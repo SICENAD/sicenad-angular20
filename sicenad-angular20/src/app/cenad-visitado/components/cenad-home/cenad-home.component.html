@@ -1,0 +1,51 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Escudo -->
+    <div class="col col-md-8 escudo p-5">
+      <img class="cenad" alt="escudoCenad" [src]="pathImg()" />
+    </div>
+
+    <!-- Enlaces importantes -->
+    <div class="col col-md-4 enlaces p-4 mt-5">
+      <h3>
+        <fa-icon [icon]="faEnlace" class="me-2"></fa-icon>
+        <u><strong>Enlaces más importantes</strong></u>
+      </h3>
+      <ul>
+        @if (esSuperAdmin) {
+        <li class="pt-4">
+          <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.calendario]">
+            <fa-icon [icon]="faCalendario" class="me-2"></fa-icon>
+            Planificar Recursos
+          </a>
+        </li>
+        } @else {
+        <li class="pt-4">
+          <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.calendario]">
+            <fa-icon [icon]="faCalendario" class="me-2"></fa-icon>
+            Calendario
+          </a>
+        </li>
+        }
+        <li class="pt-4">
+          <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.recursos]">
+            <fa-icon [icon]="faRecurso" class="me-2"></fa-icon>
+            Recursos
+          </a>
+        </li>
+        <li class="pt-4">
+          <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.cartografias]">
+            <fa-icon [icon]="faCartografia" class="me-2"></fa-icon>
+            Cartografía
+          </a>
+        </li>
+        <li class="pt-4">
+          <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.solicitudes]">
+            <fa-icon [icon]="faSolicitar" class="me-2"></fa-icon>
+            Solicitudes
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

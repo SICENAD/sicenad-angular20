@@ -1,0 +1,79 @@
+h1 {
+  color: #344E41;
+  font-weight: bold;
+}
+
+h3, fa-icon.fa-2x:hover {
+  color: #3A5A40;
+}
+
+.nav {
+  position: relative;
+  margin: 0 30%;
+  text-align: left;
+  top: 40%;
+  transform: translateY(-50%);
+}
+
+fa-icon.menu {
+  color: #DAD7CD;
+}
+
+div.titulo {
+  background-color: #A3B18A;
+  text-align: center;
+  height: 5em;
+  align-items: center;
+}
+
+div.menu a {
+  color: #588157;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 12px;
+  margin-right: 20px;
+}
+
+div a:hover {
+  color: yellowgreen;
+}
+
+li.home {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+div.menu a.home {
+  margin-top: 0;
+}
+
+div.consultar {
+ width: 320px !important;
+}
+
+div.otros {
+  width: 220px !important;
+}
+
+.dropdown-menu {
+   display: none;
+   position: relative;
+}
+
+.dropdown:hover .dropdown-menu {
+   display: block;
+}
+
+div.submenu {
+   display: none !important;
+   position: relative;
+}
+
+.dropdown-submenu:hover .submenu {
+   display: block !important;
+   position: relative;
+}
+
+.homePrincipal {
+  cursor:pointer;
+}

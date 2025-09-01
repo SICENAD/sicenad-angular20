@@ -1,0 +1,9 @@
+.enlace {
+    color: #52796f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.enlace:hover {
+    text-decoration: underline;
+    color: #354f52;
+}

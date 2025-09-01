@@ -1,0 +1,27 @@
+header {
+  margin-top: 10px;
+}
+
+.logueado {
+  color:darkgrey;
+}
+
+.btn {
+  background: #A3B18A;
+}
+
+.titulo {
+  color: #3A5A40;
+}
+
+.identificar:hover {
+  background: green;
+}
+
+.cerrar:hover {
+  background: red;
+}
+
+.letra {
+  color: #588157;
+}

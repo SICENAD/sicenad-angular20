@@ -1,0 +1,144 @@
+<div class="d-flex align-items-center position-relative p-2 bg-light">
+  <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
+    <u>GESTIÓN DE CENAD,CMT</u>
+  </h3>
+  <button class="btn text-white ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nuevo-cenad">
+    Nuevo <b>CENAD/CMT</b>
+  </button>
+</div>
+<hr class="w-100" />
+<div class="row ms-5 p-0">
+  <div class="col col-md-12">
+    <div class="row mt-2 titulos">
+      <div class="col-4 titulo"><b>CENAD/CMT</b></div>
+      <div class="col-4 titulo"><b>PROVINCIA</b></div>
+      <div class="col-4 titulo"><b>ADMINISTRADOR</b></div>
+    </div>
+    @for (c of cenads(); track c.idString) {
+    <app-cenad [cenad]="c"></app-cenad>
+    }
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-nuevo-cenad" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Nuevo CENAD/CMT</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombre" class="form-label"><b>CENAD/CMT</b></label>
+            <input
+              type="text"
+              class="form-control"
+              id="nombre"
+              [value]="nombre()"
+              name="nombre"
+              (input)="nombre.set(txtNombre.value)"
+              #txtNombre
+            />
+          </div>
+          <div class="mb-3">
+            <label class="titulo"><b>PROVINCIA*</b></label>
+            <select class="form-select" [value]="provincia()" (change)="onProvinciaChange($event)">
+              > @if (!provincia()) {
+              <option value="" disabled selected>Selecciona una provincia</option>
+              } @for (p of provincias(); track p.idProvincia) {
+              <option [value]="p.idProvincia">{{ p.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="direccion" class="form-label"><b>Dirección</b></label>
+            <input
+              type="text"
+              class="form-control"
+              id="direccion"
+              [value]="direccion()"
+              name="username"
+              (input)="direccion.set(txtDireccion.value)"
+              #txtDireccion
+            />
+          </div>
+          <div class="mb-3">
+            <label for="tfno" class="form-label"><b>Teléfono</b></label>
+            <input
+              type="text"
+              class="form-control"
+              id="tfno"
+              [value]="tfno()"
+              name="tfno"
+              (input)="tfno.set(txtTfno.value)"
+              #txtTfno
+            />
+            @if (phoneError()) {
+            <span class="text-danger">{{ phoneError() }}</span>
+            }
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label"><b>Correo</b></label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              [value]="email()"
+              name="email"
+              (input)="email.set(txtEmail.value)"
+              #txtEmail
+            />
+            <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+            @if (emailError()) {
+            <span class="text-danger">{{ emailError() }}</span>
+            }
+          </div>
+          <div class="mb-3">
+            <label class="form-label"
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
+            <textarea
+              class="form-control letra"
+              id="descripcion"
+              [value]="descripcion()"
+              name="descripcion"
+              (input)="descripcion.set(txtDescripcion.value)"
+              #txtDescripcion
+            >
+            </textarea>
+          </div>
+          <div class="mb-3">
+            <label class="titulo"><b>ESCUDO*</b> (Tamaño máximo: {{ sizeMaxEscudo() }} MB)</label>
+            <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput />
+          </div>
+          @if (previewEscudo()) {
+          <div style="margin-top: 10px">
+            <label><b>Vista previa del escudo:</b></label
+            ><br />
+            <img
+              [src]="previewEscudo()"
+              alt="Vista previa"
+              class="img-thumbnail"
+              style="max-height: 100px"
+            />
+          </div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            [disabled]="!formularioValidado()"
+            (click)="crearCenad()"
+          >
+            Crear CENAD/CMT
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

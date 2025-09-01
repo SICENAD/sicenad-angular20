@@ -1,0 +1,14 @@
+<header>
+  @if (auth.token()) {
+  <p class="alert alert-success">
+    {{ auth.username() }} autenticado en la API como {{ identificacion() }}
+    <button class="btn btn-success ms-3" (click)="logout()">Cerrar sesión</button>
+  </p>
+  } @else {
+  <p class="alert alert-danger">
+    Usuario NO autenticado en la API
+    <button class="btn btn-danger ms-2 me-3" [routerLink]="routesPaths.login">Iniciar sesión</button>
+    Necesitas iniciar sesión para poder acceder a los distintos CENAD,s/CMT,s
+  </p>
+  }
+</header>

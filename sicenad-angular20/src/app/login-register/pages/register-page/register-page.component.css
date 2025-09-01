@@ -1,0 +1,38 @@
+.container {
+  padding: 20px;
+  color: #a3b18a;
+}
+
+.login-form {
+  max-width: 300px;
+  /* Controla el ancho */
+  text-align: left;
+  /* Alinea el contenido a la izquierda */
+  font-weight: bold;
+}
+
+.btn-primary {
+  background: #a3b18a;
+  border: none;
+  font-size: 14px;
+  color: white;
+  padding: 8px 16px;
+}
+
+.btn-primary:hover {
+  background-color: #588157;
+}
+
+.link-personalizado {
+  color: #a3b18a;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+h1, .link-personalizado:hover {
+  color: #588157;
+}
+
+.passwordSistema {
+  color: red;
+}

@@ -1,0 +1,8 @@
+<!-- muestra, si los hay, los cenad de esa provincia, con un enlace a su pagina principal -->
+<ul>
+  <li>
+    <a [routerLink]="[routesPaths.cenadHome, cenad()?.idString]" class="enlace">
+      {{ cenad()?.nombre }}
+    </a>
+  </li>
+</ul>

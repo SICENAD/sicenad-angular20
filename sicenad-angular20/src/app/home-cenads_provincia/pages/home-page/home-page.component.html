@@ -1,0 +1,86 @@
+<div class="container-fluid">
+  <div class="row m-2">
+    <div class="col col-md-2 p-4">
+      <a (click)="actualizarSessionStorage()">
+        <img class="madoc" width="80" height="110" alt="MADOC" src="img/madoc.png" />
+      </a>
+    </div>
+    <div class="col col-md-7 align-self-center pt-5">
+      <h6 class="bienvenido text-center">Bienvenido al Sistema de CENAD,s y CMT,s del ET</h6>
+    </div>
+    <div class="col col-md-1 mt-4 ml-5">
+      <h2 class="text-center">SICENAD</h2>
+    </div>
+  </div>
+  <div class="row ml-5 p-0">
+    <!-- MAPA -->
+    <div class="col col-md-8 interactivo">
+      <div
+        id="mapa"
+        style="
+          background: url('img/spain.png') no-repeat 0px 0px;
+          width: 781px;
+          height: 713px;
+          zoom: 0.8;
+          transform: scale(0.8);
+        "
+      >
+        <img [src]="mapaSrc()" alt="Seleccione una provincia" usemap="#Map" class="spain" />
+        <map name="Map" id="Map" alt="Mapa de España por provincias">
+          @for (prov of provinciasMap(); track prov.id) {
+          <area
+            [shape]="prov.shape"
+            [coords]="prov.coords"
+            [alt]="prov.alt"
+            [title]="prov.title"
+            [class]="prov.class"
+            (mouseover)="mapaSrc.set('img/provincias/' + prov.img)"
+            (mouseout)="mapaSrc.set('img/transparente.png')"
+            (click)="respuesta(prov.id)"
+          />
+          }
+        </map>
+      </div>
+    </div>
+    <!-- PANEL DE FILTRO -->
+    <div class="col col-md-4 p-5 filtro">
+      <p class="seleccione">Seleccione provincia:</p>
+      <div class="form-group">
+        <select
+          name="provincia"
+          class="select-provincia"
+          [value]="idProvinciaSeleccionada()"
+          (change)="respuesta(+provinciaSelect.value)" #provinciaSelect
+        >
+          @if (!idProvinciaSeleccionada()) {
+          <option value="" disabled selected>Seleccione una provincia</option>
+          } @for (provincia of provincias(); track provincia.idProvincia) {
+          <option [value]="provincia.idProvincia">
+            {{ provincia.nombre }}
+          </option>
+          }
+        </select>
+      </div>
+      <div class="busqueda mt-4">
+        <br />
+        <span>Resultado de la búsqueda:</span>
+        <br /><br />
+        <h3>
+          <strong>{{ provinciaSeleccionada().toUpperCase() }}</strong>
+        </h3>
+        <br />
+        <h4 class="titulo-busqueda"><u>CENAD/CMT:</u></h4>
+        <!-- Resultados -->
+        @for (cenad of cenadsFiltro(); track cenad.idString) {
+        <div class="resultado">
+          <app-resultado-cenads-provincia [cenad]="cenad" />
+        </div>
+        } @empty {
+        <div>
+          <span class="no-existe"> * No existe ningún CENAD/CMT </span>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

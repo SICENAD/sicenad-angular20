@@ -1,0 +1,22 @@
+h1 {
+  color: #3A5A40; font-weight: bold
+}
+
+h2 {
+  color: #A3B18A; 
+}
+
+a {
+  color: #3A5A40;
+  font-size: 18px;
+}
+
+a:hover {
+  color: #A3B18A;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

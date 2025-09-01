@@ -1,0 +1,150 @@
+<div class="container">
+  <h1 class="text-center">Crear nuevo <b>Usuario Superadministrador</b></h1>
+  <form>
+    <!-- Teléfono -->
+    <div class="mb-3">
+      <label for="tfno" class="form-label"><b>Teléfono</b></label>
+      <input
+        type="text"
+        class="form-control"
+        id="tfno"
+        [value]="tfno()"
+        name="tfno"
+        (input)="tfno.set(txtTfno.value)"
+        #txtTfno
+      />
+      @if (phoneError()) {
+      <span class="text-danger">{{ phoneError() }}</span>
+      }
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label"><b>Correo</b></label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        [value]="email()"
+        name="email"
+        (input)="email.set(txtEmail.value)"
+        #txtEmail
+      />
+      <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+      @if (emailError()) {
+      <span class="text-danger">{{ emailError() }}</span>
+      }
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="mb-3">
+      <label class="form-label me-2"
+        ><b>¿QUIERE RECIBIR NOTIFICACIONES?<sup class="text-danger">*</sup></b></label
+      >
+      <input
+        type="checkbox"
+        class="letra"
+        id="emailAdmitido"
+        [checked]="emailAdmitido()"
+        name="emailAdmitido"
+        (change)="emailAdmitido.set(booleanEmailAdmitido.checked)"
+        #booleanEmailAdmitido
+      />
+    </div>
+
+    <!-- Descripción -->
+    <div class="mb-3">
+      <label class="form-label"
+        ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+      >
+      <textarea
+        class="form-control letra"
+        id="descripcion"
+        [value]="descripcion()"
+        name="descripcion"
+        (input)="descripcion.set(txtDescripcion.value)"
+        #txtDescripcion
+      >
+      </textarea>
+    </div>
+
+    <!-- Username -->
+    <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+      <label for="username" class="form-label"><b>Usuario</b></label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        [value]="username()"
+        name="username"
+        (input)="username.set(txtUsername.value)"
+        #txtUsername
+      />
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+      <label for="password" class="form-label"><b>Contraseña</b></label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        [value]="password()"
+        name="password"
+        (input)="password.set(txtPassword.value)"
+        #txtPassword
+      />
+    </div>
+
+    <!-- Botones -->
+    <a [routerLink]="routesPaths.login" class="btn btn-primary text-white col-2 me-5">Cancelar</a>
+    <button
+      type="button"
+      class="btn btn-primary text-white col-2"
+      data-bs-toggle="modal"
+      data-bs-target="#modal-crear-usuario"
+      [disabled]="!formularioValidado()"
+    >
+      Crear Usuario
+    </button>
+  </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-crear-usuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Crear Usuario</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label"><b>Confirmar contraseña</b></label>
+        <input
+          type="password"
+          class="form-control"
+          [value]="passwordForRegisterFromUser()"
+          name="passwordForRegisterFromUser"
+          (input)="passwordForRegisterFromUser.set(txtPasswordForRegisterFromUser.value)"
+          #txtPasswordForRegisterFromUser
+        />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="solicitudRegistro()"
+          data-bs-dismiss="modal"
+        >
+          Crear Usuario
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

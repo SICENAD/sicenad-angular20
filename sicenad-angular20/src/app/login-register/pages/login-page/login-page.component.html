@@ -1,0 +1,52 @@
+ <div class="ms-5">
+  <a [routerLink]="routesPaths.home">
+    <fa-icon class="fa-2x home" [icon]="faHome"></fa-icon
+  ></a>
+ </div>
+<div class="container">
+  <form>
+    @if (feedback()) {
+    <p class="text-danger">{{ feedback() }}</p>
+    }
+    <div class="mb-3 col-3">
+      <label for="username" class="form-label">
+        <b>Usuario</b>
+      </label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        [value]="username()"
+        name="username"
+        (input)="username.set(txtUsername.value)"
+        #txtUsername
+      />
+    </div>
+
+    <div class="mb-3 col-3">
+      <label for="password" class="form-label">
+        <b>Contraseña</b>
+      </label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        [value]="password()"
+        name="password"
+        (input)="password.set(txtPassword.value)"
+        #txtPassword
+      />
+    </div>
+
+    <button type="button" (click)="login()" class="btn btn-primary" [disabled]="!formularioValidado()">Iniciar Sesión</button>
+
+    @if (feedback()) {
+    <p class="text-danger">{{ feedback() }}</p>
+    }
+  </form>
+
+  <span>
+    ¿No tienes cuenta?
+    <a [routerLink]="routesPaths.register" class="link-personalizado">Crear cuenta</a>
+  </span>
+</div>

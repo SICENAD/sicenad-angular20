@@ -1,0 +1,162 @@
+<div class="container-fluid mb-0 pb-0">
+  <div class="row titulo mt-1">
+    <div class="col col-md-1">
+      <button
+        class="navbar-toggler"
+        type="button"
+        (click)="toggleMenu()"
+        aria-controls="navbarContenido"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <fa-icon [icon]="faMenu" size="2x"></fa-icon>
+      </button>
+    </div>
+    <div class="col col-md-10">
+      <h1>{{ cenad()?.nombre?.toUpperCase() }}</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-md-12 menu">
+      <nav
+        class="navbar navbar-expand-lg collapse navbar-collapse mt-0 pt-0 pb-0"
+        [class.show]="menuVisible()"
+        id="navbarContenido"
+      >
+        <ul class="navbar-nav mr-auto">
+          <!-- Home -->
+          <li class="nav-item home">
+            <a class="nav-link home" [routerLink]="routesPaths.home">
+              <fa-icon [icon]="faHome" size="2x"></fa-icon>
+            </a>
+          </li>
+
+          <!-- Home principal -->
+          <li class="nav-item homePrincipal">
+            <a class="nav-link homePrincipal" [routerLink]="[routesPaths.cenadHome, idCenad()]">
+              CENAD/CMT
+            </a>
+          </li>
+
+          <!-- Consultar -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button">
+              <fa-icon [icon]="faConsultar" ></fa-icon> Consultar
+            </a>
+            <div class="dropdown-menu consultar">
+              @if (!isAdminEsteCenad() && !isGestorEsteCenad()) {
+                <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.recursos]">
+                  <fa-icon [icon]="faRecurso"></fa-icon> Recursos
+                </a>
+              }
+              @if (!isSuperAdmin()) {
+                <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.calendario]">
+                  <fa-icon [icon]="faCalendario"></fa-icon> Calendario
+                </a>
+              }
+              @if (!isAdminEsteCenad()) {
+                <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.cartografias]">
+                  <fa-icon [icon]="faCartografia"></fa-icon> Cartografía
+                </a>
+              }
+              @if (!isCenadZaragoza()) {
+                <a class="nav-link" href="https://www.tiempo.com" target="_blank">
+                  <fa-icon [icon]="faMeteo"></fa-icon> Meteorología
+                </a>
+              }
+              <a class="nav-link" href="http://srvgregwww02/GESNOEX" target="_blank">
+                <fa-icon [icon]="faArtefacto"></fa-icon> Artefactos No Explosionados
+              </a>
+              @if (isCenadZaragoza()) {
+                <a class="nav-link" href="https://10.63.172.26/so/#/login" target="_blank">
+                  <fa-icon [icon]="faVista"></fa-icon> Vistas ACMT
+                </a>
+              }
+            </div>
+          </li>
+
+          <!-- Submenú especial Zaragoza -->
+          @if (isCenadZaragoza()) {
+            <li class="nav-item dropdown-submenu">
+              <a class="nav-link dropdown-toggle">
+                <fa-icon [icon]="faMeteo"></fa-icon> Meteorología
+              </a>
+              <div class="dropdown-menu submenu">
+                <a class="nav-link" href="https://www.tiempo.com/san-gregorio.htm" target="_blank">
+                  <fa-icon [icon]="faPrevision"></fa-icon> Previsión
+                </a>
+                <a class="nav-link" href="assets/CENAD-SG_Calculador-de-IPI.xlsx" target="_blank">
+                  <fa-icon [icon]="faIPI"></fa-icon> IPI
+                </a>
+                <a class="nav-link" href="http://10.63.172.49/map" target="_blank">
+                  <fa-icon [icon]="faMetozonas"></fa-icon> Datos por Zonas
+                </a>
+              </div>
+            </li>
+          }
+
+          <!-- Otros -->
+          @if (!isAdminEsteCenad()) {
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle">
+                <fa-icon [icon]="faMas"></fa-icon> Otros
+              </a>
+              <div class="dropdown-menu otros">
+                <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.infoCenad]">
+                  <fa-icon [icon]="faInfo"></fa-icon> Información
+                </a>
+                <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.normativas]">
+                  <fa-icon [icon]="faNormativa"></fa-icon> Normativa
+                </a>
+              </div>
+            </li>
+          }
+
+          <!-- Gestionar -->
+          @if (isAdminEsteCenad() || isGestorEsteCenad()) {
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle">
+                <fa-icon [icon]="faUser"></fa-icon> Gestionar
+              </a>
+              <div class="dropdown-menu gestionar">
+                @if (isAdminEsteCenad()) {
+                  <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.cartografias]">
+                    <fa-icon [icon]="faCartografia"></fa-icon> Cartografía
+                  </a>
+                }
+                <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.recursos]">
+                  <fa-icon [icon]="faRecurso"></fa-icon> Recursos
+                </a>
+                @if (isAdminEsteCenad()) {
+                  <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.categorias]">
+                    <fa-icon [icon]="faCategorias"></fa-icon> Categorías
+                  </a>
+                  <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.usuariosCenad]">
+                    <fa-icon [icon]="faUsuarios"></fa-icon> Usuarios
+                  </a>
+                  <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.unidadesCenad]">
+                    <fa-icon [icon]="faUnidades"></fa-icon> Unidades
+                  </a>
+                  <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.normativas]">
+                    <fa-icon [icon]="faNormativa"></fa-icon> Normativa
+                  </a>
+                  <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.infoCenad]">
+                    <fa-icon [icon]="faInfo"></fa-icon> Información
+                  </a>
+                }
+              </div>
+            </li>
+          }
+
+          <!-- Solicitudes -->
+          <li class="nav-item gestionar">
+            <a class="nav-link gestionar" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.solicitudes]">
+              <fa-icon [icon]="faSolicitar"></fa-icon> Solicitudes
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

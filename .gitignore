@@ -1,0 +1,55 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+logs/
+
+### Javadoc ###
+
+/doc
+
+### diagramas eclipse ###
+
+/diagramas
+
+### archivos subidos ###
+
+### lo comento para que suba las fotos y asi en los distintos pcs no me de errores de que no encuentra los archivos, pero no lo subiria esto...
+###     /archivos
+
+### Información que no quiero compartir ###
+
+src/main/resources/config/passwordsBD.properties
