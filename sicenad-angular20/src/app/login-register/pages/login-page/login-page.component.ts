@@ -2,7 +2,7 @@ import { Component, signal, inject, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ApiService } from '@services/apiService';
+import { UsuarioService } from '@services/usuarioService';
 import { AuthStore } from '@stores/auth.store';
 import { IconosStore } from '@stores/iconos.store';
 
@@ -13,7 +13,7 @@ import { IconosStore } from '@stores/iconos.store';
   styleUrls: ['./login-page.component.css']
 })
 export class LoginComponent {
-  private apiService = inject(ApiService);
+  private usuarioService = inject(UsuarioService);
   private router = inject(Router);
   private auth = inject(AuthStore);
   private iconos = inject(IconosStore);
@@ -30,7 +30,7 @@ export class LoginComponent {
   );
 
   login() {
-    this.apiService.login(this.username(), this.password()).subscribe({
+    this.usuarioService.login(this.username(), this.password()).subscribe({
       next: (res) => {
         this.feedback.set('');
         this.auth.loginSuccessfull(res.token, res.username, res.rol);

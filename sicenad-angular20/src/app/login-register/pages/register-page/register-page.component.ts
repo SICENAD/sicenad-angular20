@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
-import { ApiService } from '@services/apiService';
+import { UsuarioService } from '@services/usuarioService';
 import { UtilsStore } from '@stores/utils.store';
 
 @Component({
@@ -12,7 +12,7 @@ import { UtilsStore } from '@stores/utils.store';
 })
 export class RegisterComponent {
   private utils = inject(UtilsStore);
-  private apiService = inject(ApiService);
+  private usuarioService = inject(UsuarioService);
   private router = inject(Router);
 
   readonly routesPaths = RoutesPaths;
@@ -52,7 +52,7 @@ export class RegisterComponent {
     const passwordForRegister = this.utils.passwordForRegister();
     passwordForRegister == this.passwordForRegisterFromUser()
       ?
-      (this.apiService.register(
+      (this.usuarioService.register(
         this.username(),
         this.password(),
         this.tfno(),

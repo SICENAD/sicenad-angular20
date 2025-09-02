@@ -3,8 +3,6 @@ import { inject, Injectable, Injector } from "@angular/core";
 import { AuthStore } from "@stores/auth.store";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { UtilsStore } from "@stores/utils.store";
-import { RegisterResponse } from "@interfaces/responses/registerResponse";
-import { LoginResponse } from "@interfaces/responses/loginResponse";
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -16,7 +14,7 @@ export class ApiService {
   private get auth(): AuthStore {
     return this.injector.get(AuthStore);
   }
-  getUrlApi() {
+  getUrlApi() {//para no necesitar inyectar utils en los servicios de las entidades
     return this.utils.urlApi();
   }
 
@@ -32,16 +30,6 @@ export class ApiService {
         throw err;
       })
     );
-  }
-  // --- REQUEST LOGIN ---
-  public login(username: string, password: string): Observable<LoginResponse> {
-    const url = `${this.utils.urlApi()}/auth/login`;
-    return this.postSinToken<LoginResponse>(url, { username, password });
-  }
-  // --- REQUEST REGISTER ---
-  public register(username: string, password: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, rol: string): Observable<RegisterResponse> {
-    const url = `${this.utils.urlApi()}/auth/register`;
-    return this.postSinToken<RegisterResponse>(url, { username, password, tfno, email, emailAdmitido, descripcion, rol });
   }
 
   // --- REQUEST CON TOKEN GENERAL ---
