@@ -1,1 +1,19 @@
-<p>cenad works!</p>,
+<hr class="w-100" />
+@if (cenad()) {
+<div class="row">
+  <div class="col-4">
+    {{ cenad()?.nombre }}
+    <app-cenad-modal
+      [cenad]="cenad()"
+    ></app-cenad-modal>
+  </div>
+  <div class="col-4">{{ (provincia()) }}</div>
+  @if (usuarioAdministrador()) {
+  <div class="col-4">
+    {{ (usuarioAdministrador()?.username) }}
+  </div>
+  } @else {
+  <div class="col-4">NO TIENE</div>
+  }
+</div>
+}

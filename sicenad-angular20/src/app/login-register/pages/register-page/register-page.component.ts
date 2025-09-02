@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
-import { UsuarioService } from '@services/usuarioService';
+import { OrquestadorService } from '@services/orquestadorService';
 import { UtilsStore } from '@stores/utils.store';
 
 @Component({
@@ -12,7 +12,7 @@ import { UtilsStore } from '@stores/utils.store';
 })
 export class RegisterComponent {
   private utils = inject(UtilsStore);
-  private usuarioService = inject(UsuarioService);
+  private orquestadorService = inject(OrquestadorService);
   private router = inject(Router);
 
   readonly routesPaths = RoutesPaths;
@@ -52,7 +52,7 @@ export class RegisterComponent {
     const passwordForRegister = this.utils.passwordForRegister();
     passwordForRegister == this.passwordForRegisterFromUser()
       ?
-      (this.usuarioService.register(
+      (this.orquestadorService.registerUsuario(
         this.username(),
         this.password(),
         this.tfno(),
@@ -67,7 +67,7 @@ export class RegisterComponent {
         error: (err) => {
           console.error('Error en registro:', err);
         }
-      }), this.router.navigate(['/login'])
+      }), this.router.navigate([RoutesPaths.login])
       )
       : alert('El password introducido no es correcto');
   }

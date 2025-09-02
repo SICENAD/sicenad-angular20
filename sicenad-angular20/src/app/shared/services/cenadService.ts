@@ -3,13 +3,11 @@ import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs
 import { ApiService } from "./apiService";
 import { Cenad } from "@interfaces/models/cenad";
 import { UtilService } from "./utilService";
-import { CargaInicialStore } from "@stores/cargaInicial.store";
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
-  private cargaInicial = inject(CargaInicialStore);
 
   private cenads: Cenad[] = [];
   private cenad: Cenad | null = null;
@@ -21,25 +19,28 @@ export class CenadService {
     return this.cenad;
   }
 
-  getAllCenads(): Observable<boolean> {
+  getAll(): Observable<Cenad[]> {
     const url = `${this.apiService.getUrlApi()}/cenads?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { cenads: Cenad[] } }>(url, 'GET').pipe(
-      tap(res => {
-        this.cenads = res._embedded?.cenads.map((c: any): Cenad => ({ ...c, url: c._links?.self?.href })) || [];
-      }),
-      map(() => true),
+      map(res =>
+        res._embedded?.cenads.map(c => ({ ...c, url: (c as any)._links?.self?.href })) || []
+      ),
       catchError(err => {
         console.error(err);
-        return of(false);
+        return of([]);
       })
     );
   }
+
+
+
+
 
   getCenadsSinAdmin(): Observable<Cenad[] | null> {
     const url = `${this.apiService.getUrlApi()}/cenads/sinAdmin?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { cenads: Cenad[] } }>(url, 'GET').pipe(
       map(res => {
-        this.cenads = res._embedded?.cenads.map((c: any): Cenad => ({...c, url: c._links?.self?.href})) || [];
+        this.cenads = res._embedded?.cenads.map((c: any): Cenad => ({ ...c, url: c._links?.self?.href })) || [];
         return this.cenads;
       }),
       catchError(err => { console.error(err); return of(null); })
@@ -48,12 +49,18 @@ export class CenadService {
 
   getCenadSeleccionado(idCenad: string): Observable<Cenad | null> {
     const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
-    return this.apiService.peticionConToken<any>(url, 'GET').pipe(
-      map((c: any): Cenad => ({ ...c, url: c._links?.self?.href })),
-      tap(res => this.cenad = res),
+    return this.apiService.peticionConToken<Cenad>(url, 'GET').pipe(
+    map(res => ({...res, url: (res as any)._links?.self?.href})),
+
       catchError(err => { console.error(err); return of(null); })
     );
   }
+
+
+
+
+
+
 
   crearCenad(
     nombre: string,
@@ -63,7 +70,7 @@ export class CenadService {
     email: string,
     descripcion: string,
     archivoEscudo: File
-  ): Observable<boolean> {
+  ): Observable<any> {
     const url = `${this.apiService.getUrlApi()}/cenads`;
     const body = {
       nombre: nombre.toUpperCase(),
@@ -85,7 +92,6 @@ export class CenadService {
             return this.apiService.peticionConToken<any>(urlCenad, 'PATCH', { escudo }).pipe(
               tap(() => {
                 this.utilService.toast(`Se ha creado el CENAD/CMT ${nombre}`, 'success');
-                this.cargaInicial.getDatosIniciales();
               }),
               map(() => true)
             );
@@ -106,7 +112,7 @@ export class CenadService {
     archivoEscudo: File,
     escudoActual: string,
     idCenad: string
-  ): Observable<string | null> {
+  ): Observable<any> {
     let escudo = escudoActual || '';
     const urlCenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
     const body: Partial<Cenad> = {
@@ -122,7 +128,6 @@ export class CenadService {
       return this.apiService.peticionConToken<any>(urlCenad, 'PATCH', body).pipe(
         tap(() => {
           this.utilService.toast(`Se ha editado el CENAD/CMT ${nombre}`, 'success');
-          this.cargaInicial.getDatosIniciales();
         }),
         map(() => escudo),
         catchError(err => { console.error(err); return of(null); })
@@ -150,7 +155,7 @@ export class CenadService {
     );
   }
 
-  deleteCenad(idCenad: string): Observable<boolean> {
+  deleteCenad(idCenad: string): Observable<any> {
     const urlCenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
     const urlCarpeta = `${this.apiService.getUrlApi()}/files/${idCenad}/borrarCarpetaCenad`;
     return this.apiService.borrarCarpeta(urlCarpeta).pipe(
@@ -158,7 +163,6 @@ export class CenadService {
       tap(res => {
         this.cenad = res;
         this.utilService.toast(`Se ha eliminado el CENAD/CMT`, 'success');
-        this.cargaInicial.getDatosIniciales();
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })
@@ -178,7 +182,7 @@ export class CenadService {
     archivoInfoCenad: File,
     infoCenadActual: string,
     idCenad: string
-  ): Observable<string | null> {
+  ): Observable<any> {
     let infocenad = infoCenadActual;
     const urlCenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
     const patchInfo = (): Observable<string | null> => {
@@ -193,7 +197,6 @@ export class CenadService {
       return this.apiService.peticionConToken<any>(urlCenad, 'PATCH', body).pipe(
         tap(() => {
           this.utilService.toast(`Se ha editado la información del CENAD/CMT`, 'success');
-          this.cargaInicial.getDatosIniciales();
         }),
         map(() => infocenad),
         catchError(err => {

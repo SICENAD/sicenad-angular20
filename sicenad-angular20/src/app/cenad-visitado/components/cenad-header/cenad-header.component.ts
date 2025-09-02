@@ -2,10 +2,12 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
-import { CargaInicialStore } from '@stores/cargaInicial.store';
 import { CenadStore } from '@stores/cenad.store';
+import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
+import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 
 @Component({
   selector: 'app-cenad-header',
@@ -16,9 +18,11 @@ import { IconosStore } from '@stores/iconos.store';
 export class CenadHeaderComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private auth = inject(AuthStore);
-  private cargaInicial = inject(CargaInicialStore);
+  private datosPrincipalesStore = inject(DatosPrincipalesStore);
+  private usuarioLogueado = inject(UsuarioLogueadoStore);
   private cenadStore = inject(CenadStore);
   private iconoStore = inject(IconosStore);
+  private orquestadorService = inject(OrquestadorService);
 
   faLock = this.iconoStore.faLock;
   faSignOutAlt = this.iconoStore.faSignOutAlt;
@@ -47,13 +51,13 @@ export class CenadHeaderComponent implements OnInit {
 
   readonly routesPaths = RoutesPaths;
 
-  cenads = computed(() => this.cargaInicial.cenads());
+  cenads = computed(() => this.datosPrincipalesStore.cenads());
   idCenad = computed(() => this.route.snapshot.params['idCenad']);
   cenad = computed(() => this.cenadStore.cenadVisitado());
   isSuperAdmin = computed(() => this.auth.rol() === 'Superadministrador');
   isGestorNormal = computed(() => this.auth.rol() === 'Gestor' || this.auth.rol() === 'Normal');
-  isGestorEsteCenad = computed(() => this.auth.rol() === 'Gestor' && this.idCenad() === this.cargaInicial.cenadPropio()?.idString);
-  isAdminEsteCenad = computed(() => this.auth.rol() === 'Administrador' && this.idCenad() === this.cargaInicial.cenadPropio()?.idString);
+  isGestorEsteCenad = computed(() => this.auth.rol() === 'Gestor' && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
+  isAdminEsteCenad = computed(() => this.auth.rol() === 'Administrador' && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
 
   idCenadZaragoza = signal<string | null>(null);
   isCenadZaragoza = signal(false);
@@ -65,7 +69,7 @@ export class CenadHeaderComponent implements OnInit {
 
   ngOnInit() {
     this.cenadStore.borrarDatosCenad();
-    this.cenadStore.getDatosCenad(this.idCenad());
+    this.orquestadorService.getDatosDeCenad(this.idCenad()).subscribe();
     this.cargarCenads();
   }
 

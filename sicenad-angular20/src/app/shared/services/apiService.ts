@@ -14,8 +14,17 @@ export class ApiService {
   private get auth(): AuthStore {
     return this.injector.get(AuthStore);
   }
-  getUrlApi() {//para no necesitar inyectar utils en los servicios de las entidades
-    return this.utils.urlApi();
+  getUrlApi(): string {
+    try {
+      const raw = localStorage.getItem('urlApi');
+      const fromLS = raw ? JSON.parse(raw) : null;
+      if (typeof fromLS === 'string' && fromLS.trim()) return fromLS;
+    } catch { }
+
+    // Fallback definitivo (tu env o utils)
+    // importa environment si lo usas
+    // return environment.apiUrl;
+    return ''; // o this.utils.urlApi() si lo tienes aquí inyectado
   }
 
   // --- REQUEST POST SIN TOKEN GENERAL (REGISTRO Y LOGIN) ---

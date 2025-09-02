@@ -6,7 +6,6 @@ import { CenadService } from '@services/cenadService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
-import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-cenad-home',

@@ -1,8 +1,8 @@
 import { Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { UtilsStore } from '@stores/utils.store';
-import { CargaInicialStore } from '@stores/cargaInicial.store';
-import { CenadService } from '@services/cenadService';
 import { CenadComponent } from '@app/cenads/components/cenad/cenad.component';
+import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
+import { OrquestadorService } from '@services/orquestadorService';
 @Component({
   selector: 'app-cenads-page',
   imports: [CenadComponent],
@@ -12,9 +12,9 @@ import { CenadComponent } from '@app/cenads/components/cenad/cenad.component';
 export class CenadsPageComponent {
 
   private utils = inject(UtilsStore);
-  private cargaInicial = inject(CargaInicialStore);
-  private cenadService = inject(CenadService);
-  cenads = computed(() => this.cargaInicial.cenads());
+  private datosPrincipalesStore = inject(DatosPrincipalesStore);
+  private orquestadorService = inject(OrquestadorService);
+  cenads = computed(() => this.datosPrincipalesStore.cenads());
   provincias = signal<{ idProvincia: number, nombre: string }[]>(this.utils.provincias());
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   escudoFile = signal<any>(null);
@@ -72,7 +72,7 @@ export class CenadsPageComponent {
   crearCenad() {
     const provinciaId: number = this.provincia();
 
-    this.cenadService.crearCenad(
+    this.orquestadorService.crearCenad(
       this.nombre(),
       provinciaId,
       this.direccion(),

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { Cenad } from '@interfaces/models/cenad';
 
 @Component({
   selector: 'app-cenad-modal',
@@ -6,4 +7,7 @@ import { Component } from '@angular/core';
   templateUrl: './cenadModal.component.html',
   styleUrls: ['./cenadModal.component.css'],
 })
-export class CenadModalComponent { }
+export class CenadModalComponent {
+    cenad = input<Cenad>();
+
+ }

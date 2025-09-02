@@ -1,7 +1,7 @@
 <header>
-  @if (auth.token()) {
+  @if (token()) {
   <p class="alert alert-success">
-    {{ auth.username() }} autenticado en la API como {{ identificacion() }}
+    {{ username() }} autenticado en la API como {{ identificacion() }}
     <button class="btn btn-success ms-3" (click)="logout()">Cerrar sesión</button>
   </p>
   } @else {

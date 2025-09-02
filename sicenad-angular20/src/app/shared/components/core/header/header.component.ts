@@ -1,11 +1,8 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { AuthStore } from '@stores/auth.store';
-import { CargaInicialStore } from '@stores/cargaInicial.store';
-import { firstValueFrom } from 'rxjs';
-import { UtilsStore } from '@stores/utils.store';
 import { Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
-
+import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 
 @Component({
   selector: 'app-header',
@@ -13,31 +10,29 @@ import { RoutesPaths } from '@app/app.routes';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
-  auth = inject(AuthStore);
-  private cargaInicial = inject(CargaInicialStore);
-  private utils = inject(UtilsStore);
+  private auth = inject(AuthStore);
   private router = inject(Router);
+  private usuarioLogueado = inject(UsuarioLogueadoStore);
 
-    readonly routesPaths = RoutesPaths;
+  readonly routesPaths = RoutesPaths;
 
+  username = computed(() => this.auth.username());
+  token = computed(() => this.auth.token());
   identificacion = computed(() => {
     if (this.auth.rol() === 'Administrador' || this.auth.rol() === 'Gestor') {
-      return `${this.auth.rol()} del ${this.cargaInicial.cenadPropio()?.nombre || ''}`
+      return `${this.auth.rol()} del ${this.usuarioLogueado.cenadPropio()?.nombre || ''}`
     } else if (this.auth.rol() === 'Normal') {
-      return `${this.auth.rol()} de ${this.cargaInicial.unidad()?.nombre || ''}`
+      return `${this.auth.rol()} de ${this.usuarioLogueado.unidad()?.nombre || ''}`
     } else {
       return this.auth.rol() || ''
     }
   })
 
-  async ngOnInit() {
-    await firstValueFrom(this.utils.cargarPropiedadesIniciales());
-  }
   logout = () => {
     this.auth.logout();
-    this.router.navigate(['']);
+    this.router.navigate([this.routesPaths.home]);
   }
 
 }

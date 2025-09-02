@@ -2,7 +2,7 @@ import { Component, signal, inject, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UsuarioService } from '@services/usuarioService';
+import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { IconosStore } from '@stores/iconos.store';
 
@@ -13,10 +13,10 @@ import { IconosStore } from '@stores/iconos.store';
   styleUrls: ['./login-page.component.css']
 })
 export class LoginComponent {
-  private usuarioService = inject(UsuarioService);
   private router = inject(Router);
   private auth = inject(AuthStore);
   private iconos = inject(IconosStore);
+  private orquestadorService = inject(OrquestadorService);
   faHome = this.iconos.faHome;
   readonly routesPaths = RoutesPaths;
 
@@ -30,11 +30,13 @@ export class LoginComponent {
   );
 
   login() {
-    this.usuarioService.login(this.username(), this.password()).subscribe({
+    this.orquestadorService.loginUsuario(this.username(), this.password()).subscribe({
       next: (res) => {
         this.feedback.set('');
-        this.auth.loginSuccessfull(res.token, res.username, res.rol);
-        this.router.navigate(['']);
+        this.auth.getDatosSeguridad(res.token, res.username, res.rol);
+        this.orquestadorService.initializeDatosPrincipales();
+        this.orquestadorService.getDatosDeUsuario();
+        this.router.navigate([this.routesPaths.home]);
       },
       error: (err) => {
         console.error('Error en login:', err);

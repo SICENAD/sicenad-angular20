@@ -1,12 +1,14 @@
 import { Injectable, signal, computed, inject, effect } from '@angular/core';
-import { CargaInicialStore } from './cargaInicial.store';
 import { CenadStore } from './cenad.store';
+import { DatosPrincipalesStore } from './datosPrincipales.store';
+import { UsuarioLogueadoStore } from './usuarioLogueado.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
 
-  private cargaInicial = inject(CargaInicialStore);
+  private usuarioLogueado = inject(UsuarioLogueadoStore);
   private cargaCenad = inject(CenadStore);
+  datosPrincipalesStore = inject(DatosPrincipalesStore);
 
   // --- STATE ---
   private _token = signal<string | null>(localStorage.getItem('token'));
@@ -32,16 +34,11 @@ export class AuthStore {
 
   // --- ACTIONS ---
 
-  loginSuccessfull(token: string, username: string, rol: string) {
-    this.getDatosSeguridad(token, username, rol);
-        this.cargaInicial.getDatosIniciales();
-        this.cargaInicial.getDatosDeUsuario();
-  }
   async logout() {
-    this.borrarDatosSeguridad();
-    this.cargaInicial.borrarDatosIniciales();
-    this.cargaInicial.borrarDatosDeUsuario();
+    this.usuarioLogueado.borrarDatosDeUsuario();
+    this.datosPrincipalesStore.borrarDatosIniciales();
     this.cargaCenad.borrarDatosCenad();
+    this.borrarDatosSeguridad();
   }
 
   getDatosSeguridad(token: string, username: string, rol: string) {
