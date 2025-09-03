@@ -172,14 +172,14 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
       case 'Administrador': {
         const usuario: UsuarioAdministrador = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_administrador/search/findByUsername?username=${username}`,
+            `/usuarios_administrador/search/findByUsername?username=${username}`,
             'GET',
             null
           )
         );
         const cenad: Cenad = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_administrador/${usuario.idString}/cenad`,
+            `/usuarios_administrador/${usuario.idString}/cenad`,
             'GET',
             null
           )
@@ -189,14 +189,14 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
       case 'Gestor': {
         const usuario: UsuarioGestor = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_gestor/search/findByUsername?username=${username}`,
+            `/usuarios_gestor/search/findByUsername?username=${username}`,
             'GET',
             null
           )
         );
         const cenad: Cenad = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_gestor/${usuario.idString}/cenad`,
+            `/usuarios_gestor/${usuario.idString}/cenad`,
             'GET',
             null
           )
@@ -206,14 +206,14 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
       case 'Normal': {
         const usuario: UsuarioNormal = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_normal/search/findByUsername?username=${username}`,
+            `/usuarios_normal/search/findByUsername?username=${username}`,
             'GET',
             null
           )
         );
         const unidad: Unidad = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_normal/${usuario.idString}/unidad`,
+            `/usuarios_normal/${usuario.idString}/unidad`,
             'GET',
             null
           )
@@ -223,7 +223,7 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
       case 'Superadministrador': {
         const usuario: UsuarioSuperAdministrador = await firstValueFrom(
           this.apiService.peticionConToken(
-            `${this.apiService.getUrlApi()}/usuarios_superadministrador/search/findByUsername?username=${username}`,
+            `/usuarios_superadministrador/search/findByUsername?username=${username}`,
             'GET',
             null
           )

@@ -1,1 +1,194 @@
-<p>cenadModal works!</p>,
+<!-- editar-cenad.component.html -->
+<!-- Botón para abrir modal -->
+<a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
+  <fa-icon class="fa" [icon]="faEdit"></fa-icon>
+</a>
+<!-- Modal -->
+<div
+  class="modal fade"
+  [id]="idModal()"
+  tabindex="-1"
+  aria-labelledby="modal-editar-cenad-Label"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal-editar-cenad-Label">
+          Editar Cenad {{ cenad()?.nombre }}
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label"><b>CENAD/CMT</b></label>
+            <input
+              type="text"
+              class="form-control"
+              id="nombre"
+              [value]="nombre()"
+              name="nombre"
+              (input)="nombre.set(txtNombre.value)"
+              #txtNombre
+            />
+          </div>
+          <!-- Provincia -->
+          <div class="mb-3">
+            <label class="titulo"><b>PROVINCIA*</b></label>
+            <select class="form-select" [value]="provinciaSeleccionada()" (change)="onProvinciaChange($event)">
+              @for (p of provincias(); track p.idProvincia) {
+              <option [value]="p.idProvincia">{{ p.nombre }}</option>
+              }
+            </select>{{provinciaSeleccionada()}}
+          </div>
+          <!-- Dirección -->
+          <div class="mb-3">
+            <label for="direccion" class="form-label"><b>Dirección</b></label>
+            <input
+              type="text"
+              class="form-control"
+              id="direccion"
+              [value]="direccion()"
+              name="username"
+              (input)="direccion.set(txtDireccion.value)"
+              #txtDireccion
+            />
+          </div>
+          <div class="mb-3">
+            <label for="tfno" class="form-label"><b>Teléfono</b></label>
+            <input
+              type="text"
+              class="form-control"
+              id="tfno"
+              [value]="tfno()"
+              name="tfno"
+              (input)="tfno.set(txtTfno.value)"
+              #txtTfno
+            />
+            @if (phoneError()) {
+            <span class="text-danger">{{ phoneError() }}</span>
+            }
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label"><b>Correo</b></label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              [value]="email()"
+              name="email"
+              (input)="email.set(txtEmail.value)"
+              #txtEmail
+            />
+            <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+            @if (emailError()) {
+            <span class="text-danger">{{ emailError() }}</span>
+            }
+          </div>
+          <div class="mb-3">
+            <label class="form-label"
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
+            <textarea
+              class="form-control letra"
+              id="descripcion"
+              [value]="descripcion()"
+              name="descripcion"
+              (input)="descripcion.set(txtDescripcion.value)"
+              #txtDescripcion
+            >
+            </textarea>
+          </div>
+          <!-- Escudo -->
+          <div class="mb-3">
+            <label class="titulo"><b>ESCUDO*</b> (Tamaño máximo: {{ sizeMaxEscudo() }} MB)</label>
+            @if (escudoActual()) {
+            <div>
+              <p>Archivo actual: {{ escudoActual() }}</p>
+              <img
+                [src]="urlEscudoActual()"
+                alt="Escudo actual"
+                style="max-height: 100px"
+                class="img-thumbnail"
+              />
+            </div>
+            } @else {
+            <p class="text-muted">No hay ningún escudo cargado</p>
+            }
+            <div class="d-flex">
+              <label class="btn">
+                Seleccionar archivo
+                <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput />
+              </label>
+              @if (archivoEscudo()) {
+              <div class="mt-2 ms-2">
+                <small>Archivo seleccionado: {{ archivoEscudo()?.name }}</small>
+              </div>
+              }
+            </div>
+            @if (previewEscudo()) {
+            <div style="margin-top: 10px">
+              <label><b>Vista previa del escudo:</b></label
+              ><br />
+              <img
+                [src]="previewEscudo()"
+                alt="Vista previa"
+                class="img-thumbnail"
+                style="max-height: 100px"
+              />
+            </div>
+            }
+          </div>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          [attr.data-bs-target]="'#' + idModalEliminar()"
+          data-bs-toggle="modal"
+        >
+          Borrar Cenad
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="editarCenad()"
+          data-bs-dismiss="modal"
+          [disabled]="!formularioValidado()"
+        >
+          Guardar Cenad
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal eliminar -->
+<div class="modal fade" [id]="idModalEliminar()" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Eliminar Cenad {{ cenad()?.idString }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">¿Desea eliminar {{ nombre() }}?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="borrarCenad()"
+          data-bs-dismiss="modal"
+        >
+          Borrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

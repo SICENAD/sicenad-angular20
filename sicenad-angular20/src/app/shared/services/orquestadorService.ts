@@ -385,11 +385,12 @@ export class OrquestadorService {
     tfno: string,
     email: string,
     descripcion: string,
-    archivoEscudo: File,
+    archivoEscudo: File | null,
     escudoActual: string,
     idCenad: string
-  ): Observable<any> {
-    return this.cenadService.editarCenad(
+  ): string {
+    let nombreArchivo: string = '';
+    this.cenadService.editarCenad(
       nombre,
       provincia,
       direccion,
@@ -402,6 +403,7 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         if (res) {
+          nombreArchivo = res;
           this.loadAllCenads(); // refresca la store
           console.log(`Cenad ${nombre} actualizado correctamente.`);
         } else {
@@ -409,6 +411,7 @@ export class OrquestadorService {
         }
       })
     );
+    return nombreArchivo;
   }
 
   borrarCenad(id: string): Observable<any> {

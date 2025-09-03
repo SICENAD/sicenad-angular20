@@ -108,7 +108,7 @@ export class CenadService {
     tfno: string,
     email: string,
     descripcion: string,
-    archivoEscudo: File,
+    archivoEscudo: File | null,
     escudoActual: string,
     idCenad: string
   ): Observable<any> {
