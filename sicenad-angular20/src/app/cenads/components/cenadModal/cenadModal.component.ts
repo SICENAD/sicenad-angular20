@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Cenad } from '@interfaces/models/cenad';
-import { CenadService } from '@services/cenadService';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
@@ -15,7 +14,6 @@ import { UtilsStore } from '@stores/utils.store';
 export class CenadModalComponent {
   private utils = inject(UtilsStore);
   private orquestadorService = inject(OrquestadorService);
-  private cenadService = inject(CenadService);
   private iconos = inject(IconosStore);
   faEdit = this.iconos.faEdit;
   // --- Inputs / Outputs ---
@@ -69,7 +67,7 @@ export class CenadModalComponent {
     const escudo = this.cenad()?.escudo;
     if (!escudo) return;
     if (!this.idCenad()) return;
-    this.cenadService.getEscudo(escudo, this.idCenad()).subscribe({
+    this.orquestadorService.getEscudoCenad(escudo, this.idCenad()).subscribe({
       next: blob => this.urlEscudoActual.set(URL.createObjectURL(blob)),
       error: err => console.error('Error cargando escudo', err)
     });

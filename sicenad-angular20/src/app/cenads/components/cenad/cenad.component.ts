@@ -1,9 +1,10 @@
 // cenad.component.ts
-import { Component, input, signal, computed, inject } from '@angular/core';
+import { Component, input, signal, computed, inject, effect } from '@angular/core';
 import { UtilsStore } from '@stores/utils.store';
 import { CenadModalComponent } from '../cenadModal/cenadModal.component';
 import { Cenad } from '@interfaces/models/cenad';
-import { UsuarioService } from '@services/usuarioService';
+import { OrquestadorService } from '@services/orquestadorService';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-cenad',
@@ -13,7 +14,7 @@ import { UsuarioService } from '@services/usuarioService';
 })
 export class CenadComponent  {
   private utils = inject(UtilsStore);
-  private usuarioService = inject(UsuarioService);
+  private orquestadorService = inject(OrquestadorService);
 
   // Recibimos el CENAD del padre
   cenad = input.required<Cenad>();
@@ -27,6 +28,17 @@ export class CenadComponent  {
     const encontrada = this.utils.provincias().find(p => p.idProvincia === idProvincia);
     return encontrada ? encontrada.nombre : '';
   });
+
+  private getUsuarioAdministrador = effect(() => {
+    const c = this.cenad();
+    if (!c) return;
+      this.orquestadorService.loadUsuarioAdministradorCenad(c.idString).pipe(
+            tap(res => {
+              this.usuarioAdministrador.set(res);
+            }),
+  ).subscribe()});
+
+
 /*
   ngOnInit() {
     this.fetchUsuarioAdministrador();

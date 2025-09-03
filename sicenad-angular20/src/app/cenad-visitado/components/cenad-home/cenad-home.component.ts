@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CenadService } from '@services/cenadService';
+import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
@@ -20,7 +20,7 @@ export class CenadHomeComponent {
   private auth = inject(AuthStore);
   private cenadStore = inject(CenadStore);
   private iconoStore = inject(IconosStore);
-  private cenadService = inject(CenadService);
+  private orquestadorService = inject(OrquestadorService);
   readonly routesPaths = RoutesPaths;
 
   idCenad = computed(() => this.route.snapshot.params['idCenad']);
@@ -37,7 +37,7 @@ export class CenadHomeComponent {
   private esperarYCargarEscudo = void effect(() => {
     const escudo = this.escudoCenad();
     if (!escudo) return;
-    this.cenadService.getEscudo(escudo, this.idCenad()).subscribe({
+    this.orquestadorService.getEscudoCenad(escudo, this.idCenad()).subscribe({
       next: blob => this.pathImg.set(URL.createObjectURL(blob)),
       error: err => console.error('Error cargando escudo', err)
     });

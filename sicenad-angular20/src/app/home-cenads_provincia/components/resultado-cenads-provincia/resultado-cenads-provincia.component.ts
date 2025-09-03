@@ -10,6 +10,6 @@ import { RoutesPaths } from '@app/app.routes';
 })
 export class ResultadoCenadsProvinciaComponent {
   readonly routesPaths = RoutesPaths;
-  cenad = input<{ idString: string; nombre: string }>();
+  cenad = input.required<{ idString: string; nombre: string }>();
 
 }

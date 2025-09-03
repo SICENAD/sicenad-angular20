@@ -427,6 +427,13 @@ export class OrquestadorService {
     );
   }
 
+  getEscudoCenad(escudo: string, idCenad: string): Observable<Blob> {
+    return this.cenadService.getEscudo(escudo, idCenad);
+  }
+
+
+
+
 
   /*
     // --- CRUD CategoriasFichero ---

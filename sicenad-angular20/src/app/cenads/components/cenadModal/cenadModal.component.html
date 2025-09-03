@@ -23,7 +23,7 @@
         <form>
           <!-- Nombre -->
           <div class="mb-3">
-            <label for="nombre" class="form-label"><b>CENAD/CMT</b></label>
+            <label for="nombre" class="form-label"><b>CENAD/CMT<sup class="text-danger">*</sup></b></label>
             <input
               type="text"
               class="form-control"
@@ -36,7 +36,7 @@
           </div>
           <!-- Provincia -->
           <div class="mb-3">
-            <label class="titulo"><b>PROVINCIA*</b></label>
+            <label class="titulo"><b>PROVINCIA<sup class="text-danger">*</sup></b></label>
             <select class="form-select" [value]="provinciaSeleccionada()" (change)="onProvinciaChange($event)">
               <option [value]="provinciaSeleccionada()">{{ provinciaSeleccionadaNombre() }}</option>
               @for (p of provincias(); track p.idProvincia) {
@@ -46,7 +46,7 @@
           </div>
           <!-- Dirección -->
           <div class="mb-3">
-            <label for="direccion" class="form-label"><b>Dirección</b></label>
+            <label for="direccion" class="form-label"><b>Dirección<sup class="text-danger">*</sup></b></label>
             <input
               type="text"
               class="form-control"
@@ -58,7 +58,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="tfno" class="form-label"><b>Teléfono</b></label>
+            <label for="tfno" class="form-label"><b>Teléfono<sup class="text-danger">*</sup></b></label>
             <input
               type="text"
               class="form-control"
@@ -73,7 +73,7 @@
             }
           </div>
           <div class="mb-3">
-            <label for="email" class="form-label"><b>Correo</b></label>
+            <label for="email" class="form-label"><b>Correo<sup class="text-danger">*</sup></b></label>
             <input
               type="email"
               class="form-control"
@@ -104,7 +104,7 @@
           </div>
           <!-- Escudo -->
           <div class="mb-3">
-            <label class="titulo"><b>ESCUDO*</b> (Tamaño máximo: {{ sizeMaxEscudo() }} MB)</label>
+            <label class="titulo"><b>ESCUDO<sup class="text-danger">*</sup></b> (Tamaño máximo: {{ sizeMaxEscudo() }} MB)</label>
             @if (escudoActual()) {
             <div>
               <p>Archivo actual: {{ escudoActual() }}</p>
