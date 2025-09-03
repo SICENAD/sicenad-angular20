@@ -18,8 +18,8 @@ export class CategoriaFicheroService {
   }
 
   getAll(): Observable<CategoriaFichero[]> {
-    const url = `${this.apiService.getUrlApi()}/categorias_fichero?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias_fichero: CategoriaFichero[] } }>(url, 'GET').pipe(
+    const endpoint = `/categorias_fichero?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { categorias_fichero: CategoriaFichero[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias_fichero.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

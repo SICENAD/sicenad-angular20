@@ -18,8 +18,8 @@ export class SolicitudService {
   }
 
   getAll(idCenad: string): Observable<Solicitud[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/solicitudes?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { solicitudes: Solicitud[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/solicitudes?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

@@ -18,8 +18,8 @@ export class NormativaService {
   }
 
   getAll(idCenad: string): Observable<Normativa[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/normativas?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { ficheros: Normativa[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/normativas?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { ficheros: Normativa[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.ficheros.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

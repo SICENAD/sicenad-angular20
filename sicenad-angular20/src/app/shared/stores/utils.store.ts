@@ -9,7 +9,11 @@ export class UtilsStore {
   private http = inject(HttpClient);
 
   // --- STATE ---
-  properties = signal<any | null>(null);
+  private _properties = signal<any | null>(null);
+  properties = computed(() => this._properties());
+  setProperties(value: any | null) {
+    this._properties.set(value);
+  }
 
   provincias = signal([
     { idProvincia: 15, nombre: 'A CORUÑA' },
@@ -105,9 +109,12 @@ export class UtilsStore {
   // --- ACTIONS ---
   cargarPropiedadesIniciales(): Observable<any> {
     if (this.properties()) return of(this.properties());
-
     return this.http.get(`${environment.publicPath}properties.json`).pipe(
-      tap((res) => this.properties.set(res)),
+      tap((res) => {
+        this.setProperties(res);
+        console.log('🔹 Properties cargadas:', res);
+        console.log('urlapi1 ' + this.urlApi());
+      }),
       catchError(err => {
         console.error('Error cargando properties.json:', err);
         return throwError(() => err);

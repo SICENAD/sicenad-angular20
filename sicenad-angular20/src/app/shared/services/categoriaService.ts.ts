@@ -22,8 +22,8 @@ export class CategoriaService {
   }
 
   getAll(idCenad: string): Observable<Categoria[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/categorias?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/categorias?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -35,8 +35,8 @@ export class CategoriaService {
   }
 
   getAllCategoriasPadre(idCenad: string): Observable<Categoria[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/categoriasPadre?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/categoriasPadre?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

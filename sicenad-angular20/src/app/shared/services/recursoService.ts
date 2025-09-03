@@ -18,8 +18,8 @@ export class RecursoService {
   }
 
   getAll(idCenad: string): Observable<Recurso[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/recursos?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/recursos?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

@@ -18,8 +18,8 @@ export class UnidadService {
   }
 
   getAll(): Observable<Unidad[]> {
-    const url = `${this.apiService.getUrlApi()}/unidades?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { unidades: Unidad[] } }>(url, 'GET').pipe(
+    const endpoint = `/unidades?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { unidades: Unidad[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.unidades.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

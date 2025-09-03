@@ -28,12 +28,13 @@ export class ApiService {
   }
 
   // --- REQUEST POST SIN TOKEN GENERAL (REGISTRO Y LOGIN) ---
-  public postSinToken<T>(url: string, body: any): Observable<T> {
+  public postSinToken<T>(endpoint: string, body: any): Observable<T> {
+    const urlBase = this.utils.urlApi();
     const headers = new HttpHeaders({
       'Content-Type': 'application/json; charset=utf-8',
       'Accept': 'application/json'
     });
-    return this.http.post<T>(url, body, { headers }).pipe(
+    return this.http.post<T>(`${urlBase}${endpoint}`, body, { headers }).pipe(
       catchError((err) => {
         console.error('Error en postSinToken:', err);
         throw err;
@@ -43,11 +44,12 @@ export class ApiService {
 
   // --- REQUEST CON TOKEN GENERAL ---
   private requestConToken<T>(
-    url: string,
+    endpoint: string,
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     body?: any,
     isFile: boolean = false
   ): Observable<T> {
+    const urlBase = this.utils.urlApi();
     const token = this.auth.token();
     const headersObj: Record<string, string> = {
       Authorization: `Bearer ${token}`,
@@ -63,24 +65,24 @@ export class ApiService {
     let observable: Observable<T>;
     switch (method) {
       case 'POST':
-        observable = this.http.post<T>(url, body || {}, { headers });
+        observable = this.http.post<T>(`${urlBase}${endpoint}`, body || {}, { headers });
         break;
       case 'PUT':
-        observable = this.http.put<T>(url, body || {}, { headers });
+        observable = this.http.put<T>(`${urlBase}${endpoint}`, body || {}, { headers });
         break;
       case 'PATCH':
-        observable = this.http.patch<T>(url, body || {}, { headers });
+        observable = this.http.patch<T>(`${urlBase}${endpoint}`, body || {}, { headers });
         break;
       case 'DELETE':
-        observable = this.http.delete<T>(url, { headers });
+        observable = this.http.delete<T>(`${urlBase}${endpoint}`, { headers });
         break;
       case 'GET':
       default:
         if (isFile) {
           // Indicamos que la respuesta será un blob
-          observable = this.http.get(url, { headers, responseType: 'blob' as 'json' }) as Observable<T>;
+          observable = this.http.get(`${urlBase}${endpoint}`, { headers, responseType: 'blob' as 'json' }) as Observable<T>;
         } else {
-          observable = this.http.get<T>(url, { headers });
+          observable = this.http.get<T>(`${urlBase}${endpoint}`, { headers });
         }
     }
 

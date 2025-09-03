@@ -10,11 +10,12 @@ import { LoginResponse } from "@interfaces/responses/loginResponse";
 import { RegisterResponse } from "@interfaces/responses/registerResponse";
 import { Cenad } from "@interfaces/models/cenad";
 import { Unidad } from "@interfaces/models/unidad";
+import { UtilsStore } from "@stores/utils.store";
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private apiService = inject(ApiService);
-
+  private utils = inject(UtilsStore);
   private usuarios = signal<Usuario[]>([]);
   private usuarios_superadministrador = signal<UsuarioSuperAdministrador[]>([]);
   private usuarios_administrador = signal<UsuarioAdministrador[]>([]);
@@ -59,18 +60,18 @@ export class UsuarioService {
 
   // --- REQUEST LOGIN ---
   public login(username: string, password: string): Observable<LoginResponse> {
-    const url = `${this.apiService.getUrlApi()}/auth/login`;
-    return this.apiService.postSinToken<LoginResponse>(url, { username, password });
+    const endpoint = `/auth/login`;
+    return this.apiService.postSinToken<LoginResponse>(endpoint, { username, password });
   }
   // --- REQUEST REGISTER ---
   public register(username: string, password: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, rol: string): Observable<RegisterResponse> {
-    const url = `${this.apiService.getUrlApi()}/auth/register`;
-    return this.apiService.postSinToken<RegisterResponse>(url, { username, password, tfno, email, emailAdmitido, descripcion, rol });
+    const endpoint = `/auth/register`;
+    return this.apiService.postSinToken<RegisterResponse>(endpoint, { username, password, tfno, email, emailAdmitido, descripcion, rol });
   }
 
   getAll(): Observable<Usuario[]> {
-    const url = `${this.apiService.getUrlApi()}/usuarios?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios: Usuario[] } }>(url, 'GET').pipe(
+    const endpoint = `/usuarios?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { usuarios: Usuario[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -81,8 +82,8 @@ export class UsuarioService {
     );
   }
   getAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
-    const url = `${this.apiService.getUrlApi()}/usuarios_superadministrador?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_superadministrador: UsuarioSuperAdministrador[] } }>(url, 'GET').pipe(
+    const endpoint = `/usuarios_superadministrador?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { usuarios_superadministrador: UsuarioSuperAdministrador[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_superadministrador.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -94,8 +95,8 @@ export class UsuarioService {
   }
 
   getAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
-    const url = `${this.apiService.getUrlApi()}/usuarios_administrador?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_administrador: UsuarioAdministrador[] } }>(url, 'GET').pipe(
+    const endpoint = `/usuarios_administrador?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { usuarios_administrador: UsuarioAdministrador[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_administrador.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -107,8 +108,8 @@ export class UsuarioService {
   }
 
   getAllUsuariosGestor(): Observable<UsuarioGestor[]> {
-    const url = `${this.apiService.getUrlApi()}/usuarios_gestor?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(url, 'GET').pipe(
+    const endpoint = `/usuarios_gestor?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_gestor.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -120,8 +121,8 @@ export class UsuarioService {
   }
 
   getAllUsuariosGestorCenad(idCenad: string): Observable<UsuarioGestor[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/usuariosGestores?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/usuariosGestores?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_gestor.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -133,8 +134,8 @@ export class UsuarioService {
   }
 
   getAllUsuariosNormal(): Observable<UsuarioNormal[]> {
-    const url = `${this.apiService.getUrlApi()}/usuarios_normal?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_normal: UsuarioNormal[] } }>(url, 'GET').pipe(
+    const endpoint = `/usuarios_normal?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { usuarios_normal: UsuarioNormal[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_normal.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -146,8 +147,8 @@ export class UsuarioService {
   }
 
 getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
-  const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/usuarioAdministrador`;
-  return this.apiService.peticionConToken<UsuarioAdministrador>(url, 'GET').pipe(
+  const endpoint = `/cenads/${idCenad}/usuarioAdministrador`;
+  return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
     map(res => ({...res, url: (res as any)._links?.self?.href})),
           catchError(err => { console.error(err); return of(null); })
   );

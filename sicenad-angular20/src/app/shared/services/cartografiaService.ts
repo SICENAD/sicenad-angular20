@@ -18,8 +18,8 @@ export class CartografiaService {
   }
 
   getAll(idCenad: string): Observable<Cartografia[]> {
-    const url = `${this.apiService.getUrlApi()}/cenads/${idCenad}/cartografias?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { cartografias: Cartografia[] } }>(url, 'GET').pipe(
+    const endpoint = `/cenads/${idCenad}/cartografias?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { cartografias: Cartografia[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.cartografias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

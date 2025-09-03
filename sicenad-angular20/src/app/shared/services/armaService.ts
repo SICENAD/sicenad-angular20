@@ -18,8 +18,8 @@ export class ArmaService {
   }
 
   getAll(): Observable<Arma[]> {
-    const url = `${this.apiService.getUrlApi()}/armas?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { armas: Arma[] } }>(url, 'GET').pipe(
+    const endpoint = `/armas?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { armas: Arma[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.armas.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),

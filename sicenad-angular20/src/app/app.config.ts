@@ -4,6 +4,8 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { UtilsStore } from '@stores/utils.store';
+import { firstValueFrom } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +20,15 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       progressBar: true,
       closeButton: true,
-    }),]
-}
-
+    }),
+    // 🔹 Inicialización asíncrona de properties.json
+    {
+      provide: 'APP_INITIALIZER',
+      multi: true,
+      useFactory: (utils: UtilsStore) => {
+        return () => firstValueFrom(utils.cargarPropiedadesIniciales());
+      },
+      deps: [UtilsStore],
+    },
+  ]
+};

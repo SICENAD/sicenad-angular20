@@ -18,8 +18,8 @@ export class TipoFormularioService {
   }
 
   getAll(): Observable<TipoFormulario[]> {
-    const url = `${this.apiService.getUrlApi()}/tipos_formulario?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { tipos_formulario: TipoFormulario[] } }>(url, 'GET').pipe(
+    const endpoint = `/tipos_formulario?size=1000`;
+    return this.apiService.peticionConToken<{ _embedded: { tipos_formulario: TipoFormulario[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.tipos_formulario.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
