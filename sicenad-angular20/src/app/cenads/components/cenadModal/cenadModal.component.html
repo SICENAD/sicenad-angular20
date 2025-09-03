@@ -38,6 +38,7 @@
           <div class="mb-3">
             <label class="titulo"><b>PROVINCIA*</b></label>
             <select class="form-select" [value]="provinciaSeleccionada()" (change)="onProvinciaChange($event)">
+              <option [value]="provinciaSeleccionada()">{{ provinciaSeleccionadaNombre() }}</option>
               @for (p of provincias(); track p.idProvincia) {
               <option [value]="p.idProvincia">{{ p.nombre }}</option>
               }

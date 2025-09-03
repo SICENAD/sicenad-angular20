@@ -2,7 +2,7 @@
 @if (cenad()) {
 <div class="row">
   <div class="col-4">
-    {{ cenad()?.nombre }}
+    {{ cenad().nombre }}
     <app-cenad-modal [cenad]="cenad()"></app-cenad-modal>
   </div>
   <div class="col-4">{{ provincia() }}</div>

@@ -16,14 +16,14 @@ export class CenadComponent  {
   private usuarioService = inject(UsuarioService);
 
   // Recibimos el CENAD del padre
-  cenad = input<Cenad>();
+  cenad = input.required<Cenad>();
 
   // Señal para usuario administrador
   usuarioAdministrador = signal<any>(null);
 
   // Computed para mostrar nombre de provincia
   provincia = computed(() => {
-    const idProvincia = this.cenad()?.provincia;
+    const idProvincia = this.cenad().provincia;
     const encontrada = this.utils.provincias().find(p => p.idProvincia === idProvincia);
     return encontrada ? encontrada.nombre : '';
   });

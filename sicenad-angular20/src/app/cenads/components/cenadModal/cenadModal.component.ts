@@ -43,6 +43,9 @@ export class CenadModalComponent {
   idModal = computed(() => this._idModal() + this.idCenad());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idCenad());
   provincia = computed(() => this.cenad()?.provincia || 0);
+  provinciaSeleccionadaNombre = computed(() => {
+    return this.provincias().find(p => p.idProvincia === this.provinciaSeleccionada())?.nombre || '';
+  });
 
   ngOnInit(): void {
     if (!this.cenad()) return;
