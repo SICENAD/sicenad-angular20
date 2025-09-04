@@ -54,10 +54,9 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: CenadsPageComponent
-        /* redirectTo: RoutesPaths.cenads,
+       //component: CenadsPageComponent
+         redirectTo: RoutesPaths.cenads,
          pathMatch: 'full'
-         */
       },
       {
         path: RoutesPaths.armas,
