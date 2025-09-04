@@ -317,7 +317,7 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         console.log('✅ Registro correcto', res);
-        this.loadAllUsuariosSuperadministrador();
+        this.loadAllUsuariosSuperadministrador().subscribe();
       }),
       catchError(err => {
         console.error('❌ Error registrando usuario', err);
@@ -330,7 +330,7 @@ export class OrquestadorService {
     username: string,
     password: string,
   ): Observable<LoginResponse> {
-        this.ensureUrlApi();            // <-- clave
+    this.ensureUrlApi();            // <-- clave
 
     return this.usuarioService.login(
       username,
@@ -369,7 +369,9 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         if (res) {
-          this.loadAllCenads();
+          this.loadAllCenads().pipe(
+            tap(cenads => this.datosStore.setCenads(cenads))
+          ).subscribe();
           console.log(`Cenad ${nombre} creado correctamente.`);
         } else {
           console.warn(`Hubo un problema creando el cenad ${nombre}.`);
