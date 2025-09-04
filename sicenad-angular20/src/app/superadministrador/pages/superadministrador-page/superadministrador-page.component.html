@@ -1,2 +1,43 @@
-<p>superadministrador-page works!</p>
-<router-outlet />
+<!-- muestra la vista principal del superadministrador -->
+<div class="container-fluid">
+<div class="row ">
+    <div class="col col-md-2 p-3">
+      <img class="madoc" width="80" height="110" alt="MADOC" src="img/madoc.png" />
+    </div>
+    <div class="col col-md-7 align-self-center mt-4">
+      <h3 class="bienvenido text-center titulo1"><u>SUPERADMINISTRADOR</u></h3>
+    </div>
+    <div class="col col-md-1 mt-4 ml-5">
+      <h2 class="text-center">SICENAD</h2>
+    </div>
+  </div>
+<div class="row justify-content-center align-items-center">
+    <div class="col-4 ps-0">
+      <a class="nav-link ml-4 home" [routerLink]="routesPaths.login"
+        ><fa-icon class="fa-2x home" [icon]="faHome"></fa-icon><strong>Home</strong></a
+      >
+    </div>
+    <div class="col-8 d-flex justify-content-end">
+      <button class="btn cenad me-2" [routerLink]="routesPaths.cenads" routerLinkActive="active">
+        <b>CENAD,s/CMT,s</b>
+      </button>
+      <button class="btn usuario me-2" [routerLink]="routesPaths.usuariosSuper" routerLinkActive="active">
+        <b>Usuarios</b>
+      </button>
+      <button class="btn unidad me-2" [routerLink]="routesPaths.unidadesSuper" routerLinkActive="active">
+        <b>Unidades</b>
+      </button>
+      <button class="btn tipoFormulario me-2" [routerLink]="routesPaths.tiposFormulario" routerLinkActive="active">
+        <b>Tipos de formulario</b>
+      </button>
+      <button class="btn categoriaFichero me-2" [routerLink]="routesPaths.categoriasFichero" routerLinkActive="active">
+        <b>Categorías de Ficheros</b>
+      </button>
+      <button class="btn arma me-2" [routerLink]="routesPaths.armas" routerLinkActive="active">
+        <b>Armas</b>
+      </button>
+    </div>
+    <hr class="w-100 mt-3" />
+  </div>
+  <router-outlet />
+</div>
