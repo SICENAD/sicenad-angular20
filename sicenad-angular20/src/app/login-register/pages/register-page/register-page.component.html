@@ -1,101 +1,57 @@
 <div class="container">
   <h1 class="text-center">Crear nuevo <b>Usuario Superadministrador</b></h1>
-  <form>
+  <form [formGroup]="registerForm">
     <!-- Teléfono -->
     <div class="mb-3">
       <label for="tfno" class="form-label"><b>Teléfono</b></label>
-      <input
-        type="text"
-        class="form-control"
-        id="tfno"
-        [value]="tfno()"
-        name="tfno"
-        (input)="tfno.set(txtTfno.value)"
-        #txtTfno
-      />
-      @if (phoneError()) {
-      <span class="text-danger">{{ phoneError() }}</span>
+      <input type="text" class="form-control" id="tfno" formControlName="tfno" />
+      @if (tfno?.touched && tfno?.invalid) {
+      <span class="text-danger">{{ tfno?.errors | json }}</span>
       }
     </div>
-
     <!-- Email -->
     <div class="mb-3">
       <label for="email" class="form-label"><b>Correo</b></label>
-      <input
-        type="email"
-        class="form-control"
-        id="email"
-        [value]="email()"
-        name="email"
-        (input)="email.set(txtEmail.value)"
-        #txtEmail
-      />
+      <input type="email" class="form-control" id="email" formControlName="email" />
       <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
-      @if (emailError()) {
-      <span class="text-danger">{{ emailError() }}</span>
+      @if (email?.touched && email?.invalid) {
+      <span class="text-danger">{{ email?.errors | json }}</span>
       }
     </div>
-
     <!-- Notificaciones -->
     <div class="mb-3">
       <label class="form-label me-2"
         ><b>¿QUIERE RECIBIR NOTIFICACIONES?<sup class="text-danger">*</sup></b></label
       >
-      <input
-        type="checkbox"
-        class="letra"
-        id="emailAdmitido"
-        [checked]="emailAdmitido()"
-        name="emailAdmitido"
-        (change)="emailAdmitido.set(booleanEmailAdmitido.checked)"
-        #booleanEmailAdmitido
-      />
+      <input type="checkbox" class="letra" id="emailAdmitido" formControlName="emailAdmitido" />
     </div>
-
     <!-- Descripción -->
     <div class="mb-3">
       <label class="form-label"
         ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
       >
-      <textarea
-        class="form-control letra"
-        id="descripcion"
-        [value]="descripcion()"
-        name="descripcion"
-        (input)="descripcion.set(txtDescripcion.value)"
-        #txtDescripcion
-      >
+      <textarea class="form-control letra" id="descripcion" formControlName="descripcion">
       </textarea>
+      @if (descripcion?.touched && descripcion?.invalid) {
+      <div class="text-danger">La descripción es obligatoria.</div>
+      }
     </div>
-
     <!-- Username -->
     <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
       <label for="username" class="form-label"><b>Usuario</b></label>
-      <input
-        type="text"
-        class="form-control"
-        id="username"
-        [value]="username()"
-        name="username"
-        (input)="username.set(txtUsername.value)"
-        #txtUsername
-      />
+      <input type="text" class="form-control" id="username" formControlName="username" />
+      @if (username?.touched && username?.invalid) {
+      <div class="text-danger">El usuario es obligatorio.</div>
+      }
     </div>
-
     <!-- Password -->
     <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
       <label for="password" class="form-label"><b>Contraseña</b></label>
-      <input
-        type="password"
-        class="form-control"
-        id="password"
-        [value]="password()"
-        name="password"
-        (input)="password.set(txtPassword.value)"
-        #txtPassword
-      />
+      <input type="password" class="form-control" id="password" formControlName="password" />
+      @if (password?.touched && password?.invalid) {
+      <div class="text-danger">La contraseña es obligatoria.</div>
+      }
     </div>
-
     <!-- Botones -->
     <a [routerLink]="routesPaths.login" class="btn btn-primary text-white col-2 me-5">Cancelar</a>
     <button
@@ -103,7 +59,7 @@
       class="btn btn-primary text-white col-2"
       data-bs-toggle="modal"
       data-bs-target="#modal-crear-usuario"
-      [disabled]="!formularioValidado()"
+      [disabled]="registerForm.invalid"
     >
       Crear Usuario
     </button>

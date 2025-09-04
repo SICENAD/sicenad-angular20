@@ -1,10 +1,8 @@
- <div class="ms-5">
-  <a [routerLink]="routesPaths.home">
-    <fa-icon class="fa-2x home" [icon]="faHome"></fa-icon
-  ></a>
- </div>
+<div class="ms-5">
+  <a [routerLink]="routesPaths.home"> <fa-icon class="fa-2x home" [icon]="faHome"></fa-icon></a>
+</div>
 <div class="container">
-  <form>
+  <form [formGroup]="loginForm">
     @if (feedback()) {
     <p class="text-danger">{{ feedback() }}</p>
     }
@@ -12,17 +10,11 @@
       <label for="username" class="form-label">
         <b>Usuario</b>
       </label>
-      <input
-        type="text"
-        class="form-control"
-        id="username"
-        [value]="username()"
-        name="username"
-        (input)="username.set(txtUsername.value)"
-        #txtUsername
-      />
+      <input type="text" class="form-control" id="username" formControlName="username" />
+      @if (username?.touched && username?.invalid) {
+      <div class="text-danger">El usuario es obligatorio.</div>
+      }
     </div>
-
     <div class="mb-3 col-3">
       <label for="password" class="form-label">
         <b>Contraseña</b>
@@ -31,20 +23,21 @@
         type="password"
         class="form-control"
         id="password"
-        [value]="password()"
-        name="password"
-        (input)="password.set(txtPassword.value)"
-        #txtPassword
+               formControlName="password"
       />
+      @if (password?.touched && password?.invalid) {
+      <div class="text-danger">La contraseña es obligatoria.</div>
+      }
     </div>
-
-    <button type="button" (click)="login()" class="btn btn-primary" [disabled]="!formularioValidado()">Iniciar Sesión</button>
-
-    @if (feedback()) {
-    <p class="text-danger">{{ feedback() }}</p>
-    }
+    <button
+      type="button"
+      (click)="login()"
+      class="btn btn-primary"
+      [disabled]="loginForm.invalid"
+    >
+      Iniciar Sesión
+    </button>
   </form>
-
   <span>
     ¿No tienes cuenta?
     <a [routerLink]="routesPaths.register" class="link-personalizado">Crear cuenta</a>
