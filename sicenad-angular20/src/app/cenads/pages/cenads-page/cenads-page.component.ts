@@ -3,9 +3,10 @@ import { UtilsStore } from '@stores/utils.store';
 import { CenadComponent } from '@app/cenads/components/cenad/cenad.component';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { OrquestadorService } from '@services/orquestadorService';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 @Component({
   selector: 'app-cenads-page',
-  imports: [CenadComponent],
+  imports: [CenadComponent,ReactiveFormsModule],
   templateUrl: './cenads-page.component.html',
   styleUrls: ['./cenads-page.component.css'],
 })
@@ -14,83 +15,58 @@ export class CenadsPageComponent {
   private utils = inject(UtilsStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private orquestadorService = inject(OrquestadorService);
+  private fb = inject(FormBuilder);
+
   cenads = computed(() => this.datosPrincipalesStore.cenads());
   provincias = signal<{ idProvincia: number, nombre: string }[]>(this.utils.provincias());
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
-  escudoFile = signal<any>(null);
-  previewEscudo = signal<string | null>(null);
+  previewEscudo: string | null = null;
+
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  nombre = signal('');
-  provincia = signal(0);
-  tfno = signal('');
-  email = signal('');
-  direccion = signal('');
-  descripcion = signal('');
-  escudo = signal('');
-
-  // Validadores
-  private isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  private isValidPhone = (phone: string) => /^[0-9]{9}$/.test(phone);
-
-  emailError = computed(() => {
-    if (!this.email().trim()) return null;
-    return this.isValidEmail(this.email()) ? null : 'El correo no es válido';
+ cenadForm: FormGroup = this.fb.group({
+    nombre: ['', Validators.required],
+    provincia: [0, [Validators.required, Validators.min(1)]],
+    direccion: ['', Validators.required],
+    tfno: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    descripcion: ['', Validators.required],
+    escudo: [null, Validators.required]
   });
 
-  phoneError = computed(() => {
-    if (!this.tfno().trim()) return null;
-    return this.isValidPhone(this.tfno()) ? null : 'El teléfono debe tener 9 dígitos';
-  });
 
-  formularioValidado = computed(() =>
-    this.nombre().trim() !== '' &&
-    this.provincia() > 0 &&
-    this.direccion().trim() !== '' &&
-    this.tfno().trim() !== '' &&
-    this.isValidPhone(this.tfno()) &&
-    this.email().trim() !== '' &&
-    this.isValidEmail(this.email()) &&
-    this.descripcion().trim() !== '' &&
-    !!this.escudoFile());
+  get nombre() { return this.cenadForm.get('nombre'); }
+  get provincia() { return this.cenadForm.get('provincia'); }
+  get direccion() { return this.cenadForm.get('direccion'); }
+  get tfno() { return this.cenadForm.get('tfno'); }
+  get email() { return this.cenadForm.get('email'); }
+  get descripcion() { return this.cenadForm.get('descripcion'); }
+  get escudo() { return this.cenadForm.get('escudo'); }
 
   onFileChange(event: any) {
     const file: File = event.target.files[0];
-    this.escudoFile.set(file);
     if (file) {
-      this.previewEscudo.set(URL.createObjectURL(file));
+      this.cenadForm.patchValue({ escudo: file });
+      this.previewEscudo = URL.createObjectURL(file);
     } else {
-      this.previewEscudo.set(null);
+      this.cenadForm.patchValue({ escudo: null });
+      this.previewEscudo = null;
     }
   }
 
-  onProvinciaChange(e: Event) {
-    const value = (e.target as HTMLSelectElement).value; // string
-    // Convierte a número y evita NaN en caso de opción vacía
-    this.provincia.set(value ? Number(value) : 0);
-  }
-  crearCenad() {
-    const provinciaId: number = this.provincia();
-
+   crearCenad() {
+    if (this.cenadForm.invalid) {
+      this.cenadForm.markAllAsTouched();
+      return;
+    }
+    const { nombre, provincia, direccion, tfno, email, descripcion, escudo } = this.cenadForm.value;
     this.orquestadorService.crearCenad(
-      this.nombre(),
-      provinciaId,
-      this.direccion(),
-      this.tfno(),
-      this.email(),
-      this.descripcion(),
-      this.escudoFile()
+      nombre, provincia, direccion, tfno, email, descripcion, escudo
     ).subscribe(success => {
       if (success) {
-        this.nombre.set('');
-        this.provincia.set(0);
-        this.direccion.set('');
-        this.tfno.set('');
-        this.email.set('');
-        this.descripcion.set('');
-        this.previewEscudo.set(null);
-        this.escudoFile.set(null);
-        this.fileInput.nativeElement.value = '';
+        this.cenadForm.reset({ provincia: 0 });
+        this.previewEscudo = null;
+        if (this.fileInput) this.fileInput.nativeElement.value = '';
       }
     });
   }
