@@ -1,113 +1,59 @@
-<!-- editar-cenad.component.html -->
 <!-- Botón para abrir modal -->
 <a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
   <fa-icon class="fa" [icon]="faEdit"></fa-icon>
 </a>
-<!-- Modal -->
-<div
-  class="modal fade"
-  [id]="idModal()"
-  tabindex="-1"
-  aria-labelledby="modal-editar-cenad-Label"
-  aria-hidden="true"
->
+
+<!-- Modal Editar Cenad -->
+<div class="modal fade" [id]="idModal()" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal-editar-cenad-Label">
-          Editar Cenad {{ cenad()?.nombre }}
-        </h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title">Editar Cenad {{ cenad()?.nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+
       <div class="modal-body">
-        <form>
-          <!-- Nombre -->
+        <form [formGroup]="cenadForm">
           <div class="mb-3">
-            <label for="nombre" class="form-label"><b>CENAD/CMT<sup class="text-danger">*</sup></b></label>
-            <input
-              type="text"
-              class="form-control"
-              id="nombre"
-              [value]="nombre()"
-              name="nombre"
-              (input)="nombre.set(txtNombre.value)"
-              #txtNombre
-            />
+            <label><b>Nombre</b></label>
+            <input type="text" class="form-control" formControlName="nombre" />
           </div>
-          <!-- Provincia -->
+
           <div class="mb-3">
-            <label class="titulo"><b>PROVINCIA<sup class="text-danger">*</sup></b></label>
-            <select class="form-select" [value]="provinciaSeleccionada()" (change)="onProvinciaChange($event)">
-              <option [value]="provinciaSeleccionada()">{{ provinciaSeleccionadaNombre() }}</option>
+            <label><b>Provincia</b></label>
+            <select class="form-select" formControlName="provincia">
+              <option value="0" disabled>Selecciona una provincia</option>
               @for (p of provincias(); track p.idProvincia) {
               <option [value]="p.idProvincia">{{ p.nombre }}</option>
               }
-            </select>{{provinciaSeleccionada()}}
+            </select>
           </div>
-          <!-- Dirección -->
+
           <div class="mb-3">
-            <label for="direccion" class="form-label"><b>Dirección<sup class="text-danger">*</sup></b></label>
-            <input
-              type="text"
-              class="form-control"
-              id="direccion"
-              [value]="direccion()"
-              name="username"
-              (input)="direccion.set(txtDireccion.value)"
-              #txtDireccion
-            />
+            <label><b>Dirección</b></label>
+            <input type="text" class="form-control" formControlName="direccion" />
           </div>
+
           <div class="mb-3">
-            <label for="tfno" class="form-label"><b>Teléfono<sup class="text-danger">*</sup></b></label>
-            <input
-              type="text"
-              class="form-control"
-              id="tfno"
-              [value]="tfno()"
-              name="tfno"
-              (input)="tfno.set(txtTfno.value)"
-              #txtTfno
-            />
-            @if (phoneError()) {
-            <span class="text-danger">{{ phoneError() }}</span>
-            }
+            <label><b>Teléfono</b></label>
+            <input type="text" class="form-control" formControlName="tfno" />
           </div>
+
           <div class="mb-3">
-            <label for="email" class="form-label"><b>Correo<sup class="text-danger">*</sup></b></label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              [value]="email()"
-              name="email"
-              (input)="email.set(txtEmail.value)"
-              #txtEmail
-            />
-            <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
-            @if (emailError()) {
-            <span class="text-danger">{{ emailError() }}</span>
-            }
+            <label><b>Correo</b></label>
+            <input type="email" class="form-control" formControlName="email" />
           </div>
+
           <div class="mb-3">
-            <label class="form-label"
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
-            >
-            <textarea
-              class="form-control letra"
-              id="descripcion"
-              [value]="descripcion()"
-              name="descripcion"
-              (input)="descripcion.set(txtDescripcion.value)"
-              #txtDescripcion
-            >
-            </textarea>
+            <label><b>Descripción</b></label>
+            <textarea class="form-control" formControlName="descripcion"></textarea>
           </div>
-          <!-- Escudo -->
+
           <div class="mb-3">
-            <label class="titulo"><b>ESCUDO<sup class="text-danger">*</sup></b> (Tamaño máximo: {{ sizeMaxEscudo() }} MB)</label>
+            <label><b>Escudo</b> (Máx {{ sizeMaxEscudo() }} MB)</label>
             @if (escudoActual()) {
-            <div>
-              <p>Archivo actual: {{ escudoActual() }}</p>
+            <div class="d-flex flex-column align-items-start mb-2">
+              <small class="text-muted mb-2">Archivo actual: {{ escudoActual() }}</small>
               <img
                 [src]="urlEscudoActual()"
                 alt="Escudo actual"
@@ -119,13 +65,19 @@
             <p class="text-muted">No hay ningún escudo cargado</p>
             }
             <div class="d-flex">
-              <label class="btn">
-                Seleccionar archivo
-                <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput />
-              </label>
-              @if (archivoEscudo()) {
+                <input
+                  type="file"
+                  accept="image/*"
+                  (change)="onFileChange($event)"
+                  #fileInput
+                  hidden
+                />
+                <button type="button" class="btn" (click)="fileInput.click()">
+                  Seleccionar archivo
+                </button>
+              @if (escudoFile()) {
               <div class="mt-2 ms-2">
-                <small>Archivo seleccionado: {{ archivoEscudo()?.name }}</small>
+                <small class="text-muted">Archivo seleccionado: {{ escudoFile()?.name }}</small>
               </div>
               }
             </div>
@@ -144,8 +96,6 @@
           </div>
         </form>
       </div>
-
-      <!-- Footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button
@@ -161,7 +111,7 @@
           class="btn btn-success"
           (click)="editarCenad()"
           data-bs-dismiss="modal"
-          [disabled]="!formularioValidado()"
+          [disabled]="cenadForm.invalid"
         >
           Guardar Cenad
         </button>
@@ -169,16 +119,15 @@
     </div>
   </div>
 </div>
-
 <!-- Modal eliminar -->
 <div class="modal fade" [id]="idModalEliminar()" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Cenad {{ cenad()?.idString }}</h1>
+        <h1 class="modal-title fs-5">Eliminar Cenad {{ cenad()?.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ nombre() }}?</div>
+      <div class="modal-body">¿Desea eliminar {{ cenad()?.nombre }}?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button
