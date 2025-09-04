@@ -19,7 +19,6 @@
     }
   </div>
 </div>
-
 <!-- Modal -->
 <div class="modal fade" id="modal-nuevo-cenad" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -38,7 +37,6 @@
               <span class="text-danger">El nombre es obligatorio</span>
             }
           </div>
-
           <!-- Provincia -->
           <div class="mb-3">
             <label class="titulo"><b>PROVINCIA*</b></label>
@@ -52,7 +50,6 @@
               <div class="text-danger">Selecciona una provincia válida</div>
             }
           </div>
-
           <!-- Dirección -->
           <div class="mb-3">
             <label for="direccion" class="form-label"><b>Dirección</b></label>
@@ -61,7 +58,6 @@
               <span class="text-danger">La dirección es obligatoria</span>
             }
           </div>
-
           <!-- Teléfono -->
           <div class="mb-3">
             <label for="tfno" class="form-label"><b>Teléfono</b></label>
@@ -70,7 +66,6 @@
               <span class="text-danger">El teléfono debe tener 9 dígitos</span>
             }
           </div>
-
           <!-- Email -->
           <div class="mb-3">
             <label for="email" class="form-label"><b>Correo</b></label>
@@ -80,7 +75,6 @@
               <span class="text-danger">Correo inválido</span>
             }
           </div>
-
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label"><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
@@ -89,13 +83,11 @@
               <div class="text-danger">La descripción es obligatoria.</div>
             }
           </div>
-
           <!-- Escudo -->
           <div class="mb-3">
             <label class="titulo"><b>ESCUDO*</b> (Máx: {{ sizeMaxEscudo() }} MB)</label>
             <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput/>
           </div>
-
           <!-- Vista previa -->
           @if (previewEscudo) {
             <div style="margin-top: 10px">
@@ -104,7 +96,6 @@
             </div>
           }
         </div>
-
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
           <button

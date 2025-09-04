@@ -5,7 +5,7 @@
       <img class="madoc" width="80" height="110" alt="MADOC" src="img/madoc.png" />
     </div>
     <div class="col col-md-7 align-self-center mt-4">
-      <h3 class="bienvenido text-center titulo1"><u>SUPERADMINISTRADOR</u></h3>
+      <h1 class="bienvenido text-center titulo1"><u><b>SUPERADMINISTRADOR</b></u></h1>
     </div>
     <div class="col col-md-1 mt-4 ml-5">
       <h2 class="text-center">SICENAD</h2>
@@ -18,7 +18,7 @@
       >
     </div>
     <div class="col-8 d-flex justify-content-end">
-      <button class="btn cenad me-2" [routerLink]="routesPaths.cenads" routerLinkActive="active">
+      <button class="btn cenad me-2" [routerLink]="routesPaths.cenads" routerLinkActive="active" [class.active]="isCenadActive()">
         <b>CENAD,s/CMT,s</b>
       </button>
       <button class="btn usuario me-2" [routerLink]="routesPaths.usuariosSuper" routerLinkActive="active">

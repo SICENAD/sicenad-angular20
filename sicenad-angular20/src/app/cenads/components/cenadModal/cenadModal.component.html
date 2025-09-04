@@ -2,7 +2,6 @@
 <a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
   <fa-icon class="fa" [icon]="faEdit"></fa-icon>
 </a>
-
 <!-- Modal Editar Cenad -->
 <div class="modal fade" [id]="idModal()" tabindex="-1">
   <div class="modal-dialog">
@@ -11,14 +10,12 @@
         <h5 class="modal-title">Editar Cenad {{ cenad()?.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
       <div class="modal-body">
         <form [formGroup]="cenadForm">
           <div class="mb-3">
             <label><b>Nombre</b></label>
             <input type="text" class="form-control" formControlName="nombre" />
           </div>
-
           <div class="mb-3">
             <label><b>Provincia</b></label>
             <select class="form-select" formControlName="provincia">
@@ -28,27 +25,22 @@
               }
             </select>
           </div>
-
           <div class="mb-3">
             <label><b>Dirección</b></label>
             <input type="text" class="form-control" formControlName="direccion" />
           </div>
-
           <div class="mb-3">
             <label><b>Teléfono</b></label>
             <input type="text" class="form-control" formControlName="tfno" />
           </div>
-
           <div class="mb-3">
             <label><b>Correo</b></label>
             <input type="email" class="form-control" formControlName="email" />
           </div>
-
           <div class="mb-3">
             <label><b>Descripción</b></label>
             <textarea class="form-control" formControlName="descripcion"></textarea>
           </div>
-
           <div class="mb-3">
             <label><b>Escudo</b> (Máx {{ sizeMaxEscudo() }} MB)</label>
             @if (escudoActual()) {

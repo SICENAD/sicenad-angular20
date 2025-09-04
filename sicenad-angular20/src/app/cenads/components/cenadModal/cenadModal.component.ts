@@ -5,7 +5,6 @@ import { Cenad } from '@interfaces/models/cenad';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
-import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-cenad-modal',
@@ -60,8 +59,6 @@ export class CenadModalComponent {
       });
   });
 
-
-
   ngOnInit(): void {
     if (this.cenad()) {
       this.cenadForm.patchValue({
@@ -72,10 +69,8 @@ export class CenadModalComponent {
         email: this.cenad()?.email,
         descripcion: this.cenad()?.descripcion,
       });
-
     }
   }
-
   get nombre() { return this.cenadForm.get('nombre'); }
   get provincia() { return this.cenadForm.get('provincia'); }
   get direccion() { return this.cenadForm.get('direccion'); }
@@ -106,7 +101,6 @@ export class CenadModalComponent {
     const archivoEscudo = this.escudoFile();
     console.log('Archivo nuevo:', archivoEscudo);
     console.log('Escudo actual:', this.escudoActual());
-
     this.orquestadorService.actualizarCenad(
       nombre,
       provincia,
@@ -141,5 +135,4 @@ export class CenadModalComponent {
       this.output.emit(); // notificamos al padre
     });
   }
-
 }
