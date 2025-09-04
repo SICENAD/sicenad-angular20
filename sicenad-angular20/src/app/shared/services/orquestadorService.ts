@@ -390,9 +390,8 @@ export class OrquestadorService {
     archivoEscudo: File | null,
     escudoActual: string,
     idCenad: string
-  ): string {
-    let nombreArchivo: string = '';
-    this.cenadService.editarCenad(
+  ): Observable<any> {
+    return this.cenadService.editarCenad(
       nombre,
       provincia,
       direccion,
@@ -405,15 +404,14 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         if (res) {
-          nombreArchivo = res;
-          this.loadAllCenads(); // refresca la store
-          console.log(`Cenad ${nombre} actualizado correctamente.`);
+          this.loadAllCenads().pipe(
+            tap(cenads => this.datosStore.setCenads(cenads))
+          ).subscribe(); console.log(`Cenad ${nombre} actualizado correctamente.`);
         } else {
           console.warn(`Hubo un problema actualizando el cenad ${nombre}.`);
         }
       })
     );
-    return nombreArchivo;
   }
 
   borrarCenad(id: string): Observable<any> {
@@ -421,7 +419,9 @@ export class OrquestadorService {
       tap(res => {
         if (res) {
           console.log(`Cenad con id ${id} borrado correctamente.`);
-          this.loadAllCenads(); // refresca la store
+          this.loadAllCenads().pipe(
+            tap(cenads => this.datosStore.setCenads(cenads))
+          ).subscribe();
         } else {
           console.warn(`Hubo un problema borrando el cenad con id ${id}.`);
         }

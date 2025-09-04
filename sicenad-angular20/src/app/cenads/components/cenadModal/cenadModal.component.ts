@@ -4,6 +4,7 @@ import { Cenad } from '@interfaces/models/cenad';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-cenad-modal',
@@ -94,7 +95,8 @@ export class CenadModalComponent {
 
   async editarCenad() {
     const provinciaId: number = this.provinciaSeleccionada();
-    const nombreArchivo = this.orquestadorService.actualizarCenad(
+    let nombreArchivo = '';
+    this.orquestadorService.actualizarCenad(
       this.nombre(),
       provinciaId,
       this.direccion(),
@@ -104,13 +106,18 @@ export class CenadModalComponent {
       this.archivoEscudo(),
       this.escudoActual(),
       this.idCenad()
-    );
+    ).subscribe(res => {
+      if (res) {
+        nombreArchivo = res;
+        console.log(`Cenad ${this.nombre()} actualizado correctamente.`);
+      }
+        console.log('Cenad actualizado correctamente.' );
 
-    if (nombreArchivo) {
+    if (nombreArchivo != '') {
       this.escudoActual.set(nombreArchivo);
       this.archivoEscudo.set(null);
       this.previewEscudo.set('');
-    }
+    }})
 
     this.output.emit(); // Notificamos al componente padre
   }
