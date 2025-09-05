@@ -565,23 +565,50 @@ export class OrquestadorService {
     );
   }
 
+  // --- CRUD CategoriasFichero ---
+  crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable<any> {
+    return this.categoriaFicheroService.crearCategoriaFichero(nombre, tipo, descripcion).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCategoriasFichero().pipe(
+            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
+          ).subscribe();
+          console.log(`Categoría de fichero ${nombre} creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando la categoría de fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+  actualizarCategoriaFichero(nombre: string, tipo: number, descripcion: string, idCategoriaFichero: string): Observable<any> {
+    return this.categoriaFicheroService.editarCategoriaFichero(nombre, tipo, descripcion, idCategoriaFichero).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCategoriasFichero().pipe(
+            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
+          ).subscribe();
+          console.log(`Categoría de fichero ${nombre} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando la categoría de fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+  borrarCategoriaFichero(id: string): Observable<any> {
+    return this.categoriaFicheroService.deleteCategoriaFichero(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCategoriasFichero().pipe(
+            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
+          ).subscribe();
+          console.log(`Categoría de fichero con id ${id} borrada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando la categoría de fichero con id ${id}.`);
+        }
+      })
+    );
+  }
   /*
-    // --- CRUD CategoriasFichero ---
-    createCategoriaFichero(c: any): void {
-      this.categoriaFicheroService.create(c).subscribe(() => this.loadAllCategoriasFichero());
-    }
-    updateCategoriaFichero(c: any): void {
-      this.categoriaFicheroService.update(c).subscribe(() => this.loadAllCategoriasFichero());
-    }
-    deleteCategoriaFichero(id: string): void {
-      this.categoriaFicheroService.delete(id).subscribe(() => this.loadAllCategoriasFichero());
-    }
-
-
-
-
-
-
 
     // --- CRUD UsuariosSuperadministrador ---
     createUsuarioSuper(c: any): void {

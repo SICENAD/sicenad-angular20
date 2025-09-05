@@ -1,0 +1,17 @@
+<hr class="w-100" />
+@if (categoriaFichero()) {
+<div class="row">
+  <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
+    {{ categoriaFichero().nombre }}
+    <app-categoriaFichero-modal
+      [categoriaFichero]="categoriaFichero()"
+    ></app-categoriaFichero-modal>
+  </div>
+  <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
+    {{ categoriaFichero().tipo }}
+  </div>
+  <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
+    {{ categoriaFichero().descripcion }}
+  </div>
+</div>
+}
