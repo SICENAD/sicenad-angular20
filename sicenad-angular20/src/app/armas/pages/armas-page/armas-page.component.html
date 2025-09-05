@@ -37,7 +37,7 @@
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
-            <label for="nombre" class="form-label"><b>ARMA</b></label>
+            <label for="nombre" class="form-label titulo1"><b>ARMA<sup class="text-danger">*</sup></b></label>
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
             <span class="text-danger">El nombre es obligatorio</span>
@@ -45,7 +45,7 @@
           </div>
           <!-- Tipo de Tiro -->
           <div class="mb-3">
-            <label class="titulo"><b>TIPO DE TIRO</b></label>
+            <label class="titulo1"><b>TIPO DE TIRO<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="tipoTiro">
               <option value="" disabled >Selecciona un tipo de tiro</option>
               @for (tipoTiro of tiposTiro(); track tipoTiro) {

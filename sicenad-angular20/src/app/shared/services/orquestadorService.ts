@@ -477,7 +477,49 @@ export class OrquestadorService {
     );
   }
 
-
+    // --- CRUD Unidades ---
+    crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable<any> {
+      return this.unidadService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).pipe(
+         tap(res => {
+        if (res) {
+          this.loadAllUnidades().pipe(
+            tap(unidades => this.datosStore.setUnidades(unidades))
+          ).subscribe();
+          console.log(`Unidad ${nombre} creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando la unidad ${nombre}.`);
+        }
+      })
+    );
+  }
+  actualizarUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string, idUnidad: string): Observable<any> {
+    return this.unidadService.editarUnidad(nombre, descripcion, email, tfno, direccion, poc, idUnidad).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUnidades().pipe(
+            tap(unidades => this.datosStore.setUnidades(unidades))
+          ).subscribe();
+          console.log(`Unidad ${nombre} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando la unidad ${nombre}.`);
+        }
+      })
+    );
+  }
+  borrarUnidad(id: string): Observable<any> {
+    return this.unidadService.deleteUnidad(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUnidades().pipe(
+            tap(unidades => this.datosStore.setUnidades(unidades))
+          ).subscribe();
+          console.log(`Unidad con id ${id} borrada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando la unidad con id ${id}.`);
+        }
+      })
+    );
+  }
 
 
   /*
@@ -503,16 +545,7 @@ export class OrquestadorService {
       this.tipoFormularioService.delete(id).subscribe(() => this.loadAllTiposFormulario());
     }
 
-    // --- CRUD Unidades ---
-    createUnidad(c: any): void {
-      this.unidadService.create(c).subscribe(() => this.loadAllUnidades());
-    }
-    updateUnidad(c: any): void {
-      this.unidadService.update(c).subscribe(() => this.loadAllUnidades());
-    }
-    deleteUnidad(id: string): void {
-      this.unidadService.delete(id).subscribe(() => this.loadAllUnidades());
-    }
+
 
 
 

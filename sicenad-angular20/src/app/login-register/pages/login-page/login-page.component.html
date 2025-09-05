@@ -8,7 +8,7 @@
     }
     <div class="mb-3 col-3">
       <label for="username" class="form-label">
-        <b>Usuario</b>
+        <b>USUARIO</b>
       </label>
       <input type="text" class="form-control" id="username" formControlName="username" />
       @if (username?.touched && username?.invalid) {
@@ -17,7 +17,7 @@
     </div>
     <div class="mb-3 col-3">
       <label for="password" class="form-label">
-        <b>Contraseña</b>
+        <b>CONTRASEÑA</b>
       </label>
       <input
         type="password"
@@ -38,7 +38,7 @@
       Iniciar Sesión
     </button>
   </form>
-  <span>
+  <span class="mt-3 d-block">
     ¿No tienes cuenta?
     <a [routerLink]="routesPaths.register" class="link-personalizado">Crear cuenta</a>
   </span>

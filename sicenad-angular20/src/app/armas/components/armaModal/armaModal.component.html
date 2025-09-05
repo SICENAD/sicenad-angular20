@@ -2,7 +2,7 @@
 <a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
   <fa-icon class="fa" [icon]="faEdit"></fa-icon>
 </a>
-<!-- Modal Editar Cenad -->
+<!-- Modal Editar Arma -->
 <div class="modal fade" [id]="idModal()" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -13,11 +13,11 @@
       <div class="modal-body">
         <form [formGroup]="armaForm">
           <div class="mb-3">
-            <label><b>Nombre</b></label>
+            <label><b>ARMA<sup class="text-danger">*</sup></b></label>
             <input type="text" class="form-control" formControlName="nombre" />
           </div>
           <div class="mb-3">
-            <label><b>Tipo de Tiro</b></label>
+            <label><b>TIPO DE TIRO<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="tipoTiro">
               @for (tipoTiro of tiposTiro(); track tipoTiro) {
               <option [value]="tipoTiro">{{ tipoTiro }}</option>

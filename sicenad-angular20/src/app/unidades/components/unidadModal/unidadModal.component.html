@@ -1,0 +1,113 @@
+<!-- Botón para abrir modal -->
+<a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
+  <fa-icon class="fa" [icon]="faEdit"></fa-icon>
+</a>
+<!-- Modal Editar Unidad -->
+<div class="modal fade" [id]="idModal()" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Unidad {{ unidad()?.nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="unidadForm">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label"><b>UNIDAD<sup class="text-danger">*</sup></b></label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" />
+            @if (nombre?.touched && nombre?.invalid) {
+            <span class="text-danger">El nombre es obligatorio</span>
+            }
+          </div>
+          <!-- Dirección -->
+          <div class="mb-3">
+            <label for="direccion" class="form-label"><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label>
+            <input type="text" id="direccion" class="form-control" formControlName="direccion" />
+            @if (direccion?.touched && direccion?.invalid) {
+            <span class="text-danger">La dirección es obligatoria</span>
+            }
+          </div>
+          <!-- Teléfono -->
+          <div class="mb-3">
+            <label for="tfno" class="form-label"><b>TELEFONO<sup class="text-danger">*</sup></b></label>
+            <input type="text" id="tfno" class="form-control" formControlName="tfno" />
+            @if (tfno?.touched && tfno?.invalid) {
+            <span class="text-danger">El teléfono debe tener 9 dígitos</span>
+            }
+          </div>
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label"><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label>
+            <input type="email" id="email" class="form-control" formControlName="email" />
+            <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+            @if (email?.touched && email?.invalid) {
+            <span class="text-danger">Correo inválido</span>
+            }
+          </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label class="form-label"
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
+            <textarea class="form-control letra" formControlName="descripcion"></textarea>
+            @if (descripcion?.touched && descripcion?.invalid) {
+            <div class="text-danger">La descripción es obligatoria.</div>
+            }
+          </div>
+          <!-- POC -->
+          <div class="mb-3">
+            <label for="poc" class="form-label"><b>POC<sup class="text-danger">*</sup></b></label>
+            <input type="text" id="poc" class="form-control" formControlName="poc" />
+            @if (poc?.touched && poc?.invalid) {
+            <span class="text-danger">El POC es obligatorio</span>
+            }
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          [attr.data-bs-target]="'#' + idModalEliminar()"
+          data-bs-toggle="modal"
+        >
+          Borrar Unidad
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="editarUnidad()"
+          data-bs-dismiss="modal"
+          [disabled]="unidadForm.invalid"
+        >
+          Guardar Unidad
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal eliminar -->
+<div class="modal fade" [id]="idModalEliminar()" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Eliminar Unidad {{ unidad()?.nombre }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">¿Desea eliminar {{ unidad()?.nombre }}?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="borrarUnidad()"
+          data-bs-dismiss="modal"
+        >
+          Borrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
