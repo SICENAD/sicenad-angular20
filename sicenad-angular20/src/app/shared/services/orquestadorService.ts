@@ -433,6 +433,49 @@ export class OrquestadorService {
     return this.cenadService.getEscudo(escudo, idCenad);
   }
 
+    // --- CRUD Armas ---
+    crearArma(nombre: string, tipoTiro: string): Observable<any> {
+      return this.armaService.crearArma(nombre, tipoTiro).pipe(
+         tap(res => {
+        if (res) {
+          this.loadAllArmas().pipe(
+            tap(armas => this.datosStore.setArmas(armas))
+          ).subscribe();
+          console.log(`Arma ${nombre} creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando el arma ${nombre}.`);
+        }
+      })
+    );
+  }
+  actualizarArma(nombre: string, tipoTiro: string, idArma: string): Observable<any> {
+    return this.armaService.editarArma(nombre, tipoTiro, idArma).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllArmas().pipe(
+            tap(armas => this.datosStore.setArmas(armas))
+          ).subscribe();
+          console.log(`Arma ${nombre} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el arma ${nombre}.`);
+        }
+      })
+    );
+  }
+  borrarArma(id: string): Observable<any> {
+    return this.armaService.deleteArma(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllArmas().pipe(
+            tap(armas => this.datosStore.setArmas(armas))
+          ).subscribe();
+          console.log(`Arma con id ${id} borrada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el arma con id ${id}.`);
+        }
+      })
+    );
+  }
 
 
 
@@ -471,16 +514,7 @@ export class OrquestadorService {
       this.unidadService.delete(id).subscribe(() => this.loadAllUnidades());
     }
 
-    // --- CRUD Armas ---
-    createArma(c: any): void {
-      this.armaService.create(c).subscribe(() => this.loadAllArmas());
-    }
-    updateArma(c: any): void {
-      this.armaService.update(c).subscribe(() => this.loadAllArmas());
-    }
-    deleteArma(id: string): void {
-      this.armaService.delete(id).subscribe(() => this.loadAllArmas());
-    }
+
 
     // --- CRUD UsuariosSuperadministrador ---
     createUsuarioSuper(c: any): void {

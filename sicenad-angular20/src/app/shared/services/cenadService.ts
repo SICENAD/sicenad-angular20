@@ -161,7 +161,7 @@ export class CenadService {
       switchMap(() => this.apiService.peticionConToken<any>(endpointCenad, 'DELETE')),
       tap(res => {
         this.cenad = res;
-        this.utilService.toast(`Se ha eliminado el CENAD/CMT`, 'success');
+        this.utilService.toast(`Se ha eliminado el CENAD/CMT ${this.cenad?.nombre}`, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

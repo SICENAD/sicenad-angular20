@@ -1,0 +1,75 @@
+<div class="d-flex align-items-center position-relative p-2 bg-light">
+  <a class="nav-link volver me-auto" [routerLink]="routesPaths.superadministrador"
+    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+  </a>
+  <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
+    <u>GESTIÓN DE ARMAS</u>
+  </h3>
+  <button class="btn text-white ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nuevo-arma">
+    Nuevo <b>Arma</b>
+  </button>
+</div>
+<hr class="w-100" />
+<div class="row ms-5 p-0">
+  <div class="col col-md-12">
+    <div class="row mt-2 titulos">
+      <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 titulo">
+        <b>NOMBRE</b>
+      </div>
+      <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 titulo">
+        <b>TIPO DE TIRO</b>
+      </div>
+    </div>
+    @for (a of armas(); track a.idString) {
+    <app-arma [arma]="a"></app-arma>
+    }
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal-nuevo-arma" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="armaForm">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Nuevo Arma</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label"><b>ARMA</b></label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" />
+            @if (nombre?.touched && nombre?.invalid) {
+            <span class="text-danger">El nombre es obligatorio</span>
+            }
+          </div>
+          <!-- Tipo de Tiro -->
+          <div class="mb-3">
+            <label class="titulo"><b>TIPO DE TIRO</b></label>
+            <select class="form-select" formControlName="tipoTiro">
+              <option value="" disabled >Selecciona un tipo de tiro</option>
+              @for (tipoTiro of tiposTiro(); track tipoTiro) {
+              <option [value]="tipoTiro">{{ tipoTiro }}</option>
+              }
+            </select>
+            @if (tipoTiro?.touched && tipoTiro?.invalid) {
+            <div class="text-danger">Selecciona un tipo de tiro</div>
+            }
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            [disabled]="armaForm.invalid"
+            (click)="crearArma()"
+          >
+            Crear Arma
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -5,7 +5,13 @@
   "projects": {
     "sicenad-angular20": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "inlineTemplate": false,
+          "inlineStyle": false,
+          "skipTests": true,
+          "style": "css"        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",

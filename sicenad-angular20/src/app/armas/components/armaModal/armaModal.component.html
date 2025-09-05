@@ -1,0 +1,74 @@
+<!-- Botón para abrir modal -->
+<a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
+  <fa-icon class="fa" [icon]="faEdit"></fa-icon>
+</a>
+<!-- Modal Editar Cenad -->
+<div class="modal fade" [id]="idModal()" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Arma {{ arma()?.nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="armaForm">
+          <div class="mb-3">
+            <label><b>Nombre</b></label>
+            <input type="text" class="form-control" formControlName="nombre" />
+          </div>
+          <div class="mb-3">
+            <label><b>Tipo de Tiro</b></label>
+            <select class="form-select" formControlName="tipoTiro">
+              @for (tipoTiro of tiposTiro(); track tipoTiro) {
+              <option [value]="tipoTiro">{{ tipoTiro }}</option>
+              }
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          [attr.data-bs-target]="'#' + idModalEliminar()"
+          data-bs-toggle="modal"
+        >
+          Borrar Arma
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="editarArma()"
+          data-bs-dismiss="modal"
+          [disabled]="armaForm.invalid"
+        >
+          Guardar Arma
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal eliminar -->
+<div class="modal fade" [id]="idModalEliminar()" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Eliminar Arma {{ arma()?.nombre }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">¿Desea eliminar {{ arma()?.nombre }}?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="borrarArma()"
+          data-bs-dismiss="modal"
+        >
+          Borrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -37,31 +37,5 @@ export class CenadComponent  {
               this.usuarioAdministrador.set(res);
             }),
   ).subscribe()});
-
-
-/*
-  ngOnInit() {
-    this.fetchUsuarioAdministrador();
-  }
-
-  async fetchUsuarioAdministrador() {
-    if (!this.cenad()) return;
-    const usuario = await this.usuarioService.fetchUsuarioAdministradorDeCenad(this.cenad()?.idString);
-    this.usuarioAdministrador.set(usuario);
-  }
-
-  actualizarCenadEnElemento() {
-    // Puedes actualizar la señal si el modal cambia datos
-    this.cenad.set({ ...this.cenad() });
-  }
-  */
-
-// toTitleCase(str: string) {
-  //  return str.replace(/\w\S*/g, txt =>
-    //  txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-   // );
- // }
-
-
 }
 

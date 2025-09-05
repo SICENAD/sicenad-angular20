@@ -5,7 +5,7 @@ import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { OrquestadorService } from '@services/orquestadorService';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 @Component({
-  selector: 'app-cenads-page',
+  selector: 'app-cenads',
   imports: [CenadComponent,ReactiveFormsModule],
   templateUrl: './cenads-page.component.html',
   styleUrls: ['./cenads-page.component.css'],
