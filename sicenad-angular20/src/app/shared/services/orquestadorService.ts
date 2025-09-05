@@ -433,10 +433,10 @@ export class OrquestadorService {
     return this.cenadService.getEscudo(escudo, idCenad);
   }
 
-    // --- CRUD Armas ---
-    crearArma(nombre: string, tipoTiro: string): Observable<any> {
-      return this.armaService.crearArma(nombre, tipoTiro).pipe(
-         tap(res => {
+  // --- CRUD Armas ---
+  crearArma(nombre: string, tipoTiro: string): Observable<any> {
+    return this.armaService.crearArma(nombre, tipoTiro).pipe(
+      tap(res => {
         if (res) {
           this.loadAllArmas().pipe(
             tap(armas => this.datosStore.setArmas(armas))
@@ -477,10 +477,10 @@ export class OrquestadorService {
     );
   }
 
-    // --- CRUD Unidades ---
-    crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable<any> {
-      return this.unidadService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).pipe(
-         tap(res => {
+  // --- CRUD Unidades ---
+  crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable<any> {
+    return this.unidadService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).pipe(
+      tap(res => {
         if (res) {
           this.loadAllUnidades().pipe(
             tap(unidades => this.datosStore.setUnidades(unidades))
@@ -521,6 +521,49 @@ export class OrquestadorService {
     );
   }
 
+  // --- CRUD TiposFormulario ---
+  crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
+    return this.tipoFormularioService.crearTipoFormulario(nombre, descripcion).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllTiposFormulario().pipe(
+            tap(tipos => this.datosStore.setTiposFormulario(tipos))
+          ).subscribe();
+          console.log(`Tipo de formulario ${nombre} creado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando el tipo de formulario ${nombre}.`);
+        }
+      })
+    );
+  }
+  actualizarTipoFormulario(nombre: string, descripcion: string, idTipoFormulario: string): Observable<any> {
+    return this.tipoFormularioService.editarTipoFormulario(nombre, descripcion, idTipoFormulario).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllTiposFormulario().pipe(
+            tap(tipos => this.datosStore.setTiposFormulario(tipos))
+          ).subscribe();
+          console.log(`Tipo de formulario ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el tipo de formulario ${nombre}.`);
+        }
+      })
+    );
+  }
+  borrarTipoFormulario(id: string): Observable<any> {
+    return this.tipoFormularioService.deleteTipoFormulario(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllTiposFormulario().pipe(
+            tap(tipos => this.datosStore.setTiposFormulario(tipos))
+          ).subscribe();
+          console.log(`Tipo de formulario con id ${id} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el tipo de formulario con id ${id}.`);
+        }
+      })
+    );
+  }
 
   /*
     // --- CRUD CategoriasFichero ---
@@ -534,16 +577,7 @@ export class OrquestadorService {
       this.categoriaFicheroService.delete(id).subscribe(() => this.loadAllCategoriasFichero());
     }
 
-    // --- CRUD TiposFormulario ---
-    createTipoFormulario(c: any): void {
-      this.tipoFormularioService.create(c).subscribe(() => this.loadAllTiposFormulario());
-    }
-    updateTipoFormulario(c: any): void {
-      this.tipoFormularioService.update(c).subscribe(() => this.loadAllTiposFormulario());
-    }
-    deleteTipoFormulario(id: string): void {
-      this.tipoFormularioService.delete(id).subscribe(() => this.loadAllTiposFormulario());
-    }
+
 
 
 

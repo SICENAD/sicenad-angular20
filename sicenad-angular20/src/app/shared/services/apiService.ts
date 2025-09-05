@@ -3,12 +3,14 @@ import { inject, Injectable, Injector } from "@angular/core";
 import { AuthStore } from "@stores/auth.store";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { UtilsStore } from "@stores/utils.store";
+import { UtilService } from "./utilService";
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private http = inject(HttpClient);
   private utils = inject(UtilsStore);
   private injector = inject(Injector); // Injector general para inyección tardía
+  private utilService = inject(UtilService);
 
   // Inyección tardía de AuthStore usando getter
   private get auth(): AuthStore {
@@ -90,7 +92,7 @@ export class ApiService {
       catchError(async (err) => {
         if (err.status === 401 || err.status === 403) {
           await this.auth.logout();
-          alert('Token expirado o no autorizado');
+          this.utilService.toast('Sesión expirada. Por favor, inicia sesión de nuevo.', 'warning');
         }
         throw err;
       })

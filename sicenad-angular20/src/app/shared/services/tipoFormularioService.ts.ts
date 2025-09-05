@@ -1,11 +1,13 @@
 import { inject, Injectable } from "@angular/core";
-import { catchError, map, Observable, of } from "rxjs";
+import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { TipoFormulario } from "@interfaces/models/tipoFormulario";
+import { UtilService } from "./utilService";
 
 @Injectable({ providedIn: 'root' })
 export class TipoFormularioService {
   private apiService = inject(ApiService);
+  private utilService = inject(UtilService);
 
   private tiposFormulario: TipoFormulario[] = [];
   private tipoFormulario: TipoFormulario | null = null;
@@ -30,4 +32,44 @@ export class TipoFormularioService {
     );
   }
 
+  crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
+    const endpoint = `/tipos_formulario`;
+    return this.apiService.peticionConToken<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion }).pipe(
+      map(res => !!res),
+      tap(() => {
+        this.utilService.toast(`Se ha creado el tipo de formulario ${nombre}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+
+  editarTipoFormulario(nombre: string, descripcion: string, idTipoFormulario: string): Observable<any> {
+    const endpoint = `/tipos_formulario/${idTipoFormulario}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion }).pipe(
+      map(res => !!res),
+      tap(() => {
+        this.utilService.toast(`Se ha modificado el tipo de formulario ${nombre}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+  deleteTipoFormulario(idTipoFormulario: string): Observable<any> {
+    const endpoint = `/tipos_formulario/${idTipoFormulario}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+      tap(res => {
+        this.tipoFormulario = res;
+        this.utilService.toast(`Se ha eliminado el tipo de formulario ${this.tipoFormulario?.nombre}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
 }
