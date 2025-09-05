@@ -1,0 +1,44 @@
+<!-- muestra la vista principal de la gestión de usuarios. si se accede como superadministrador mostrará
+administradores y normales y si se entra como administrador de un cenad mostrara gestores de su cenad y normales -->
+<div class="d-flex align-items-center position-relative p-2 bg-light">
+  <a class="nav-link volver me-auto" [routerLink]="[name(), params()]"
+    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+  </a>
+  <h3 class="position-absolute start-50 translate-middle-x m-0 mb-3 titulo">
+    <u>GESTIÓN DE USUARIOS</u>
+  </h3>
+  @if (rol() === 'Normal' || rol() === 'Gestor' || (rol() === 'Administrador' && !isMiCenad())){
+  <div class="row ms-5 p-0 mt-5">
+    <p class="titulo mt-5">NO ESTÁS AUTORIZADO A LA GESTIÓN DE USUARIOS EN OTRO CENAD/CMT</p>
+  </div>
+  }
+</div>
+<!-- vista de superadministrador->ve superadministradores,administradores y usuarios normales -->
+@if (rol() === 'Superadministrador'){
+<div class="row ms-5">
+  <!-- superadministradores -->
+  <div class="col col-md-4">
+    <p>Superadministradores</p>
+  </div>
+  <!-- administradores -->
+  <div class="col col-md-4 filtro">
+    <p>Administradores</p>
+  </div>
+  <!-- usuarios normales -->
+  <div class="col col-md-4 filtro">
+    <p>Normales</p>
+  </div>
+</div>
+} @if (rol() === 'Administrador' && isMiCenad()) {
+<!-- vista de administrador->ve gestores y usuarios normales -->
+<div class="row ms-5">
+  <!-- Gestores -->
+  <div class="col col-md-6">
+    <p>Gestores</p>
+  </div>
+  <!-- usuarios normales -->
+  <div class="col col-md-6 filtro">
+    <p>Normales</p>
+  </div>
+</div>
+}

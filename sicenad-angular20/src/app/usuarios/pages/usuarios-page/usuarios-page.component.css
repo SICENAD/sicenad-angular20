@@ -1,0 +1,111 @@
+.btn {
+    background: #3A5A40;
+    padding: 0.5;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background-color: #A3B18A;
+}
+
+.titulo {
+    color: #3A5A40;
+    font-weight: bold;
+}
+
+.titulo1 {
+    color: #588157;
+}
+
+h5 {
+    color: #354f52;
+    font-weight: bold;
+}
+
+a.volver {
+    color: #3A5A40;
+    font-size: 18px;
+}
+
+a.volver:hover {
+    color: #A3B18A;
+}
+
+.row {
+    height: auto;
+    padding: auto;
+    margin: auto;
+}
+
+hr {
+    margin-bottom: 0;
+    margin-top: 1;
+}
+
+.modal {
+    max-height: 100%;
+    max-width: 100%;
+    margin: auto;
+}
+
+div.filtro {
+    border: 6px solid #588157;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-right: 0px;
+}
+
+.btn {
+    background: #3A5A40;
+    padding: 0.5;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background-color: #A3B18A;
+}
+
+.titulo {
+    color: #3A5A40;
+    font-weight: bold;
+}
+
+.titulo1 {
+    color: #588157;
+}
+
+h5 {
+    color: #354f52;
+    font-weight: bold;
+    background-color: lightgreen;
+}
+
+a.volver {
+    color: #3A5A40;
+    font-size: 18px;
+}
+
+a.volver:hover {
+    color: #A3B18A;
+}
+
+.row {
+    height: auto;
+    padding: auto;
+    margin: auto;
+}
+
+hr {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.modal {
+    max-height: 100%;
+    max-width: 100%;
+    margin: auto;
+}
+
+div.titulos {
+    background-color: #DAD7CD;
+}

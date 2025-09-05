@@ -2,6 +2,8 @@ import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { CenadStore } from './cenad.store';
 import { DatosPrincipalesStore } from './datosPrincipales.store';
 import { UsuarioLogueadoStore } from './usuarioLogueado.store';
+import { Router } from '@angular/router';
+import { RoutesPaths } from '@app/app.routes';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
@@ -9,7 +11,8 @@ export class AuthStore {
   private usuarioLogueado = inject(UsuarioLogueadoStore);
   private cargaCenad = inject(CenadStore);
   datosPrincipalesStore = inject(DatosPrincipalesStore);
-
+  private route = inject(Router);
+  readonly routesPaths = RoutesPaths;
   // --- STATE ---
   private _token = signal<string | null>(localStorage.getItem('token'));
   private _username = signal<string | null>(localStorage.getItem('username'));
@@ -39,6 +42,7 @@ export class AuthStore {
     this.datosPrincipalesStore.borrarDatosIniciales();
     this.cargaCenad.borrarDatosCenad();
     this.borrarDatosSeguridad();
+    this.route.navigate([this.routesPaths.home]);
   }
 
   getDatosSeguridad(token: string, username: string, rol: string) {

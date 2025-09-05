@@ -91,8 +91,9 @@ export class ApiService {
     return observable.pipe(
       catchError(async (err) => {
         if (err.status === 401 || err.status === 403) {
-          await this.auth.logout();
           this.utilService.toast('Sesión expirada. Por favor, inicia sesión de nuevo.', 'warning');
+          await this.auth.logout();
+
         }
         throw err;
       })
