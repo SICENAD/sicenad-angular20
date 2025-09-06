@@ -8,7 +8,7 @@ div a {
   font-weight: bold;
 }
 
-fa-icon:hover {
+fa-icon:hover, p {
   color: #588157;
 }
 .row {

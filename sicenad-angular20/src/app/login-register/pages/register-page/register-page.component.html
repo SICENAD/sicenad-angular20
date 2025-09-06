@@ -2,16 +2,20 @@
   <h1 class="text-center">Crear nuevo <b>Usuario Superadministrador</b></h1>
   <form [formGroup]="registerForm">
     <!-- Teléfono -->
-    <div class="mb-3">
-      <label for="tfno" class="form-label"><b>TELÉFONO<sup class="text-danger">*</sup></b></label>
+    <div class="mb-3 col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
+      <label for="tfno" class="form-label"
+        ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
+      >
       <input type="text" class="form-control" id="tfno" formControlName="tfno" />
       @if (tfno?.touched && tfno?.invalid) {
       <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
       }
     </div>
     <!-- Email -->
-    <div class="mb-3">
-      <label for="email" class="form-label"><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label>
+    <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+      <label for="email" class="form-label"
+        ><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label
+      >
       <input type="email" class="form-control" id="email" formControlName="email" />
       <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
       @if (email?.touched && email?.invalid) {
@@ -20,9 +24,7 @@
     </div>
     <!-- Notificaciones -->
     <div class="mb-3">
-      <label class="form-label me-2"
-        ><b>¿QUIERE RECIBIR NOTIFICACIONES?</b></label
-      >
+      <label class="form-label me-2"><b>¿QUIERE RECIBIR NOTIFICACIONES?</b></label>
       <input type="checkbox" class="letra" id="emailAdmitido" formControlName="emailAdmitido" />
     </div>
     <!-- Descripción -->
@@ -37,16 +39,20 @@
       }
     </div>
     <!-- Username -->
-    <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
-      <label for="username" class="form-label"><b>USUARIO<sup class="text-danger">*</sup></b></label>
+    <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+      <label for="username" class="form-label"
+        ><b>USUARIO<sup class="text-danger">*</sup></b></label
+      >
       <input type="text" class="form-control" id="username" formControlName="username" />
       @if (username?.touched && username?.invalid) {
       <div class="text-danger">El usuario es obligatorio.</div>
       }
     </div>
     <!-- Password -->
-    <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
-      <label for="password" class="form-label"><b>CONTRASEÑA<sup class="text-danger">*</sup></b></label>
+    <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+      <label for="password" class="form-label"
+        ><b>CONTRASEÑA<sup class="text-danger">*</sup></b></label
+      >
       <input type="password" class="form-control" id="password" formControlName="password" />
       @if (password?.touched && password?.invalid) {
       <div class="text-danger">La contraseña es obligatoria.</div>

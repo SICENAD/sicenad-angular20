@@ -9,10 +9,12 @@ import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UsuariosSuperadministradorPageComponent } from "../usuariosSuperadministrador-page/usuariosSuperadministrador-page.component";
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { UsuariosAdministradorPageComponent } from '../usuariosAdministrador-page/usuariosAdministrador-page.component';
+import { UsuariosGestorPageComponent } from '../usuariosGestor-page/usuariosGestor-page.component';
+import { UsuariosNormalPageComponent } from '../usuariosNormal-page/usuariosNormal-page.component';
 
 @Component({
   selector: 'app-usuarios-page',
-  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent, UsuariosAdministradorPageComponent],
+  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent, UsuariosAdministradorPageComponent, UsuariosGestorPageComponent, UsuariosNormalPageComponent],
   templateUrl: './usuarios-page.component.html',
   styleUrls: ['./usuarios-page.component.css'],
 })

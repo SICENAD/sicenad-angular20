@@ -163,11 +163,21 @@ export class UsuarioService {
     );
   }
 
+ getUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
+    const endpoint = `/usuarios_gestor/search/findByUsername?username=${username}`;
+    return this.apiService.peticionConToken<UsuarioGestor>(endpoint, 'GET').pipe(
+      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
 
-
-
-
-
+ getUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
+    const endpoint = `/usuarios_normal/search/findByUsername?username=${username}`;
+    return this.apiService.peticionConToken<UsuarioNormal>(endpoint, 'GET').pipe(
+      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
 
 
   editarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {

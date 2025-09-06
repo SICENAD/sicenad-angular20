@@ -1,42 +1,40 @@
 <div>
-  <h5 class="text-center titulo"><b>ADMINISTRADORES</b></h5>
+  <h5 class="text-center titulo"><b>GESTORES</b></h5>
   <hr class="w-100" />
   <div class="d-flex justify-content-end mb-2">
     <button
       class="btn text-white mt-2"
       data-bs-toggle="modal"
-      data-bs-target="#modal-nuevo-usuarioAdministrador"
+      data-bs-target="#modal-nuevo-usuarioGestor"
     >
-      Nuevo <b>Usuario Administrador</b>
+      Nuevo <b>Usuario Gestor</b>
     </button>
   </div>
   <hr class="w-100" />
   <div class="row titulos">
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 titulo">
-      <b>ADMINISTRADOR</b>
+      <b>GESTOR</b>
     </div>
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 titulo">
       <b>CENAD</b>
     </div>
   </div>
-  @for (u of usuariosAdministrador(); track u.idString) {
+  @for (u of usuariosGestorDeCenad(); track u.idString) {
   <app-usuario [usuario]="u" />
   }
 </div>
-<!-- Modal usuarioAdministrador-->
+<!-- Modal usuarioGestor-->
 <div
   class="modal fade"
-  id="modal-nuevo-usuarioAdministrador"
+  id="modal-nuevo-usuarioGestor"
   tabindex="-1"
-  aria-labelledby="modal-nuevo-usuarioAdministrador-Label"
+  aria-labelledby="modal-nuevo-usuarioGestor-Label"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal-nuevo-usuarioAdministrador-Label">
-          Nuevo Usuario Administrador
-        </h1>
+        <h1 class="modal-title fs-5" id="modal-nuevo-usuarioGestor-Label">Nuevo Usuario Gestor</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -101,21 +99,6 @@
             <input type="password" class="form-control" id="password" formControlName="password" />
             @if (password?.touched && password?.invalid) {
             <div class="text-danger">La contraseña es obligatoria.</div>
-            }
-          </div>
-          <!-- CENAD -->
-          <div class="mb-3 col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6">
-            <label class="form-label titulo1"><b>CENAD</b></label>
-            <select class="form-select" formControlName="cenad">
-              <option [ngValue]="null" disabled selected>Selecciona un CENAD</option>
-              @for (c of cenadsSinAdmin(); track c.idString) {
-              <option [ngValue]="c">
-                {{ c.nombre }}
-              </option>
-              }
-            </select>
-            @if (cenad?.touched && cenad?.invalid) {
-            <div class="text-danger">Debes seleccionar un CENAD.</div>
             }
           </div>
         </form>

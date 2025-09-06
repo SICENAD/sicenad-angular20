@@ -388,6 +388,106 @@ export class OrquestadorService {
     );
   }
 
+  registerUsuarioGestor(
+    username: string,
+    password: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idCenad: string
+  ): Observable<RegisterResponse> {
+    return this.registerUsuario(
+      username,
+      password,
+      tfno,
+      email,
+      emailAdmitido,
+      descripcion,
+      RolUsuario.Gestor
+    ).pipe(
+      switchMap(registerRes =>
+        this.loadUsuarioGestorPorUsername(username).pipe(
+          switchMap(usuario => {
+            if (!usuario) {
+              console.warn(`No se encontró Usuario Administrador con username ${username} tras el registro.`);
+              return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
+            }
+            // Editamos el usuario para asignarle el CENAD
+            return this.actualizarUsuarioGestor(
+              username,
+              tfno,
+              email,
+              emailAdmitido,
+              descripcion,
+              idCenad,
+              usuario.idString
+            ).pipe(
+              map(() => registerRes) // seguimos devolviendo la respuesta del registro original
+            );
+          })
+        )
+      ),
+      tap(() => {
+        this.loadAllUsuariosGestor(idCenad).subscribe();
+      }),
+      catchError(err => {
+        console.error('Error en registerUsuarioGestor:', err);
+        return of(null as unknown as RegisterResponse);
+      })
+    );
+  }
+
+  registerUsuarioNormal(
+    username: string,
+    password: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idUnidad: string
+  ): Observable<RegisterResponse> {
+    return this.registerUsuario(
+      username,
+      password,
+      tfno,
+      email,
+      emailAdmitido,
+      descripcion,
+      RolUsuario.Normal
+    ).pipe(
+      switchMap(registerRes =>
+        this.loadUsuarioNormalPorUsername(username).pipe(
+          switchMap(usuario => {
+            if (!usuario) {
+              console.warn(`No se encontró Usuario Normal con username ${username} tras el registro.`);
+              return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
+            }
+            // Editamos el usuario para asignarle el CENAD
+            return this.actualizarUsuarioNormal(
+              username,
+              tfno,
+              email,
+              emailAdmitido,
+              descripcion,
+              idUnidad,
+              usuario.idString
+            ).pipe(
+              map(() => registerRes) // seguimos devolviendo la respuesta del registro original
+            );
+          })
+        )
+      ),
+      tap(() => {
+        this.loadAllUsuariosNormal().subscribe();
+      }),
+      catchError(err => {
+        console.error('Error en registerUsuarioNormal:', err);
+        return of(null as unknown as RegisterResponse);
+      })
+    );
+  }
+
   registerUsuario(
     username: string,
     password: string,
@@ -486,6 +586,15 @@ export class OrquestadorService {
   }
 
   // --- CRUD UsuariosGestor ---
+  loadUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
+    return this.usuarioService.getUsuarioGestorPorUsername(username).pipe(
+      catchError(err => {
+        console.error('Error cargando usuario gestor', err);
+        return of(null);
+      })
+    );
+  }
+
   actualizarUsuarioGestor(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioGestor: string): Observable<any> {
     return this.usuarioService.editarUsuarioGestor(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioGestor).pipe(
       tap(res => {
@@ -516,6 +625,15 @@ export class OrquestadorService {
   }
 
   // --- CRUD UsuariosNormal ---
+  loadUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
+    return this.usuarioService.getUsuarioNormalPorUsername(username).pipe(
+      catchError(err => {
+        console.error('Error cargando usuario normal', err);
+        return of(null);
+      })
+    );
+  }
+
   actualizarUsuarioNormal(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUnidad: string, idUsuarioNormal: string): Observable<any> {
     return this.usuarioService.editarUsuarioNormal(username, tfno, email, emailAdmitido, descripcion, idUnidad, idUsuarioNormal).pipe(
       tap(res => {

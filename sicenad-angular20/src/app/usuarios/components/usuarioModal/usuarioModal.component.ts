@@ -11,7 +11,6 @@ import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
 import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
-import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-usuario-modal',
@@ -20,7 +19,6 @@ import { UtilsStore } from '@stores/utils.store';
   styleUrls: ['./usuarioModal.component.css']
 })
 export class UsuarioModalComponent {
-  private utils = inject(UtilsStore);
   private orquestadorService = inject(OrquestadorService);
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);

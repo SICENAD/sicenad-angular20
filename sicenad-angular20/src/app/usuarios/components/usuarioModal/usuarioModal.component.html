@@ -7,13 +7,15 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Usuario Superadministrador {{ usuarioTipado.username }}</h5>
+        <h5 class="modal-title">
+          Editar Usuario {{ usuarioTipado.rol }} {{ usuarioTipado.username }}
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="usuarioForm">
           <!-- Username -->
-          <div class="mb-3 col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+          <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <label for="username" class="form-label"
               ><b>USUARIO<sup class="text-danger">*</sup></b></label
             >
@@ -23,7 +25,7 @@
             }
           </div>
           <!-- Teléfono -->
-          <div class="mb-3">
+          <div class="mb-3 col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
             <label for="tfno" class="form-label"
               ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
             >
@@ -33,7 +35,7 @@
             }
           </div>
           <!-- Email -->
-          <div class="mb-3">
+          <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
             <label for="email" class="form-label"
               ><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label
             >
@@ -64,6 +66,15 @@
             <div class="text-danger">La descripción es obligatoria.</div>
             }
           </div>
+          <!-- Unidad -->
+          @if (usuarioTipado.rol === 'Normal') {
+          <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+            <label for="unidad" class="form-label"
+              ><b>UNIDAD</b></label
+            >
+            <p>{{ unidad()?.nombre }}</p>
+          </div>
+          }
         </form>
       </div>
       <div class="modal-footer">
