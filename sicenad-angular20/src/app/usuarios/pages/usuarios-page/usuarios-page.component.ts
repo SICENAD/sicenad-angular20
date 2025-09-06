@@ -6,10 +6,11 @@ import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
+import { UsuariosSuperadministradorPageComponent } from "../usuariosSuperadministrador-page/usuariosSuperadministrador-page.component";
 
 @Component({
   selector: 'app-usuarios-page',
-  imports: [RouterLink, FontAwesomeModule],
+  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent],
   templateUrl: './usuarios-page.component.html',
   styleUrls: ['./usuarios-page.component.css'],
 })

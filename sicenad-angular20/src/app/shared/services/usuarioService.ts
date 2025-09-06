@@ -1,5 +1,5 @@
 import { inject, Injectable, signal, Signal } from "@angular/core";
-import { catchError, firstValueFrom, map, Observable, of } from "rxjs";
+import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Usuario } from "@interfaces/models/usuario";
 import { UsuarioSuperAdministrador } from "@interfaces/models/usuarioSuperadministrador";
@@ -10,12 +10,12 @@ import { LoginResponse } from "@interfaces/responses/loginResponse";
 import { RegisterResponse } from "@interfaces/responses/registerResponse";
 import { Cenad } from "@interfaces/models/cenad";
 import { Unidad } from "@interfaces/models/unidad";
-import { UtilsStore } from "@stores/utils.store";
+import { UtilService } from "./utilService";
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private apiService = inject(ApiService);
-  private utils = inject(UtilsStore);
+  private utilService = inject(UtilService);
   private usuarios = signal<Usuario[]>([]);
   private usuarios_superadministrador = signal<UsuarioSuperAdministrador[]>([]);
   private usuarios_administrador = signal<UsuarioAdministrador[]>([]);
@@ -155,6 +155,39 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
 }
 
 
+
+
+
+
+
+
+
+  editarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {
+    const endpoint = `/usuarios_superadministrador/${idUsuarioSuperadministrador}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion }).pipe(
+      map(res => !!res),
+      tap(() => {
+        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+  deleteUsuarioSuperadministrador(idUsuarioSuperadministrador: string): Observable<any> {
+    const endpoint = `/usuarios_superadministrador/${idUsuarioSuperadministrador}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+      tap(res => {
+        this.usuario_superadministrador = res;
+        this.utilService.toast(`Se ha eliminado el usuario ${this.usuario_superadministrador()?.username}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
 
 
 

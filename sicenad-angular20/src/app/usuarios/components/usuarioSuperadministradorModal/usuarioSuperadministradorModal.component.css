@@ -1,0 +1,36 @@
+.passwordHelp {
+  font-size: small;
+  color: red;
+}
+div,
+div a {
+  color: #A3B18A;
+  font-weight: bold;
+}
+
+fa-icon:hover {
+  color: #588157;
+}
+.row {
+  height: auto;
+  padding: auto;
+  margin: auto;
+}
+
+hr {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.btn {
+  background: #A3B18A;
+  padding: 0.5;
+  font-size: 14px;
+  color: white;
+}
+
+.btn:hover {
+  background-color: #588157;
+  color: white;
+  text-decoration: none;
+}

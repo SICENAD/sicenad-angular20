@@ -296,6 +296,25 @@ export class OrquestadorService {
   }
 
   // --- USUARIOS ---
+  loginUsuario(
+    username: string,
+    password: string,
+  ): Observable<LoginResponse> {
+    this.ensureUrlApi();            // <-- clave
+
+    return this.usuarioService.login(
+      username,
+      password
+    ).pipe(
+      tap(res => {
+        console.log('✅ Login correcto', res);
+      }),
+      catchError(err => {
+        console.error('❌ Error logueando usuario', err);
+        throw err;
+      })
+    );
+  }
 
   registerUsuario(
     username: string,
@@ -326,22 +345,32 @@ export class OrquestadorService {
     );
   }
 
-  loginUsuario(
-    username: string,
-    password: string,
-  ): Observable<LoginResponse> {
-    this.ensureUrlApi();            // <-- clave
-
-    return this.usuarioService.login(
-      username,
-      password
-    ).pipe(
+    // --- CRUD UsuariosSuperadministrador ---
+      actualizarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {
+    return this.usuarioService.editarUsuarioSuperadministrador(username, tfno, email, emailAdmitido, descripcion, idUsuarioSuperadministrador).pipe(
       tap(res => {
-        console.log('✅ Login correcto', res);
-      }),
-      catchError(err => {
-        console.error('❌ Error logueando usuario', err);
-        throw err;
+        if (res) {
+          this.loadAllUsuariosSuperadministrador().pipe(
+            tap(usuarios => this.datosStore.setUsuariosSuperadministrador(usuarios))
+          ).subscribe();
+          console.log(`Usuario Superadministrador ${username} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el Usuario Superadministrador ${username}.`);
+        }
+      })
+    );
+  }
+  borrarUsuarioSuperadministrador(id: string): Observable<any> {
+    return this.usuarioService.deleteUsuarioSuperadministrador(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosSuperadministrador().pipe(
+            tap(usuarios => this.datosStore.setUsuariosSuperadministrador(usuarios))
+          ).subscribe();
+          console.log(`Usuario Superadministrador con id ${id} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el Usuario Superadministrador con id ${id}.`);
+        }
       })
     );
   }
@@ -610,16 +639,7 @@ export class OrquestadorService {
   }
   /*
 
-    // --- CRUD UsuariosSuperadministrador ---
-    createUsuarioSuper(c: any): void {
-      this.usuarioSuperService.create(c).subscribe(() => this.loadAllUsuariosSuperadministrador());
-    }
-    updateUsuarioSuper(c: any): void {
-      this.usuarioSuperService.update(c).subscribe(() => this.loadAllUsuariosSuperadministrador());
-    }
-    deleteUsuarioSuper(id: string): void {
-      this.usuarioSuperService.delete(id).subscribe(() => this.loadAllUsuariosSuperadministrador());
-    }
+
 
     // --- CRUD UsuariosAdministrador ---
     createUsuarioAdmin(c: any): void {
