@@ -11,6 +11,7 @@ import { RegisterResponse } from "@interfaces/responses/registerResponse";
 import { Cenad } from "@interfaces/models/cenad";
 import { Unidad } from "@interfaces/models/unidad";
 import { UtilService } from "./utilService";
+import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -175,12 +176,16 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
       })
     );
   }
-  deleteUsuarioSuperadministrador(idUsuarioSuperadministrador: string): Observable<any> {
-    const endpoint = `/usuarios_superadministrador/${idUsuarioSuperadministrador}`;
+  deleteUsuario(idUsuario: string): Observable<any> {
+    const endpoint = `/usuarios/${idUsuario}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.usuario_superadministrador = res;
-        this.utilService.toast(`Se ha eliminado el usuario ${this.usuario_superadministrador()?.username}`, 'success');
+        if (res) {
+          console.log(`Usuario con id ${idUsuario} eliminado correctamente.`);
+          this.usuario.set(res);
+          console.log(this.usuario());
+          this.utilService.toast(`Se ha eliminado el usuario ${this.usuario()?.username}`, 'success');
+        }
       }),
       catchError(err => {
         console.error(err);
@@ -202,7 +207,7 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
   async getDatosUsuario(rol: string, username: string): Promise<{
     usuario: any; cenad?: Cenad | null; unidad?: Unidad | null }> {
     switch (rol) {
-      case 'Administrador': {
+      case RolUsuario.Administrador: {
         const usuario: UsuarioAdministrador = await firstValueFrom(
           this.apiService.peticionConToken(
             `/usuarios_administrador/search/findByUsername?username=${username}`,
@@ -219,7 +224,7 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
         );
         return { usuario, cenad };
       }
-      case 'Gestor': {
+      case RolUsuario.Gestor: {
         const usuario: UsuarioGestor = await firstValueFrom(
           this.apiService.peticionConToken(
             `/usuarios_gestor/search/findByUsername?username=${username}`,
@@ -236,7 +241,7 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
         );
         return { usuario, cenad };
       }
-      case 'Normal': {
+      case RolUsuario.Normal: {
         const usuario: UsuarioNormal = await firstValueFrom(
           this.apiService.peticionConToken(
             `/usuarios_normal/search/findByUsername?username=${username}`,
@@ -253,7 +258,7 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
         );
         return { usuario, unidad };
       }
-      case 'Superadministrador': {
+      case RolUsuario.Superadministrador: {
         const usuario: UsuarioSuperAdministrador = await firstValueFrom(
           this.apiService.peticionConToken(
             `/usuarios_superadministrador/search/findByUsername?username=${username}`,

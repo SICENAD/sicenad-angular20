@@ -361,7 +361,7 @@ export class OrquestadorService {
     );
   }
   borrarUsuarioSuperadministrador(id: string): Observable<any> {
-    return this.usuarioService.deleteUsuarioSuperadministrador(id).pipe(
+    return this.usuarioService.deleteUsuario(id).pipe(
       tap(res => {
         if (res) {
           this.loadAllUsuariosSuperadministrador().pipe(
