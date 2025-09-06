@@ -6,6 +6,8 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { UsuarioAdministrador } from '@interfaces/models/usuarioAdministrador';
 import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
 import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
+import { Cenad } from '@interfaces/models/cenad';
+import { Unidad } from '@interfaces/models/unidad';
 
 @Component({
   selector: 'app-usuario',
@@ -16,6 +18,9 @@ import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
 export class UsuarioComponent {
 
   usuario = input.required<Usuario>();
+  cenad = input<Cenad | undefined>();
+  unidad = input<Unidad | undefined>();
+
   get usuarioTipado(): UsuarioSuperAdministrador | UsuarioAdministrador | UsuarioGestor | UsuarioNormal {
     switch (this.usuario()?.rol) {
       case RolUsuario.Superadministrador:

@@ -3,6 +3,7 @@ import { AuthStore } from '@stores/auth.store';
 import { Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 
 @Component({
   selector: 'app-header',
@@ -21,9 +22,9 @@ export class HeaderComponent {
   username = computed(() => this.auth.username());
   token = computed(() => this.auth.token());
   identificacion = computed(() => {
-    if (this.auth.rol() === 'Administrador' || this.auth.rol() === 'Gestor') {
+    if (this.auth.rol() === RolUsuario.Administrador || this.auth.rol() === RolUsuario.Gestor) {
       return `${this.auth.rol()} del ${this.usuarioLogueado.cenadPropio()?.nombre || ''}`
-    } else if (this.auth.rol() === 'Normal') {
+    } else if (this.auth.rol() === RolUsuario.Normal) {
       return `${this.auth.rol()} de ${this.usuarioLogueado.unidad()?.nombre || ''}`
     } else {
       return this.auth.rol() || ''

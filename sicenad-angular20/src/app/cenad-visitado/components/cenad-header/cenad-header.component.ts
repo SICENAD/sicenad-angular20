@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -54,10 +55,10 @@ export class CenadHeaderComponent implements OnInit {
   cenads = computed(() => this.datosPrincipalesStore.cenads());
   idCenad = computed(() => this.route.snapshot.params['idCenad']);
   cenad = computed(() => this.cenadStore.cenadVisitado());
-  isSuperAdmin = computed(() => this.auth.rol() === 'Superadministrador');
-  isGestorNormal = computed(() => this.auth.rol() === 'Gestor' || this.auth.rol() === 'Normal');
-  isGestorEsteCenad = computed(() => this.auth.rol() === 'Gestor' && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
-  isAdminEsteCenad = computed(() => this.auth.rol() === 'Administrador' && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
+  isSuperAdmin = computed(() => this.auth.rol() === RolUsuario.Superadministrador);
+  isGestorNormal = computed(() => this.auth.rol() === RolUsuario.Gestor || this.auth.rol() === RolUsuario.Normal);
+  isGestorEsteCenad = computed(() => this.auth.rol() === RolUsuario.Gestor && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
+  isAdminEsteCenad = computed(() => this.auth.rol() === RolUsuario.Administrador && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
 
   idCenadZaragoza = signal<string | null>(null);
   isCenadZaragoza = signal(false);

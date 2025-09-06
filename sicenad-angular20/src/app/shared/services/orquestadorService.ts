@@ -345,8 +345,8 @@ export class OrquestadorService {
     );
   }
 
-    // --- CRUD UsuariosSuperadministrador ---
-      actualizarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {
+  // --- CRUD UsuariosSuperadministrador ---
+  actualizarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {
     return this.usuarioService.editarUsuarioSuperadministrador(username, tfno, email, emailAdmitido, descripcion, idUsuarioSuperadministrador).pipe(
       tap(res => {
         if (res) {
@@ -375,9 +375,97 @@ export class OrquestadorService {
     );
   }
 
-  // --- CRUD Cenad ---
+  // --- CRUD UsuariosAdministrador ---
+  actualizarUsuarioAdministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioAdministrador: string): Observable<any> {
+    return this.usuarioService.editarUsuarioAdministrador(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioAdministrador).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosAdministrador().pipe(
+            tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
+          ).subscribe();
+          console.log(`Usuario Administrador ${username} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el Usuario Administrador ${username}.`);
+        }
+      })
+    );
+  }
+  borrarUsuarioAdministrador(id: string): Observable<any> {
+    return this.usuarioService.deleteUsuario(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosAdministrador().pipe(
+            tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
+          ).subscribe();
+          console.log(`Usuario Administrador con id ${id} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el Usuario Administrador con id ${id}.`);
+        }
+      })
+    );
+  }
 
-  // --- CRUD Cenad en OrquestadorService ---
+  // --- CRUD UsuariosGestor ---
+  actualizarUsuarioGestor(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioGestor: string): Observable<any> {
+    return this.usuarioService.editarUsuarioGestor(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioGestor).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosGestor(idCenad).pipe(
+            tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
+          ).subscribe();
+          console.log(`Usuario Gestor ${username} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el Usuario Gestor ${username}.`);
+        }
+      })
+    );
+  }
+  borrarUsuarioGestor(idCenad: string, idUsuario: string): Observable<any> {
+    return this.usuarioService.deleteUsuario(idUsuario).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosGestor(idCenad).pipe(
+            tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
+          ).subscribe();
+          console.log(`Usuario Gestor con id ${idUsuario} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el Usuario Gestor con id ${idUsuario}.`);
+        }
+      })
+    );
+  }
+
+  // --- CRUD UsuariosNormal ---
+  actualizarUsuarioNormal(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUnidad: string, idUsuarioNormal: string): Observable<any> {
+    return this.usuarioService.editarUsuarioNormal(username, tfno, email, emailAdmitido, descripcion, idUnidad, idUsuarioNormal).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosNormal().pipe(
+            tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
+          ).subscribe();
+          console.log(`Usuario Normal ${username} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el Usuario Normal ${username}.`);
+        }
+      })
+    );
+  }
+  borrarUsuarioNormal(id: string): Observable<any> {
+    return this.usuarioService.deleteUsuario(id).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllUsuariosNormal().pipe(
+            tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
+          ).subscribe();
+          console.log(`Usuario Normal con id ${id} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el Usuario Normal con id ${id}.`);
+        }
+      })
+    );
+  }
+
+  // --- CRUD Cenad ---
   crearCenad(
     nombre: string,
     provincia: number,

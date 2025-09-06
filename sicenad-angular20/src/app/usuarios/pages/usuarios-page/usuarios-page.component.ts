@@ -7,6 +7,7 @@ import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UsuariosSuperadministradorPageComponent } from "../usuariosSuperadministrador-page/usuariosSuperadministrador-page.component";
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 
 @Component({
   selector: 'app-usuarios-page',
@@ -22,8 +23,9 @@ export class UsuariosPageComponent {
 
   faVolver = this.iconoStore.faVolver;
   readonly routesPaths = RoutesPaths;
+  readonly misRoles = RolUsuario;
   name = computed(() => {
-    return this.rol() === 'Superadministrador' ? this.routesPaths.superadministrador : this.routesPaths.cenadHome;
+    return this.rol() === this.misRoles.Superadministrador ? this.routesPaths.superadministrador : this.routesPaths.cenadHome;
   });
   idCenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado()?.idString;
@@ -34,6 +36,6 @@ export class UsuariosPageComponent {
   });
   rol = signal<string | null>(this.auth.rol());
   params = computed(() => {
-    return this.rol() === 'Superadministrador' ? {} : this.idCenadVisitado();
+    return this.rol() === this.misRoles.Superadministrador ? {} : this.idCenadVisitado();
   });
 }

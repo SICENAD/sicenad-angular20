@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { UnidadComponent } from '@app/unidades/components/unidad/unidad.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -30,7 +31,7 @@ export class UnidadesPageComponent {
   readonly routesPaths = RoutesPaths;
   unidades = computed(() => this.datosPrincipalesStore.unidades());
   name = computed(() => {
-    return this.rol() === 'Superadministrador' ? this.routesPaths.superadministrador : this.routesPaths.cenadHome;
+    return this.rol() === RolUsuario.Superadministrador ? this.routesPaths.superadministrador : this.routesPaths.cenadHome;
   });
   idCenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado()?.idString;
@@ -41,7 +42,7 @@ export class UnidadesPageComponent {
   });
   rol = signal<string | null>(this.auth.rol());
   params = computed(() => {
-    return this.rol() === 'Superadministrador' ? {} : this.idCenadVisitado();
+    return this.rol() === RolUsuario.Superadministrador ? {} : this.idCenadVisitado();
   });
 
   unidadForm: FormGroup = this.fb.group({

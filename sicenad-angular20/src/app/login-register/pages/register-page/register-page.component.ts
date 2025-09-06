@@ -4,11 +4,11 @@ import { RoutesPaths } from '@app/app.routes';
 import { OrquestadorService } from '@services/orquestadorService';
 import { UtilsStore } from '@stores/utils.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink, ReactiveFormsModule, JsonPipe],
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './register-page.component.html',
   styleUrls: ['./register-page.component.css']
 })
@@ -74,7 +74,7 @@ export class RegisterComponent {
         email,
         emailAdmitido,
         descripcion,
-        'Superadministrador'
+        RolUsuario.Superadministrador
       ).subscribe({
         next: (res) => {
           this.passwordForRegisterFromUser.set('');

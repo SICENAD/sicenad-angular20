@@ -63,7 +63,7 @@
             <label for="tfno" class="form-label titulo1"><b>TELÉFONO<sup class="text-danger">*</sup></b></label>
             <input type="text" id="tfno" class="form-control" formControlName="tfno"/>
             @if (tfno?.touched && tfno?.invalid) {
-              <span class="text-danger">El teléfono debe tener 9 dígitos</span>
+              <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
             }
           </div>
           <!-- Email -->
@@ -72,7 +72,7 @@
             <input type="email" id="email" class="form-control" formControlName="email"/>
             <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
             @if (email?.touched && email?.invalid) {
-              <span class="text-danger">Correo inválido</span>
+              <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
             }
           </div>
           <!-- Descripción -->

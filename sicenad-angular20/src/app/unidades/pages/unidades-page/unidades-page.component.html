@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center position-relative p-2 bg-light">
-<a class="nav-link volver me-auto" [routerLink]="[name(), params()]"
+  <a class="nav-link volver me-auto" [routerLink]="[name(), params()]"
     ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
@@ -72,7 +72,7 @@
             >
             <input type="text" id="tfno" class="form-control" formControlName="tfno" />
             @if (tfno?.touched && tfno?.invalid) {
-            <span class="text-danger">El teléfono debe tener 9 dígitos</span>
+            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
             }
           </div>
           <!-- Email -->
@@ -83,7 +83,7 @@
             <input type="email" id="email" class="form-control" formControlName="email" />
             <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
             @if (email?.touched && email?.invalid) {
-            <span class="text-danger">Correo inválido</span>
+            <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
             }
           </div>
           <!-- Descripción -->

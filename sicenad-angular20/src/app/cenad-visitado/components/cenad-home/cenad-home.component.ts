@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -44,7 +45,7 @@ export class CenadHomeComponent {
   });
 
   get esSuperAdmin() {
-    return this.auth.rol() === 'Superadministrador';
+    return this.auth.rol() === RolUsuario.Superadministrador;
   }
 
 }

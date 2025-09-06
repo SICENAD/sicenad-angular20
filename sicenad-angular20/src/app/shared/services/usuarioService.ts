@@ -147,13 +147,13 @@ export class UsuarioService {
     );
   }
 
-getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
-  const endpoint = `/cenads/${idCenad}/usuarioAdministrador`;
-  return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
-    map(res => ({...res, url: (res as any)._links?.self?.href})),
-          catchError(err => { console.error(err); return of(null); })
-  );
-}
+  getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
+    const endpoint = `/cenads/${idCenad}/usuarioAdministrador`;
+    return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
+      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
 
 
 
@@ -176,6 +176,52 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
       })
     );
   }
+
+  editarUsuarioAdministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioAdministrador: string): Observable<any> {
+    const endpoint = `/usuarios_administrador/${idUsuarioAdministrador}`;
+    const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
+      map(res => !!res),
+      tap(() => {
+        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+
+  editarUsuarioGestor(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioGestor: string): Observable<any> {
+    const endpoint = `/usuarios_gestor/${idUsuarioGestor}`;
+    const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
+      map(res => !!res),
+      tap(() => {
+        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+
+  editarUsuarioNormal(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUnidad: string, idUsuarioNormal: string): Observable<any> {
+    const endpoint = `/usuarios_normal/${idUsuarioNormal}`;
+    const unidad = `${this.apiService.getUrlApi()}/unidades/${idUnidad}`;
+    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, unidad }).pipe(
+      map(res => !!res),
+      tap(() => {
+        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      }),
+      catchError(err => {
+        console.error(err);
+        return of(false);
+      })
+    );
+  }
+
   deleteUsuario(idUsuario: string): Observable<any> {
     const endpoint = `/usuarios/${idUsuario}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
@@ -205,7 +251,8 @@ getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador |
 
 
   async getDatosUsuario(rol: string, username: string): Promise<{
-    usuario: any; cenad?: Cenad | null; unidad?: Unidad | null }> {
+    usuario: any; cenad?: Cenad | null; unidad?: Unidad | null
+  }> {
     switch (rol) {
       case RolUsuario.Administrador: {
         const usuario: UsuarioAdministrador = await firstValueFrom(

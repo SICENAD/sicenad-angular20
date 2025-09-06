@@ -6,7 +6,7 @@
       <label for="tfno" class="form-label"><b>TELÉFONO<sup class="text-danger">*</sup></b></label>
       <input type="text" class="form-control" id="tfno" formControlName="tfno" />
       @if (tfno?.touched && tfno?.invalid) {
-      <span class="text-danger">{{ tfno?.errors | json }}</span>
+      <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
       }
     </div>
     <!-- Email -->
@@ -15,7 +15,7 @@
       <input type="email" class="form-control" id="email" formControlName="email" />
       <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
       @if (email?.touched && email?.invalid) {
-      <span class="text-danger">{{ email?.errors | json }}</span>
+      <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
       }
     </div>
     <!-- Notificaciones -->

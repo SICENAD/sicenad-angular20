@@ -13,11 +13,18 @@
       <div class="modal-body">
         <form [formGroup]="cenadForm">
           <div class="mb-3">
-            <label><b>CENAD/CMT<sup class="text-danger">*</sup></b></label>
+            <label
+              ><b>CENAD/CMT<sup class="text-danger">*</sup></b></label
+            >
             <input type="text" class="form-control" formControlName="nombre" />
+            @if (nombre?.touched && nombre?.invalid) {
+            <span class="text-danger">El nombre es obligatorio</span>
+            }
           </div>
           <div class="mb-3">
-            <label><b>PROVINCIA<sup class="text-danger">*</sup></b></label>
+            <label
+              ><b>PROVINCIA<sup class="text-danger">*</sup></b></label
+            >
             <select class="form-select" formControlName="provincia">
               <option value="0" disabled>Selecciona una provincia</option>
               @for (p of provincias(); track p.idProvincia) {
@@ -26,23 +33,45 @@
             </select>
           </div>
           <div class="mb-3">
-            <label><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label>
+            <label
+              ><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label
+            >
             <input type="text" class="form-control" formControlName="direccion" />
+            @if (direccion?.touched && direccion?.invalid) {
+            <span class="text-danger">La dirección es obligatoria</span>
+            }
           </div>
           <div class="mb-3">
-            <label><b>TELÉFONO<sup class="text-danger">*</sup></b></label>
+            <label
+              ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
+            >
             <input type="text" class="form-control" formControlName="tfno" />
+            @if (tfno?.touched && tfno?.invalid) {
+            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            }
           </div>
           <div class="mb-3">
-            <label><b>CORREO<sup class="text-danger">*</sup></b></label>
+            <label
+              ><b>CORREO<sup class="text-danger">*</sup></b></label
+            >
             <input type="email" class="form-control" formControlName="email" />
+            @if (email?.touched && email?.invalid) {
+            <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+            }
           </div>
           <div class="mb-3">
-            <label><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
+            <label
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
             <textarea class="form-control" formControlName="descripcion"></textarea>
+            @if (descripcion?.touched && descripcion?.invalid) {
+            <div class="text-danger">La descripción es obligatoria.</div>
+            }
           </div>
           <div class="mb-3">
-            <label><b>ESCUDO<sup class="text-danger">*</sup></b> (Máx {{ sizeMaxEscudo() }} MB)</label>
+            <label
+              ><b>ESCUDO<sup class="text-danger">*</sup></b> (Máx {{ sizeMaxEscudo() }} MB)</label
+            >
             @if (escudoActual()) {
             <div class="d-flex flex-column align-items-start mb-2">
               <small class="text-muted mb-2">Archivo actual: {{ escudoActual() }}</small>
@@ -57,16 +86,16 @@
             <p class="text-muted">No hay ningún escudo cargado</p>
             }
             <div class="d-flex">
-                <input
-                  type="file"
-                  accept="image/*"
-                  (change)="onFileChange($event)"
-                  #fileInput
-                  hidden
-                />
-                <button type="button" class="btn" (click)="fileInput.click()">
-                  Seleccionar archivo
-                </button>
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onFileChange($event)"
+                #fileInput
+                hidden
+              />
+              <button type="button" class="btn" (click)="fileInput.click()">
+                Seleccionar archivo
+              </button>
               @if (escudoFile()) {
               <div class="mt-2 ms-2">
                 <small class="text-muted">Archivo seleccionado: {{ escudoFile()?.name }}</small>

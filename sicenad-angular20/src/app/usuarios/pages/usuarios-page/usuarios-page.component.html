@@ -7,14 +7,14 @@ administradores y normales y si se entra como administrador de un cenad mostrara
   <h3 class="position-absolute start-50 translate-middle-x m-0 mb-3 titulo">
     <u>GESTIÓN DE USUARIOS</u>
   </h3>
-  @if (rol() === 'Normal' || rol() === 'Gestor' || (rol() === 'Administrador' && !isMiCenad())){
+  @if (rol() === misRoles.Normal || (rol() === misRoles.Administrador && !isMiCenad())) {
   <div class="row ms-5 p-0 mt-5">
     <p class="titulo mt-5">NO ESTÁS AUTORIZADO A LA GESTIÓN DE USUARIOS EN OTRO CENAD/CMT</p>
   </div>
   }
 </div>
 <!-- vista de superadministrador->ve superadministradores,administradores y usuarios normales -->
-@if (rol() === 'Superadministrador'){
+@if (rol() === misRoles.Superadministrador) {
 <div class="row ms-5">
   <!-- superadministradores -->
   <div class="col col-md-4">
@@ -29,7 +29,7 @@ administradores y normales y si se entra como administrador de un cenad mostrara
     <p>Normales</p>
   </div>
 </div>
-} @if (rol() === 'Administrador' && isMiCenad()) {
+} @if (rol() === misRoles.Administrador && isMiCenad()) {
 <!-- vista de administrador->ve gestores y usuarios normales -->
 <div class="row ms-5">
   <!-- Gestores -->

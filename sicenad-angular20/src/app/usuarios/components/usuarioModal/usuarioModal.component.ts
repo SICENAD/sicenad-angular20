@@ -1,8 +1,9 @@
-import { JsonPipe } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { Cenad } from '@interfaces/models/cenad';
+import { Unidad } from '@interfaces/models/unidad';
 import { Usuario } from '@interfaces/models/usuario';
 import { UsuarioAdministrador } from '@interfaces/models/usuarioAdministrador';
 import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
@@ -14,7 +15,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-usuario-modal',
-  imports: [ReactiveFormsModule, FontAwesomeModule, JsonPipe],
+  imports: [ReactiveFormsModule, FontAwesomeModule],
   templateUrl: './usuarioModal.component.html',
   styleUrls: ['./usuarioModal.component.css']
 })
@@ -27,6 +28,8 @@ export class UsuarioModalComponent {
   faEdit = this.iconos.faEdit;
   // --- Inputs / Outputs ---
   usuario = input<Usuario>();
+  cenad = input<Cenad | undefined>();
+  unidad = input<Unidad | undefined>();
   output = output<void>();
 
   get usuarioTipado(): UsuarioSuperAdministrador | UsuarioAdministrador | UsuarioGestor | UsuarioNormal {
@@ -101,62 +104,63 @@ export class UsuarioModalComponent {
           error: error => console.error('Error actualizando Usuario Superadministrador:', error)
         });
         break;
-      /*
-          case RolUsuario.Administrador:
-            this.orquestadorService.actualizarUsuarioAdministrador(
-              username,
-              tfno,
-              email,
-              emailAdmitido,
-              descripcion,
-              this.idUsuario()
-            ).subscribe({
-              next: res => {
-                if (res) {
-                  console.log(`Usuario Administrador ${username} actualizado correctamente.`);
-                  this.output.emit();
-                }
-              },
-              error: error => console.error('Error actualizando Usuario Administrador:', error)
-            });
-            break;
-          case RolUsuario.Gestor:
-            this.orquestadorService.actualizarUsuarioGestor(
-              username,
-              tfno,
-              email,
-              emailAdmitido,
-              descripcion,
-              this.idUsuario()
-            ).subscribe({
-              next: res => {
-                if (res) {
-                  console.log(`Usuario Gestor ${username} actualizado correctamente.`);
-                  this.output.emit();
-                }
-              },
-              error: error => console.error('Error actualizando Usuario Gestor:', error)
-            });
-            break;
-          case RolUsuario.Normal:
-            this.orquestadorService.actualizarUsuarioNormal(
-              username,
-              tfno,
-              email,
-              emailAdmitido,
-              descripcion,
-              this.idUsuario()
-            ).subscribe({
-              next: res => {
-                if (res) {
-                  console.log(`Usuario Normal ${username} actualizado correctamente.`);
-                  this.output.emit();
-                }
-              },
-              error: error => console.error('Error actualizando Usuario Normal:', error)
-            });
-            break;
-      */
+      case RolUsuario.Administrador:
+        this.orquestadorService.actualizarUsuarioAdministrador(
+          username,
+          tfno,
+          email,
+          emailAdmitido,
+          descripcion,
+          this.cenad()?.idString || '',
+          this.idUsuario()
+        ).subscribe({
+          next: res => {
+            if (res) {
+              console.log(`Usuario Administrador ${username} actualizado correctamente.`);
+              this.output.emit();
+            }
+          },
+          error: error => console.error('Error actualizando Usuario Administrador:', error)
+        });
+        break;
+      case RolUsuario.Gestor:
+        this.orquestadorService.actualizarUsuarioGestor(
+          username,
+          tfno,
+          email,
+          emailAdmitido,
+          descripcion,
+          this.cenad()?.idString || '',
+          this.idUsuario()
+        ).subscribe({
+          next: res => {
+            if (res) {
+              console.log(`Usuario Gestor ${username} actualizado correctamente.`);
+              this.output.emit();
+            }
+          },
+          error: error => console.error('Error actualizando Usuario Gestor:', error)
+        });
+        break;
+      case RolUsuario.Normal:
+        this.orquestadorService.actualizarUsuarioNormal(
+          username,
+          tfno,
+          email,
+          emailAdmitido,
+          descripcion,
+          this.unidad()?.idString || '',
+          this.idUsuario()
+        ).subscribe({
+          next: res => {
+            if (res) {
+              console.log(`Usuario Normal ${username} actualizado correctamente.`);
+              this.output.emit();
+            }
+          },
+          error: error => console.error('Error actualizando Usuario Normal:', error)
+        });
+        break;
       default:
         console.error('Rol no reconocido al actualizar usuario:', this.usuario()?.rol);
     }
@@ -169,26 +173,24 @@ export class UsuarioModalComponent {
           this.output.emit();
         });
         break;
-      /*
-            case RolUsuario.Administrador:
-              this.orquestadorService.borrarUsuarioAdministrador(this.idUsuario()).subscribe(() => {
-                console.log('Usuario Administrador borrado correctamente.');
-                this.output.emit();
-              });
-              break;
-            case RolUsuario.Gestor:
-              this.orquestadorService.borrarUsuarioGestor(this.idUsuario()).subscribe(() => {
-                console.log('Usuario Gestor borrado correctamente.');
-                this.output.emit();
-              });
-              break;
-            case RolUsuario.Normal:
-              this.orquestadorService.borrarUsuarioNormal(this.idUsuario()).subscribe(() => {
-                console.log('Usuario Normal borrado correctamente.');
-                this.output.emit();
-              });
-              break;
-      */
+      case RolUsuario.Administrador:
+        this.orquestadorService.borrarUsuarioAdministrador(this.idUsuario()).subscribe(() => {
+          console.log('Usuario Administrador borrado correctamente.');
+          this.output.emit();
+        });
+        break;
+      case RolUsuario.Gestor:
+        this.orquestadorService.borrarUsuarioGestor(this.cenad()?.idString || '', this.idUsuario()).subscribe(() => {
+          console.log('Usuario Gestor borrado correctamente.');
+          this.output.emit();
+        });
+        break;
+      case RolUsuario.Normal:
+        this.orquestadorService.borrarUsuarioNormal(this.idUsuario()).subscribe(() => {
+          console.log('Usuario Normal borrado correctamente.');
+          this.output.emit();
+        });
+        break;
       default:
         console.error('Rol no reconocido al borrar usuario:', this.usuario()?.rol);
     }
