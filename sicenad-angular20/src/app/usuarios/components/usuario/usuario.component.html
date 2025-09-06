@@ -1,7 +1,38 @@
 <hr class="w-100" />
 <div class="row">
+  @if (usuarioTipado.rol === rolUsuario.Superadministrador) {
   <div class="col-10 col-sm-10 col-md-12 col-lg-12 col-xl-12">
     {{ usuarioTipado.username }}
-      <app-usuario-modal [usuario]="usuarioTipado" [cenad]="cenad()" [unidad]="unidad()"></app-usuario-modal>
+    <app-usuario-modal
+      [usuario]="usuarioTipado"
+      [cenad]="cenad()"
+      [unidad]="unidad()"
+    ></app-usuario-modal>
   </div>
+  } @if (usuarioTipado.rol === rolUsuario.Administrador || usuarioTipado.rol === rolUsuario.Gestor) {
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 titulo">
+    {{ usuarioTipado.username }}
+    <app-usuario-modal
+      [usuario]="usuarioTipado"
+      [cenad]="cenad()"
+      [unidad]="unidad()"
+    ></app-usuario-modal>
+  </div>
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 titulo">
+    {{ cenad()?.nombre }}
+  </div>
+  }
+    @if (usuarioTipado.rol === rolUsuario.Normal) {
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 titulo">
+    {{ usuarioTipado.username }}
+    <app-usuario-modal
+      [usuario]="usuarioTipado"
+      [cenad]="cenad()"
+      [unidad]="unidad()"
+    ></app-usuario-modal>
+  </div>
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 titulo">
+    {{ unidad()?.nombre }}
+  </div>
+  }
 </div>

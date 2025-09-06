@@ -67,14 +67,13 @@ export class RegisterComponent {
     const passwordForRegister = this.utils.passwordForRegister();
     passwordForRegister == this.passwordForRegisterFromUser()
       ?
-      (this.orquestadorService.registerUsuario(
+      (this.orquestadorService.registerUsuarioSuperadministrador(
         username,
         password,
         tfno,
         email,
         emailAdmitido,
-        descripcion,
-        RolUsuario.Superadministrador
+        descripcion
       ).subscribe({
         next: (res) => {
           this.passwordForRegisterFromUser.set('');

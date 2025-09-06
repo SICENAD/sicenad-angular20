@@ -3,6 +3,7 @@ import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs
 import { ApiService } from "./apiService";
 import { Cenad } from "@interfaces/models/cenad";
 import { UtilService } from "./utilService";
+import { Unidad } from "@interfaces/models/unidad";
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {
@@ -39,10 +40,33 @@ export class CenadService {
   getCenadsSinAdmin(): Observable<Cenad[] | null> {
     const endpoint = `/cenads/sinAdmin?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { cenads: Cenad[] } }>(endpoint, 'GET').pipe(
-      map(res => {
-        this.cenads = res._embedded?.cenads.map((c: any): Cenad => ({ ...c, url: c._links?.self?.href })) || [];
-        return this.cenads;
-      }),
+      map(res =>
+        res._embedded?.cenads.map((c: any): Cenad => ({ ...c, url: c._links?.self?.href })) || []
+      ),
+      catchError(err => { console.error(err); return of([]); })
+    );
+  }
+
+  getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
+    const endpoint = `/usuarios_administrador/${idUsuarioAdministrador}/cenad`;
+    return this.apiService.peticionConToken<Cenad>(endpoint, 'GET').pipe(
+      map(res => ({...res, url: (res as any)._links?.self?.href})),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
+
+  getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
+    const endpoint = `/usuarios_gestor/${idUsuarioGestor}/cenad`;
+    return this.apiService.peticionConToken<Cenad>(endpoint, 'GET').pipe(
+      map(res => ({...res, url: (res as any)._links?.self?.href})),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
+
+  getUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
+    const endpoint = `/usuarios_normal/${idUsuarioNormal}/unidad`;
+    return this.apiService.peticionConToken<Unidad>(endpoint, 'GET').pipe(
+      map(res => ({...res, url: (res as any)._links?.self?.href})),
       catchError(err => { console.error(err); return of(null); })
     );
   }
@@ -54,8 +78,6 @@ export class CenadService {
       catchError(err => { console.error(err); return of(null); })
     );
   }
-
-
 
 
 

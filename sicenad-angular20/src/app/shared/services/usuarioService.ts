@@ -155,6 +155,13 @@ export class UsuarioService {
     );
   }
 
+    getUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
+    const endpoint = `/usuarios_administrador/search/findByUsername?username=${username}`;
+    return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
+      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
 
 
 

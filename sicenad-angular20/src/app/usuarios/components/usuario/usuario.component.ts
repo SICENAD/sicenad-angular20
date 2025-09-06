@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
 import { Usuario } from '@interfaces/models/usuario';
 import { UsuarioModalComponent } from '../usuarioModal/usuarioModal.component';
@@ -6,6 +6,7 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { UsuarioAdministrador } from '@interfaces/models/usuarioAdministrador';
 import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
 import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
+import { OrquestadorService } from '@services/orquestadorService';
 import { Cenad } from '@interfaces/models/cenad';
 import { Unidad } from '@interfaces/models/unidad';
 
@@ -17,9 +18,12 @@ import { Unidad } from '@interfaces/models/unidad';
 })
 export class UsuarioComponent {
 
+  private orquestadorService = inject(OrquestadorService);
+
   usuario = input.required<Usuario>();
-  cenad = input<Cenad | undefined>();
-  unidad = input<Unidad | undefined>();
+  readonly rolUsuario = RolUsuario;
+  cenad = signal<Cenad | undefined>(undefined);
+  unidad = signal<Unidad | undefined>(undefined);
 
   get usuarioTipado(): UsuarioSuperAdministrador | UsuarioAdministrador | UsuarioGestor | UsuarioNormal {
     switch (this.usuario()?.rol) {
@@ -34,4 +38,46 @@ export class UsuarioComponent {
         return this.usuario() as UsuarioNormal;
     }
   }
- }
+
+  private cargarCenadOUnidad(): void {
+    if (!this.usuario()) return;
+    switch (this.usuario()?.rol) {
+      case this.rolUsuario.Superadministrador:
+        // Aquí podrás hacer otra llamada o acción específica
+        console.log('Usuario Superadministrador detectado');
+        break;
+      case this.rolUsuario.Administrador:
+        // Caso específico para rol Administrador
+        this.orquestadorService.loadCenadDeAdministrador(this.usuario().idString).subscribe({
+          next: (cenad) => {
+            if (cenad) {
+              console.log('CENAD cargado para el usuario Administrador:', cenad);
+              // Aquí podrías guardar en un signal o propiedad local
+              this.cenad.set(cenad);
+            } else {
+              console.warn(`No se encontró un CENAD para el usuario ${this.usuario().idString}`);
+            }
+          },
+          error: (error) => {
+            console.error('Error al cargar CENAD para usuario Administrador:', error);
+          }
+        });
+        break;
+      case this.rolUsuario.Gestor:
+        // Lógica para gestor
+        console.log('Usuario Gestor detectado');
+        break;
+      case this.rolUsuario.Normal:
+        // Lógica para usuario normal
+        console.log('Usuario Normal detectado');
+        break;
+      default:
+        break;
+    }
+  }
+
+  ngOnInit(): void {
+    this.cargarCenadOUnidad();
+  }
+
+}

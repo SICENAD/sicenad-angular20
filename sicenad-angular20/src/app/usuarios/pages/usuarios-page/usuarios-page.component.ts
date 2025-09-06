@@ -8,10 +8,11 @@ import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UsuariosSuperadministradorPageComponent } from "../usuariosSuperadministrador-page/usuariosSuperadministrador-page.component";
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { UsuariosAdministradorPageComponent } from '../usuariosAdministrador-page/usuariosAdministrador-page.component';
 
 @Component({
   selector: 'app-usuarios-page',
-  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent],
+  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent, UsuariosAdministradorPageComponent],
   templateUrl: './usuarios-page.component.html',
   styleUrls: ['./usuarios-page.component.css'],
 })

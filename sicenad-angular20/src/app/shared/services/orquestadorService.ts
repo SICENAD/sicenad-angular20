@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { forkJoin, Observable, of, tap, catchError } from "rxjs";
+import { forkJoin, Observable, of, tap, catchError, map, switchMap } from "rxjs";
 import { DatosPrincipalesStore } from "@stores/datosPrincipales.store";
 import { CenadService } from "./cenadService";
 import { Cenad } from "@interfaces/models/cenad";
@@ -32,6 +32,7 @@ import { Solicitud } from "@interfaces/models/solicitud";
 import { UsuarioGestor } from "@interfaces/models/usuarioGestor";
 import { RegisterResponse } from "@interfaces/responses/registerResponse";
 import { LoginResponse } from "@interfaces/responses/loginResponse";
+import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
 
 
 @Injectable({ providedIn: 'root' })
@@ -316,6 +317,77 @@ export class OrquestadorService {
     );
   }
 
+  registerUsuarioSuperadministrador(
+    username: string,
+    password: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+  ): Observable<RegisterResponse> {
+    return this.registerUsuario(
+      username,
+      password,
+      tfno,
+      email,
+      emailAdmitido,
+      descripcion,
+      RolUsuario.Superadministrador
+    ).pipe(
+      tap(() => this.loadAllUsuariosSuperadministrador().subscribe())
+    );
+  }
+
+  registerUsuarioAdministrador(
+    username: string,
+    password: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idCenad: string
+  ): Observable<RegisterResponse> {
+    return this.registerUsuario(
+      username,
+      password,
+      tfno,
+      email,
+      emailAdmitido,
+      descripcion,
+      RolUsuario.Administrador
+    ).pipe(
+      switchMap(registerRes =>
+        this.loadUsuarioAdministradorPorUsername(username).pipe(
+          switchMap(usuario => {
+            if (!usuario) {
+              console.warn(`No se encontró Usuario Administrador con username ${username} tras el registro.`);
+              return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
+            }
+            // Editamos el usuario para asignarle el CENAD
+            return this.actualizarUsuarioAdministrador(
+              username,
+              tfno,
+              email,
+              emailAdmitido,
+              descripcion,
+              idCenad,
+              usuario.idString
+            ).pipe(
+              map(() => registerRes) // seguimos devolviendo la respuesta del registro original
+            );
+          })
+        )
+      ),
+      tap(() => {
+        this.loadAllUsuariosAdministrador().subscribe();
+      }),
+      catchError(err => {
+        console.error('Error en registerUsuarioAdministrador:', err);
+        return of(null as unknown as RegisterResponse);
+      })
+    );
+  }
+
   registerUsuario(
     username: string,
     password: string,
@@ -336,7 +408,6 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         console.log('✅ Registro correcto', res);
-        this.loadAllUsuariosSuperadministrador().subscribe();
       }),
       catchError(err => {
         console.error('❌ Error registrando usuario', err);
@@ -376,6 +447,15 @@ export class OrquestadorService {
   }
 
   // --- CRUD UsuariosAdministrador ---
+  loadUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
+    return this.usuarioService.getUsuarioAdministradorPorUsername(username).pipe(
+      catchError(err => {
+        console.error('Error cargando usuario administrador', err);
+        return of(null);
+      })
+    );
+  }
+
   actualizarUsuarioAdministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioAdministrador: string): Observable<any> {
     return this.usuarioService.editarUsuarioAdministrador(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioAdministrador).pipe(
       tap(res => {
@@ -550,6 +630,33 @@ export class OrquestadorService {
     return this.cenadService.getEscudo(escudo, idCenad);
   }
 
+  loadCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
+    return this.cenadService.getCenadDeAdministrador(idUsuarioAdministrador).pipe(
+      catchError(err => {
+        console.error('Error cargando cenad del administrador', err);
+        return of(null);
+      })
+    );
+  }
+
+  loadCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
+    return this.cenadService.getCenadDeGestor(idUsuarioGestor).pipe(
+      catchError(err => {
+        console.error('Error cargando cenad del gestor', err);
+        return of(null);
+      })
+    );
+  }
+
+  loadCenadsSinAdmin(): Observable<Cenad[] | null> {
+    return this.cenadService.getCenadsSinAdmin().pipe(
+      catchError(err => {
+        console.error('Error cargando cenads', err);
+        return of([]);
+      })
+    );
+  }
+
   // --- CRUD Armas ---
   crearArma(nombre: string, tipoTiro: string): Observable<any> {
     return this.armaService.crearArma(nombre, tipoTiro).pipe(
@@ -634,6 +741,15 @@ export class OrquestadorService {
         } else {
           console.warn(`Hubo un problema borrando la unidad con id ${id}.`);
         }
+      })
+    );
+  }
+
+  loadUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
+    return this.cenadService.getUnidadDeUsuarioNormal(idUsuarioNormal).pipe(
+      catchError(err => {
+        console.error('Error cargando unidad del usuario normal', err);
+        return of(null);
       })
     );
   }
