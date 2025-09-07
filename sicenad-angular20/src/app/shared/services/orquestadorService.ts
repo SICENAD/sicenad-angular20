@@ -961,32 +961,84 @@ export class OrquestadorService {
       })
     );
   }
-  /*
 
+  // --- CRUD Cartografias ---
+  crearCartografia(
+    nombre: string,
+    descripcion: string,
+    escala: string,
+    archivo: File,
+    idCenad: string
+  ): Observable<any> {
+    return this.cartografiaService.crearCartografia(
+      nombre,
+      descripcion,
+      escala,
+      archivo,
+      idCenad
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCartografias(idCenad).pipe(
+            tap(cartografias => this.cenadStore.setCartografias(cartografias))
+          ).subscribe();
+          console.log(`Cartografía ${nombre} creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando la cartografía ${nombre}.`);
+        }
+      })
+    );
+  }
 
+  actualizarCartografia(
+    nombre: string,
+    descripcion: string,
+    escala: string,
+    archivoCartografia: File | null,
+    archivoActual: string,
+    idCenad: string,
+    idCartografia: string
+  ): Observable<any> {
+    return this.cartografiaService.editarCartografia(
+      nombre,
+      descripcion,
+      escala,
+      archivoCartografia,
+      archivoActual,
+      idCenad,
+      idCartografia
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCartografias(idCenad).pipe(
+            tap(cartografias => this.cenadStore.setCartografias(cartografias))
+          ).subscribe(); console.log(`Cartografía ${nombre} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando la cartografía ${nombre}.`);
+        }
+      })
+    );
+  }
 
-    // --- CRUD UsuariosAdministrador ---
-    createUsuarioAdmin(c: any): void {
-      this.usuarioAdminService.create(c).subscribe(() => this.loadAllUsuariosAdministrador());
-    }
-    updateUsuarioAdmin(c: any): void {
-      this.usuarioAdminService.update(c).subscribe(() => this.loadAllUsuariosAdministrador());
-    }
-    deleteUsuarioAdmin(id: string): void {
-      this.usuarioAdminService.delete(id).subscribe(() => this.loadAllUsuariosAdministrador());
-    }
+  borrarCartografia(nombreArchivo: string, idCartografia: string, idCenad: string): Observable<any> {
+    return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, idCenad).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Cartografía ${nombreArchivo} borrada correctamente.`);
+          this.loadAllCartografias(idCenad).pipe(
+            tap(cartografias => this.cenadStore.setCartografias(cartografias))
+          ).subscribe();
+        } else {
+          console.warn(`Hubo un problema borrando la cartografía ${nombreArchivo}.`);
+        }
+      })
+    );
+  }
 
-    // --- CRUD UsuariosNormal ---
-    createUsuarioNormal(c: any): void {
-      this.usuarioNormalService.create(c).subscribe(() => this.loadAllUsuariosNormal());
-    }
-    updateUsuarioNormal(c: any): void {
-      this.usuarioNormalService.update(c).subscribe(() => this.loadAllUsuariosNormal());
-    }
-    deleteUsuarioNormal(id: string): void {
-      this.usuarioNormalService.delete(id).subscribe(() => this.loadAllUsuariosNormal());
-    }
-  */
+  getArchivoCartografia(nombreArchivo: string, idCenad: string): Observable<void> {
+    return this.cartografiaService.getArchivoCartografia(nombreArchivo, idCenad);
+  }
+
 
   // --- GETTERS ---
   getCenads(): Cenad[] { return this.datosStore.cenads(); }

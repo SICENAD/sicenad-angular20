@@ -123,22 +123,25 @@ export class ApiService {
   mostrarArchivo(url: string): Observable<Blob> {
     return this.peticionArchivoCarpetaConToken<Blob>(url, 'GET', null);
   }
-  descargarArchivo(urlDownload: string, nombreArchivo: string): void {
-    this.peticionArchivoCarpetaConToken<Blob>(urlDownload, 'GET', null).subscribe({
-      next: (blob: Blob) => {
+  descargarArchivo(urlDownload: string, nombreArchivo: string): Observable<void> {
+    return this.peticionArchivoCarpetaConToken<Blob>(urlDownload, 'GET', null).pipe(
+      map((blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = nombreArchivo;
         a.click();
         window.URL.revokeObjectURL(url);
-      },
-      error: (err) => {
+        return void 0; // Esto emite "void"
+      }),
+      catchError(err => {
         alert('Error al descargar el archivo');
         console.error(err);
-      }
-    });
+        return throwError(() => err);
+      })
+    );
   }
+
   subirArchivo(urlUpload: string, archivo: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', archivo);

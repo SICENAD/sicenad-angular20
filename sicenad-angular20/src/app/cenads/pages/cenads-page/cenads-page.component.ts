@@ -34,7 +34,6 @@ export class CenadsPageComponent {
     escudo: [null, Validators.required]
   });
 
-
   get nombre() { return this.cenadForm.get('nombre'); }
   get provincia() { return this.cenadForm.get('provincia'); }
   get direccion() { return this.cenadForm.get('direccion'); }

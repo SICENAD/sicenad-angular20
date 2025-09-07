@@ -31,69 +31,92 @@
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
-            <label for="nombre" class="form-label titulo1"><b>CENAD/CMT<sup class="text-danger">*</sup></b></label>
-            <input type="text" id="nombre" class="form-control" formControlName="nombre"/>
+            <label for="nombre" class="form-label titulo1"
+              ><b>CENAD/CMT<sup class="text-danger">*</sup></b></label
+            >
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-              <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">El nombre es obligatorio</span>
             }
           </div>
           <!-- Provincia -->
           <div class="mb-3">
-            <label class="titulo1"><b>PROVINCIA<sup class="text-danger">*</sup></b></label>
+            <label class="titulo1"
+              ><b>PROVINCIA<sup class="text-danger">*</sup></b></label
+            >
             <select class="form-select" formControlName="provincia">
               <option value="0" disabled selected>Selecciona una provincia</option>
               @for (p of provincias(); track p.idProvincia) {
-                <option [value]="p.idProvincia">{{ p.nombre }}</option>
+              <option [value]="p.idProvincia">{{ p.nombre }}</option>
               }
             </select>
             @if (provincia?.touched && provincia?.invalid) {
-              <div class="text-danger">Selecciona una provincia válida</div>
+            <div class="text-danger">Selecciona una provincia válida</div>
             }
           </div>
           <!-- Dirección -->
           <div class="mb-3">
-            <label for="direccion" class="form-label titulo1"><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label>
-            <input type="text" id="direccion" class="form-control" formControlName="direccion"/>
+            <label for="direccion" class="form-label titulo1"
+              ><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label
+            >
+            <input type="text" id="direccion" class="form-control" formControlName="direccion" />
             @if (direccion?.touched && direccion?.invalid) {
-              <span class="text-danger">La dirección es obligatoria</span>
+            <span class="text-danger">La dirección es obligatoria</span>
             }
           </div>
           <!-- Teléfono -->
           <div class="mb-3">
-            <label for="tfno" class="form-label titulo1"><b>TELÉFONO<sup class="text-danger">*</sup></b></label>
-            <input type="text" id="tfno" class="form-control" formControlName="tfno"/>
+            <label for="tfno" class="form-label titulo1"
+              ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
+            >
+            <input type="text" id="tfno" class="form-control" formControlName="tfno" />
             @if (tfno?.touched && tfno?.invalid) {
-              <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
             }
           </div>
           <!-- Email -->
           <div class="mb-3">
-            <label for="email" class="form-label titulo1"><b>CORREO<sup class="text-danger">*</sup></b></label>
-            <input type="email" id="email" class="form-control" formControlName="email"/>
+            <label for="email" class="form-label titulo1"
+              ><b>CORREO<sup class="text-danger">*</sup></b></label
+            >
+            <input type="email" id="email" class="form-control" formControlName="email" />
             <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
             @if (email?.touched && email?.invalid) {
-              <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+            <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
             }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
-            <label class="form-label titulo1"><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
+            <label class="form-label titulo1"
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-              <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">La descripción es obligatoria.</div>
             }
           </div>
           <!-- Escudo -->
           <div class="mb-3">
-            <label class="titulo1"><b>ESCUDO<sup class="text-danger">*</sup></b> (Máx: {{ sizeMaxEscudo() }} MB)</label>
-            <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput/>
+            <label class="titulo1"
+              ><b>ESCUDO<sup class="text-danger">*</sup></b> (Máx: {{ sizeMaxEscudo() }} MB)</label
+            >
+            <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput hidden />
+            <button type="button" class="btn" (click)="fileInput.click()">
+              Seleccionar archivo
+            </button>
           </div>
           <!-- Vista previa -->
           @if (previewEscudo) {
-            <div style="margin-top: 10px">
-              <label><b>Vista previa del escudo:</b></label><br/>
-              <img [src]="previewEscudo" alt="Vista previa" class="img-thumbnail" style="max-height: 100px"/>
-            </div>
+          <div style="margin-top: 10px">
+            <label><b>Vista previa del escudo:</b></label
+            ><br />
+            <img
+              [src]="previewEscudo"
+              alt="Vista previa"
+              class="img-thumbnail"
+              style="max-height: 100px"
+            />
+          </div>
           }
         </div>
         <div class="modal-footer">

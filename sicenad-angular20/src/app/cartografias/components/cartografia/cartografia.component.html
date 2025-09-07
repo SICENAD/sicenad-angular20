@@ -1,0 +1,15 @@
+<hr class="w-100" />
+@if (cartografia()) {
+<div class="row">
+  <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
+    {{ cartografia().nombre }}
+    <app-cartografia-modal [cartografia]="cartografia()" />
+  </div>
+  <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2">{{ cartografia().escala }}</div>
+  <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5">{{ cartografia().descripcion }}</div>
+  <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 text-center">
+    <a (click)="descargar()"
+      ><fa-icon [icon]="faDownload"></fa-icon></a>
+  </div>
+</div>
+}
