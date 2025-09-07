@@ -1,5 +1,4 @@
-import { Injectable, signal, computed, inject, effect } from '@angular/core';
-import { UtilsStore } from '@stores/utils.store';
+import { Injectable, signal, inject, effect } from '@angular/core';
 import { Categoria } from '@interfaces/models/categoria';
 import { Cartografia } from '@interfaces/models/cartografia';
 import { Cenad } from '@interfaces/models/cenad';
@@ -8,10 +7,11 @@ import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
 import { UsuarioAdministrador } from '@interfaces/models/usuarioAdministrador';
 import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
+import { LocalStorageService } from '@services/localStorageService';
 
 @Injectable({ providedIn: 'root' })
 export class CenadStore {
-  private utils = inject(UtilsStore);
+  private localStorageService = inject(LocalStorageService);
 
   // --- STATE ---
   private _categorias = signal<Categoria[]>([]);
@@ -24,28 +24,28 @@ export class CenadStore {
   private _usuarioAdministrador = signal<UsuarioAdministrador | null>(null);
   private _cenadVisitado = signal<Cenad | null>(null);
 
-  // --- GETTERS ---
-  categorias = computed(() => this._categorias());
-  categoriasPadre = computed(() => this._categoriasPadre());
-  recursos = computed(() => this._recursos());
-  cartografias = computed(() => this._cartografias());
-  normativas = computed(() => this._normativas());
-  solicitudes = computed(() => this._solicitudes());
-  usuariosGestor = computed(() => this._usuariosGestor());
-  usuarioAdministrador = computed(() => this._usuarioAdministrador());
-  cenadVisitado = computed(() => this._cenadVisitado());
+// --- GETTERS --- (usando computedAntiExpiracionLocalStorage)
+  categorias = this.localStorageService.computedAntiExpiracionLocalStorage(this._categorias);
+  categoriasPadre = this.localStorageService.computedAntiExpiracionLocalStorage(this._categoriasPadre);
+  recursos = this.localStorageService.computedAntiExpiracionLocalStorage(this._recursos);
+  cartografias = this.localStorageService.computedAntiExpiracionLocalStorage(this._cartografias);
+  normativas = this.localStorageService.computedAntiExpiracionLocalStorage(this._normativas);
+  solicitudes = this.localStorageService.computedAntiExpiracionLocalStorage(this._solicitudes);
+  usuariosGestor = this.localStorageService.computedAntiExpiracionLocalStorage(this._usuariosGestor);
+  usuarioAdministrador = this.localStorageService.computedAntiExpiracionLocalStorage(this._usuarioAdministrador);
+  cenadVisitado = this.localStorageService.computedAntiExpiracionLocalStorage(this._cenadVisitado);
 
   // --- EFFECTS (persistencia localStorage) ---
   private persist = effect(() => {
-    localStorage.setItem('categorias', JSON.stringify(this._categorias()));
-    localStorage.setItem('categoriasPadre', JSON.stringify(this._categoriasPadre()));
-    localStorage.setItem('recursos', JSON.stringify(this._recursos()));
-    localStorage.setItem('cartografias', JSON.stringify(this._cartografias()));
-    localStorage.setItem('normativas', JSON.stringify(this._normativas()));
-    localStorage.setItem('solicitudes', JSON.stringify(this._solicitudes()));
-    localStorage.setItem('usuariosGestor', JSON.stringify(this._usuariosGestor()));
-    localStorage.setItem('usuarioAdministrador', JSON.stringify(this._usuarioAdministrador()));
-    localStorage.setItem('cenadVisitado', JSON.stringify(this._cenadVisitado()));
+    this.localStorageService.setItem('categorias', this._categorias());
+    this.localStorageService.setItem('categoriasPadre', this._categoriasPadre());
+    this.localStorageService.setItem('recursos', this._recursos());
+    this.localStorageService.setItem('cartografias', this._cartografias());
+    this.localStorageService.setItem('normativas', this._normativas());
+    this.localStorageService.setItem('solicitudes', this._solicitudes());
+    this.localStorageService.setItem('usuariosGestor', this._usuariosGestor());
+    this.localStorageService.setItem('usuarioAdministrador', this._usuarioAdministrador());
+    this.localStorageService.setItem('cenadVisitado', this._cenadVisitado());
   });
 
   // --- MÉTODOS DE UTILIDAD: SET / ADD / REMOVE / CLEAR ---
@@ -100,43 +100,21 @@ export class CenadStore {
   clearCenadVisitado() { this._cenadVisitado.set(null); }
 
   constructor() {
-    this.initializeLocalStorage();
+    this.loadFromLocalStorage();
   }
 
-  // --- INIT ---
-  private initializeLocalStorage() {
-    const arrayKeys = ['categorias', 'categoriasPadre', 'recursos', 'cartografias', 'normativas', 'solicitudes', 'usuariosGestor'];
-    const objectKeys = ['usuarioAdministrador', 'cenadVisitado'];
-    arrayKeys.forEach(k => {
-      if (!localStorage.getItem(k)) localStorage.setItem(k, JSON.stringify([]));
-    });
-    objectKeys.forEach(k => {
-      if (!localStorage.getItem(k)) localStorage.setItem(k, JSON.stringify(null));
-    });
-
-    this._categorias.set([...this.utils.parseJSON<Categoria[]>(localStorage.getItem('categorias'), [])]);
-    this._categoriasPadre.set([...this.utils.parseJSON<Categoria[]>(localStorage.getItem('categoriasPadre'), [])]);
-    this._recursos.set([...this.utils.parseJSON<Recurso[]>(localStorage.getItem('recursos'), [])]);
-    this._cartografias.set([...this.utils.parseJSON<Cartografia[]>(localStorage.getItem('cartografias'), [])]);
-    this._normativas.set([...this.utils.parseJSON<Normativa[]>(localStorage.getItem('normativas'), [])]);
-    this._solicitudes.set([...this.utils.parseJSON<Solicitud[]>(localStorage.getItem('solicitudes'), [])]);
-    this._usuariosGestor.set([...this.utils.parseJSON<UsuarioGestor[]>(localStorage.getItem('usuariosGestor'), [])]);
-    this._usuarioAdministrador.set(this.utils.parseJSON<UsuarioAdministrador | null>(localStorage.getItem('usuarioAdministrador'), null));
-    this._cenadVisitado.set(this.utils.parseJSON<Cenad | null>(localStorage.getItem('cenadVisitado'), null));
-  }
-
-  // --- OTROS MÉTODOS ---
   loadFromLocalStorage() {
-    this._categorias.set([...this.utils.parseJSON<Categoria[]>(localStorage.getItem('categorias'), [])]);
-    this._categoriasPadre.set([...this.utils.parseJSON<Categoria[]>(localStorage.getItem('categoriasPadre'), [])]);
-    this._recursos.set([...this.utils.parseJSON<Recurso[]>(localStorage.getItem('recursos'), [])]);
-    this._cartografias.set([...this.utils.parseJSON<Cartografia[]>(localStorage.getItem('cartografias'), [])]);
-    this._normativas.set([...this.utils.parseJSON<Normativa[]>(localStorage.getItem('normativas'), [])]);
-    this._solicitudes.set([...this.utils.parseJSON<Solicitud[]>(localStorage.getItem('solicitudes'), [])]);
-    this._usuariosGestor.set([...this.utils.parseJSON<UsuarioGestor[]>(localStorage.getItem('usuariosGestor'), [])]);
-    this._usuarioAdministrador.set(this.utils.parseJSON<UsuarioAdministrador | null>(localStorage.getItem('usuarioAdministrador'), null));
-    this._cenadVisitado.set(this.utils.parseJSON<Cenad | null>(localStorage.getItem('cenadVisitado'), null));
+    this._categorias.set([...this.localStorageService.getItem<Categoria[]>('categorias') || []]);
+    this._categoriasPadre.set([...this.localStorageService.getItem<Categoria[]>('categoriasPadre') || []]);
+    this._recursos.set([...this.localStorageService.getItem<Recurso[]>('recursos') || []]);
+    this._cartografias.set([...this.localStorageService.getItem<Cartografia[]>('cartografias') || []]);
+    this._normativas.set([...this.localStorageService.getItem<Normativa[]>('normativas') || []]);
+    this._solicitudes.set([...this.localStorageService.getItem<Solicitud[]>('solicitudes') || []]);
+    this._usuariosGestor.set([...this.localStorageService.getItem<UsuarioGestor[]>('usuariosGestor') || []]);
+    this._usuarioAdministrador.set(this.localStorageService.getItem<UsuarioAdministrador | null>('usuarioAdministrador'));
+    this._cenadVisitado.set(this.localStorageService.getItem<Cenad | null>('cenadVisitado'));
   }
+
   borrarDatosCenad() {
     this.clearUsuarioAdministrador();
     this.clearCenadVisitado();

@@ -73,6 +73,10 @@ export class UtilsStore {
   // --- GETTERS ---
   urlApi = computed(() => this.properties()?.urlApi || '');
   passwordForRegister = computed(() => this.properties()?.passwordForRegister || '');
+  minutosExpiracionLocalStorage = computed<number>(() => {
+    const val = this.properties()?.minutosExpiracionLocalStorage;
+    return val != null ? Number(val) : 0;
+  });
   sizeMaxEscudo = computed<number>(() => {
     const val = this.properties()?.sizeMaxEscudo;
     return val != null ? Number(val) : 0;

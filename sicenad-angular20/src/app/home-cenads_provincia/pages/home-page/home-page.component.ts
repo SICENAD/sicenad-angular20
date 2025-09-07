@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { UtilsStore } from '@stores/utils.store';
 import { ResultadoCenadsProvinciaComponent } from '../../components/resultado-cenads-provincia/resultado-cenads-provincia.component';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
+import { LocalStorageService } from '@services/localStorageService';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,7 @@ import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
   styleUrls: ['./home-page.component.css'],
 })
 export class HomeComponent {
+  private localStorageService = inject(LocalStorageService);
   private utils = inject(UtilsStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
 
@@ -495,19 +497,16 @@ export class HomeComponent {
 
   // Métodos
   actualizarLocalStorage() {
-    localStorage.clear();
+    this.localStorageService.clear();
   }
 
   respuesta(id: number) {
     this.idProvinciaSeleccionada.set(id);
-
     const provincia = this.provincias().find(p => p.idProvincia === +id);
     this.provinciaSeleccionada.set(provincia?.nombre ?? '');
-
     this.cenadsFiltro.set(
       this.cenads().filter(c => c.provincia === +id)
     );
-
     this.inicio.set(false);
   }
 }

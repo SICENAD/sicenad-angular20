@@ -4,6 +4,7 @@ import { AuthStore } from "@stores/auth.store";
 import { catchError, map, Observable, throwError } from "rxjs";
 import { UtilsStore } from "@stores/utils.store";
 import { UtilService } from "./utilService";
+import { LocalStorageService } from "./localStorageService";
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -11,22 +12,23 @@ export class ApiService {
   private utils = inject(UtilsStore);
   private injector = inject(Injector); // Injector general para inyección tardía
   private utilService = inject(UtilService);
+  private localStorageService = inject(LocalStorageService);
 
   // Inyección tardía de AuthStore usando getter
   private get auth(): AuthStore {
     return this.injector.get(AuthStore);
   }
-  getUrlApi(): string {
-    try {
-      const raw = localStorage.getItem('urlApi');
-      const fromLS = raw ? JSON.parse(raw) : null;
-      if (typeof fromLS === 'string' && fromLS.trim()) return fromLS;
-    } catch { }
 
-    // Fallback definitivo (tu env o utils)
-    // importa environment si lo usas
+  getUrlApi(): string {
+    const value = this.localStorageService.getItem<string>('urlApi');
+    if (value && value.trim()) return value;
+
+    // Fallback definitivo
     // return environment.apiUrl;
-    return ''; // o this.utils.urlApi() si lo tienes aquí inyectado
+    // o si tienes utils:
+    // return this.utils.urlApi();
+
+    return '';
   }
 
   // --- REQUEST POST SIN TOKEN GENERAL (REGISTRO Y LOGIN) ---

@@ -60,6 +60,7 @@ export class OrquestadorService {
     const current = this.datosStore.urlApi();
     if (!current || !current.trim()) {
       this.datosStore.setUrlApi(this.utils.urlApi() ?? '');
+      this.datosStore.setMinutosExpiracionLocalStorage(this.utils.minutosExpiracionLocalStorage() ?? 0);
     }
   }
   // --- Inicializar todo desde localStorage + API ---
@@ -69,6 +70,7 @@ export class OrquestadorService {
 
     this.getDatosPrincipales().subscribe();
     this.datosStore.setUrlApi(this.utils.urlApi());
+    this.datosStore.setMinutosExpiracionLocalStorage(this.utils.minutosExpiracionLocalStorage());
   }
 
   // --- ForkJoin multi-entidad ---

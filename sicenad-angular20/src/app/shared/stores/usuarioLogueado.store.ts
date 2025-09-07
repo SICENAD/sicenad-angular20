@@ -1,44 +1,33 @@
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { effect, inject, Injectable, signal } from "@angular/core";
 import { Cenad } from "@interfaces/models/cenad";
 import { Unidad } from "@interfaces/models/unidad";
-import { UtilsStore } from "./utils.store";
 import { Usuario } from "@interfaces/models/usuario";
+import { LocalStorageService } from "@services/localStorageService";
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioLogueadoStore {
-  private utils = inject(UtilsStore);
+  private localStorageService = inject(LocalStorageService);
 
   // --- STATE ---
   private _cenadPropio = signal<Cenad | null>(null);
   private _unidad = signal<Unidad | null>(null);
   private _usuarioLogueado = signal<Usuario | null>(null);
 
-  //GETTERS
-  cenadPropio = computed(() => this._cenadPropio());
-  unidad = computed(() => this._unidad());
-  usuarioLogueado = computed(() => this._usuarioLogueado());
+// --- GETTERS --- (usando computedAntiExpiracionLocalStorage)
+  cenadPropio = this.localStorageService.computedAntiExpiracionLocalStorage(this._cenadPropio);
+  unidad = this.localStorageService.computedAntiExpiracionLocalStorage(this._unidad);
+  usuarioLogueado = this.localStorageService.computedAntiExpiracionLocalStorage(this._usuarioLogueado);
+
 
 // --- EFFECTS ---
   private persist = effect(() => {
-    localStorage.setItem('cenadPropio', JSON.stringify(this._cenadPropio()));
-    localStorage.setItem('unidad', JSON.stringify(this._unidad()));
-    localStorage.setItem('usuarioLogueado', JSON.stringify(this._usuarioLogueado()));
+    this.localStorageService.setItem('cenadPropio', this._cenadPropio());
+    this.localStorageService.setItem('unidad', this._unidad());
+    this.localStorageService.setItem('usuarioLogueado', this._usuarioLogueado());
   });
 
   constructor() {
-    this.initializeLocalStorage();
-  }
-
-  // --- INIT ---
-  private initializeLocalStorage() {
-    const keys = ['cenadPropio', 'unidad', 'usuarioLogueado'];
-    keys.forEach(k => {
-      if (!localStorage.getItem(k)) localStorage.setItem(k, JSON.stringify(null));
-    });
-
-    this._cenadPropio.set(this.utils.parseJSON<Cenad | null>(localStorage.getItem('cenadPropio'), null));
-    this._unidad.set(this.utils.parseJSON<Unidad | null>(localStorage.getItem('unidad'), null));
-    this._usuarioLogueado.set(this.utils.parseJSON<Usuario | null>(localStorage.getItem('usuarioLogueado'), null));
+    this.loadFromLocalStorage();
   }
 
   // --- MÉTODOS DE UTILIDAD: SET / ADD / REMOVE / CLEAR ---
@@ -52,9 +41,9 @@ export class UsuarioLogueadoStore {
   clearUsuario() { this._usuarioLogueado.set(null); }
 
   loadFromLocalStorage() {
-    this._cenadPropio.set(this.utils.parseJSON<Cenad | null>(localStorage.getItem('cenadPropio'), null));
-    this._unidad.set(this.utils.parseJSON<Unidad | null>(localStorage.getItem('unidad'), null));
-    this._usuarioLogueado.set(this.utils.parseJSON<Usuario | null>(localStorage.getItem('usuarioLogueado'), null));
+    this._cenadPropio.set(this.localStorageService.getItem<Cenad | null>('cenadPropio'));
+    this._unidad.set(this.localStorageService.getItem<Unidad | null>('unidad'));
+    this._usuarioLogueado.set(this.localStorageService.getItem<Usuario | null>('usuarioLogueado'));
   }
 
   borrarDatosDeUsuario() {
