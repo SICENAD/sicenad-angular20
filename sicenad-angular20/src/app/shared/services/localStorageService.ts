@@ -6,7 +6,7 @@ import { Subscription, timer } from 'rxjs';
 export class LocalStorageService {
   private utils = inject(UtilsStore);
   private readonly defaultTtl = 2 * 60 * 1000; // 2 minutos por defecto
-  private readonly expiryKey = 'horaExpiracion';
+  private readonly expiryKey = 'horaExpiracionLocalStorage';
   private expirySub: Subscription | null = null;
   private onExpireCallback: (() => void) | null = null;
 

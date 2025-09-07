@@ -2,7 +2,7 @@
     "urlApiHeroku": "https://puentes-sicenad-cda28931791a.herokuapp.com/api",
     "urlApi": "http://localhost:8080/api",
     "passwordForRegister": "2112",
-    "minutosExpiracionLocalStorage": 1,
+    "minutosExpiracionLocalStorage": 15,
     "sizeMaxEscudo": 2,
     "sizeMaxDocRecurso": 30,
     "sizeMaxDocSolicitud": 30,
