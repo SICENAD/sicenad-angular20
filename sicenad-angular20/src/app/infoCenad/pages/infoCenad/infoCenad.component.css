@@ -1,0 +1,73 @@
+.btn {
+    background: #3A5A40;
+}
+
+.btn:hover {
+    background-color: #A3B18A;
+}
+
+/* h3 {
+  color: #354f52; font-weight: bold
+} */
+.titulo,
+.texto {
+    color: #3A5A40;
+}
+
+.titulo1,
+.letra {
+    color: #588157;
+}
+
+a.volver {
+    color: #3A5A40;
+    font-size: 18px;
+}
+
+a.volver:hover,
+.href:hover {
+    color: #A3B18A;
+}
+
+.row {
+    height: auto;
+    padding: auto;
+    margin: auto;
+}
+
+hr {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+div.titulos {
+    background-color: #DAD7CD;
+}
+
+figure {
+    display: inline-block;
+}
+
+.texto {
+    white-space: pre-wrap;
+}
+
+h3 {
+    color: #3A5A40;
+}
+
+img.cenad {
+    display: block;
+    width: 365px;
+    height: 533px;
+    align-content: center;
+    margin: auto;
+    padding-bottom: 2px;
+}
+
+div.informacion {
+    border: 6px solid #354f52;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-right: 0px;
+}

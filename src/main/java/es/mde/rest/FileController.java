@@ -661,7 +661,7 @@ public class FileController {
 	 * @return La respuesta de la API...
 	 * @throws Exception
 	 */
-	@GetMapping("/api/files/{idCenad}/infoCenads/{filename:.+}")
+	@GetMapping("/api/files/{idCenad}/infoCenad/{filename:.+}")
 	public ResponseEntity<Resource> getFileInfoCenad(@PathVariable String filename, @PathVariable("idCenad") String id)
 			throws Exception {
 		Resource resource = fileServiceAPI.loadInfoCenad(filename, id);

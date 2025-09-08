@@ -1,0 +1,183 @@
+<!-- muestra la información del CENAD/CMT, con diferente vista segun este logueado como administrador de ese cenad o no -->
+<div class="container-fluid">
+  <div class="row ms-0 pl-0 mb-0 pb-0">
+    <a
+      class="nav-link volver me-auto"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+      ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+    </a>
+    <hr class="w-100 mt-0 mb-1" />
+  </div>
+  <!-- este boton se deberá mostrar solo si eres el administrador del Cenad -->
+  <div class="row align-items-start mt-0 pt-0">
+    @if (isAdminEsteCenad()) {
+    <div class="col-3">
+      <button class="btn text-white" (click)="cambiaRol()">Cambiar a Vista {{ rol() }}</button>
+    </div>
+    }
+  </div>
+  <!--esta sera la vista del administrador-->
+  @if (rol() !== 'Administrador') {
+  <div>
+    <form [formGroup]="cenadForm">
+      <div class="row py-2">
+        <div class="col-lg-4 col-md-12">
+          <label class="titulo"
+            ><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label
+          >
+          <input
+            type="text"
+            class="form-control letra"
+            formControlName="direccion"
+            placeholder="Dirección del CENAD/CMT"
+            name="direccion"
+          />
+          @if (direccion?.touched && direccion?.invalid) {
+          <span class="text-danger">La dirección es obligatoria</span>
+          }
+        </div>
+        <div class="col-lg-4 col-md-12 pt-3">
+          <label class="titulo"
+            ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
+          >
+          <input
+            type="text"
+            class="form-control letra"
+            formControlName="tfno"
+            placeholder="Teléfono de contacto del CENAD/CMT"
+            name="telefono"
+          />
+          @if (tfno?.touched && tfno?.invalid) {
+          <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+          }
+        </div>
+        <div class="col-lg-4 col-md-12 pt-3">
+          <label class="titulo"
+            ><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label
+          >
+          <input
+            type="email"
+            class="form-control letra"
+            formControlName="email"
+            placeholder="Email de contacto del CENAD/CMT"
+            name="email"
+          />
+          @if (email?.touched && email?.invalid) {
+          <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+          }
+        </div>
+        <div class="col-lg-6 col-md-12 pt-3">
+          <label class="titulo"
+            ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+          >
+          <textarea
+            class="form-control letra"
+            formControlName="descripcion"
+            placeholder="Descripción del CENAD/CMT"
+            name="descripcion"
+            rows="5"
+            cols="50"
+          >
+          </textarea>
+          @if (descripcion?.touched && descripcion?.invalid) {
+          <div class="text-danger">La descripción es obligatoria.</div>
+          }
+        </div>
+        <div class="col-lg-6 col-md-12 pt-3">
+          <label class="titulo"
+            ><b>COMO LLEGAR<sup class="text-danger mr-2">*</sup></b> (Tamaño máximo permitido:
+            {{ sizeMaxEscudo() }} MB)</label
+          >
+          <!-- Mostrar archivo actual si existe -->
+          @if (infoCenadActual()) {
+          <div class="d-flex flex-column align-items-start mb-2">
+            <small class="text-muted mb-2">Archivo actual: {{ infoCenadActual() }}</small>
+            <img
+              [src]="urlInfoCenadActual()"
+              alt="InfoCenad actual"
+              style="max-height: 100px"
+              class="img-thumbnail"
+            />
+          </div>
+          } @else {
+          <p class="text-muted">No hay ningún archivo cargado</p>
+          }
+
+          <div class="d-flex">
+            <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput hidden />
+            <button type="button" class="btn" (click)="fileInput.click()">
+              Seleccionar archivo
+            </button>
+            @if (infoCenadFile()) {
+            <div class="mt-2 ms-2">
+              <small class="text-muted">Archivo seleccionado: {{ infoCenadFile()?.name }}</small>
+            </div>
+            }
+          </div>
+          @if (previewInfoCenad()) {
+          <div style="margin-top: 10px">
+            <label><b>Vista previa de la información del CENAD/CMT:</b></label
+            ><br />
+            <img
+              [src]="previewInfoCenad()"
+              alt="Vista previa"
+              class="img-thumbnail"
+              style="max-height: 100px"
+            />
+          </div>
+          }
+        </div>
+      </div>
+      <div class="form-row justify-content-between pt-3">
+        <div class="col-lg-5 col-md-12 mb-4">
+          <button
+            type="button"
+            (click)="editarInfoCenad()"
+            data-bs-dismiss="modal"
+            class="btn text-white"
+          >
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  } @else {
+  <!--esta sera la vista del usuario normal-->
+  <div class="container-fluid">
+    <div class="row">
+      @if (infoCenadActual() != null && infoCenadActual() != '') {
+      <div class="col col-md-6 escudo p-5">
+        <img class="cenad" alt="infoCenad" [src]="urlInfoCenadActual()" />
+      </div>
+      } @else {
+      <div class="col col-md-6 escudo p-5">
+        <img height="300" class="mx-auto d-block" alt="noInfoCenad" src="img/noInfoCenad.png" />
+      </div>
+      }
+      <div class="col col-md-6 informacion p-4 mt-5">
+        <div class="titulo">
+          <h4 class="text-center"><b>DIRECCIÓN</b></h4>
+          <hr />
+          <p class="texto">{{ cenadVisitado()?.direccion }}</p>
+        </div>
+        <div class="titulo">
+          <h4 class="text-center"><b>TELÉFONO</b></h4>
+          <hr />
+          <p class="texto">{{ cenadVisitado()?.tfno }}</p>
+        </div>
+        <div class="titulo">
+          <h4 class="text-center"><b>EMAIL</b></h4>
+          <hr />
+          <p class="texto">{{ cenadVisitado()?.email }}</p>
+        </div>
+        <div class="titulo">
+          <h4 class="text-center"><b>DESCRIPCIÓN</b></h4>
+          <hr />
+          <p class="texto">{{ cenadVisitado()?.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

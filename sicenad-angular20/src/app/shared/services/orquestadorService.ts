@@ -750,6 +750,41 @@ export class OrquestadorService {
     return this.cenadService.getEscudo(escudo, idCenad);
   }
 
+ actualizarInfoCenad(
+    nombre: string,
+    direccion: string,
+    tfno: string,
+    email: string,
+    descripcion: string,
+    archivoInfoCenad: File | null,
+    infoCenadActual: string,
+    idCenad: string
+  ): Observable<any> {
+    return this.cenadService.editarInfoCenad(
+      direccion,
+      tfno,
+      email,
+      descripcion,
+      archivoInfoCenad,
+      infoCenadActual,
+      idCenad
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCenads().pipe(
+            tap(cenads => this.datosStore.setCenads(cenads))
+          ).subscribe(); console.log(`Cenad ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el cenad ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  getInfoCenad(infoCenad: string, idCenad: string): Observable<Blob> {
+    return this.cenadService.getInfoCenad(infoCenad, idCenad);
+  }
+
   loadCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
     return this.cenadService.getCenadDeAdministrador(idUsuarioAdministrador).pipe(
       catchError(err => {
@@ -866,7 +901,7 @@ export class OrquestadorService {
   }
 
   loadUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
-    return this.cenadService.getUnidadDeUsuarioNormal(idUsuarioNormal).pipe(
+    return this.unidadService.getUnidadDeUsuarioNormal(idUsuarioNormal).pipe(
       catchError(err => {
         console.error('Error cargando unidad del usuario normal', err);
         return of(null);
