@@ -92,12 +92,12 @@ export class CartografiaModalComponent {
     this.orquestadorService.actualizarCartografia(nombre, descripcion, escala, archivo, this.archivoActual(), this.idCenad(), this.idCartografia()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Arma ${nombre} actualizada correctamente.`);
+          console.log(`Cartografía ${nombre} actualizada correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Arma:', error);
+        console.error('Error actualizando Cartografía:', error);
       }
     });
   }

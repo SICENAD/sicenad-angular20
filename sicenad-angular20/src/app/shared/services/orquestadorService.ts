@@ -1039,6 +1039,79 @@ export class OrquestadorService {
     return this.cartografiaService.getArchivoCartografia(nombreArchivo, idCenad);
   }
 
+  // --- CRUD Normativas ---
+  crearNormativa(
+    nombre: string,
+    descripcion: string,
+    archivo: File,
+    idCenad: string
+  ): Observable<any> {
+    return this.normativaService.crearNormativa(
+      nombre,
+      descripcion,
+      archivo,
+      idCenad
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllNormativas(idCenad).pipe(
+            tap(normativas => this.cenadStore.setNormativas(normativas))
+          ).subscribe();
+          console.log(`Normativa ${nombre} creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando la normativa ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarNormativa(
+    nombre: string,
+    descripcion: string,
+    archivoNormativa: File | null,
+    archivoActual: string,
+    idCenad: string,
+    idNormativa: string
+  ): Observable<any> {
+    return this.normativaService.editarNormativa(
+      nombre,
+      descripcion,
+      archivoNormativa,
+      archivoActual,
+      idCenad,
+      idNormativa
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllNormativas(idCenad).pipe(
+            tap(normativas => this.cenadStore.setNormativas(normativas))
+          ).subscribe();
+          console.log(`Normativa ${nombre} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando la normativa ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string): Observable<any> {
+    return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, idCenad).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Normativa ${nombreArchivo} borrada correctamente.`);
+          this.loadAllNormativas(idCenad).pipe(
+            tap(normativas => this.cenadStore.setNormativas(normativas))
+          ).subscribe();
+        } else {
+          console.warn(`Hubo un problema borrando la normativa ${nombreArchivo}.`);
+        }
+      })
+    );
+  }
+
+  getArchivoNormativa(nombreArchivo: string, idCenad: string): Observable<void> {
+    return this.normativaService.getArchivoNormativa(nombreArchivo, idCenad);
+  }
 
   // --- GETTERS ---
   getCenads(): Cenad[] { return this.datosStore.cenads(); }
@@ -1062,17 +1135,6 @@ export class OrquestadorService {
   getUsuariosGestorCenad(): UsuarioGestor[] { return this.cenadStore.usuariosGestor(); }
   getUsuarioAdministradorCenad(): UsuarioAdministrador | null { return this.cenadStore.usuarioAdministrador(); }
   getCenadVisitado(): Cenad | null { return this.cenadStore.cenadVisitado(); }
-
-
-
-
-
-
-
-
-
-
-
 
   async getDatosDeUsuario() {
     const rol = this.auth.rol()!;//obliga a que no sea nulo.si fuera nulo petaria, pero es que si fuera nulo no se ha logueado y no se lanza este metodo

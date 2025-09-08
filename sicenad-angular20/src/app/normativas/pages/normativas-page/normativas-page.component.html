@@ -1,0 +1,100 @@
+<!-- muestra la vista de cartografías -->
+<div class="d-flex align-items-center position-relative p-2 bg-light">
+  <a
+    class="nav-link volver me-auto"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+  </a>
+  <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
+    <u>NORMATIVA DEL {{ cenadVisitado()?.nombre }}</u>
+  </h3>
+  @if (isAdminEsteCenad()) {
+  <button class="btn text-white ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nueva-normativa">
+    Nueva <b>Normativa</b>
+  </button>
+  }
+</div>
+<hr class="w-100" />
+<div class="row ms-5 p-0">
+  <div class="col col-md-12">
+    <div class="row mt-2 titulos">
+      <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5 titulo">
+        <b>NOMBRE</b>
+      </div>
+      <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 titulo">
+        <b>DESCRIPCIÓN</b>
+      </div>
+      <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 titulo text-center">
+        <b>DESCARGA</b>
+      </div>
+    </div>
+    @for (n of normativas(); track n.idString) {
+    <app-normativa [normativa]="n" />
+    }
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal-nueva-normativa" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="normativaForm">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Nueva Normativa</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label titulo1"
+              ><b>NOMBRE DE LA NORMATIVA<sup class="text-danger">*</sup></b></label
+            >
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" />
+            @if (nombre?.touched && nombre?.invalid) {
+            <span class="text-danger">El nombre es obligatorio</span>
+            }
+          </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label class="form-label titulo1"
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
+            <textarea class="form-control letra" formControlName="descripcion"></textarea>
+            @if (descripcion?.touched && descripcion?.invalid) {
+            <div class="text-danger">La descripción es obligatoria.</div>
+            }
+          </div>
+          <!-- Archivo -->
+          <div class="mb-3">
+            <label class="titulo1"
+              ><b>ARCHIVO<sup class="text-danger">*</sup></b> (Máx:
+              {{ sizeMaxDocRecurso() }} MB)</label
+            >
+            <div class="d-flex">
+              <input type="file" accept="*" (change)="onFileChange($event)" #fileInput hidden />
+              <button type="button" class="btn" (click)="fileInput.click()">
+                Seleccionar archivo
+              </button>
+              @if (archivoFile()) {
+              <div class="mt-2 ms-2">
+                <small class="text-muted">Archivo seleccionado: {{ archivoFile()?.name }}</small>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            [disabled]="normativaForm.invalid"
+            (click)="crearNormativa()"
+          >
+            Crear Normativa
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
