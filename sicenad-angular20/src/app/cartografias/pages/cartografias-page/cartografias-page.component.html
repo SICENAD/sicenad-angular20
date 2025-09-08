@@ -1,51 +1,39 @@
 <!-- muestra la vista de cartografías -->
-<div class="container-fluid">
-  <div class="row ms-4 mb-0 ps-3">
-    <a
-      class="nav-link volver me-auto"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
-      ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
-    </a>
-  </div>
-  <div class="row mt-1">
-    <div class="col-9 text-center">
-      <h3 class="text-center titulo1">
-        <u>CARTOGRAFÍA DEL {{ cenadVisitado()?.nombre }}</u>
-      </h3>
-    </div>
-    @if (isAdminEsteCenad()) {
-    <div class="col-3 justify-content-end">
-      <button
-        class="btn text-white"
-        data-bs-toggle="modal"
-        data-bs-target="#modal-nueva-cartografia"
-      >
-        Nueva <b>Cartografía</b>
-      </button>
-    </div>
-    }
-  </div>
-  <hr class="w-100" />
-  <div class="row ms-5 p-0">
-    <div class="col col-md-12">
-      <div class="row mt-2 titulos">
-        <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
-          <b>NOMBRE</b>
-        </div>
-        <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-          <b>ESCALA</b>
-        </div>
-        <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5 titulo">
-          <b>DESCRIPCIÓN</b>
-        </div>
-        <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 titulo text-center">
-          <b>DESCARGA</b>
-        </div>
+<div class="d-flex align-items-center position-relative p-2 bg-light">
+  <a
+    class="nav-link volver me-auto"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+  </a>
+  <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
+    <u>CARTOGRAFÍA DEL {{ cenadVisitado()?.nombre }}</u>
+  </h3>
+  @if (isAdminEsteCenad()) {
+  <button class="btn text-white ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nueva-cartografia">
+    Nueva <b>Cartografía</b>
+  </button>
+  }
+</div>
+<hr class="w-100" />
+<div class="row ms-5 p-0">
+  <div class="col col-md-12">
+    <div class="row mt-2 titulos">
+      <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
+        <b>NOMBRE</b>
       </div>
-      @for (c of cartografias(); track c.idString) {
-      <app-cartografia [cartografia]="c" />
-      }
+      <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+        <b>ESCALA</b>
+      </div>
+      <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5 titulo">
+        <b>DESCRIPCIÓN</b>
+      </div>
+      <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 titulo text-center">
+        <b>DESCARGA</b>
+      </div>
     </div>
+    @for (c of cartografias(); track c.idString) {
+    <app-cartografia [cartografia]="c" />
+    }
   </div>
 </div>
 <!-- Modal -->

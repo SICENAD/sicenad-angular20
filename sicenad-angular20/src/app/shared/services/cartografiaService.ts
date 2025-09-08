@@ -144,24 +144,4 @@ export class CartografiaService {
     const endpoint = `/files/${idCenad}/cartografias/${nombreArchivo}`;
     return this.apiService.descargarArchivo(endpoint, nombreArchivo);
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -26,7 +26,6 @@ export class CartografiaModalComponent {
   cartografia = input<Cartografia>();
   output = output<void>();
 
-
   // --- State ---
   escalas = computed(() => this.utils.escalasCartografia());
   sizeMaxCartografia = computed(() => this.utils.sizeMaxCartografia());
@@ -80,7 +79,6 @@ export class CartografiaModalComponent {
       });
     }
   }
-
 
   editarCartografia() {
     if (this.cartografiaForm.invalid) {

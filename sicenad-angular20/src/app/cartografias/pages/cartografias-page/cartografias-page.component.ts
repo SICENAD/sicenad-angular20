@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrquestadorService } from '@services/orquestadorService';
-import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
 import { CartografiaComponent } from "@app/cartografias/components/cartografia/cartografia.component";
@@ -22,7 +21,6 @@ import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 export class CartografiasPageComponent {
 
   private utils = inject(UtilsStore);
-  private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private orquestadorService = inject(OrquestadorService);
   private iconoStore = inject(IconosStore);
   private fb = inject(FormBuilder);
