@@ -1,10 +1,10 @@
 div,
-div a {
+div a, a fa-icon {
   color: #A3B18A;
   font-weight: bold;
 }
 
-v-icon:hover {
+fa-icon:hover {
   color: #588157;
 }
 

@@ -1,12 +1,19 @@
 <div class="d-flex align-items-center position-relative p-2 bg-light">
+  <!-- Botón volver a la página anterior -->
   <a
     class="nav-link volver me-auto"
     [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
-    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+  >
+    <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+    <strong>Volver</strong>
   </a>
+
+  <!-- Título centrado -->
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
-    <u>CATEGORÍAS DEL CENAD {{cenadVisitado()?.nombre}}</u>
+    <u>CATEGORÍAS DEL CENAD {{ cenadVisitado()?.nombre }}</u>
   </h3>
+
+  <!-- Botón crear categoría -->
   <button
     class="btn text-white ms-auto"
     data-bs-toggle="modal"
@@ -15,23 +22,93 @@
     Nueva <b>Categoría</b>
   </button>
 </div>
+
 <hr class="w-100" />
-<div class="row ms-5 p-0">
-  <div class="col col-md-12">
-    <div class="row mt-2 titulos">
-      <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
-        <b>CATEGORÍAS PRINCIPALES</b>
-      </div>
-      <div class="col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8 titulo">
-        <b>DESCRIPCIÓN</b>
-      </div>
-    </div>
-    @for (c of categorias(); track c.idString) {
-    <app-categoria [categoria]="c"></app-categoria>
-    }
+
+<!-- Filtro de búsqueda -->
+<div class="row mb-3">
+  <div class="col-md-6 mx-auto">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Filtrar categorías por nombre..."
+      [value]="filtro()"
+      (input)="filtro.set($any($event.target).value)"
+    />
   </div>
 </div>
-<!-- Modal -->
+
+<div class="row ms-5 p-0">
+  <div class="col col-md-12">
+    @if (categoriaSeleccionada()) {
+    <div class="mb-3 pt-3">
+      <h4><b>CATEGORÍA SELECCIONADA:</b> {{ categoriaSeleccionada()?.nombre }}</h4>
+      <p><b>Descripción:</b> {{ categoriaSeleccionada()?.descripcion }}</p>
+      <!-- Botón volver a categoría anterior (solo si hay historial) -->
+      @if (historialCategorias().length > 0) {
+      <div class="mb-2">
+        <a class="nav-link volver me-auto" (click)="volverCategoriaAnterior()">
+          <fa-icon [icon]="faVolver"></fa-icon><b> Volver a categoría anterior</b>
+        </a>
+      </div>
+      }
+      <div class="mb-2">
+        <a class="nav-link volver me-auto" (click)="volverCategoriasPadre()">
+          <fa-icon [icon]="faVolver"></fa-icon><b> Volver a categorías principales</b>
+        </a>
+      </div>
+      <hr />
+      <div class="row mt-2">
+        <div class="col-md-1 titulo"><b></b></div>
+        <div class="col-md-3 titulo"><b>SUBCATEGORÍAS</b></div>
+        <div class="col-md-8 titulo"><b>DESCRIPCIÓN</b></div>
+        @if (subcategorias().length === 0) {
+        <div class="text-muted">No hay subcategorías para esta categoría.</div>
+        } @else { @for (sub of subcategorias(); track sub.idString) {
+        <div class="row">
+          <div class="col-1">
+            <app-categoriaModal [categoria]="sub" class="row categoria-item p-2" />
+          </div>
+          <div class="col-11">
+            <app-categoria
+              [categoria]="sub"
+              class="row categoria-item p-2"
+              (click)="seleccionarCategoria(sub)"
+              style="cursor: pointer"
+            ></app-categoria>
+          </div>
+        </div>
+        } }
+      </div>
+    </div>
+    }
+    <!-- Si NO hay categoría seleccionada -> mostrar categorías padre filtradas -->
+    @if (!categoriaSeleccionada()) {
+    <div class="row mt-2 titulos">
+      <div class="col-md-1 titulo"><b></b></div>
+      <div class="col-md-3 titulo"><b>CATEGORÍAS</b></div>
+      <div class="col-md-8 titulo"><b>DESCRIPCIÓN</b></div>
+    </div>
+
+    @for (c of categoriasPadreFiltradas(); track c.idString) {
+    <div class="row">
+      <div class="col-1"><app-categoriaModal [categoria]="c" class="row categoria-item p-2" /></div>
+      <div class="col-11">
+        <app-categoria
+          [categoria]="c"
+          class="row categoria-item p-2"
+          (click)="seleccionarCategoria(c)"
+          style="cursor: pointer"
+        ></app-categoria>
+      </div>
+    </div>
+    } @if (categoriasPadreFiltradas().length === 0) {
+    <div class="text-muted mt-3">No se encontraron categorías principales.</div>
+    } }
+  </div>
+</div>
+
+<!-- Modal para crear categoría -->
 <div class="modal fade" id="modal-nueva-categoria" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -43,37 +120,40 @@
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
-            <label for="nombre" class="form-label titulo1"
-              ><b>CATEGORÍA<sup class="text-danger">*</sup></b></label
-            >
+            <label for="nombre" class="form-label titulo1">
+              <b>CATEGORÍA<sup class="text-danger">*</sup></b>
+            </label>
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
             <span class="text-danger">El nombre es obligatorio</span>
             }
           </div>
+
           <!-- Descripción -->
           <div class="mb-3">
-            <label class="form-label titulo1"
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
-            >
+            <label class="form-label titulo1">
+              <b>DESCRIPCIÓN<sup class="text-danger">*</sup></b>
+            </label>
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
             <div class="text-danger">La descripción es obligatoria.</div>
             }
           </div>
+
           <!-- Categoría Padre -->
           <div class="mb-3 col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6">
             <label class="form-label titulo1"><b>CATEGORÍA PADRE</b></label>
             <select class="form-select" formControlName="categoriaPadre">
-              <option [ngValue]="null" disabled selected>Puede seleccionar una Categoría Padre</option>
-              @for (c of categorias(); track c.idString) {
-              <option [ngValue]="c">
-                {{ c.nombre }}
+              <option [ngValue]="null" disabled selected>
+                Puede seleccionar una Categoría Padre
               </option>
+              @for (c of categoriasPadre(); track c.idString) {
+              <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
           <button
