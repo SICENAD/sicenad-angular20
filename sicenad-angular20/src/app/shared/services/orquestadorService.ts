@@ -812,6 +812,127 @@ export class OrquestadorService {
     );
   }
 
+ // --- CRUD Categoria ---
+  crearCategoria(
+    nombre: string,
+    descripcion: string,
+    idCenad: string,
+    idCategoriaPadre: string,
+  ): Observable<any> {
+    return this.categoriaService.crearCategoria(
+      nombre,
+      descripcion,
+      idCenad,
+      idCategoriaPadre
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCategorias(idCenad).pipe(
+            tap(categorias => this.cenadStore.setCategorias(categorias))
+          ).subscribe();
+          this.loadAllCategoriasPadre(idCenad).pipe(
+            tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
+          ).subscribe();
+          console.log(`Categoría ${nombre} creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando la categoría ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarCategoria(
+    nombre: string,
+    descripcion: string,
+    idCenad: string,
+    idCategoria: string,
+    idCategoriaPadre: string
+  ): Observable<any> {
+    return this.categoriaService.editarCategoria(
+      nombre,
+      descripcion,
+      idCategoria,
+      idCategoriaPadre
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllCategorias(idCenad).pipe(
+            tap(categorias => this.cenadStore.setCategorias(categorias))
+          ).subscribe();
+          this.loadAllCategoriasPadre(idCenad).pipe(
+            tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
+          ).subscribe();
+          console.log(`Categoría ${nombre} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando la categoría ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  borrarCategoria(idCategoria: string, idCenad: string): Observable<any> {
+    return this.categoriaService.deleteCategoria(idCategoria).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Categoría con id ${idCategoria} borrada correctamente.`);
+          this.loadAllCategorias(idCenad).pipe(
+            tap(categorias => this.cenadStore.setCategorias(categorias))
+          ).subscribe();
+          this.loadAllCategoriasPadre(idCenad).pipe(
+            tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
+          ).subscribe();
+        } else {
+          console.warn(`Hubo un problema borrando la categoría con id ${idCategoria}.`);
+        }
+      })
+    );
+  }
+
+  loadSubcategorias(idCategoria: string): Observable<Categoria[] | null> {
+    return this.categoriaService.getSubCategorias(idCategoria).pipe(
+      catchError(err => {
+        console.error('Error cargando subcategorías', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadSubcategoriasAnidadas(idCategoria: string): Observable<Categoria[] | null> {
+    return this.categoriaService.getSubCategoriasAnidadas(idCategoria).pipe(
+      catchError(err => {
+        console.error('Error cargando subcategorías', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
+    return this.categoriaService.getCategoriaSeleccionada(idCategoria).pipe(
+      catchError(err => {
+        console.error('Error cargando la categoria', err);
+        return of(null);
+      })
+    );
+  }
+
+  loadCategoriaPadre(idCategoria: string): Observable<Categoria | null> {
+    return this.categoriaService.getCategoriaPadre(idCategoria).pipe(
+      catchError(err => {
+        console.error('Error cargando la categoria padre', err);
+        return of(null);
+      })
+    );
+  }
+
+  loadCategoriaDeRecurso(idRecurso: string): Observable<Categoria | null> {
+    return this.categoriaService.getCategoriaDeRecurso(idRecurso).pipe(
+      catchError(err => {
+        console.error('Error cargando la categoria de recurso', err);
+        return of(null);
+      })
+    );
+  }
+
   // --- CRUD Armas ---
   crearArma(nombre: string, tipoTiro: string): Observable<any> {
     return this.armaService.crearArma(nombre, tipoTiro).pipe(

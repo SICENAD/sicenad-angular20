@@ -3,7 +3,6 @@ import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs
 import { ApiService } from "./apiService";
 import { Cenad } from "@interfaces/models/cenad";
 import { UtilService } from "./utilService";
-import { Unidad } from "@interfaces/models/unidad";
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {

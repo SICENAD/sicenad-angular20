@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CategoriaModalComponent } from '../categoriaModal/categoriaModal.component';
+import { Categoria } from '@interfaces/models/categoria';
 
 @Component({
   selector: 'app-categoria',
@@ -7,4 +8,6 @@ import { CategoriaModalComponent } from '../categoriaModal/categoriaModal.compon
   templateUrl: './categoria.component.html',
   styleUrls: ['./categoria.component.css']
 })
-export class CategoriaComponent { }
+export class CategoriaComponent {
+  categoria = input.required<Categoria>();
+ }
