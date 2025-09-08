@@ -38,7 +38,6 @@ export class LocalStorageService {
     const newExpiry = Date.now() + ttl;
     localStorage.setItem(this.expiryKey, new Date(newExpiry).toISOString());
     this.scheduleExpiryCheck(newExpiry);
-    console.log('TTL usado (ms):', ttl);
   }
 
   private scheduleExpiryCheck(expiryTimestamp: number) {

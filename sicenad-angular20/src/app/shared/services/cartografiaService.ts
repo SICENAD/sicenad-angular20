@@ -53,6 +53,8 @@ export class CartografiaService {
       nombre: nombre.toUpperCase(),
       descripcion,
       escala,
+      categoriaFichero: `${this.utils.urlApi()}/categorias_fichero/${this.utils.categoriaFicheroCartografia()}`,
+      cenad: `${this.utils.urlApi()}/cenads/${idCenad}`
     };
     return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
