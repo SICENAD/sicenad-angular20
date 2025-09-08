@@ -28,8 +28,8 @@
           <div class="mb-3">
             <label class="form-label titulo1"><b>CATEGORÍA PADRE</b></label>
             <select class="form-select" formControlName="categoriaPadre">
-              <option [ngValue]="null" disabled selected>
-                Puede seleccionar una Categoría Padre
+              <option [ngValue]="null">
+                Ninguna (categoría principal)
               </option>
               @for (c of categorias(); track c.idString) {
               <option [ngValue]="c">
@@ -37,6 +37,7 @@
               </option>
               }
             </select>
+            <input type="text" class="form-control" [value]="categoriaPadre?.value.nombre" />
           </div>
         </form>
       </div>

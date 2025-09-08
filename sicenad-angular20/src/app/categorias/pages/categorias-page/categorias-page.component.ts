@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
@@ -22,12 +22,12 @@ export class CategoriasPageComponent {
   private iconoStore = inject(IconosStore);
   private fb = inject(FormBuilder);
 
+  @ViewChild('topScroll') topScroll!: ElementRef<HTMLDivElement>; // 🔹 Para el scroll automático
+
   faVolver = this.iconoStore.faVolver;
   readonly routesPaths = RoutesPaths;
 
-  /** Signals */
-  filtro = signal<string>(''); // <- Filtro buscador
-
+  // Estado
   categorias = computed(() => this.cenadStore.categorias());
   categoriasPadre = computed(() => this.cenadStore.categoriasPadre());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
@@ -36,11 +36,15 @@ export class CategoriasPageComponent {
   categoriaSeleccionada = signal<Categoria | null>(null);
   subcategorias = signal<Categoria[]>([]);
 
-  // Historial para volver a categorías anteriores
-  historialCategorias = signal<Categoria[]>([]);
-  categoriaAnterior = computed(() => {
-    const historial = this.historialCategorias();
-    return historial.length > 0 ? historial[historial.length - 1] : null;
+  // Historial para volver atrás
+  categoriaAnterior = signal<Categoria | null>(null);
+
+  // Filtro
+  filtro = signal<string>('');
+
+  categoriasPadreFiltradas = computed(() => {
+    const term = this.filtro().toLowerCase();
+    return this.categoriasPadre().filter(c => c.nombre.toLowerCase().includes(term));
   });
 
   categoriaForm: FormGroup = this.fb.group({
@@ -53,43 +57,37 @@ export class CategoriasPageComponent {
   get descripcion() { return this.categoriaForm.get('descripcion'); }
   get categoriaPadre() { return this.categoriaForm.get('categoriaPadre'); }
 
-  /** Filtro aplicado a categorías padre */
-  categoriasPadreFiltradas = computed(() => {
-    const term = this.filtro().toLowerCase();
-    return (this.categoriasPadre() ?? []).filter(c =>
-      c.nombre.toLowerCase().includes(term)
-    );
-  });
-
   /** Seleccionar una categoría y cargar sus subcategorías */
   seleccionarCategoria(categoria: Categoria) {
-    // Guardamos la categoría actual en el historial antes de cambiar
     if (this.categoriaSeleccionada()) {
-      this.historialCategorias.set([...this.historialCategorias(), this.categoriaSeleccionada()!]);
+      this.categoriaAnterior.set(this.categoriaSeleccionada()); // Guarda la categoría actual antes de cambiar
     }
 
     this.categoriaSeleccionada.set(categoria);
 
+    // Llamada al backend para cargar subcategorías
     this.orquestadorService.loadSubcategorias(categoria.idString).subscribe({
-      next: (subcats) => this.subcategorias.set(subcats ?? []),
+      next: (subcats) => {
+        this.subcategorias.set(subcats ?? []);
+        this.scrollToTop(); // 🔹 Mueve la vista al inicio
+      },
       error: (err) => console.error('Error cargando subcategorías', err)
     });
   }
 
-  /** Volver a la categoría anterior del historial */
+  /** Volver a la categoría anterior */
   volverCategoriaAnterior() {
-    const historial = [...this.historialCategorias()];
-    if (historial.length === 0) return;
+    if (this.categoriaAnterior()) {
+      this.seleccionarCategoria(this.categoriaAnterior()!);
+      this.categoriaAnterior.set(null); // Limpia después de volver
+    }
+  }
 
-    const anterior = historial.pop()!;
-    this.historialCategorias.set(historial);
-
-    this.categoriaSeleccionada.set(anterior);
-
-    this.orquestadorService.loadSubcategorias(anterior.idString).subscribe({
-      next: (subcats) => this.subcategorias.set(subcats ?? []),
-      error: (err) => console.error('Error cargando subcategorías', err)
-    });
+  /** Scroll automático hacia arriba */
+  private scrollToTop() {
+    if (this.topScroll) {
+      this.topScroll.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   /** Crear categoría nueva */
@@ -98,7 +96,6 @@ export class CategoriasPageComponent {
       this.categoriaForm.markAllAsTouched();
       return;
     }
-
     const { nombre, descripcion, categoriaPadre } = this.categoriaForm.value;
     const idCategoriaPadre = categoriaPadre ? categoriaPadre.idString : '';
 
@@ -109,13 +106,8 @@ export class CategoriasPageComponent {
           if (success) {
             this.categoriaForm.reset();
 
-            if (categoriaPadre) {
-              // Recargar subcategorías si estamos en una categoría padre
-              this.seleccionarCategoria(categoriaPadre);
-            } else {
-              // Recargar categorías principales
-
-            }
+          // 🔹 Volver siempre a la vista inicial de categorías principales
+          this.volverCategoriasPadre();
           } else {
             console.error('Error al crear la categoría');
           }
@@ -128,7 +120,6 @@ export class CategoriasPageComponent {
   volverCategoriasPadre() {
     this.categoriaSeleccionada.set(null);
     this.subcategorias.set([]);
-    this.historialCategorias.set([]);
+    this.scrollToTop(); // 🔹 También volvemos arriba
   }
 }
-

@@ -13,7 +13,8 @@ import { UtilsStore } from '@stores/utils.store';
   templateUrl: './categoriaModal.component.html',
   styleUrls: ['./categoriaModal.component.css']
 })
-export class CategoriaModalComponent {  private utils = inject(UtilsStore);
+export class CategoriaModalComponent {
+    private utils = inject(UtilsStore);
   private orquestadorService = inject(OrquestadorService);
   private iconos = inject(IconosStore);
   private cenadStore = inject(CenadStore);
@@ -39,15 +40,35 @@ export class CategoriaModalComponent {  private utils = inject(UtilsStore);
     categoriaPadre: [null]
   });
 
-  ngOnInit(): void {
-    if (this.categoria()) {
-      this.categoriaForm.patchValue({
-        nombre: this.categoria()?.nombre || '',
-        descripcion: this.categoria()?.descripcion || '',
-        categoriaPadre: this.categoria()?.categoriaPadre || null
-      });
-    }
+
+ngOnInit(): void {
+  if (!this.categoria()) return;
+
+  // Cargar los valores básicos
+  this.categoriaForm.patchValue({
+    nombre: this.categoria()?.nombre || '',
+    descripcion: this.categoria()?.descripcion || '',
+    categoriaPadre: null // temporalmente null hasta cargar la categoría padre real
+  });
+
+  // Intentar cargar la categoría padre desde backend
+  if (this.categoria()) {
+    this.orquestadorService.loadCategoriaPadre(this.categoria()!.idString).subscribe({
+      next: (padre) => {
+        // si hay padre, asignarlo
+        this.categoriaForm.patchValue({ categoriaPadre: padre });
+      },
+      error: (err) => {
+        if (err.status === 502) {
+          // No hay categoría padre, se deja null
+          this.categoriaForm.patchValue({ categoriaPadre: null });
+        } else {
+          console.error('Error cargando categoría padre', err);
+        }
+      }
+    });
   }
+}
 
   get nombre() { return this.categoriaForm.get('nombre'); }
   get descripcion() { return this.categoriaForm.get('descripcion'); }
