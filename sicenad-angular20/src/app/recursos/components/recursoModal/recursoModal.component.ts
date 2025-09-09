@@ -39,7 +39,7 @@ export class RecursoModalComponent {
   idModal = computed(() => this._idModal() + this.idRecurso());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idRecurso());
 
-    recursoForm: FormGroup = this.fb.group({
+  recursoForm: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     descripcion: ['', Validators.required],
     otros: [''],
@@ -48,7 +48,7 @@ export class RecursoModalComponent {
     usuarioGestor: [null, Validators.required]
   });
 
-constructor() {
+  constructor() {
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
       const recursoActual = this.recurso();
@@ -123,7 +123,7 @@ constructor() {
       return;
     }
     const { nombre, descripcion, otros, categoria, tipoFormulario, usuarioGestor } = this.recursoForm.value;
-        let otrosVacio = '';
+    let otrosVacio = '';
     if (otros) {
       otrosVacio = otros;
     }

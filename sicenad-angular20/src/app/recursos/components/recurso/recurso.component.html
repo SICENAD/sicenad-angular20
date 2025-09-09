@@ -5,7 +5,7 @@
     @if ((!isAdminEsteCenad())) {
     <a
       class="nav-link ms-1 mt-1 mb-1"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.recursos, recurso()?.idString]"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.recursos, recurso()!.idString]"
     >
       <fa-icon class="" [icon]="faConsultar"></fa-icon>
     </a>
