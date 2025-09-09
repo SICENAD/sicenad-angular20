@@ -2,10 +2,9 @@
 <div class="container-fluid">
   <div class="position-relative d-flex align-items-center mb-3" style="height: 50px">
     <!-- Flecha alineada a la izquierda -->
-    <a
-      class="nav-link volver me-auto"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()!.idString, routesPaths.recursos]"
-      ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+    <a class="nav-link volver me-auto"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()!.idString, routesPaths.recursos]"><fa-icon
+        class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
     </a>
     <!-- Título centrado -->
     <h3 class="titulo1 position-absolute start-50 translate-middle-x text-center">
@@ -16,9 +15,9 @@
   <!-- este boton se deberá mostrar solo si eres el gestor del recurso -->
   <div class="row align-items-start mt-0 pt-0">
     @if (isGestorEsteRecurso()) {
-      <div class="col-3">
-        <button class="btn text-white" (click)="cambiaRol()">Cambiar a Vista {{ rol() }}</button>
-      </div>
+    <div class="col-3">
+      <button class="btn text-white" (click)="cambiaRol()">Cambiar a Vista {{ rol() }}</button>
+    </div>
     }
   </div>
   @if (rol() !== 'Gestor') {
@@ -27,15 +26,8 @@
     <form [formGroup]="recursoForm">
       <div class="row py-2">
         <div class="col-lg-3 col-md-12">
-          <label class="titulo"
-            ><b>RECURSO<sup class="text-danger">*</sup></b></label
-          >
-          <input
-            type="text"
-            class="form-control letra"
-            formControlName="nombre"
-            placeholder="Nombre del recurso"
-          />
+          <label class="titulo"><b>RECURSO<sup class="text-danger">*</sup></b></label>
+          <input type="text" class="form-control letra" formControlName="nombre" placeholder="Nombre del recurso" />
           @if (nombre?.touched && nombre?.invalid) {
           <span class="text-danger">La dirección es obligatoria</span>
           }
@@ -45,83 +37,44 @@
           <label class="titulo1"> {{ categoria()?.nombre }} </label>
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"
-            ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
-          >
-          <textarea
-            class="form-control letra"
-            formControlName="descripcion"
-            placeholder="Descripción del recurso"
-            name="descripcion"
-            rows="5"
-            cols="50"
-          >
+          <label class="titulo"><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
+          <textarea class="form-control letra" formControlName="descripcion" placeholder="Descripción del recurso"
+            name="descripcion" rows="5" cols="50">
           </textarea>
           @if (descripcion?.touched && descripcion?.invalid) {
           <div class="text-danger">La descripción es obligatoria.</div>
           }
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"
-            ><b>OTROS<sup class="text-danger">*</sup></b></label
-          >
-          <textarea
-            class="form-control letra"
-            formControlName="otros"
-            placeholder="Otros datos del recurso"
-            name="otros"
-            rows="5"
-            cols="50"
-          >
+          <label class="titulo"><b>OTROS<sup class="text-danger">*</sup></b></label>
+          <textarea class="form-control letra" formControlName="otros" placeholder="Otros datos del recurso"
+            name="otros" rows="5" cols="50">
           </textarea>
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo me-2"
-            ><b
-              >¿TIENE DATOS ESPECÍFICOS PARA SU SOLICITUD?<sup class="text-danger">*</sup></b
-            ></label
-          >
-          <input
-            type="checkbox"
-            class="letra"
-            id="conDatosEspecificosSolicitud"
-            formControlName="conDatosEspecificosSolicitud"
-          />
+          <label class="titulo me-2"><b>¿TIENE DATOS ESPECÍFICOS PARA SU SOLICITUD?<sup
+                class="text-danger">*</sup></b></label>
+          <input type="checkbox" class="letra" id="conDatosEspecificosSolicitud"
+            formControlName="conDatosEspecificosSolicitud" />
         </div>
         <div class="col-lg-12 col-md-12 pt-3" v-if="conDatosEspecificosSolicitud">
           <label class="titulo"><b>DATOS ESPECÍFICOS DE LA SOLICITUD</b></label>
-          <textarea
-            class="form-control letra"
-            formControlName="datosEspecificosSolicitud"
-            placeholder="datosEspecificosSolicitud"
-            name="datosEspecificosSolicitud"
-            rows="5"
-            cols="50"
-          >
+          <textarea class="form-control letra" formControlName="datosEspecificosSolicitud"
+            placeholder="datosEspecificosSolicitud" name="datosEspecificosSolicitud" rows="5" cols="50">
           </textarea>
         </div>
       </div>
       <!--aqui insertare la vista de ficheros del gestor, un listado donde crearlos y editarlos...-->
-
-      <!--
-      <FicherosComponent :rol="rol" />
-      -->
-
+      <app-ficheros [isGestorEsteRecurso]="isGestorEsteRecurso()" [ficheros]="ficheros()" />
       <div class="form-row justify-content-between pt-3">
         <div class="col-lg-5 col-md-12 mb-4">
-          <button
-            type="button"
-            (click)="actualizarRecurso()"
-            data-bs-dismiss="modal"
-            class="btn text-white"
-          >
+          <button type="button" (click)="actualizarRecurso()" data-bs-dismiss="modal" class="btn text-white">
             Guardar
           </button>
         </div>
       </div>
     </form>
   </div>
-
   } @else {
   <!--esta sera la vista del usuario normal-->
   <div class="container-fluid">
@@ -130,12 +83,8 @@
       <hr />
       <p class="texto ms-3">{{ recurso()?.descripcion }}</p>
     </div>
-
     <!--ahora tendria que recorrer los ficheros clasificados por categoria de fichero...con enlaces de descarga o modales si son imagenes-->
-    <!--
-    <FicherosComponent :rol="rol" />
-
-    -->
+    <app-ficheros [isGestorEsteRecurso]="isGestorEsteRecurso()" [ficheros]="ficheros()" />
     <div class="titulo">
       <h4 class="text-center"><b>CALENDARIO</b></h4>
       <hr />
@@ -152,13 +101,7 @@
     <div class="titulo">
       <h4 class="text-center"><b>DATOS ESPECÍFICOS DE LA SOLICITUD</b></h4>
       <hr />
-      <textarea
-        class="texto"
-        rows="6"
-        cols="60"
-        readonly
-        [value]="recurso()?.datosEspecificosSolicitud"
-      ></textarea>
+      <textarea class="texto" rows="6" cols="60" readonly [value]="recurso()?.datosEspecificosSolicitud"></textarea>
     </div>
     }
   </div>

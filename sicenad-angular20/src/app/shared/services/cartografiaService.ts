@@ -98,7 +98,7 @@ export class CartografiaService {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
       return this.apiService.peticionConToken<any>(endpointCartografia, 'PATCH', body).pipe(
         tap(() => {
-          this.utilService.toast(`Se ha editado el CENAD/CMT ${nombre}`, 'success');
+          this.utilService.toast(`Se ha editado la cartografía ${nombre}`, 'success');
         }),
         map(() => nombreArchivo),
         catchError(err => { console.error(err); return of(null); })

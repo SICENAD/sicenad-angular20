@@ -2,9 +2,11 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
+import { FicherosComponent } from '@app/ficheros/components/ficheros/ficheros.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { Categoria } from '@interfaces/models/categoria';
+import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { Recurso } from '@interfaces/models/recurso';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
@@ -15,7 +17,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-recursoDetalle',
-  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink],
+  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosComponent],
   templateUrl: './recursoDetalle-page.component.html',
   styleUrls: ['./recursoDetalle-page.component.css']
 })
@@ -42,6 +44,7 @@ export class RecursoDetallePageComponent {
   idGestorDelRecurso = signal<string>('');
   categoria = signal<Categoria | null>(null);
   recurso = signal<Recurso | null>(null);
+  ficheros = signal<FicheroRecurso[]>([]);
 
   isGestorEsteRecurso = computed(() => {
 
@@ -119,42 +122,51 @@ export class RecursoDetallePageComponent {
         }
       });
     });
-  }
 
-  cambiaRol() {
-    if (this.cambiaBoton()) {
-      this.cambiaBoton.set(false);
-    } else {
-      this.cambiaBoton.set(true);
-    }
-    this.rol.set(this.cambiaBoton() ? 'Previa' : 'Gestor');
-  }
-
-  actualizarRecurso() {
-    if (this.recursoForm.invalid) {
-      this.recursoForm.markAllAsTouched();
-      return;
-    }
-    const { nombre, descripcion, otros, conDatosEspecificosSolicitud, datosEspecificosSolicitud } = this.recursoForm.value;
-
-    this.orquestadorService.actualizarRecursoDetalle(
-      nombre,
-      descripcion,
-      otros,
-      conDatosEspecificosSolicitud,
-      datosEspecificosSolicitud,
-      this.cenadVisitado()!.idString,
-      this.idRecurso()
-    ).subscribe({
-      next: res => {
-        if (res) {
-          console.log(`Recurso ${nombre} actualizado correctamente.`);
-        }
+    // Cargar elos ficheros del recurso
+    this.orquestadorService.loadFicherosDeRecurso(this.idRecurso()).subscribe({
+      next: (ficheros) => {
+        this.ficheros.set(ficheros ?? []);
       },
-      error: (err) => {
-        console.error('Error actualizando recurso:', err);
+      error: () => {
       }
     });
+}
+
+cambiaRol() {
+  if (this.cambiaBoton()) {
+    this.cambiaBoton.set(false);
+  } else {
+    this.cambiaBoton.set(true);
   }
+  this.rol.set(this.cambiaBoton() ? 'Previa' : 'Gestor');
+}
+
+actualizarRecurso() {
+  if (this.recursoForm.invalid) {
+    this.recursoForm.markAllAsTouched();
+    return;
+  }
+  const { nombre, descripcion, otros, conDatosEspecificosSolicitud, datosEspecificosSolicitud } = this.recursoForm.value;
+
+  this.orquestadorService.actualizarRecursoDetalle(
+    nombre,
+    descripcion,
+    otros,
+    conDatosEspecificosSolicitud,
+    datosEspecificosSolicitud,
+    this.cenadVisitado()!.idString,
+    this.idRecurso()
+  ).subscribe({
+    next: res => {
+      if (res) {
+        console.log(`Recurso ${nombre} actualizado correctamente.`);
+      }
+    },
+    error: (err) => {
+      console.error('Error actualizando recurso:', err);
+    }
+  });
+}
 
 }

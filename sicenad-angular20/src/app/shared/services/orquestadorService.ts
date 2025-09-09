@@ -33,6 +33,8 @@ import { UsuarioGestor } from "@interfaces/models/usuarioGestor";
 import { RegisterResponse } from "@interfaces/responses/registerResponse";
 import { LoginResponse } from "@interfaces/responses/loginResponse";
 import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
+import { FicheroService } from "./ficheroService";
+import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
 
 
 @Injectable({ providedIn: 'root' })
@@ -54,6 +56,7 @@ export class OrquestadorService {
   private cartografiaService = inject(CartografiaService);
   private normativaService = inject(NormativaService);
   private solicitudService = inject(SolicitudService);
+  private ficheroService = inject(FicheroService);
 
   /** Garantiza que el store tenga urlApi válida antes de usar servicios */
   private ensureUrlApi() {
@@ -1340,6 +1343,96 @@ export class OrquestadorService {
 
   getArchivoCartografia(nombreArchivo: string, idCenad: string): Observable<void> {
     return this.cartografiaService.getArchivoCartografia(nombreArchivo, idCenad);
+  }
+
+  // --- CRUD FicherosRecurso ---
+  loadFicherosDeRecurso(idRecurso: string): Observable<FicheroRecurso[] | null> {
+    return this.ficheroService.getAllFicherosDeRecurso(idRecurso).pipe(
+      catchError(err => {
+        console.error('Error cargando ficheros del recurso', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadFicheroSeleccionado(idFichero: string): Observable<FicheroRecurso | null> {
+    return this.ficheroService.getFicheroRecursoSeleccionado(idFichero).pipe(
+      catchError(err => {
+        console.error('Error cargando el recurso', err);
+        return of(null);
+      })
+    );
+  }
+  crearFicheroRecurso(
+    nombre: string,
+    descripcion: string,
+    archivo: File,
+    idCategoriaFichero: string,
+    idCenad: string,
+    idRecurso: string
+  ): Observable<any> {
+    return this.ficheroService.crearFicheroRecurso(
+      nombre,
+      descripcion,
+      archivo,
+      idCategoriaFichero,
+      idCenad,
+      idRecurso
+    ).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Fichero ${nombre} creado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando el fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarFicheroRecurso(
+    nombre: string,
+    descripcion: string,
+    archivo: File | null,
+    nombreArchivoActual: string,
+    idCenad: string,
+    idRecurso: string,
+    idCategoriaFichero: string,
+    idFichero: string
+  ): Observable<any> {
+    return this.ficheroService.editarFicheroRecurso(
+      nombre,
+      descripcion,
+      archivo,
+      nombreArchivoActual,
+      idCenad,
+      idRecurso,
+      idCategoriaFichero,
+      idFichero
+    ).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Fichero ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  borrarFicheroRecurso(nombreArchivo: string, idFichero: string, idCenad: string, idRecurso: string): Observable<any> {
+    return this.ficheroService.deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
+        }
+      })
+    );
+  }
+
+  getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
+    return this.ficheroService.getArchivoRecurso(nombreArchivo, idCenad, idRecurso);
   }
 
   // --- CRUD Normativas ---
