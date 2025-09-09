@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -8,6 +8,7 @@ import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { Categoria } from '@interfaces/models/categoria';
 import { Recurso } from '@interfaces/models/recurso';
+import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 
 @Component({
   selector: 'app-recursos',
@@ -16,6 +17,7 @@ import { Recurso } from '@interfaces/models/recurso';
   styleUrls: ['./recursos-page.component.css']
 })
 export class RecursosPageComponent {
+  private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
   private orquestadorService = inject(OrquestadorService);
   private iconoStore = inject(IconosStore);
@@ -31,7 +33,25 @@ export class RecursosPageComponent {
   recursos = computed(() => this.cenadStore.recursos());
   categorias = computed(() => this.cenadStore.categorias());
   categoriasPadre = computed(() => this.cenadStore.categoriasPadre());
+  tiposFormulario = computed(() => this.datosPrincipalesStore.tiposFormulario());
+  usuariosGestor = computed(() => this.cenadStore.usuariosGestor());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
+
+    recursoForm: FormGroup = this.fb.group({
+    nombre: ['', Validators.required],
+    descripcion: ['', Validators.required],
+    otros: [''],
+    categoria: [null, Validators.required],
+    tipoFormulario: [null, Validators.required],
+    usuarioGestor: [null, Validators.required]
+  });
+
+  get nombre() { return this.recursoForm.get('nombre'); }
+  get descripcion() { return this.recursoForm.get('descripcion'); }
+  get otros() { return this.recursoForm.get('otros'); }
+  get categoria() { return this.recursoForm.get('categoria'); }
+  get tipoFormulario() { return this.recursoForm.get('tipoFormulario'); }
+  get usuarioGestor() { return this.recursoForm.get('usuarioGestor'); }
 
   // Categoría seleccionada
   categoriaSeleccionada = signal<Categoria | null>(null);
@@ -125,4 +145,32 @@ export class RecursosPageComponent {
     if (!categoria) return false; // Si no hay categoría seleccionada, no es padre
     return this.categoriasPadre().some(c => c.idString === categoria.idString);
   }
+
+/** Crear recurso */
+  crearRecurso() {
+    if (this.recursoForm.invalid) {
+      this.recursoForm.markAllAsTouched();
+      return;
+    }
+    const { nombre, descripcion, otros, categoria, tipoFormulario, usuarioGestor } = this.recursoForm.value;
+    let otrosVacio = '';
+    if (otros) {
+      otrosVacio = otros;
+    }
+    this.orquestadorService
+      .crearRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.idString, tipoFormulario.idString, categoria.idString, usuarioGestor.idString)
+      .subscribe({
+        next: (success) => {
+          if (success) {
+            this.recursoForm.reset();
+            // 🔹 Volver siempre a la vista inicial de categorías principales
+            this.limpiarCategoria();
+          } else {
+            console.error('Error al crear la categoría');
+          }
+        },
+        error: (err) => console.error('Error en la creación de categoría', err)
+      });
+  }
+
 }

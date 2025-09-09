@@ -9,6 +9,13 @@
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
     <u>RECURSOS DEL CENAD {{ cenadVisitado()?.nombre }}</u>
   </h3>
+  <button
+    class="btn text-white ms-auto"
+    data-bs-toggle="modal"
+    data-bs-target="#modal-nuevo-recurso"
+  >
+    Nuevo <b>Recurso</b>
+  </button>
 </div>
 <hr class="w-100" />
 <!-- Filtro de búsqueda -->
@@ -28,11 +35,7 @@
 <div class="row mb-3">
   <div class="col text-center">
     <!-- Botón "Todos" -->
-    <button
-      class="btn me-2"
-      (click)="limpiarCategoria()"
-      [class.active]="!categoriaSeleccionada()"
-    >
+    <button class="btn me-2" (click)="limpiarCategoria()" [class.active]="!categoriaSeleccionada()">
       Todos
     </button>
     @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
@@ -55,7 +58,7 @@
       }
     </ng-container>
     } @else {
-     <b>SUBCATEGORÍAS: </b>
+    <b>SUBCATEGORÍAS: </b>
     <!-- Subcategorías directas -->
     <ng-container>
       @for (sub of subcategorias(); track sub.idString ) {
@@ -86,5 +89,89 @@
     } } @else {
     <div class="text-muted mt-3">No se encontraron recursos.</div>
     }
+  </div>
+</div>
+<!-- Modal para crear categoría -->
+<div class="modal fade" id="modal-nuevo-recurso" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="recursoForm">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Nuevo Recurso</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label titulo1">
+              <b>RECURSO<sup class="text-danger">*</sup></b>
+            </label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" />
+            @if (nombre?.touched && nombre?.invalid) {
+            <span class="text-danger">El nombre es obligatorio</span>
+            }
+          </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label class="form-label titulo1">
+              <b>DESCRIPCIÓN<sup class="text-danger">*</sup></b>
+            </label>
+            <textarea class="form-control letra" formControlName="descripcion"></textarea>
+            @if (descripcion?.touched && descripcion?.invalid) {
+            <div class="text-danger">La descripción es obligatoria.</div>
+            }
+          </div>
+          <!-- Otros -->
+          <div class="mb-3">
+            <label for="otros" class="form-label titulo1">
+              <b>OTROS</b>
+            </label>
+            <input type="text" id="otros" class="form-control" formControlName="otros" />
+          </div>
+          <!-- Tipo de formulario -->
+          <div class="mb-3">
+            <label class="form-label titulo1"><b>TIPO DE FORMULARIO<sup class="text-danger">*</sup></b></label>
+            <select class="form-select" formControlName="tipoFormulario">
+              <option [ngValue]="null">Seleccione un tipo de formulario</option>
+              @for (t of tiposFormulario(); track t.idString) {
+              <option [ngValue]="t">{{ t.nombre }}</option>
+              }
+            </select>
+          </div>
+          <!-- Categoría -->
+          <div class="mb-3">
+            <label class="form-label titulo1"><b>CATEGORÍA<sup class="text-danger">*</sup></b></label>
+            <select class="form-select" formControlName="categoria">
+              <option [ngValue]="null">Seleccione una categoría</option>
+              @for (c of categorias(); track c.idString) {
+              <option [ngValue]="c">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+          <!-- Usuario Gestor -->
+          <div class="mb-3">
+            <label class="form-label titulo1"><b>USUARIO GESTOR<sup class="text-danger">*</sup></b></label>
+            <select class="form-select" formControlName="usuarioGestor">
+              <option [ngValue]="null">Seleccione un usuario gestor</option>
+              @for (u of usuariosGestor(); track u.idString) {
+              <option [ngValue]="u">{{ u.username }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            [disabled]="recursoForm.invalid"
+            (click)="crearRecurso()"
+          >
+            Crear Recurso
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

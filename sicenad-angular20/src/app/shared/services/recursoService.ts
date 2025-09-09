@@ -95,7 +95,7 @@ export class RecursoService {
       otros: otros,
       tipoFormulario: `${this.apiService.getUrlApi()}/tipos_formulario/${idTipoFormulario}`,
       categoria: `${this.apiService.getUrlApi()}/categorias/${idCategoria}`,
-      gestor: `${this.apiService.getUrlApi()}/usuarios_gestor/${idGestor}`
+      usuarioGestor: `${this.apiService.getUrlApi()}/usuarios_gestor/${idGestor}`
     };
     return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
