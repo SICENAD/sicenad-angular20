@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Categoria } from '@interfaces/models/categoria';
@@ -40,6 +40,28 @@ export class CategoriaModalComponent {
     categoriaPadre: [null]
   });
 
+  constructor() {
+    // Este effect ahora se ejecuta en un contexto válido
+    effect(() => {
+      const categorias = this.categorias();
+      const categoriaActual = this.categoria();
+      if (!categorias || !categoriaActual) return;
+
+      // Cargar la categoría padre
+      this.orquestadorService.loadCategoriaPadre(categoriaActual.idString).subscribe({
+        next: (padre) => {
+          const padreRef = padre
+            ? categorias.find(c => c.idString === padre.idString) || null
+            : null;
+
+          this.categoriaForm.patchValue({ categoriaPadre: padreRef });
+        },
+        error: () => {
+          this.categoriaForm.patchValue({ categoriaPadre: null });
+        }
+      });
+    });
+  }
 
 ngOnInit(): void {
   if (!this.categoria()) return;
@@ -47,27 +69,8 @@ ngOnInit(): void {
   // Cargar los valores básicos
   this.categoriaForm.patchValue({
     nombre: this.categoria()?.nombre || '',
-    descripcion: this.categoria()?.descripcion || '',
-    categoriaPadre: null // temporalmente null hasta cargar la categoría padre real
+    descripcion: this.categoria()?.descripcion || ''
   });
-
-  // Intentar cargar la categoría padre desde backend
-  if (this.categoria()) {
-    this.orquestadorService.loadCategoriaPadre(this.categoria()!.idString).subscribe({
-      next: (padre) => {
-        // si hay padre, asignarlo
-        this.categoriaForm.patchValue({ categoriaPadre: padre });
-      },
-      error: (err) => {
-        if (err.status === 502) {
-          // No hay categoría padre, se deja null
-          this.categoriaForm.patchValue({ categoriaPadre: null });
-        } else {
-          console.error('Error cargando categoría padre', err);
-        }
-      }
-    });
-  }
 }
 
   get nombre() { return this.categoriaForm.get('nombre'); }
