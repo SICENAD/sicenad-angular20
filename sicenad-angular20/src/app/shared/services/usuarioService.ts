@@ -155,7 +155,7 @@ export class UsuarioService {
     );
   }
 
-    getUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
+  getUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
     const endpoint = `/usuarios_administrador/search/findByUsername?username=${username}`;
     return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
@@ -163,7 +163,7 @@ export class UsuarioService {
     );
   }
 
- getUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
+  getUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
     const endpoint = `/usuarios_gestor/search/findByUsername?username=${username}`;
     return this.apiService.peticionConToken<UsuarioGestor>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
@@ -171,7 +171,15 @@ export class UsuarioService {
     );
   }
 
- getUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
+  getUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
+    const endpoint = `/recursos/${idRecurso}/usuarioGestor`;
+    return this.apiService.peticionConToken<UsuarioGestor>(endpoint, 'GET').pipe(
+      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
+
+  getUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
     const endpoint = `/usuarios_normal/search/findByUsername?username=${username}`;
     return this.apiService.peticionConToken<UsuarioNormal>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),

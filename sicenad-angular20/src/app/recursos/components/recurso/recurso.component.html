@@ -1,0 +1,22 @@
+<hr class="w-100" />
+@if (recurso()) {
+<div class="d-flex">
+  <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 d-flex">
+    @if ((!isAdminEsteCenad())) {
+    <a
+      class="nav-link ms-1 mt-1 mb-1"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.recursos, recurso()?.idString]"
+    >
+      <fa-icon class="" [icon]="faConsultar"></fa-icon>
+    </a>
+    }
+    <p class="ms-1 mt-1 mb-1">{{ recurso().nombre }}</p>
+    @if ((isAdminEsteCenad())) {
+      <app-recursoModal [recurso]="recurso()" class="ms-1 mt-1 mb-1"></app-recursoModal>
+    }
+  </div>
+  <div class="col-10 col-sm-10 col-md-9 col-lg-9 col-xl-9 ms-1 mt-1 mb-1">
+    {{ recurso().descripcion }}
+  </div>
+</div>
+}

@@ -7,7 +7,7 @@
     <strong>Volver</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
-    <u>RECURSOS DEL CENAD {{ cenadVisitado()?.nombre }}</u>
+    <u>RECURSOS DEL {{ cenadVisitado()?.nombre }}</u>
   </h3>
   <button
     class="btn text-white ms-auto"
@@ -78,14 +78,7 @@
       <div class="col-md-9 titulo"><b>DESCRIPCIÓN</b></div>
     </div>
     @if (recursosFiltrados().length > 0) { @for (r of recursosFiltrados(); track r.idString) {
-    <div class="row mt-2">
-      <div class="col-md-3">
-        <b>{{ r.nombre }}</b>
-      </div>
-      <div class="col-md-9">
-        <b>{{ r.descripcion }}</b>
-      </div>
-    </div>
+    <app-recurso [recurso]="r"/>
     } } @else {
     <div class="text-muted mt-3">No se encontraron recursos.</div>
     }

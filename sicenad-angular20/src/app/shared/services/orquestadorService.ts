@@ -597,6 +597,15 @@ export class OrquestadorService {
     );
   }
 
+  loadUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
+    return this.usuarioService.getUsuarioGestorDeRecurso(idRecurso).pipe(
+      catchError(err => {
+        console.error('Error cargando usuario gestor', err);
+        return of(null);
+      })
+    );
+  }
+
   actualizarUsuarioGestor(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioGestor: string): Observable<any> {
     return this.usuarioService.editarUsuarioGestor(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioGestor).pipe(
       tap(res => {
@@ -1159,6 +1168,16 @@ export class OrquestadorService {
   }
 
   // --- CRUD TiposFormulario ---
+
+  loadTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
+    return this.tipoFormularioService.getTipoFormularioDeRecurso(idRecurso).pipe(
+      catchError(err => {
+        console.error('Error cargando tipo de formulario', err);
+        return of(null);
+      })
+    );
+  }
+
   crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
     return this.tipoFormularioService.crearTipoFormulario(nombre, descripcion).pipe(
       tap(res => {

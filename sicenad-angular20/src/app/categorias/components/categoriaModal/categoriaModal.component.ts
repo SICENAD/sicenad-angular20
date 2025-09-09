@@ -5,7 +5,6 @@ import { Categoria } from '@interfaces/models/categoria';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
-import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-categoriaModal',
@@ -14,7 +13,6 @@ import { UtilsStore } from '@stores/utils.store';
   styleUrls: ['./categoriaModal.component.css']
 })
 export class CategoriaModalComponent {
-    private utils = inject(UtilsStore);
   private orquestadorService = inject(OrquestadorService);
   private iconos = inject(IconosStore);
   private cenadStore = inject(CenadStore);

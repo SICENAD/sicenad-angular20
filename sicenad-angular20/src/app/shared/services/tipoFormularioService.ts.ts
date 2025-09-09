@@ -32,6 +32,14 @@ export class TipoFormularioService {
     );
   }
 
+  getTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
+    const endpoint = `/recursos/${idRecurso}/tipoFormulario`;
+    return this.apiService.peticionConToken<TipoFormulario>(endpoint, 'GET').pipe(
+      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError(err => { console.error(err); return of(null); })
+    );
+  }
+
   crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
     const endpoint = `/tipos_formulario`;
     return this.apiService.peticionConToken<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion }).pipe(

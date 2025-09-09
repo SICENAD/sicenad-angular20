@@ -9,10 +9,11 @@ import { IconosStore } from '@stores/iconos.store';
 import { Categoria } from '@interfaces/models/categoria';
 import { Recurso } from '@interfaces/models/recurso';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
+import { RecursoComponent } from '@app/recursos/components/recurso/recurso.component';
 
 @Component({
   selector: 'app-recursos',
-  imports: [RouterLink, FontAwesomeModule, ReactiveFormsModule],
+  imports: [RouterLink, FontAwesomeModule, ReactiveFormsModule, RecursoComponent],
   templateUrl: './recursos-page.component.html',
   styleUrls: ['./recursos-page.component.css']
 })
