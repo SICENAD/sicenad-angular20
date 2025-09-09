@@ -1,0 +1,90 @@
+<div class="d-flex align-items-center position-relative p-2 bg-light">
+  <a
+    class="nav-link volver me-auto"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+  >
+    <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+    <strong>Volver</strong>
+  </a>
+  <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
+    <u>RECURSOS DEL CENAD {{ cenadVisitado()?.nombre }}</u>
+  </h3>
+</div>
+<hr class="w-100" />
+<!-- Filtro de búsqueda -->
+<div class="row mb-3">
+  <div class="col-md-6 mx-auto">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Filtrar recursos por nombre..."
+      [value]="filtro()"
+      (input)="filtro.set($any($event.target).value)"
+    />
+  </div>
+</div>
+<h4 class="text-center">FILTRAR POR CATEGORÍAS</h4>
+<!-- Botones de categorías -->
+<div class="row mb-3">
+  <div class="col text-center">
+    <!-- Botón "Todos" -->
+    <button
+      class="btn me-2"
+      (click)="limpiarCategoria()"
+      [class.active]="!categoriaSeleccionada()"
+    >
+      Todos
+    </button>
+    @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
+    <!-- Botón "Volver a categoría anterior" -->
+    <button class="btn me-2 volver" (click)="volverCategoriaAnterior()">
+      <fa-icon class="volver" [icon]="faSubir"></fa-icon>
+    </button>
+    } @if (categoriaSeleccionada()) {
+    <!-- Categoría seleccionada actual -->
+    <button class="btn me-2 categoriaSeleccionada" disabled>
+      {{ categoriaSeleccionada()?.nombre }}
+    </button>
+    } @if (!categoriaSeleccionada()) {
+    <!-- Si no hay categoría seleccionada, mostrar las categorías raíz -->
+    <ng-container>
+      @for (cat of categoriasPadre() ; track cat.idString) {
+      <button class="btn me-2" (click)="seleccionarCategoria(cat)">
+        {{ cat.nombre }}
+      </button>
+      }
+    </ng-container>
+    } @else {
+     <b>SUBCATEGORÍAS: </b>
+    <!-- Subcategorías directas -->
+    <ng-container>
+      @for (sub of subcategorias(); track sub.idString ) {
+      <button class="btn btn-outline-secondary me-2" (click)="seleccionarCategoria(sub)">
+        {{ sub.nombre }}
+      </button>
+      }
+    </ng-container>
+    }
+  </div>
+</div>
+<!-- Lista de recursos -->
+<div class="row ms-5 p-0" #topScroll>
+  <div class="col col-md-12">
+    <div class="row mt-2 titulos">
+      <div class="col-md-3 titulo"><b>NOMBRE</b></div>
+      <div class="col-md-9 titulo"><b>DESCRIPCIÓN</b></div>
+    </div>
+    @if (recursosFiltrados().length > 0) { @for (r of recursosFiltrados(); track r.idString) {
+    <div class="row mt-2">
+      <div class="col-md-3">
+        <b>{{ r.nombre }}</b>
+      </div>
+      <div class="col-md-9">
+        <b>{{ r.descripcion }}</b>
+      </div>
+    </div>
+    } } @else {
+    <div class="text-muted mt-3">No se encontraron recursos.</div>
+    }
+  </div>
+</div>

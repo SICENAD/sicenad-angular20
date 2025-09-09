@@ -25,6 +25,7 @@ export class CategoriasPageComponent {
   @ViewChild('topScroll') topScroll!: ElementRef<HTMLDivElement>; // 🔹 Para el scroll automático
 
   faVolver = this.iconoStore.faVolver;
+  faSubir = this.iconoStore.faSubir;
   readonly routesPaths = RoutesPaths;
 
   // Estado
@@ -35,9 +36,6 @@ export class CategoriasPageComponent {
   // Categoría seleccionada y subcategorías
   categoriaSeleccionada = signal<Categoria | null>(null);
   subcategorias = signal<Categoria[]>([]);
-
-  // Historial para volver atrás
-  categoriaAnterior = signal<Categoria | null>(null);
 
   // Filtro
   filtro = signal<string>('');
@@ -59,12 +57,7 @@ export class CategoriasPageComponent {
 
   /** Seleccionar una categoría y cargar sus subcategorías */
   seleccionarCategoria(categoria: Categoria) {
-    if (this.categoriaSeleccionada()) {
-      this.categoriaAnterior.set(this.categoriaSeleccionada()); // Guarda la categoría actual antes de cambiar
-    }
-
     this.categoriaSeleccionada.set(categoria);
-
     // Llamada al backend para cargar subcategorías
     this.orquestadorService.loadSubcategorias(categoria.idString).subscribe({
       next: (subcats) => {
@@ -74,13 +67,30 @@ export class CategoriasPageComponent {
       error: (err) => console.error('Error cargando subcategorías', err)
     });
   }
-
-  /** Volver a la categoría anterior */
+  /** Volver a la categoría padre (subir un nivel) */
   volverCategoriaAnterior() {
-    if (this.categoriaAnterior()) {
-      this.seleccionarCategoria(this.categoriaAnterior()!);
-      this.categoriaAnterior.set(null); // Limpia después de volver
-    }
+    const categoriaActual = this.categoriaSeleccionada();
+    if (!categoriaActual) return;
+    this.orquestadorService.loadCategoriaPadre(categoriaActual.idString).subscribe({
+      next: (categoriaPadre) => {
+        if (categoriaPadre) {
+          // Si hay categoría padre, la seleccionamos
+          this.seleccionarCategoria(categoriaPadre);
+        } else {
+          // Si no tiene padre → volver a la vista raíz
+        }
+      },
+      error: (err) => {
+        console.error('Error cargando la categoría padre', err);
+        // Si da error 502 u otro, volvemos a la vista raíz
+      }
+    });
+  }
+
+  /** Devuelve true si la categoría es categoriaPadre */
+  esCategoriaPadre(categoria: Categoria | null): boolean {
+    if (!categoria) return false; // Si no hay categoría seleccionada, no es padre
+    return this.categoriasPadre().some(c => c.idString === categoria.idString);
   }
 
   /** Scroll automático hacia arriba */
@@ -98,16 +108,14 @@ export class CategoriasPageComponent {
     }
     const { nombre, descripcion, categoriaPadre } = this.categoriaForm.value;
     const idCategoriaPadre = categoriaPadre ? categoriaPadre.idString : '';
-
     this.orquestadorService
       .crearCategoria(nombre, descripcion, this.cenadVisitado()!.idString, idCategoriaPadre)
       .subscribe({
         next: (success) => {
           if (success) {
             this.categoriaForm.reset();
-
-          // 🔹 Volver siempre a la vista inicial de categorías principales
-          this.volverCategoriasPadre();
+            // 🔹 Volver siempre a la vista inicial de categorías principales
+            this.volverCategoriasPadre();
           } else {
             console.error('Error al crear la categoría');
           }

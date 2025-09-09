@@ -1,18 +1,16 @@
-h4 {
-    color: #A3B18A;
-}
-h4 b {
-    color: #3A5A40;
-}
-
 .btn {
     background: #3A5A40;
     padding: 0.5;
     font-size: 14px;
+    color: white;
 }
 
 .btn:hover {
     background-color: #A3B18A;
+}
+.categoriaSeleccionada {
+    font-weight: bold;
+    font-size: large;
 }
 
 .titulo {
@@ -52,8 +50,4 @@ hr {
     max-height: 100%;
     max-width: 100%;
     margin: auto;
-}
-strong {
-      color: #3A5A40;
-
 }

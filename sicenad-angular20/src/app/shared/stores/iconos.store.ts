@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { faHome, faLock, faSignOutAlt, faBars, faBomb, faBook, faBusinessTime, faCalendarAlt, faCloudSun, faEdit, faFire, faFolderOpen, faFolderPlus, faGlobe, faLink, faMap, faQuestionCircle, faSearchLocation, faSitemap, faSnowflake, faTree, faUserCog, faUsers, faEye, faFileEdit, faPenToSquare, faArrowAltCircleLeft, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faLock, faSignOutAlt, faBars, faBomb, faBook, faBusinessTime, faCalendarAlt, faCloudSun, faEdit, faFire, faFolderOpen, faFolderPlus, faGlobe, faLink, faMap, faQuestionCircle, faSearchLocation, faSitemap, faSnowflake, faTree, faUserCog, faUsers, faEye, faFileEdit, faPenToSquare, faArrowAltCircleLeft, faDownload, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
 
 @Injectable({ providedIn: 'root' })
 export class IconosStore {
@@ -30,4 +30,5 @@ export class IconosStore {
   faEdit = faPenToSquare;
   faVolver = faArrowAltCircleLeft;
   faDownload = faDownload;
+  faSubir = faArrowAltCircleUp;
 }

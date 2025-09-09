@@ -41,9 +41,11 @@ public class CategoriaDAOImpl implements CategoriaDAOCustom {
 	 */
 	@Override 
 	public List<Recurso> getRecursosDeSubcategorias(Long id) {
-		List<Recurso> recursos = new ArrayList<Recurso>();
-		getSubcategoriasAnidadas(id).forEach(c -> recursos.addAll(c.getRecursos()));
-		return recursos;
+		List<Recurso> recursosTotales = new ArrayList<Recurso>();
+		Categoria categoria = categoriaDAO.findById(id).get();
+		getSubcategoriasAnidadas(id).forEach(c -> recursosTotales.addAll(c.getRecursos()));
+		recursosTotales.addAll(categoria.getRecursos());		
+		return recursosTotales;
 	}
 
 	/**

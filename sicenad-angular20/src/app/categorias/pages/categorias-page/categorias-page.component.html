@@ -7,12 +7,10 @@
     <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
     <strong>Volver</strong>
   </a>
-
   <!-- Título centrado -->
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
     <u>CATEGORÍAS DEL CENAD {{ cenadVisitado()?.nombre }}</u>
   </h3>
-
   <!-- Botón crear categoría -->
   <button
     class="btn text-white ms-auto"
@@ -22,9 +20,7 @@
     Nueva <b>Categoría</b>
   </button>
 </div>
-
 <hr class="w-100" />
-
 <!-- Filtro de búsqueda -->
 <div class="row mb-3">
   <div class="col-md-6 mx-auto">
@@ -37,25 +33,26 @@
     />
   </div>
 </div>
-
 <div class="row ms-5 p-0" #topScroll>
   <div class="col col-md-12">
     @if (categoriaSeleccionada()) {
     <div class="mb-3 pt-3">
       <h4><b>CATEGORÍA SELECCIONADA:</b> {{ categoriaSeleccionada()?.nombre }}</h4>
       <p><b>Descripción:</b> {{ categoriaSeleccionada()?.descripcion }}</p>
-      <!-- Botón volver a categoría anterior (solo si hay historial) -->
-      @if (subcategorias().length > 0) {
-      <div class="mb-2">
-        <a class="nav-link volver me-auto" (click)="volverCategoriaAnterior()">
-          <fa-icon [icon]="faVolver"></fa-icon><b> Volver a categoría anterior</b>
-        </a>
+      <!-- Botón volver a categoría anterior (solo si no es categoría principal o padre) -->
+      @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
+      <div class="mb-2 d-flex align-items-center">
+        <a (click)="volverCategoriaAnterior()" class="nav-link volver me-1">
+          <fa-icon [icon]="faSubir" class="me-1"> </fa-icon
+        ></a>
+        <strong>Volver a categoría anterior</strong>
       </div>
       }
-      <div class="mb-2">
-        <a class="nav-link volver me-auto" (click)="volverCategoriasPadre()">
-          <fa-icon [icon]="faVolver"></fa-icon><b> Volver a categorías principales</b>
+      <div class="mb-2 d-flex align-items-center">
+        <a (click)="volverCategoriasPadre()" class="nav-link volver me-1">
+          <fa-icon [icon]="faVolver"></fa-icon>
         </a>
+        <strong>Volver a categorías principales</strong>
       </div>
       <hr />
       <div class="row mt-2">
@@ -86,10 +83,9 @@
     @if (!categoriaSeleccionada()) {
     <div class="row mt-2 titulos">
       <div class="col-md-1 titulo"><b></b></div>
-      <div class="col-md-3 titulo"><b>CATEGORÍAS</b></div>
+      <div class="col-md-3 titulo"><b>CATEGORÍAS PRINCIPALES</b></div>
       <div class="col-md-8 titulo"><b>DESCRIPCIÓN</b></div>
     </div>
-
     @for (c of categoriasPadreFiltradas(); track c.idString) {
     <div class="row">
       <div class="col-1"><app-categoriaModal [categoria]="c" class="row categoria-item p-2" /></div>
@@ -107,7 +103,6 @@
     } }
   </div>
 </div>
-
 <!-- Modal para crear categoría -->
 <div class="modal fade" id="modal-nueva-categoria" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -128,7 +123,6 @@
             <span class="text-danger">El nombre es obligatorio</span>
             }
           </div>
-
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label titulo1">
@@ -139,20 +133,17 @@
             <div class="text-danger">La descripción es obligatoria.</div>
             }
           </div>
-
           <!-- Categoría Padre -->
           <div class="mb-3">
             <label class="form-label titulo1"><b>CATEGORÍA PADRE</b></label>
             <select class="form-select" formControlName="categoriaPadre">
-              <option [ngValue]="null">Ninguna (categoría principal)
-              </option>
+              <option [ngValue]="null">Ninguna (categoría principal)</option>
               @for (c of categorias(); track c.idString) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>
           </div>
         </div>
-
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
           <button

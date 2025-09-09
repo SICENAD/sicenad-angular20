@@ -16,6 +16,7 @@ import { CartografiasPageComponent } from './cartografias/pages/cartografias-pag
 import { NormativasPageComponent } from './normativas/pages/normativas-page/normativas-page.component';
 import { InfoCenadComponent } from './infoCenad/pages/infoCenad/infoCenad.component';
 import { CategoriasPageComponent } from './categorias/pages/categorias-page/categorias-page.component';
+import { RecursosPageComponent } from './recursos/pages/recursos-page/recursos-page.component';
 
 //uso "alias" para las rutas para desde el resto del codigo llamar a estas constantes y si en un futuro modificamos los path de las rutas solo habra que modificar esta constante y nada de los componentes que usan los RouterLinks...
 export const RoutesPaths = {
@@ -119,7 +120,7 @@ export const routes: Routes = [
       },
       {
         path: RoutesPaths.recursos,
-        component: LoginComponent
+        component: RecursosPageComponent
       },
       {
         path: `${RoutesPaths.recursos}/:idRecurso`,

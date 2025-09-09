@@ -750,7 +750,7 @@ export class OrquestadorService {
     return this.cenadService.getEscudo(escudo, idCenad);
   }
 
- actualizarInfoCenad(
+  actualizarInfoCenad(
     nombre: string,
     direccion: string,
     tfno: string,
@@ -812,7 +812,7 @@ export class OrquestadorService {
     );
   }
 
- // --- CRUD Categoria ---
+  // --- CRUD Categoria ---
   crearCategoria(
     nombre: string,
     descripcion: string,
@@ -928,6 +928,134 @@ export class OrquestadorService {
     return this.categoriaService.getCategoriaDeRecurso(idRecurso).pipe(
       catchError(err => {
         console.error('Error cargando la categoria de recurso', err);
+        return of(null);
+      })
+    );
+  }
+
+  // --- CRUD Recurso ---
+  crearRecurso(nombre: string, descripcion: string, otros: string, idCenad: string, idTipoFormulario: string, idCategoria: string, idGestor: string): Observable<any> {
+    return this.recursoService.crearRecurso(
+      nombre,
+      descripcion,
+      otros,
+      idTipoFormulario,
+      idCategoria,
+      idGestor
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllRecursos(idCenad).pipe(
+            tap(recursos => this.cenadStore.setRecursos(recursos))
+          ).subscribe();
+          console.log(`Recurso ${nombre} creado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando el recurso ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarRecurso(nombre: string, descripcion: string, otros: string, idCenad: string, idTipoFormulario: string, idCategoria: string, idGestor: string, idRecurso: string): Observable<any> {
+    return this.recursoService.editarRecurso(
+      nombre,
+      descripcion,
+      otros,
+      idTipoFormulario,
+      idCategoria,
+      idGestor,
+      idRecurso
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllRecursos(idCenad).pipe(
+            tap(recursos => this.cenadStore.setRecursos(recursos))
+          ).subscribe();
+          console.log(`Recurso ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el recurso ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarRecursoDetalle(nombre: string, descripcion: string, otros: string, conDatosEspecificosSolicitud: boolean, datosEspecificosSolicitud: string, idCenad: string, idRecurso: string): Observable<any> {
+    return this.recursoService.editarRecursoDetalle(
+      nombre,
+      descripcion,
+      otros,
+      conDatosEspecificosSolicitud,
+      datosEspecificosSolicitud,
+      idRecurso,
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllRecursos(idCenad).pipe(
+            tap(recursos => this.cenadStore.setRecursos(recursos))
+          ).subscribe();
+          console.log(`Recurso ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el recurso ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  borrarRecurso(idRecurso: string, idCenad: string): Observable<any> {
+    return this.recursoService.deleteRecurso(idRecurso).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Recurso con id ${idRecurso} borrado correctamente.`);
+          this.loadAllRecursos(idCenad).pipe(
+            tap(recursos => this.cenadStore.setRecursos(recursos))
+          ).subscribe();
+        } else {
+          console.warn(`Hubo un problema borrando el recurso con id ${idRecurso}.`);
+        }
+      })
+    );
+  }
+
+  loadRecursosDeCategoria(idCategoria: string): Observable<Recurso[] | null> {
+    return this.recursoService.getRecursosDeCategoria(idCategoria).pipe(
+      catchError(err => {
+        console.error('Error cargando recursos de la categoría', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadRecursosDeSubcategorias(idCategoria: string): Observable<Recurso[] | null> {
+    return this.recursoService.getRecursosDeSubcategorias(idCategoria).pipe(
+      catchError(err => {
+        console.error('Error cargando recursos de las subcategorías', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadRecursosDeGestor(idGestor: string): Observable<Recurso[] | null> {
+    return this.recursoService.getRecursosDeGestor(idGestor).pipe(
+      catchError(err => {
+        console.error('Error cargando recursos del gestor', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadRecursoSeleccionado(idRecurso: string): Observable<Recurso | null> {
+    return this.recursoService.getRecursoSeleccionado(idRecurso).pipe(
+      catchError(err => {
+        console.error('Error cargando el recurso', err);
+        return of(null);
+      })
+    );
+  }
+
+  loadRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
+    return this.recursoService.getRecursoDeSolicitud(idSolicitud).pipe(
+      catchError(err => {
+        console.error('Error cargando el recurso de solicitud', err);
         return of(null);
       })
     );
