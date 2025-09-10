@@ -60,7 +60,7 @@
         </div>
       </div>
       @for (f of ficheros(); track f.idString) {
-      <app-fichero [fichero]="f" />
+      <app-fichero [fichero]="f" [idRecurso]="idRecurso()!"/>
       }
     </div>
   </div>

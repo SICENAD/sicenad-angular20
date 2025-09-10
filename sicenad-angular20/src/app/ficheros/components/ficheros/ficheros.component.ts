@@ -73,15 +73,23 @@ export class FicherosComponent {
   }
 
   constructor() {
+    // Effect SOLO para obtener las categorías
     effect(() => {
-      this.obtenerCategoriasMisFicheros(this.ficheros() || []);
+      const ficheros = this.ficheros() || [];
+      this.obtenerCategoriasMisFicheros(ficheros);
+    });
 
-      this.categoriasFicheroImagenesMisFicheros().forEach((categoriaFichero: CategoriaFichero) => {
+    // Effect SOLO para cargar imágenes
+    effect(() => {
+      const categorias = this.categoriasFicheroImagenesMisFicheros();
+      categorias.forEach((categoriaFichero: CategoriaFichero) => {
         categoriaFichero.ficheros!.forEach((fichero: FicheroRecurso) => {
           const nombreArchivo = fichero.nombreArchivo;
           const idCenad = this.cenadVisitado()!.idString;
           const idRecurso = this.idRecurso() || '';
+
           if (!nombreArchivo) return;
+
           this.orquestadorService.getImagenRecurso(nombreArchivo, idCenad, idRecurso).subscribe({
             next: blob => fichero.urlImagen = URL.createObjectURL(blob),
             error: err => console.error('Error cargando imagen del fichero', err)
@@ -90,6 +98,7 @@ export class FicherosComponent {
       });
     });
   }
+
 
   descargar(fichero: FicheroRecurso): void {
     const archivo = fichero.nombreArchivo;
