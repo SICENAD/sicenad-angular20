@@ -9,4 +9,6 @@ export interface Fichero {
   cenad?: Cenad;
   categoriaFichero?: CategoriaFichero;
   url?: string;
+  urlImagen?: string;
+  urlDescarga?: string;
 }

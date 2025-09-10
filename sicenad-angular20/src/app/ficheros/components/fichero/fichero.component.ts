@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FicheroModalComponent } from '../ficheroModal/ficheroModal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 
 @Component({
   selector: 'app-fichero',
@@ -8,4 +9,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   templateUrl: './fichero.component.html',
   styleUrls: ['./fichero.component.css'],
 })
-export class FicheroComponent { }
+export class FicheroComponent {
+  fichero = input<FicheroRecurso>();
+}

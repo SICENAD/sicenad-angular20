@@ -29,7 +29,7 @@ export class InfoCenadComponent {
   faVolver = this.iconosStore.faVolver;
   routesPaths = RoutesPaths;
   cambiaBoton = signal(false);
-  rol = signal("Administrador");
+  btnVista = signal("Administrador");
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   isAdminEsteCenad = computed(() => {
@@ -68,7 +68,7 @@ export class InfoCenadComponent {
     } else {
       this.cambiaBoton.set(true);
     }
-    this.rol.set(this.cambiaBoton() ? 'Previa' : 'Administrador');
+    this.btnVista.set(this.cambiaBoton() ? 'Previa' : 'Administrador');
   }
 
   ngOnDestroy() {

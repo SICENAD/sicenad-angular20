@@ -1225,6 +1225,15 @@ export class OrquestadorService {
   }
 
   // --- CRUD CategoriasFichero ---
+  loadCategoriaFicheroDeFichero(idFichero: string): Observable<CategoriaFichero | null> {
+    return this.categoriaFicheroService.getCategoriaFicheroDeFichero(idFichero).pipe(
+      catchError(err => {
+        console.error('Error cargando la categoria de fichero', err);
+        return of(null);
+      })
+    );
+  }
+
   crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable<any> {
     return this.categoriaFicheroService.crearCategoriaFichero(nombre, tipo, descripcion).pipe(
       tap(res => {
@@ -1381,6 +1390,7 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         if (res) {
+          this.loadFicherosDeRecurso(idRecurso).subscribe();
           console.log(`Fichero ${nombre} creado correctamente.`);
         } else {
           console.warn(`Hubo un problema creando el fichero ${nombre}.`);
@@ -1411,6 +1421,7 @@ export class OrquestadorService {
     ).pipe(
       tap(res => {
         if (res) {
+          this.loadFicherosDeRecurso(idRecurso).subscribe();
           console.log(`Fichero ${nombre} actualizado correctamente.`);
         } else {
           console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
@@ -1423,6 +1434,7 @@ export class OrquestadorService {
     return this.ficheroService.deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso).pipe(
       tap(res => {
         if (res) {
+          this.loadFicherosDeRecurso(idRecurso).subscribe();
           console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
         } else {
           console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
@@ -1433,6 +1445,9 @@ export class OrquestadorService {
 
   getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
     return this.ficheroService.getArchivoRecurso(nombreArchivo, idCenad, idRecurso);
+  }
+  getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<Blob> {
+    return this.ficheroService.getImagenRecurso(nombreArchivo, idCenad, idRecurso);
   }
 
   // --- CRUD Normativas ---

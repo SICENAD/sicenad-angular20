@@ -1,3 +1,204 @@
-@for (f of ficheros(); track f.idString) {
-    <div>{{f.nombre}}</div>
+@if (btnVista() === 'Gestor') {
+<!-- muestra la vista de ficheros  que verá quien no sea gestor del recurso-->
+<div>
+  @for (c of categoriasFicheroImagenesMisFicheros(); track c.idString) {
+  <div class="titulo">
+    <h4 class="text-center">
+      <b>{{ c.nombre }}</b>
+    </h4>
+    <hr />
+  </div>
+  @for (f of c.ficheros; track f.idString) {
+  <a href="#" (click)="show($event, f)">
+    <figure class="pe-4 pt-2 pb-3">
+      <img [src]="f.urlImagen" width="350" [alt]="f.nombre" />
+      <figcaption class="text-center pt-2">{{ f.nombre }}</figcaption>
+    </figure>
+  </a>
+  } } @for (c of categoriasFicheroNoImagenesMisFicheros(); track c.idString) {
+  <div class="titulo">
+    <h4 class="text-center">
+      <b>{{ c.nombre }}</b>
+    </h4>
+    <hr />
+    @for (f of c.ficheros; track f.idString) {
+    <div>
+      <a (click)="descargar(f)" class="texto href ms-3">{{ f.nombre }}</a>
+    </div>
+    }
+  </div>
+  }
+</div>
+} @else {
+<!-- muestra la vista de ficheros que verá el gestor-->
+<div class="container-fluid">
+  <div class="row mt-1">
+    <div>
+      <h3 class="text-center titulo1"><u>FICHEROS</u></h3>
+    </div>
+    <div class="text-end">
+      <button class="btn text-white" data-bs-toggle="modal" data-bs-target="#modal-nuevo-fichero">
+        Nuevo <b>Fichero</b>
+      </button>
+    </div>
+  </div>
+  <hr class="w-100 mt-2" />
+  <div class="row ms-5 p-0">
+    <div class="col col-md-12">
+      <div class="row mt-2 titulos">
+        <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
+          <b>NOMBRE</b>
+        </div>
+        <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
+          <b>CATEGORÍA DE FICHERO</b>
+        </div>
+        <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5 titulo">
+          <b>DESCRIPCIÓN</b>
+        </div>
+        <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 titulo text-center">
+          <b>DESCARGA</b>
+        </div>
+      </div>
+      @for (f of ficheros(); track f.idString) {
+      <app-fichero [fichero]="f" />
+      }
+    </div>
+  </div>
+</div>
 }
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="modal-nuevo-fichero"
+  tabindex="-1"
+  aria-labelledby="modal-nuevo-fichero-Label"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal-nuevo-fichero-Label">Nuevo Fichero</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="ficheroForm">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label titulo1"
+              ><b>NOMBRE DE LA CARTOGRAFÍA<sup class="text-danger">*</sup></b></label
+            >
+            <input type="text" id="nombre" class="form-control" formControlName="nombre" />
+            @if (nombre?.touched && nombre?.invalid) {
+            <span class="text-danger">El nombre es obligatorio</span>
+            }
+          </div>
+          <!-- Categoría de fichero -->
+          <div class="mb-3">
+            <label class="form-label titulo1"
+              ><b>CATEGORÍA DE FICHERO<sup class="text-danger">*</sup></b></label
+            >
+            <select class="form-select" formControlName="categoriaFichero">
+              <option [ngValue]="null">Seleccione una categoría de fichero</option>
+              @for (c of categoriasFichero(); track c.idString) {
+              <option [ngValue]="c">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label class="form-label titulo1"
+              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+            >
+            <textarea class="form-control letra" formControlName="descripcion"></textarea>
+            @if (descripcion?.touched && descripcion?.invalid) {
+            <div class="text-danger">La descripción es obligatoria.</div>
+            }
+          </div>
+          <!-- Archivo -->
+          <div class="mb-3">
+            <label class="titulo1"
+              ><b>ARCHIVO<sup class="text-danger">*</sup></b> (Máx:
+              {{ sizeMaxDocRecurso() }} MB)</label
+            >
+            <div class="d-flex">
+              <input type="file" accept="*" (change)="onFileChange($event)" #fileInput hidden />
+              <button type="button" class="btn" (click)="fileInput.click()">
+                Seleccionar archivo
+              </button>
+              @if (archivoFile()) {
+              <div class="mt-2 ms-2">
+                <small class="text-muted">Archivo seleccionado: {{ archivoFile()?.name }}</small>
+              </div>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-dismiss="modal"
+          [disabled]="ficheroForm.invalid"
+          (click)="crearFichero()"
+        >
+          Crear Fichero
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal de imagen -->
+@if (showModal()) {
+<div
+  class="modal fade show"
+  tabindex="-1"
+  style="display: block;"
+  aria-modal="true"
+  role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Encabezado -->
+      <div class="modal-header">
+        <h4 class="modal-title">{{ imagenModalNombre() }}</h4>
+        <button
+          type="button"
+          class="btn-close ms-auto"
+          aria-label="Cerrar"
+          (click)="hide()">
+        </button>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="modal-body">
+        <figure>
+          <img
+            class="pe-2 pt-2 img-fluid"
+            [src]="imagenModal()?.urlImagen"
+            [alt]="imagenModal()?.nombre"
+          />
+          <figcaption class="text-center pt-2">
+            {{ imagenModal()?.descripcion }}
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="hide()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fondo modal -->
+<div class="modal-backdrop fade show"></div>
+}
+

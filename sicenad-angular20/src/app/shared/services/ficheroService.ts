@@ -58,7 +58,7 @@ export class FicheroService {
   }
 
   crearFicheroRecurso(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, idCenad: string, idRecurso: string): Observable<any> {
-    const endpoint = `/cartografias`;
+    const endpoint = `/ficheros`;
     const body = {
       nombre: nombre.toUpperCase(),
       descripcion,
@@ -154,6 +154,11 @@ export class FicheroService {
   getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
     const endpoint = `/files/${idCenad}/docRecursos/${idRecurso}/${nombreArchivo}`;
     return this.apiService.descargarArchivo(endpoint, nombreArchivo);
+  }
+
+    getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<Blob> {
+    const endpoint = `/files/${idCenad}/docRecursos/${idRecurso}/${nombreArchivo}`;
+    return this.apiService.mostrarArchivo(endpoint);
   }
 }
 

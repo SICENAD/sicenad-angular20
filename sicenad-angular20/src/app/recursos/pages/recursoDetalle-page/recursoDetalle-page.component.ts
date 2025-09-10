@@ -34,7 +34,7 @@ export class RecursoDetallePageComponent {
   faVolver = this.iconosStore.faVolver;
   routesPaths = RoutesPaths;
   cambiaBoton = signal(false);
-  rol = signal("Gestor");
+  btnVista = signal("Gestor");
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   idRecurso = computed(() => this.route.snapshot.params['idRecurso']);
@@ -124,6 +124,46 @@ export class RecursoDetallePageComponent {
     });
 
     // Cargar elos ficheros del recurso
+    this.recargarFicheros();
+  }
+
+  cambiaRol() {
+    if (this.cambiaBoton()) {
+      this.cambiaBoton.set(false);
+    } else {
+      this.cambiaBoton.set(true);
+    }
+    this.btnVista.set(this.cambiaBoton() ? 'Previa' : 'Gestor');
+  }
+
+  actualizarRecurso() {
+    if (this.recursoForm.invalid) {
+      this.recursoForm.markAllAsTouched();
+      return;
+    }
+    const { nombre, descripcion, otros, conDatosEspecificosSolicitud, datosEspecificosSolicitud } = this.recursoForm.value;
+
+    this.orquestadorService.actualizarRecursoDetalle(
+      nombre,
+      descripcion,
+      otros,
+      conDatosEspecificosSolicitud,
+      datosEspecificosSolicitud,
+      this.cenadVisitado()!.idString,
+      this.idRecurso()
+    ).subscribe({
+      next: res => {
+        if (res) {
+          console.log(`Recurso ${nombre} actualizado correctamente.`);
+        }
+      },
+      error: (err) => {
+        console.error('Error actualizando recurso:', err);
+      }
+    });
+  }
+
+  recargarFicheros() {
     this.orquestadorService.loadFicherosDeRecurso(this.idRecurso()).subscribe({
       next: (ficheros) => {
         this.ficheros.set(ficheros ?? []);
@@ -131,42 +171,5 @@ export class RecursoDetallePageComponent {
       error: () => {
       }
     });
-}
-
-cambiaRol() {
-  if (this.cambiaBoton()) {
-    this.cambiaBoton.set(false);
-  } else {
-    this.cambiaBoton.set(true);
   }
-  this.rol.set(this.cambiaBoton() ? 'Previa' : 'Gestor');
-}
-
-actualizarRecurso() {
-  if (this.recursoForm.invalid) {
-    this.recursoForm.markAllAsTouched();
-    return;
-  }
-  const { nombre, descripcion, otros, conDatosEspecificosSolicitud, datosEspecificosSolicitud } = this.recursoForm.value;
-
-  this.orquestadorService.actualizarRecursoDetalle(
-    nombre,
-    descripcion,
-    otros,
-    conDatosEspecificosSolicitud,
-    datosEspecificosSolicitud,
-    this.cenadVisitado()!.idString,
-    this.idRecurso()
-  ).subscribe({
-    next: res => {
-      if (res) {
-        console.log(`Recurso ${nombre} actualizado correctamente.`);
-      }
-    },
-    error: (err) => {
-      console.error('Error actualizando recurso:', err);
-    }
-  });
-}
-
 }
