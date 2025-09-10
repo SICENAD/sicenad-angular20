@@ -24,13 +24,14 @@ export class FicheroComponent {
   faDownload = this.iconoStore.faDownload;
 
   fichero = input.required<FicheroRecurso>();
+  ficheroSignal = signal<FicheroRecurso | undefined>(undefined);
   idRecurso = input.required<string>();
   output = output<void>();
   categoriaFichero = signal<CategoriaFichero | null>(null);
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
 
   descargar(): void {
-    const archivo = this.fichero().nombreArchivo;
+    const archivo = this.ficheroSignal()?.nombreArchivo;
     if (!archivo) {
       console.warn('No hay archivo para descargar');
       return;
@@ -46,9 +47,14 @@ export class FicheroComponent {
   }
 
   constructor() {
+    // Sincronizar el input con la señal interna
+    effect(() => {
+      const nuevoFichero = this.fichero();
+      this.ficheroSignal.set(nuevoFichero);
+    });
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
-      const ficheroActual = this.fichero();
+      const ficheroActual = this.ficheroSignal();
       const categoriasFichero = this.categoriasFichero();
       if (!categoriasFichero || !ficheroActual) return;
       // Cargar la categoría de fichero del fichero
@@ -57,9 +63,20 @@ export class FicheroComponent {
           const categoriaFicheroRef = categoriaFichero
             ? categoriasFichero.find(c => c.idString === categoriaFichero.idString) || null
             : null;
-            this.categoriaFichero.set(categoriaFichero);
+          this.categoriaFichero.set(categoriaFicheroRef);
         }
       });
+    });
+  }
+
+  recargarFichero() {
+    this.orquestadorService.loadFicheroSeleccionado(this.ficheroSignal()!.idString).subscribe({
+      next: (ficheroActualizado) => {
+        this.ficheroSignal.set(ficheroActualizado ?? undefined);
+      },
+      error: () => {
+        this.ficheroSignal.set(undefined);
+      }
     });
   }
 }

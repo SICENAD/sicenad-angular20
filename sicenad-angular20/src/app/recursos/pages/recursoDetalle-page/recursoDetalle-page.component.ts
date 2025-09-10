@@ -47,7 +47,6 @@ export class RecursoDetallePageComponent {
   ficheros = signal<FicheroRecurso[]>([]);
 
   isGestorEsteRecurso = computed(() => {
-
     return (this.usuarioLogueado.usuarioLogueado()?.idString === this.idGestorDelRecurso()) && (this.auth.rol() === RolUsuario.Gestor);
   });
 
@@ -74,9 +73,7 @@ export class RecursoDetallePageComponent {
           const recursoRef = recurso
             ? recursos.find(r => r.idString === recurso.idString) || null
             : null;
-
           this.recurso.set(recursoRef);
-
           // ✅ Aquí actualizamos el formulario cuando se cargue el recurso
           if (recursoRef) {
             this.recursoForm.patchValue({
@@ -96,7 +93,6 @@ export class RecursoDetallePageComponent {
       const usuariosGestor = this.usuariosGestor();
       if (!usuariosGestor || !categorias || !recursoActual) return;
       if (this.idRecurso() === undefined) return;
-
       // Cargar la categoría del recurso
       this.orquestadorService.loadCategoriaDeRecurso(this.idRecurso()).subscribe({
         next: (categoria) => {
@@ -109,7 +105,6 @@ export class RecursoDetallePageComponent {
         error: () => {
         }
       });
-
       // Cargar el usuario gestor del recurso
       this.orquestadorService.loadUsuarioGestorDeRecurso(this.idRecurso()).subscribe({
         next: (usuarioGestor) => {
@@ -122,7 +117,6 @@ export class RecursoDetallePageComponent {
         }
       });
     });
-
     // Cargar elos ficheros del recurso
     this.recargarFicheros();
   }
@@ -142,7 +136,6 @@ export class RecursoDetallePageComponent {
       return;
     }
     const { nombre, descripcion, otros, conDatosEspecificosSolicitud, datosEspecificosSolicitud } = this.recursoForm.value;
-
     this.orquestadorService.actualizarRecursoDetalle(
       nombre,
       descripcion,

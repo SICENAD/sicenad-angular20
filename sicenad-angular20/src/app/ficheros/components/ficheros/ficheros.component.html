@@ -60,7 +60,7 @@
         </div>
       </div>
       @for (f of ficheros(); track f.idString) {
-      <app-fichero [fichero]="f" [idRecurso]="idRecurso()!"/>
+      <app-fichero [fichero]="f" [idRecurso]="idRecurso()!" />
       }
     </div>
   </div>
@@ -103,6 +103,9 @@
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>
+            @if (categoriaFichero?.touched && categoriaFichero?.invalid) {
+            <div class="text-danger">Selecciona una categoría</div>
+            }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
@@ -151,15 +154,9 @@
 </div>
 <!-- Modal de imagen -->
 @if (showModal()) {
-<div
-  class="modal fade show"
-  tabindex="-1"
-  style="display: block;"
-  aria-modal="true"
-  role="dialog">
+<div class="modal fade show" tabindex="-1" style="display: block" aria-modal="true" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
-
       <!-- Encabezado -->
       <div class="modal-header">
         <h4 class="modal-title">{{ imagenModalNombre() }}</h4>
@@ -167,8 +164,8 @@
           type="button"
           class="btn-close ms-auto"
           aria-label="Cerrar"
-          (click)="hide()">
-        </button>
+          (click)="hide()"
+        ></button>
       </div>
 
       <!-- Cuerpo -->
@@ -187,12 +184,7 @@
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="hide()">
-          Cerrar
-        </button>
+        <button type="button" class="btn btn-secondary" (click)="hide()">Cerrar</button>
       </div>
     </div>
   </div>
@@ -201,4 +193,3 @@
 <!-- Fondo modal -->
 <div class="modal-backdrop fade show"></div>
 }
-

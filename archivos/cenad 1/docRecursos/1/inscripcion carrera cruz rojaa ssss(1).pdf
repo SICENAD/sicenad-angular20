@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es-ES">
+  <head>
+    <script type="module" src="/@id/virtual:vue-devtools-path:overlay.js"></script>
+    <script type="module" src="/@id/virtual:vue-inspector-path:load.js"></script>
+
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sicenad</title>
+    <meta name="description" content="Aplicación para la gestión de campos de maniobras" />
+    <meta name="theme-color" content="#ff0000" />
+    <!-- Favicon PNG -->
+    <link rel="icon" href="/favicon.ico" sizes="64x64" />
+    <!-- Favicon SVG -->
+    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+    <!-- Favicon tab safari -->
+    <link rel="mask-icon" href="/img/icons/safari-pinned-tab.svg" color="#19223c" />
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png" sizes="180x180" />
+  <link rel="manifest" href="/manifest.webmanifest"></head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  <script id="vite-plugin-pwa:register-dev-sw" type="module">
+import registerDevSW from '/@vite-plugin-pwa/pwa-entry-point-loaded';
+registerDevSW();
+</script>
+</body>
+</html>
