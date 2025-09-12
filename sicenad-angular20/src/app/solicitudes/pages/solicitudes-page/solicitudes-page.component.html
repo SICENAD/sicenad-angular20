@@ -28,25 +28,40 @@
 } @if (usuarioLogueado()?.rol === misRoles.Normal || isAdminEsteCenad() || isGestorEsteCenad()) {
 <div class="row solicitadas-validadas mb-3">
   <div class="col-6 solicitadas">
-    <app-solicitudesEstado [estado]="estadoSolicitud().Solicitada" [solicitudes]="solicitudesPorEstado().Solicitada" />
+    <app-solicitudesEstado
+      [estado]="estadoSolicitud().Solicitada"
+      [solicitudes]="solicitudesPorEstado().Solicitada"
+    />
   </div>
   <div class="col-6 validadas">
-    <app-solicitudesEstado [estado]="estadoSolicitud().Validada" [solicitudes]="solicitudesPorEstado().Validada" />
+    <app-solicitudesEstado
+      [estado]="estadoSolicitud().Validada"
+      [solicitudes]="solicitudesPorEstado().Validada"
+    />
   </div>
 </div>
 } @if (usuarioLogueado()?.rol === misRoles.Normal || isAdminEsteCenad() || isGestorEsteCenad()) {
 <div class="row rechazadas-canceladas mb-3">
   <div class="col-6 rechazadas">
-    <app-solicitudesEstado [estado]="estadoSolicitud().Rechazada" [solicitudes]="solicitudesPorEstado().Rechazada" />
+    <app-solicitudesEstado
+      [estado]="estadoSolicitud().Rechazada"
+      [solicitudes]="solicitudesPorEstado().Rechazada"
+    />
     <hr class="w-100 titulo-rechazadas" />
   </div>
   @if (usuarioLogueado()?.rol !== misRoles.Normal) {
   <div class="col-6 canceladas">
-    <app-solicitudesEstado [estado]="estadoSolicitud().Cancelada" [solicitudes]="solicitudesPorEstado().Cancelada" />
+    <app-solicitudesEstado
+      [estado]="estadoSolicitud().Cancelada"
+      [solicitudes]="solicitudesPorEstado().Cancelada"
+    />
   </div>
   } @else {
   <div class="col-6 borrador">
-    <app-solicitudesEstado [estado]="estadoSolicitud().Borrador" [solicitudes]="solicitudesPorEstado().Borrador" />
+    <app-solicitudesEstado
+      [estado]="estadoSolicitud().Borrador"
+      [solicitudes]="solicitudesPorEstado().Borrador"
+    />
   </div>
   }
 </div>
@@ -58,6 +73,7 @@
   tabindex="-1"
   aria-labelledby="modal-nueva-solicitud-Label"
   aria-hidden="true"
+  (hidden.bs.modal)="resetForm()"
 >
   <div class="modal-dialog modal-xxl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
@@ -137,7 +153,7 @@
           </div>
           <div class="row py-2 mt-2 justify-content-between">
             <div class="col-lg-4 col-md-12">
-              @if (historialCategorias.length > 0) {
+              @if (historialCategorias().length > 0) {
               <label class="d-block me-2 mt-2">
                 Categoría Seleccionada:
                 <strong>{{
@@ -146,22 +162,22 @@
               </label>
               }
               <label class="me-5">Categoría: <sup class="text-danger me-3">*</sup></label>
-              @if ((categoriasFiltradas || []).length > 0) {
+              @if ((categoriasFiltradas() || []).length > 0) {
               <select
-                formControlName="categoriaSeleccionada"
-                (change)="filtrar()"
+                [formControlName]="'categoria'"
+                (change)="onCategoriaChange($event)"
                 class="form-select mb-3"
               >
-                <option [value]="null" disabled>Selecciona una categoría</option>
+                <option [ngValue]="null" disabled>Selecciona una categoría</option>
                 @for (c of categoriasFiltradas(); track c.idString) {
-                <option [value]="c">
+                <option [ngValue]="c">
                   {{ c.nombre.toUpperCase() }}
                 </option>
                 }
               </select>
               }
               <div class="d-flex gap-2 mb-2">
-                @if (historialCategorias.length > 0) {
+                @if (historialCategorias().length > 0) {
                 <button (click)="retroceder()" class="btn btn-secondary">Atrás</button>
                 <button (click)="borrarFiltros()" class="btn btn-danger">Borrar filtros</button>
                 }
@@ -169,10 +185,10 @@
             </div>
             <div class="col-lg-4 col-md-12">
               <label>Recurso: <sup class="text-danger me-2">*</sup></label>
-              <select name="recursos" id="recursos" v-model="idRecurso">
-                <option [value]="null" disabled selected>Selecciona un recurso</option>
+              <select name="recursos" id="recursos" formControlName="recurso">
+                <option [ngValue]="null" disabled selected>Selecciona un recurso</option>
                 @for (recurso of recursos(); track recurso.idString) {
-                <option [value]="recurso.idString">
+                <option [ngValue]="recurso.idString">
                   {{ recurso.nombre }}
                 </option>
                 }
@@ -214,7 +230,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Cerrar</button>
         @if (usuarioLogueado()?.rol !== misRoles.Normal) {
         <button
           type="button"

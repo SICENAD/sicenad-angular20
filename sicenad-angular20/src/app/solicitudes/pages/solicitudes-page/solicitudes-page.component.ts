@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
@@ -21,6 +21,7 @@ import { SolicitudesEstadoPageComponent } from '../solicitudesEstado-page/solici
   styleUrls: ['./solicitudes-page.component.css']
 })
 export class SolicitudesPageComponent {
+
   private auth = inject(AuthStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
@@ -56,7 +57,8 @@ export class SolicitudesPageComponent {
     Rechazada: 'Rechazada',
     Cancelada: 'Cancelada',
     Borrador: 'Borrador'
-  });  loading = signal(false);
+  });
+  loading = signal(false);
   categoriasFiltradas = signal<Categoria[]>([]);
   categoriaSeleccionada = signal<Categoria | null>(null);
   historialCategorias = signal<Categoria[]>([]);
@@ -79,6 +81,7 @@ export class SolicitudesPageComponent {
     fechaInicio: [new Date(), Validators.required],
     fechaFin: [new Date(), Validators.required],
     estado: ['Borrador', Validators.required],
+    categoria: [null],
     recurso: [null, Validators.required],
   });
 
@@ -92,6 +95,7 @@ export class SolicitudesPageComponent {
   get fechaFin() { return this.solicitudForm.get('fechaFin'); }
   get estado() { return this.solicitudForm.get('estado'); }
   get recurso() { return this.solicitudForm.get('recurso'); }
+  get categoria() { return this.solicitudForm.get('categoria'); }
 
   ngOnInit() {
     this.getSolicitudes();
@@ -170,7 +174,7 @@ export class SolicitudesPageComponent {
         this.recursos.set(cacheRec);
         return;
       }
-      this.orquestadorService.loadRecursosDeCategoria(idCat).subscribe({
+      this.orquestadorService.loadRecursosDeSubcategorias(idCat).subscribe({
         next: (rec) => {
           const recursosCat = rec ?? [];
 
@@ -190,6 +194,7 @@ export class SolicitudesPageComponent {
   /** Borrar filtros y volver al estado inicial */
   borrarFiltros() {
     this.cargarCategoriasPadre();
+    this.solicitudForm.patchValue({ categoria: null, recurso: null });
   }
 
   /** Retroceder en historial de categorías */
@@ -237,6 +242,8 @@ export class SolicitudesPageComponent {
         }
       });
     }
+    this.solicitudForm.patchValue({ categoria: null, recurso: null });
+
   }
 
   /** Carga recursos para retroceder en historial */
@@ -246,7 +253,7 @@ export class SolicitudesPageComponent {
       this.recursos.set(cacheRec);
       this.finalizarRetroceso();
     } else {
-      this.orquestadorService.loadRecursosDeCategoria(idCat).subscribe({
+      this.orquestadorService.loadRecursosDeSubcategorias(idCat).subscribe({
         next: (recursos) => {
           const recursosCat = recursos ?? [];
           // Guardar en caché
@@ -333,4 +340,16 @@ export class SolicitudesPageComponent {
     this.crearSolicitud();
   }
 
+  onCategoriaChange(event: Event) {
+    const categoria = this.solicitudForm.get('categoria')?.value;
+    this.categoriaSeleccionada.set(categoria);
+    console.log('Categoría seleccionada:', categoria);
+    this.filtrar();
+  }
+
+  resetForm() {
+    console.log('Resetting form and state');
+    this.solicitudForm.reset();
+    this.cargarCategoriasPadre();
+  }
 }
