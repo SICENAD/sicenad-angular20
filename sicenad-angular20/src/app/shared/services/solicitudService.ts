@@ -23,11 +23,12 @@ export class SolicitudService {
   }
 
   getSolicitudesPorEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
-    const endpoint = `/cenads/${idCenad}/solicitudesEstado/${estado}&size=1000`;
+    const endpoint = `/cenads/${idCenad}/solicitudesEstado/${estado}?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
+      map(res => {
+        console.log(`Solicitudes recibidas con estado ${estado}:`, res);
+        return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
+      }),
       catchError(err => {
         console.error(err);
         return of([]);

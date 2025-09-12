@@ -1,14 +1,93 @@
-<h1>{{ estado() }}</h1>
-@if (solicitudes() && solicitudes()!.length > 0) {
+<div class="titulos">
+  <h5 [class]="`text-center titulo-${claseEstado()}`">
+    {{ estadoTitulo() }}
+    <label class="ms-5 ps-5 ver-todas" (click)="abrirModal()" style="cursor: pointer">
+      <fa-icon class="fa-2x me-2" [icon]="faConsultar"></fa-icon>Ver Todas
+    </label>
+  </h5>
+  <hr [class]="`w-100 titulo-${claseEstado()}`" />
+  @if (solicitudesTop5().length) {
+  <div class="row">
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+      <b><u>UCO</u></b>
+    </div>
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+      <b><u>SOLICITUD</u></b>
+    </div>
+    <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
+      <b><u>RECURSO</u></b>
+    </div>
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+      <b><u>INICIO</u></b>
+    </div>
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+      <b><u>FIN</u></b>
+    </div>
+  </div>
+  }
+</div>
+@if (solicitudesTop5().length) {
 <div>
-  @for (solicitud of solicitudes(); track solicitud.idString) {
-  <p >Observaciones {{solicitud.observaciones}}</p>
-    <p >fecha de inicio {{ solicitud.fechaInicioRecurso }}</p>
-
+  @for (s of solicitudesTop5() ; track s.idString) {
+  <p>{{ s.observaciones }}</p>
+          <!--
+  <SolicitudComponent [solicitud]="s" />
+-->
   }
 </div>
 } @else {
-  <div>
-    <p class="titulo mt-5">NO HAY SOLICITUDES EN ESTE ESTADO</p>
+<div class="row justify-content-center">
+  <h6 class="no-existen">NO EXISTEN</h6>
+</div>
+}
+<hr [class]="`w-100 titulo-${claseEstado()}`" />
+@if (mostrarModal()) {
+<!-- Modal -->
+<div class="modal fade" [class]="{ show: mostrarModal() }" style="display: block">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Solicitudes {{ estadoTitulo() }}</h5>
+        <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+      </div>
+      <div class="modal-body">
+        @if (solicitudesOrdenadas().length) {
+        <div class="row">
+          <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+            <b><u>UCO</u></b>
+          </div>
+          <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+            <b><u>SOLICITUD</u></b>
+          </div>
+          <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
+            <b><u>RECURSO</u></b>
+          </div>
+          <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+            <b><u>INICIO</u></b>
+          </div>
+          <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
+            <b><u>FIN</u></b>
+          </div>
+        </div>
+        <div>
+          @for (s of solicitudesOrdenadas() ; track s.idString) {
+          <p>{{ s.observaciones }}</p>
+          <!--
+  <SolicitudComponent [solicitud]="s" />
+-->
+          }
+        </div>
+        } @else {
+        <div>
+          <p>No existen solicitudes</p>
+        </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+      </div>
+    </div>
   </div>
+</div>
+<div class="modal-backdrop fade show"></div>
 }

@@ -112,6 +112,11 @@ export class OrquestadorService {
       cartografias: this.loadAllCartografias(idCenad),
       normativas: this.loadAllNormativas(idCenad),
       solicitudes: this.loadAllSolicitudes(idCenad),
+      solicitudesBorrador: this.loadAllSolicitudesEstado(idCenad, 'Borrador'),
+      solicitudesSolicitada: this.loadAllSolicitudesEstado(idCenad, 'Solicitada'),
+      solicitudesRechazada: this.loadAllSolicitudesEstado(idCenad, 'Rechazada'),
+      solicitudesValidada: this.loadAllSolicitudesEstado(idCenad, 'Validada'),
+      solicitudesCancelada: this.loadAllSolicitudesEstado(idCenad, 'Cancelada'),
       usuariosGestor: this.loadAllUsuariosGestor(idCenad),
       usuarioAdministrador: this.loadUsuarioAdministradorCenad(idCenad),
       cenadVisitado: this.loadCenadVisitado(idCenad),
@@ -123,6 +128,11 @@ export class OrquestadorService {
         this.cenadStore.setCartografias(data.cartografias);
         this.cenadStore.setNormativas(data.normativas);
         this.cenadStore.setSolicitudes(data.solicitudes);
+        this.cenadStore.setSolicitudesBorrador(data.solicitudesBorrador);
+        this.cenadStore.setSolicitudesSolicitada(data.solicitudesSolicitada);
+        this.cenadStore.setSolicitudesRechazada(data.solicitudesRechazada);
+        this.cenadStore.setSolicitudesValidada(data.solicitudesValidada);
+        this.cenadStore.setSolicitudesCancelada(data.solicitudesCancelada);
         this.cenadStore.setUsuariosGestor(data.usuariosGestor);
         data.usuarioAdministrador ? this.cenadStore.setUsuarioAdministrador(data.usuarioAdministrador) : this.cenadStore.clearUsuarioAdministrador();
         data.cenadVisitado ? this.cenadStore.setCenadVisitado(data.cenadVisitado) : this.cenadStore.clearCenadVisitado();
@@ -267,6 +277,32 @@ export class OrquestadorService {
       catchError(err => {
         console.error('Error cargando solicitudes', err);
         this.cenadStore.clearSolicitudes();
+        return of([]);
+      })
+    );
+  }
+
+  loadAllSolicitudesEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
+    return this.solicitudService.getSolicitudesPorEstado(idCenad, estado).pipe(
+      catchError(err => {
+        console.error('Error cargando solicitudes', err);
+        switch(estado) {
+          case 'Borrador':
+            this.cenadStore.clearSolicitudesBorrador();
+            break;
+          case 'Solicitada':
+            this.cenadStore.clearSolicitudesSolicitada();
+            break;
+          case 'Rechazada':
+            this.cenadStore.clearSolicitudesRechazada();
+            break;
+          case 'Validada':
+            this.cenadStore.clearSolicitudesValidada();
+            break;
+          case 'Cancelada':
+            this.cenadStore.clearSolicitudesCancelada();
+            break;
+        }
         return of([]);
       })
     );

@@ -15,7 +15,7 @@ import { Recurso } from '@interfaces/models/recurso';
 import { SolicitudesEstadoPageComponent } from '../solicitudesEstado-page/solicitudesEstado-page.component';
 
 @Component({
-  selector: 'app-solicitudes-page',
+  selector: 'app-solicitudes',
   imports: [FontAwesomeModule, RouterLink, ReactiveFormsModule, SolicitudesEstadoPageComponent],
   templateUrl: './solicitudes-page.component.html',
   styleUrls: ['./solicitudes-page.component.css']
@@ -64,13 +64,7 @@ export class SolicitudesPageComponent {
   historialCategorias = signal<Categoria[]>([]);
   cacheSubcategorias = signal(new Map<string, Categoria[]>());
   cacheRecursos = signal(new Map<string, Recurso[]>());
-  solicitudesPorEstado = signal<any>({
-    Solicitada: [],
-    Validada: [],
-    Rechazada: [],
-    Cancelada: [],
-    Borrador: []
-  });
+
   solicitudForm: FormGroup = this.fb.group({
     unidad: [null],
     observaciones: ['', Validators.required],
@@ -98,7 +92,6 @@ export class SolicitudesPageComponent {
   get categoria() { return this.solicitudForm.get('categoria'); }
 
   ngOnInit() {
-    this.getSolicitudes();
     this.cargarCategoriasPadre();
   }
 
@@ -281,18 +274,9 @@ export class SolicitudesPageComponent {
   }
 
   /** Obtener solicitudes por estado */
-  getSolicitudes() {
+  getSolicitudes(estado: string) {
 
-    this.orquestadorService.loadAllSolicitudes(this.cenadVisitado()!.idString).subscribe({
-      next: (data) => {
-        this.solicitudesPorEstado.set({
-          Solicitada: data.filter(s => s.estado === 'Solicitada'),
-          Validada: data.filter(s => s.estado === 'Validada'),
-          Rechazada: data.filter(s => s.estado === 'Rechazada'),
-          Cancelada: data.filter(s => s.estado === 'Cancelada'),
-          Borrador: data.filter(s => s.estado === 'Borrador')
-        });
-      },
+    this.orquestadorService.loadAllSolicitudesEstado(this.cenadVisitado()!.idString, estado).subscribe({
       error: (err) => console.error('Error al obtener las solicitudes', err)
     });
   }
@@ -326,7 +310,7 @@ export class SolicitudesPageComponent {
             this.solicitudForm.reset();
             // 🔹 Volver siempre a la vista inicial de categorías principales
             this.cargarCategoriasPadre();
-            this.getSolicitudes();
+            this.getSolicitudes(estado);
           } else {
             console.error('Error al crear la categoría');
           }

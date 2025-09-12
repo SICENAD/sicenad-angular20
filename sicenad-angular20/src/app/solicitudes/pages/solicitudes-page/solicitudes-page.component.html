@@ -30,13 +30,11 @@
   <div class="col-6 solicitadas">
     <app-solicitudesEstado
       [estado]="estadoSolicitud().Solicitada"
-      [solicitudes]="solicitudesPorEstado().Solicitada"
     />
   </div>
   <div class="col-6 validadas">
     <app-solicitudesEstado
       [estado]="estadoSolicitud().Validada"
-      [solicitudes]="solicitudesPorEstado().Validada"
     />
   </div>
 </div>
@@ -45,7 +43,6 @@
   <div class="col-6 rechazadas">
     <app-solicitudesEstado
       [estado]="estadoSolicitud().Rechazada"
-      [solicitudes]="solicitudesPorEstado().Rechazada"
     />
     <hr class="w-100 titulo-rechazadas" />
   </div>
@@ -53,14 +50,12 @@
   <div class="col-6 canceladas">
     <app-solicitudesEstado
       [estado]="estadoSolicitud().Cancelada"
-      [solicitudes]="solicitudesPorEstado().Cancelada"
     />
   </div>
   } @else {
   <div class="col-6 borrador">
     <app-solicitudesEstado
       [estado]="estadoSolicitud().Borrador"
-      [solicitudes]="solicitudesPorEstado().Borrador"
     />
   </div>
   }
