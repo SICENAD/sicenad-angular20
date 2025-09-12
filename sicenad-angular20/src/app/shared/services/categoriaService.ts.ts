@@ -9,20 +9,6 @@ export class CategoriaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
 
-  private categorias: Categoria[] = [];
-  private categoriasPadre: Categoria[] = [];
-  private categoria: Categoria | null = null;
-
-  getCategorias(): Categoria[] {
-    return this.categorias;
-  }
-  getCategoriasPadre(): Categoria[] {
-    return this.categoriasPadre;
-  }
-  getCategoria(): Categoria | null {
-    return this.categoria;
-  }
-
   getAll(idCenad: string): Observable<Categoria[]> {
     const endpoint = `/cenads/${idCenad}/categorias?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
@@ -144,8 +130,8 @@ export class CategoriaService {
     const endpoint = `/categorias/${idCategoria}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.categoria = res;
-        this.utilService.toast(`Se ha eliminado la categoría ${this.categoria?.nombre}`, 'success');
+        let categoria = res;
+        this.utilService.toast(`Se ha eliminado la categoría ${categoria?.nombre}`, 'success');
       }),
       catchError(err => {
         console.error(err);

@@ -10,15 +10,6 @@ export class NormativaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private utils = inject(UtilsStore)
-  private normativas: Normativa[] = [];
-  private normativa: Normativa | null = null;
-
-  getNormativas(): Normativa[] {
-    return this.normativas;
-  }
-  getNormativa(): Normativa | null {
-    return this.normativa;
-  }
 
   getAll(idCenad: string): Observable<Normativa[]> {
     const endpoint = `/cenads/${idCenad}/normativas?size=1000`;
@@ -128,8 +119,8 @@ export class NormativaService {
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.peticionConToken<any>(endpointNormativa, 'DELETE')),
       tap(res => {
-        this.normativa = res;
-        this.utilService.toast(`Se ha eliminado la normativa ${this.normativa?.nombre}`, 'success');
+        let normativa = res;
+        this.utilService.toast(`Se ha eliminado la normativa ${normativa?.nombre}`, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

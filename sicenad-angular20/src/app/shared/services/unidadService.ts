@@ -8,15 +8,6 @@ import { UtilService } from "./utilService";
 export class UnidadService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
-  private unidades: Unidad[] = [];
-  private unidad: Unidad | null = null;
-
-  getUnidades(): Unidad[] {
-    return this.unidades;
-  }
-  getUnidad(): Unidad | null {
-    return this.unidad;
-  }
 
   getAll(): Observable<Unidad[]> {
     const endpoint = `/unidades?size=1000`;
@@ -70,8 +61,8 @@ export class UnidadService {
     const endpoint = `/unidades/${idUnidad}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.unidad = res;
-        this.utilService.toast(`Se ha eliminado la unidad ${this.unidad?.nombre}`, 'success');
+        let unidad = res;
+        this.utilService.toast(`Se ha eliminado la unidad ${unidad?.nombre}`, 'success');
       }),
       catchError(err => {
         console.error(err);

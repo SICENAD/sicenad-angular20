@@ -9,16 +9,6 @@ export class CenadService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
 
-  private cenads: Cenad[] = [];
-  private cenad: Cenad | null = null;
-
-  getCenads(): Cenad[] {
-    return this.cenads;
-  }
-  getCenad(): Cenad | null {
-    return this.cenad;
-  }
-
   getAll(): Observable<Cenad[]> {
     const endpoint = `/cenads?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { cenads: Cenad[] } }>(endpoint, 'GET').pipe(
@@ -165,8 +155,8 @@ export class CenadService {
     return this.apiService.borrarCarpeta(endpointCarpeta).pipe(
       switchMap(() => this.apiService.peticionConToken<any>(endpointCenad, 'DELETE')),
       tap(res => {
-        this.cenad = res;
-        this.utilService.toast(`Se ha eliminado el CENAD/CMT ${this.cenad?.nombre}`, 'success');
+        let cenad = res;
+        this.utilService.toast(`Se ha eliminado el CENAD/CMT ${cenad?.nombre}`, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

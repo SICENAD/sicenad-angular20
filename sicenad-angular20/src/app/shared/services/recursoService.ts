@@ -9,16 +9,6 @@ export class RecursoService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
 
-  private recursos: Recurso[] = [];
-  private recurso: Recurso | null = null;
-
-  getRecursos(): Recurso[] {
-    return this.recursos;
-  }
-  getRecurso(): Recurso | null {
-    return this.recurso;
-  }
-
   getAll(idCenad: string): Observable<Recurso[]> {
     const endpoint = `/cenads/${idCenad}/recursos?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
@@ -156,8 +146,8 @@ export class RecursoService {
     const endpoint = `/recursos/${idRecurso}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.recurso = res;
-        this.utilService.toast(`Se ha eliminado el recurso ${this.recurso?.nombre}`, 'success');
+        let recurso = res;
+        this.utilService.toast(`Se ha eliminado el recurso ${recurso?.nombre}`, 'success');
       }),
       catchError(err => {
         console.error(err);

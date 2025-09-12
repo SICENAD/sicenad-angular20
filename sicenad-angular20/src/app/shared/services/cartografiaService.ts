@@ -10,15 +10,6 @@ export class CartografiaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private utils = inject(UtilsStore)
-  private cartografias: Cartografia[] = [];
-  private cartografia: Cartografia | null = null;
-
-  getCartografias(): Cartografia[] {
-    return this.cartografias;
-  }
-  getCartografia(): Cartografia | null {
-    return this.cartografia;
-  }
 
   getAll(idCenad: string): Observable<Cartografia[]> {
     const endpoint = `/cenads/${idCenad}/cartografias?size=1000`;
@@ -132,8 +123,8 @@ export class CartografiaService {
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.peticionConToken<any>(endpointCartografia, 'DELETE')),
       tap(res => {
-        this.cartografia = res;
-        this.utilService.toast(`Se ha eliminado la cartografía ${this.cartografia?.nombre}`, 'success');
+        let cartografia = res;
+        this.utilService.toast(`Se ha eliminado la cartografía ${cartografia?.nombre}`, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

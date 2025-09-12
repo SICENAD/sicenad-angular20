@@ -9,16 +9,6 @@ export class TipoFormularioService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
 
-  private tiposFormulario: TipoFormulario[] = [];
-  private tipoFormulario: TipoFormulario | null = null;
-
-  getTiposFormulario(): TipoFormulario[] {
-    return this.tiposFormulario;
-  }
-  getTipoFormulario(): TipoFormulario | null {
-    return this.tipoFormulario;
-  }
-
   getAll(): Observable<TipoFormulario[]> {
     const endpoint = `/tipos_formulario?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { tipos_formulario: TipoFormulario[] } }>(endpoint, 'GET').pipe(
@@ -71,8 +61,8 @@ export class TipoFormularioService {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.tipoFormulario = res;
-        this.utilService.toast(`Se ha eliminado el tipo de formulario ${this.tipoFormulario?.nombre}`, 'success');
+        let tipoFormulario = res;
+        this.utilService.toast(`Se ha eliminado el tipo de formulario ${tipoFormulario?.nombre}`, 'success');
       }),
       catchError(err => {
         console.error(err);

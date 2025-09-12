@@ -35,6 +35,7 @@ import { LoginResponse } from "@interfaces/responses/loginResponse";
 import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
 import { FicheroService } from "./ficheroService";
 import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
+import { FicheroSolicitud } from "@interfaces/models/ficheroSolicitud";
 
 
 @Injectable({ providedIn: 'root' })
@@ -1073,6 +1074,111 @@ export class OrquestadorService {
     );
   }
 
+ // --- CRUD Solicitud ---
+  crearSolicitud(
+    observaciones: string,
+    unidadUsuaria: string,
+    jefeUnidadUsuaria: string,
+    pocEjercicio: string,
+    tlfnRedactor: string,
+    fechaSolicitud: Date,
+    fechaHoraInicioRecurso: Date,
+    fechaHoraFinRecurso: Date,
+    estado: string,
+    idCenad: string,
+    idRecurso: string,
+    idUsuarioNormal: string
+  ): Observable<any> {
+    return this.solicitudService.crearSolicitud(
+    observaciones,
+    unidadUsuaria,
+    jefeUnidadUsuaria,
+    pocEjercicio,
+    tlfnRedactor,
+    fechaSolicitud,
+    fechaHoraInicioRecurso,
+    fechaHoraFinRecurso,
+    estado,
+    idRecurso,
+    idUsuarioNormal,
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllSolicitudes(idCenad).pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
+          ).subscribe();
+          console.log(`Solicitud creada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando la solicitud.`);
+        }
+      })
+    );
+  }
+
+  actualizarSolicitud(
+    observaciones: string,
+    unidadUsuaria: string,
+    jefeUnidadUsuaria: string,
+    pocEjercicio: string,
+    tlfnRedactor: string,
+    fechaHoraInicioRecurso: Date,
+    fechaHoraFinRecurso: Date,
+    estado: string,
+    idCenad: string,
+    idSolicitud: string,
+    observacionesCenad: string,
+    fechaFinDocumentacion: Date
+  ): Observable<any> {
+    return this.solicitudService.editarSolicitud(
+    observaciones,
+    unidadUsuaria,
+    jefeUnidadUsuaria,
+    pocEjercicio,
+    tlfnRedactor,
+    fechaHoraInicioRecurso,
+    fechaHoraFinRecurso,
+    estado,
+    idSolicitud,
+    observacionesCenad,
+    fechaFinDocumentacion
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadAllSolicitudes(idCenad).pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
+          ).subscribe();
+          console.log(`Solicitud ${idSolicitud} actualizada correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando la solicitud ${idSolicitud}.`);
+        }
+      })
+    );
+  }
+
+  borrarSolicitud(idSolicitud: string, idCenad: string): Observable<any> {
+    return this.solicitudService.deleteSolicitud(idSolicitud).pipe(
+      tap(res => {
+        if (res) {
+          console.log(`Solicitud con id ${idSolicitud} borrada correctamente.`);
+          this.loadAllSolicitudes(idCenad).pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
+          ).subscribe();
+        } else {
+          console.warn(`Hubo un problema borrando la solicitud con id ${idSolicitud}.`);
+        }
+      })
+    );
+  }
+
+  loadSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
+    return this.solicitudService.getSolicitudSeleccionada(idSolicitud).pipe(
+      catchError(err => {
+        console.error('Error cargando la solicitud', err);
+        return of(null);
+      })
+    );
+  }
+
   // --- CRUD Armas ---
   crearArma(nombre: string, tipoTiro: string): Observable<any> {
     return this.armaService.crearArma(nombre, tipoTiro).pipe(
@@ -1448,6 +1554,182 @@ export class OrquestadorService {
   }
   getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<Blob> {
     return this.ficheroService.getImagenRecurso(nombreArchivo, idCenad, idRecurso);
+  }
+
+  //--- CRUD FicherosSolicitud ---
+  loadDocumentacionCenad(idSolicitud: string): Observable<FicheroSolicitud[] | null> {
+    return this.ficheroService.getAllDocumentacionSolicitudCenad(idSolicitud).pipe(
+      catchError(err => {
+        console.error('Error cargando ficheros del recurso', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadDocumentacionUnidad(idSolicitud: string): Observable<FicheroSolicitud[] | null> {
+    return this.ficheroService.getAllDocumentacionSolicitudUnidad(idSolicitud).pipe(
+      catchError(err => {
+        console.error('Error cargando ficheros del recurso', err);
+        return of([]);
+      })
+    );
+  }
+
+  loadFicheroSolicitudSeleccionado(idFichero: string): Observable<FicheroSolicitud | null> {
+    return this.ficheroService.getFicheroSolicitudSeleccionado(idFichero).pipe(
+      catchError(err => {
+        console.error('Error cargando el recurso', err);
+        return of(null);
+      })
+    );
+  }
+  crearFicheroSolicitudCenad(
+    nombre: string,
+    descripcion: string,
+    archivo: File,
+    idCategoriaFichero: string,
+    idCenad: string,
+    idSolicitud: string
+  ): Observable<any> {
+    return this.ficheroService.crearFicheroSolicitudCenad(
+      nombre,
+      descripcion,
+      archivo,
+      idCategoriaFichero,
+      idCenad,
+      idSolicitud
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadDocumentacionCenad(idSolicitud).subscribe();
+          console.log(`Fichero ${nombre} creado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando el fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  crearFicheroSolicitudUnidad(
+    nombre: string,
+    descripcion: string,
+    archivo: File,
+    idCategoriaFichero: string,
+    idCenad: string,
+    idSolicitud: string
+  ): Observable<any> {
+    return this.ficheroService.crearFicheroSolicitudUnidad(
+      nombre,
+      descripcion,
+      archivo,
+      idCategoriaFichero,
+      idCenad,
+      idSolicitud
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadDocumentacionUnidad(idSolicitud).subscribe();
+          console.log(`Fichero ${nombre} creado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema creando el fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarFicheroSolicitudCenad(
+    nombre: string,
+    descripcion: string,
+    archivo: File | null,
+    nombreArchivoActual: string,
+    idCenad: string,
+    idSolicitud: string,
+    idCategoriaFichero: string,
+    idFichero: string
+  ): Observable<any> {
+    return this.ficheroService.editarFicheroSolicitud(
+      nombre,
+      descripcion,
+      archivo,
+      nombreArchivoActual,
+      idCenad,
+      idSolicitud,
+      idCategoriaFichero,
+      idFichero
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadDocumentacionCenad(idSolicitud).subscribe();
+          console.log(`Fichero ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  actualizarFicheroSolicitudUnidad(
+    nombre: string,
+    descripcion: string,
+    archivo: File | null,
+    nombreArchivoActual: string,
+    idCenad: string,
+    idSolicitud: string,
+    idCategoriaFichero: string,
+    idFichero: string
+  ): Observable<any> {
+    return this.ficheroService.editarFicheroSolicitud(
+      nombre,
+      descripcion,
+      archivo,
+      nombreArchivoActual,
+      idCenad,
+      idSolicitud,
+      idCategoriaFichero,
+      idFichero
+    ).pipe(
+      tap(res => {
+        if (res) {
+          this.loadDocumentacionUnidad(idSolicitud).subscribe();
+          console.log(`Fichero ${nombre} actualizado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
+        }
+      })
+    );
+  }
+
+  borrarFicheroSolicitudCenad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
+    return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
+      tap(res => {
+        if (res) {
+          this.loadDocumentacionCenad(idSolicitud).subscribe();
+          console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
+        }
+      })
+    );
+  }
+
+  borrarFicheroSolicitudUnidad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
+    return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
+      tap(res => {
+        if (res) {
+          this.loadDocumentacionUnidad(idSolicitud).subscribe();
+          console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
+        } else {
+          console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
+        }
+      })
+    );
+  }
+
+  getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<void> {
+    return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
+  }
+  getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<Blob> {
+    return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
   }
 
   // --- CRUD Normativas ---

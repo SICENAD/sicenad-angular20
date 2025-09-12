@@ -17,47 +17,6 @@ import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
 export class UsuarioService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
-  private usuarios = signal<Usuario[]>([]);
-  private usuarios_superadministrador = signal<UsuarioSuperAdministrador[]>([]);
-  private usuarios_administrador = signal<UsuarioAdministrador[]>([]);
-  private usuarios_gestor = signal<UsuarioGestor[]>([]);
-  private usuarios_normal = signal<UsuarioNormal[]>([]);
-  private usuario = signal<Usuario | null>(null);
-  private usuario_superadministrador = signal<UsuarioSuperAdministrador | null>(null);
-  private usuario_administrador = signal<UsuarioAdministrador | null>(null);
-  private usuario_gestor = signal<UsuarioGestor | null>(null);
-  private usuario_normal = signal<UsuarioNormal | null>(null);
-
-  getUsuarios(): Signal<Usuario[]> {
-    return this.usuarios;
-  }
-  getUsuariosSuperAdministrador(): Signal<UsuarioSuperAdministrador[]> {
-    return this.usuarios_superadministrador;
-  }
-  getUsuariosAdministrador(): Signal<UsuarioAdministrador[]> {
-    return this.usuarios_administrador;
-  }
-  getUsuariosGestor(): Signal<UsuarioGestor[]> {
-    return this.usuarios_gestor;
-  }
-  getUsuariosNormal(): Signal<UsuarioNormal[]> {
-    return this.usuarios_normal;
-  }
-  getUsuario(): Signal<Usuario | null> {
-    return this.usuario;
-  }
-  getUsuarioSuperAdministrador(): Signal<UsuarioSuperAdministrador | null> {
-    return this.usuario_superadministrador;
-  }
-  getUsuarioAdministrador(): Signal<UsuarioAdministrador | null> {
-    return this.usuario_administrador;
-  }
-  getUsuarioGestor(): Signal<UsuarioGestor | null> {
-    return this.usuario_gestor;
-  }
-  getUsuarioNormal(): Signal<UsuarioNormal | null> {
-    return this.usuario_normal;
-  }
 
   // --- REQUEST LOGIN ---
   public login(username: string, password: string): Observable<LoginResponse> {
@@ -253,9 +212,9 @@ export class UsuarioService {
       tap(res => {
         if (res) {
           console.log(`Usuario con id ${idUsuario} eliminado correctamente.`);
-          this.usuario.set(res);
-          console.log(this.usuario());
-          this.utilService.toast(`Se ha eliminado el usuario ${this.usuario()?.username}`, 'success');
+          let usuario = res;
+          console.log(usuario);
+          this.utilService.toast(`Se ha eliminado el usuario ${usuario?.username}`, 'success');
         }
       }),
       catchError(err => {
@@ -265,16 +224,7 @@ export class UsuarioService {
     );
   }
 
-
-
-
-
-
-
-
-
-
-
+  // --- OBTENER DATOS DE USUARIO SEGUN ROL ---
   async getDatosUsuario(rol: string, username: string): Promise<{
     usuario: any; cenad?: Cenad | null; unidad?: Unidad | null
   }> {

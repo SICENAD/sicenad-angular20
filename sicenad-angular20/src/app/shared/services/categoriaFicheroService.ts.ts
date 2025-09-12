@@ -9,16 +9,6 @@ export class CategoriaFicheroService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
 
-  private categoriasFichero: CategoriaFichero[] = [];
-  private categoriaFichero: CategoriaFichero | null = null;
-
-  getCategoriasFichero(): CategoriaFichero[] {
-    return this.categoriasFichero;
-  }
-  getCategoriaFichero(): CategoriaFichero | null {
-    return this.categoriaFichero;
-  }
-
   getAll(): Observable<CategoriaFichero[]> {
     const endpoint = `/categorias_fichero?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { categorias_fichero: CategoriaFichero[] } }>(endpoint, 'GET').pipe(
@@ -71,8 +61,8 @@ export class CategoriaFicheroService {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.categoriaFichero = res;
-        this.utilService.toast(`Se ha eliminado la categoría de fichero ${this.categoriaFichero?.nombre}`, 'success');
+        let categoriaFichero = res;
+        this.utilService.toast(`Se ha eliminado la categoría de fichero ${categoriaFichero?.nombre}`, 'success');
       }),
       catchError(err => {
         console.error(err);

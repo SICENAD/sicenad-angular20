@@ -9,16 +9,6 @@ export class ArmaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
 
-  private armas: Arma[] = [];
-  private arma: Arma | null = null;
-
-  getArmas(): Arma[] {
-    return this.armas;
-  }
-  getArma(): Arma | null {
-    return this.arma;
-  }
-
   getAll(): Observable<Arma[]> {
     const endpoint = `/armas?size=1000`;
     return this.apiService.peticionConToken<{ _embedded: { armas: Arma[] } }>(endpoint, 'GET').pipe(
@@ -63,8 +53,8 @@ export class ArmaService {
     const endpoint = `/armas/${idArma}`;
     return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
       tap(res => {
-        this.arma = res;
-        this.utilService.toast(`Se ha eliminado el arma ${this.arma?.nombre}`, 'success');
+        let arma = res;
+        this.utilService.toast(`Se ha eliminado el arma ${arma?.nombre}`, 'success');
       }),
       catchError(err => {
         console.error(err);
