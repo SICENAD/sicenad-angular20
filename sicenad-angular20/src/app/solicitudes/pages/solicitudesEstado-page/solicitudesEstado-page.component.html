@@ -1,0 +1,14 @@
+<h1>{{ estado() }}</h1>
+@if (solicitudes() && solicitudes()!.length > 0) {
+<div>
+  @for (solicitud of solicitudes(); track solicitud.idString) {
+  <p >Observaciones {{solicitud.observaciones}}</p>
+    <p >fecha de inicio {{ solicitud.fechaInicioRecurso }}</p>
+
+  }
+</div>
+} @else {
+  <div>
+    <p class="titulo mt-5">NO HAY SOLICITUDES EN ESTE ESTADO</p>
+  </div>
+}
