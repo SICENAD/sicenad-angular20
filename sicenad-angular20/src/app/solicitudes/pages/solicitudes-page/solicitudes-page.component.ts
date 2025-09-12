@@ -208,6 +208,7 @@ export class SolicitudesPageComponent {
     this.historialCategorias.set(nuevoHistorial);
     // Si no queda historial, volvemos a categorías padre
     if (nuevoHistorial.length === 0) {
+      this.solicitudForm.patchValue({ categoria: null, recurso: null });
       this.cargarCategoriasPadre();
       this.loading.set(false);
       return;
