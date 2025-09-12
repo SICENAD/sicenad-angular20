@@ -147,7 +147,7 @@
                 name="tlfnRedactor"
               />
               @if (tlfnRedactor?.touched && tlfnRedactor?.invalid) {
-              <span class="text-danger">El teléfono es obligatorio</span>
+              <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
               }
             </div>
           </div>
@@ -188,7 +188,7 @@
               <select name="recursos" id="recursos" formControlName="recurso">
                 <option [ngValue]="null" disabled selected>Selecciona un recurso</option>
                 @for (recurso of recursos(); track recurso.idString) {
-                <option [ngValue]="recurso.idString">
+                <option [ngValue]="recurso">
                   {{ recurso.nombre }}
                 </option>
                 }
@@ -231,7 +231,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Cerrar</button>
-        @if (usuarioLogueado()?.rol !== misRoles.Normal) {
+        @if (usuarioLogueado()?.rol === misRoles.Normal) {
         <button
           type="button"
           class="btn btn-primary"
