@@ -51,7 +51,7 @@ export class UtilService {
       return `${dia}-${mes}-${year} ${horas}:${minutos}:${segundos}`;
     }
 
-    formatearFecha(fechaSQL: string | null | undefined): string {
+    formatearFecha(fechaSQL: any | null | undefined): string {
       if (!fechaSQL) return '';
       const [fecha] = fechaSQL.split(' ');
       const [anio, mes, dia] = fecha.split('-');

@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo1 d-flex">
+        <b class="me-2">{{ solicitud()?.unidadUsuaria }}</b>
+        <a class="nav-link me-auto" [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes, solicitud()?.idString]">
+            @if (isEditable()) {
+            <fa-icon [icon]="faEdit"></fa-icon>
+            } @else {
+            <fa-icon [icon]="faConsultar"></fa-icon>
+            }
+        </a>
+    </div>
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo1">
+        <b>{{ fechaSolicitudString() }}</b>
+    </div>
+    <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo1"><b>{{recurso()?.nombre}}</b></div>
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo1">
+        <b>{{ fechaInicioString() }}</b>
+    </div>
+    <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo1">
+        <b>{{ fechaFinString() }}</b>
+    </div>
+</div>

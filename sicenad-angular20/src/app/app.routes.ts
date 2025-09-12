@@ -39,7 +39,6 @@ export const RoutesPaths = {
   categorias: 'categorias',
   recursos: 'recursos',
   solicitudes: 'solicitudes',
-  solicitudesEstado: 'solicitudes/estado',
   calendario: 'calendario',
   usuariosCenad: 'usuarios',
   unidadesCenad: 'unidades',
@@ -131,10 +130,6 @@ export const routes: Routes = [
       {
         path: RoutesPaths.solicitudes,
         component: SolicitudesPageComponent
-      },
-      {
-        path: `${RoutesPaths.solicitudesEstado}/:estado`,
-        component: LoginComponent
       },
       {
         path: `${RoutesPaths.solicitudes}/:idSolicitud`,

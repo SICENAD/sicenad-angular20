@@ -29,10 +29,7 @@
 @if (solicitudesTop5().length) {
 <div>
   @for (s of solicitudesTop5() ; track s.idString) {
-  <p>{{ s.observaciones }}</p>
-          <!--
-  <SolicitudComponent [solicitud]="s" />
--->
+  <app-solicitud [solicitud]="s" />
   }
 </div>
 } @else {
@@ -71,10 +68,7 @@
         </div>
         <div>
           @for (s of solicitudesOrdenadas() ; track s.idString) {
-          <p>{{ s.observaciones }}</p>
-          <!--
-  <SolicitudComponent [solicitud]="s" />
--->
+          <app-solicitud [solicitud]="s" />
           }
         </div>
         } @else {
