@@ -47,7 +47,7 @@ export class SolicitudComponent {
   });
 
   solicitud = input<Solicitud>();
-  isEditable = computed(() => this.solicitud()?.estado === 'Borrador' || this.solicitud()?.estado === 'Solicitada' || this.isAdminEsteCenad() || this.isGestorEsteCenad());
+  isEditable = computed(() => this.solicitud()?.estado === 'Borrador' || (this.solicitud()?.estado === 'Solicitada' && (this.isAdminEsteCenad() || this.isGestorEsteCenad())));
   fechaSolicitudString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaSolicitud));
   fechaInicioString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaInicioRecurso));
   fechaFinString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaFinRecurso));
