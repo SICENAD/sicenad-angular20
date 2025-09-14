@@ -1153,7 +1153,6 @@ export class OrquestadorService {
 
   actualizarSolicitud(
     observaciones: string,
-    unidadUsuaria: string,
     jefeUnidadUsuaria: string,
     pocEjercicio: string,
     tlfnRedactor: string,
@@ -1167,7 +1166,6 @@ export class OrquestadorService {
   ): Observable<any> {
     return this.solicitudService.editarSolicitud(
     observaciones,
-    unidadUsuaria,
     jefeUnidadUsuaria,
     pocEjercicio,
     tlfnRedactor,

@@ -86,7 +86,6 @@ export class SolicitudService {
 
   editarSolicitud(
     observaciones: string,
-    unidadUsuaria: string,
     jefeUnidadUsuaria: string,
     pocEjercicio: string,
     tlfnRedactor: string,
@@ -98,14 +97,14 @@ export class SolicitudService {
     fechaFinDocumentacion: Date
   ): Observable<any> {
     const endpoint = `/solicitudes/${idSolicitud}`;
+    const fechaFinDocumentacionCondicional = fechaFinDocumentacion ? this.utilService.formatearFechaHora(fechaFinDocumentacion) : null;
     const body: any = {
         observaciones: observaciones,
         observacionesCenad: observacionesCenad,
-        unidadUsuaria: unidadUsuaria.toUpperCase(),
         jefeUnidadUsuaria: this.utilService.toTitleCase(jefeUnidadUsuaria),
         pocEjercicio: pocEjercicio,
         tlfnRedactor: tlfnRedactor,
-        fechaFinDocumentacion: this.utilService.formatearFechaHora(fechaFinDocumentacion),
+        fechaFinDocumentacion: fechaFinDocumentacionCondicional,
         fechaUltModSolicitud: this.utilService.formatearFechaHora(new Date()),
         fechaHoraInicioRecurso: this.utilService.formatearFechaHora(fechaHoraInicioRecurso),
         fechaHoraFinRecurso: this.utilService.formatearFechaHora(fechaHoraFinRecurso),

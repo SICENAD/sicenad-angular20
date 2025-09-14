@@ -131,36 +131,30 @@ export class SolicitudDetallePageComponent {
       fechaSolicitud: this.utilService.formatDate(this.solicitud()?.fechaSolicitud?.toString()) || new Date(),
       fechaInicio: this.utilService.formatDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()) || new Date(),
       fechaFin: this.utilService.formatDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) || new Date(),
-      fechaFinDocumentacion: this.utilService.formatDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || new Date(),
+      fechaFinDocumentacion: this.utilService.formatDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || null,
       estado: this.solicitud()?.estado || ''
     });
-    console.log('solicitud:', this.solicitud());
-    console.log('Solicitud cargada en el formulario:', this.solicitudForm.value);
-      console.log('fechainicio:', this.utilService.formatDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()));
-       console.log('fechainicio:', this.utilService.formatDate(this.solicitud()?.fechaHoraInicioRecurso?.toString()));
-       console.log('fechainicio:', this.solicitud()?.fechaHoraInicioRecurso?.toString());
   }
 
-
-
-
-  editarSolicitud() {
-    throw new Error('Method not implemented.');
+ editarSolicitud() {
+    if (this.solicitudForm.invalid) {
+      this.solicitudForm.markAllAsTouched();
+      return;
+    }
+    const { observaciones, observacionesCenad, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaSolicitud, fechaInicio, fechaFin, fechaFinDocumentacion, estado } = this.solicitudForm.value;
+    this.orquestadorService.actualizarSolicitud(observaciones, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, estado, this.cenadVisitado()!.idString, this.idSolicitud(), observacionesCenad, fechaFinDocumentacion).subscribe({
+      next: res => {
+        if (res) {
+          console.log(`Solicitud del recurso ${this.recurso()?.nombre} actualizada correctamente.`);
+        }
+      },
+      error: (error) => {
+        console.error('Error actualizando Solicitud:', error);
+      }
+    });
   }
-
   borrarSolicitud() {
-    throw new Error('Method not implemented.');
+    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString).subscribe(() => {
+    });
   }
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -69,7 +69,7 @@ export class SolicitudesPageComponent {
     unidad: [null],
     observaciones: [''],
     jefeUnidadUsuaria: ['', Validators.required],
-    pocEjercicio: [''],
+    pocEjercicio: ['', Validators.required],
     tlfnRedactor: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
     fechaSolicitud: [new Date(), Validators.required],
     fechaInicio: [new Date(), Validators.required],
