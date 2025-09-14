@@ -100,8 +100,6 @@
                 formControlName="jefeUnidadUsuaria"
                 placeholder="Jefe UCO Usuaria"
                 name="jefeUcoUsuaria"
-                minlength="8"
-                maxlength="20"
               />
               @if (jefeUnidadUsuaria?.touched && jefeUnidadUsuaria?.invalid) {
               <span class="text-danger">El Jefe de UCO es obligatorio</span>
@@ -209,7 +207,7 @@
           </div>
           <div class="row py-2 mt-2 justify-content-center me-3">
             <div class="col-lg-12 col-md-12">
-              <label>Observaciones: <sup class="text-danger">*</sup></label>
+              <label>Observaciones:</label>
               <textarea
                 class="form-control"
                 name="observacionesUco"
@@ -217,9 +215,6 @@
                 placeholder="Observaciones de la UCO"
               >
               </textarea>
-              @if (observaciones?.touched && observaciones?.invalid) {
-              <span class="text-danger">Las observaciones son obligatorias</span>
-              }
             </div>
           </div>
         </form>

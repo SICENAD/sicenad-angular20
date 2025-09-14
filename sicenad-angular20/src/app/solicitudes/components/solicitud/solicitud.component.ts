@@ -28,6 +28,7 @@ export class SolicitudComponent {
 
   faEdit = this.iconoStore.faEdit;
   faConsultar = this.iconoStore.faConsultar;
+  faVolver = this.iconoStore.faVolver;
   readonly routesPaths = RoutesPaths;
 
   recursos = computed(() => this.cenadStore.recursos());
@@ -49,8 +50,8 @@ export class SolicitudComponent {
   solicitud = input<Solicitud>();
   isEditable = computed(() => this.solicitud()?.estado === 'Borrador' || (this.solicitud()?.estado === 'Solicitada' && (this.isAdminEsteCenad() || this.isGestorEsteCenad())));
   fechaSolicitudString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaSolicitud));
-  fechaInicioString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaInicioRecurso));
-  fechaFinString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaFinRecurso));
+  fechaInicioString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaHoraInicioRecurso));
+  fechaFinString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaHoraFinRecurso));
 
     constructor() {
     // Este effect ahora se ejecuta en un contexto válido

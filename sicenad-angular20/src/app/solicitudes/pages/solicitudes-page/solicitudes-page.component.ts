@@ -67,7 +67,7 @@ export class SolicitudesPageComponent {
 
   solicitudForm: FormGroup = this.fb.group({
     unidad: [null],
-    observaciones: ['', Validators.required],
+    observaciones: [''],
     jefeUnidadUsuaria: ['', Validators.required],
     pocEjercicio: [''],
     tlfnRedactor: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
@@ -21,12 +21,7 @@ import { UtilsStore } from '@stores/utils.store';
   styleUrls: ['./solicitudDetalle-page.component.css'],
 })
 export class SolicitudDetallePageComponent {
-borrarSolicitud() {
-throw new Error('Method not implemented.');
-}
-editarSolicitud() {
-throw new Error('Method not implemented.');
-}
+
   private route = inject(ActivatedRoute);
   private auth = inject(AuthStore);
   private cenadStore = inject(CenadStore);
@@ -64,23 +59,27 @@ throw new Error('Method not implemented.');
   idModalEliminar = computed(() => this._idModalEliminar() + this.idSolicitud());
 
   solicitudForm: FormGroup = this.fb.group({
-    observaciones: ['', Validators.required],
+    observaciones: [''],
+    observacionesCenad: [''],
     jefeUnidadUsuaria: ['', Validators.required],
     pocEjercicio: [''],
     tlfnRedactor: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
     fechaSolicitud: [new Date(), Validators.required],
     fechaInicio: [new Date(), Validators.required],
     fechaFin: [new Date(), Validators.required],
-    estado: ['', Validators.required],
+    fechaFinDocumentacion: [new Date()],
+    estado: [''],
   });
 
   get observaciones() { return this.solicitudForm.get('observaciones'); }
+  get observacionesCenad() { return this.solicitudForm.get('observacionesCenad'); }
   get jefeUnidadUsuaria() { return this.solicitudForm.get('jefeUnidadUsuaria'); }
   get pocEjercicio() { return this.solicitudForm.get('pocEjercicio'); }
   get tlfnRedactor() { return this.solicitudForm.get('tlfnRedactor'); }
   get fechaSolicitud() { return this.solicitudForm.get('fechaSolicitud'); }
   get fechaInicio() { return this.solicitudForm.get('fechaInicio'); }
   get fechaFin() { return this.solicitudForm.get('fechaFin'); }
+  get fechaFinDocumentacion() { return this.solicitudForm.get('fechaFinDocumentacion'); }
   get estado() { return this.solicitudForm.get('estado'); }
 
   constructor() {
@@ -109,6 +108,7 @@ throw new Error('Method not implemented.');
       this.orquestadorService.loadSolicitudSeleccionada(idSol).subscribe({
         next: (solicitud) => {
           this.solicitud.set(solicitud);
+          this.cargarSolicitud();
         },
         error: () => {
           this.solicitud.set(null);
@@ -117,26 +117,40 @@ throw new Error('Method not implemented.');
     });
   }
 
-  ngOnInit(): void {
+  cargarSolicitud(): void {
     if (!this.solicitud()) return;
-
     // Cargar los valores básicos
+
+
     this.solicitudForm.patchValue({
       observaciones: this.solicitud()?.observaciones || '',
+      observacionesCenad: this.solicitud()?.observacionesCenad || '',
       jefeUnidadUsuaria: this.solicitud()?.jefeUnidadUsuaria || '',
       pocEjercicio: this.solicitud()?.pocEjercicio || '',
       tlfnRedactor: this.solicitud()?.tlfnRedactor || '',
-      fechaSolicitud: this.solicitud()?.fechaSolicitud || '',
-      fechaInicio: this.solicitud()?.fechaInicioRecurso || '',
-      fechaFin: this.solicitud()?.fechaFinRecurso || '',
+      fechaSolicitud: this.utilService.formatDate(this.solicitud()?.fechaSolicitud?.toString()) || new Date(),
+      fechaInicio: this.utilService.formatDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()) || new Date(),
+      fechaFin: this.utilService.formatDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) || new Date(),
+      fechaFinDocumentacion: this.utilService.formatDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || new Date(),
       estado: this.solicitud()?.estado || ''
     });
+    console.log('solicitud:', this.solicitud());
+    console.log('Solicitud cargada en el formulario:', this.solicitudForm.value);
+      console.log('fechainicio:', this.utilService.formatDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()));
+       console.log('fechainicio:', this.utilService.formatDate(this.solicitud()?.fechaHoraInicioRecurso?.toString()));
+       console.log('fechainicio:', this.solicitud()?.fechaHoraInicioRecurso?.toString());
   }
 
 
 
 
+  editarSolicitud() {
+    throw new Error('Method not implemented.');
+  }
 
+  borrarSolicitud() {
+    throw new Error('Method not implemented.');
+  }
 
 
 

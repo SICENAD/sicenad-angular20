@@ -1,141 +1,164 @@
 <div class="container mt-4">
-  <h1>EDITAR SOLICITUD {{ solicitud()?.idString }} recurso {{ recurso()?.nombre }}</h1>
-  <form class="formulario" [formGroup]="solicitudForm">
-    <!--cuando se abra como no editable todo el form sera de lectura-->
-    <fieldset [disabled]="!isEditable()">
-      <div class="row py-2 justify-content-between">
-        <div class="col-lg-2 col-md-12">
-          <label class="me-2">Unidad Solicitante: <sup class="text-danger">*</sup></label>
-          <label class="form-control">{{ solicitud()?.unidadUsuaria }}</label>
-        </div>
-        <div class="col-lg-2 col-md-12">
-          <label>Jefe Unidad Usuaria: <sup class="text-danger">*</sup></label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="jefeUnidadUsuaria"
-            placeholder="Jefe UCO Usuaria"
-            name="jefeUcoUsuaria"
-          />
-        </div>
-        <div class="col-lg-2 col-md-12">
-          <label for="fechaSolicitud">Fecha Solicitud: <sup class="text-danger"></sup></label>
-          <input
-            type="date"
-            class="form-control"
-            formControlName="fechaSolicitud"
-            name="fechaSol"
-            readonly
-          />
-        </div>
-        <div class="col-lg-2 col-md-12">
-          <label>POC para el EJERCICIO: <sup class="text-danger">*</sup></label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="pocEjercicio"
-            placeholder="POC para el Ejercicio"
-            name="pocEjercicio"
-          />
-        </div>
-        <div class="col-lg-2 col-md-12">
-          <label>Redactor (Teléfono): <sup class="text-danger">*</sup></label>
-          <input
-            type="text"
-            class="form-control"
-            formControlName="tlfnRedactor"
-            placeholder="RCT UCO/ RCT durante EX"
-            name="tlfnRedactor"
-          />
-        </div>
-      </div>
-      <div class="row py-2 mt-2 justify-content-between">
-        <div class="col-lg-4 col-md-12">
-          <label>Recurso: <sup class="text-danger me-2">*</sup></label>
-          <label class="form-control">{{ recurso()?.nombre }}</label>
-        </div>
-        <div class="col-lg-2 col-md-12">
-          <label for="fechaInicio">Fecha-Hora Inicio: <sup class="text-danger"></sup></label>
-          <input
-            type="datetime-local"
-            class="form-control"
-            formControlName="fechaInicio"
-          />
-        </div>
-        <div class="col-lg-2 col-md-12">
-          <label for="fechaFin">Fecha-Hora Fin: <sup class="text-danger"></sup></label>
-          <input type="datetime-local" class="form-control" formControlName="fechaFin" />
-        </div>
-      </div>
-      <div class="row py-2 mt-2 justify-content-center me-3">
-        <div class="col-lg-12 col-md-12">
-          <label>Observaciones: <sup class="text-danger">*</sup></label>
-          <textarea
-            class="form-control"
-            name="observacionesUco"
-            formControlName="observacionesUco"
-            placeholder="Observaciones de la UCO"
-          >
-          </textarea>
-        </div>
-      </div>
-      <div class="row py-2 mt-2 justify-content-center me-3">
-        <div class="col-lg-12 col-md-12">
-          <label>Observaciones del CENAD/CMT: <sup class="text-danger">*</sup></label>
-          <textarea
-            class="form-control"
-            name="observacionesCenad"
-            formControlName="observacionesCenad"
-            placeholder="Observaciones del CENAD/CMT"
-          >
-          </textarea>
-        </div>
-      </div>
-      <div class="row py-2 mt-2 justify-content-start">
-        <div class="col-auto d-flex align-items-center">
-          <label class="me-2 mb-0">
-            <b>Estado de la solicitud: <sup class="text-danger">*</sup></b>
-          </label>
-          <select
-            class="form-select form-select-sm w-auto"
-            aria-label="estado"
-            formControlName="estado"
-          >
-            @for (e of estados(); track e) {
-            <option [value]="e">
-              {{ e }}
-            </option>
+  <div class="d-flex align-items-center position-relative mb-2">
+  <!-- Botón volver a la página anterior -->
+  <a
+      class="nav-link volver position-absolute start-0"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
+  >
+    <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+    <strong>Volver</strong>
+  </a>
+  <h1 class="w-100 text-center mb-0">EDITAR SOLICITUD del recurso {{ recurso()?.nombre }}</h1></div>
+  <div>
+    <form class="formulario" [formGroup]="solicitudForm">
+      <!--cuando se abra como no editable todo el form sera de lectura-->
+      <fieldset [disabled]="!isEditable()">
+        <div class="row py-2 justify-content-between">
+          <div class="col-lg-2 col-md-12">
+            <label class="me-2">Unidad Solicitante: <sup class="text-danger">*</sup></label>
+            <label class="form-control">{{ solicitud()?.unidadUsuaria }}</label>
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <label>Jefe Unidad Usuaria: <sup class="text-danger">*</sup></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="jefeUnidadUsuaria"
+              placeholder="Jefe UCO Usuaria"
+              name="jefeUcoUsuaria"
+            />
+            @if (jefeUnidadUsuaria?.touched && jefeUnidadUsuaria?.invalid) {
+            <span class="text-danger">El Jefe de UCO es obligatorio</span>
             }
-          </select>
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <label for="fechaSolicitud">Fecha Solicitud: <sup class="text-danger"></sup></label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="fechaSolicitud"
+              name="fechaSol"
+              readonly
+            />
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <label>POC para el EJERCICIO: <sup class="text-danger">*</sup></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="pocEjercicio"
+              placeholder="POC para el Ejercicio"
+              name="pocEjercicio"
+            />
+            @if (pocEjercicio?.touched && pocEjercicio?.invalid) {
+            <span class="text-danger">El POC para el Ejercicio es obligatorio</span>
+            }
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <label>Redactor (Teléfono): <sup class="text-danger">*</sup></label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tlfnRedactor"
+              placeholder="RCT UCO/ RCT durante EX"
+              name="tlfnRedactor"
+            />
+            @if (tlfnRedactor?.touched && tlfnRedactor?.invalid) {
+            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            }
+          </div>
         </div>
-      </div>
-      <div class="row py-2 mt-2 justify-content-start">
-        <div class="col-auto d-flex align-items-center">
-          <label class="me-2 mb-0">
-            <b>Fecha Fin Documentación: <sup class="text-danger">*</sup></b>
-          </label>
-          <input
-            type="date"
-            class="form-control w-auto"
-            formControlName="fechaFinDocumentacion"
-            name="fechaFinDocumentacion"
-          />
+        <div class="row py-2 mt-2 justify-content-between">
+          <div class="col-lg-4 col-md-12">
+            <label>Recurso: <sup class="text-danger me-2">*</sup></label>
+            <label class="form-control">{{ recurso()?.nombre }}</label>
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <label for="fechaInicio">Fecha-Hora Inicio: <sup class="text-danger"></sup></label>
+            <input type="datetime-local" class="form-control" formControlName="fechaInicio" />
+            @if (fechaInicio?.touched && fechaInicio?.invalid) {
+            <span class="text-danger">La fecha de inicio es obligatoria</span>
+            }
+          </div>
+          <div class="col-lg-2 col-md-12">
+            <label for="fechaFin">Fecha-Hora Fin: <sup class="text-danger"></sup></label>
+            <input type="datetime-local" class="form-control" formControlName="fechaFin" />
+            @if (fechaFin?.touched && fechaFin?.invalid) {
+            <span class="text-danger">La fecha de fin es obligatoria</span>
+            }
+          </div>
         </div>
-      </div>
-      <div class="mb-4">
-        <p>aqui iran los ficheros de cenad</p>
-        <!--
+        <div class="row py-2 mt-2 justify-content-center me-3">
+          <div class="col-lg-12 col-md-12">
+            <label>Observaciones:</label>
+            <textarea
+              class="form-control"
+              name="observaciones"
+              formControlName="observaciones"
+              placeholder="Observaciones de la UCO"
+            >
+            </textarea>
+          </div>
+        </div>
+        <div class="row py-2 mt-2 justify-content-center me-3">
+          <div class="col-lg-12 col-md-12">
+            <label>Observaciones del CENAD/CMT:</label>
+            <textarea
+              class="form-control"
+              name="observacionesCenad"
+              formControlName="observacionesCenad"
+              placeholder="Observaciones del CENAD/CMT"
+            >
+            </textarea>
+          </div>
+        </div>
+        <div class="row py-2 mt-2 justify-content-start">
+          <div class="col-auto d-flex align-items-center">
+            <label class="me-2 mb-0">
+              <b>Estado de la solicitud:</b>
+            </label>
+            <select
+              class="form-select form-select-sm w-auto"
+              aria-label="estado"
+              formControlName="estado"
+            >
+              @for (e of estados(); track e) {
+              <option [ngValue]="e">
+                {{ e }}
+              </option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="row py-2 mt-2 justify-content-start">
+          <div class="col-auto d-flex align-items-center">
+            <label class="me-2 mb-0">
+              <b>Fecha Fin Documentación: <sup class="text-danger">*</sup></b>
+            </label>
+            <input
+              type="date"
+              class="form-control w-auto"
+              formControlName="fechaFinDocumentacion"
+              name="fechaFinDocumentacion"
+              [readOnly]="!isAdminEsteCenad() && !isGestorEsteCenad()"
+            />
+          </div>
+        </div>
+        <div class="mb-4">
+          <p>aqui iran los ficheros de cenad</p>
+          <!--
                     <FicherosDeSolicitudComponent :isCenad=true :idSolicitud="idSolicitud" />
                 -->
-      </div>
-      <div>
-        <p>aqui iran los ficheros de unidad</p>
-        <!--
+        </div>
+        <div>
+          <p>aqui iran los ficheros de unidad</p>
+          <!--
                     <FicherosDeSolicitudComponent :isCenad=false :idSolicitud="idSolicitud" />
                     -->
-      </div>
-    </fieldset>
-  </form>
+        </div>
+      </fieldset>
+    </form>
+  </div>
   <div class="mt-3">
     <a
       class="btn btn-secondary me-2"
@@ -174,9 +197,7 @@
       </div>
       <div class="modal-body">¿Desea eliminar la solicitud de {{ recurso()?.nombre }}?</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Cerrar
-        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
           (click)="borrarSolicitud()"

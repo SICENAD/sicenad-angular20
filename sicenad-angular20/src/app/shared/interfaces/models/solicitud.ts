@@ -14,8 +14,8 @@ export interface Solicitud {
   estado: string;
   fechaSolicitud?: Date;
   fechaUltModSolicitud?: Date;
-  fechaInicioRecurso?: Date;
-  fechaFinRecurso?: Date;
+  fechaHoraInicioRecurso?: Date;
+  fechaHoraFinRecurso?: Date;
   fechaFinDocumentacion?: Date;
   cenad?: Cenad;
   usuarioNormal?: UsuarioNormal;

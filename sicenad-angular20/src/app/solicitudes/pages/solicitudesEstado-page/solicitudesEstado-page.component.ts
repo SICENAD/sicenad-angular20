@@ -74,7 +74,7 @@ export class SolicitudesEstadoPageComponent {
   })
   // Ordenar por fechaInicio DESC
   solicitudesOrdenadas = computed(() => {
-    return [...this.solicitudesFiltradasPorUnidad()].sort((a: Solicitud, b: Solicitud) => new Date(b.fechaInicioRecurso!).getTime() - new Date(a.fechaInicioRecurso!).getTime());
+    return [...this.solicitudesFiltradasPorUnidad()].sort((a: Solicitud, b: Solicitud) => new Date(b.fechaHoraInicioRecurso!).getTime() - new Date(a.fechaHoraInicioRecurso!).getTime());
   });
   // Solo las 5 más recientes
   solicitudesTop5 = computed(() => this.solicitudesOrdenadas().slice(0, 5));
