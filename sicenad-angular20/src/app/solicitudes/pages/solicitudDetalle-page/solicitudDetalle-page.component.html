@@ -8,7 +8,7 @@
     </a>
     <h1 class="w-100 text-center mb-0">EDITAR SOLICITUD del recurso {{ recurso()?.nombre }}</h1>
   </div>
-  <div>
+  <div #topScroll>
     <form class="formulario" [formGroup]="solicitudForm">
       <!--cuando se abra como no editable todo el form sera de lectura-->
       <fieldset [disabled]="!isEditable()">
@@ -106,16 +106,10 @@
           </div>
         </div>
         <div class="mb-4">
-          <p>aqui iran los ficheros de cenad</p>
-          <!--
-                    <FicherosDeSolicitudComponent :isCenad=true :idSolicitud="idSolicitud" />
-                -->
+          <app-ficherosSolicitud [isCenad]="true" [documentacion]="documentacionCenad()" [idSolicitud]="solicitud()?.idString" (output)="recargarDocumentacionCenad()" />
         </div>
         <div>
-          <p>aqui iran los ficheros de unidad</p>
-          <!--
-                    <FicherosDeSolicitudComponent :isCenad=false :idSolicitud="idSolicitud" />
-                    -->
+          <app-ficherosSolicitud [isCenad]="false" [documentacion]="documentacionUnidad()" [idSolicitud]="solicitud()?.idString" (output)="recargarDocumentacionUnidad()"/>
         </div>
       </fieldset>
     </form>

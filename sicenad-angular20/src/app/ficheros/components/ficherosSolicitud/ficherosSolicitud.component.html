@@ -1,0 +1,120 @@
+<div class="container-fluid">
+    <div class="row mt-1">
+        @if (isCenad()) {
+        <div>
+            <h3 class="text-center titulo1"><u>FICHEROS DEL CENAD/CMT</u></h3>
+        </div>
+        } @else {
+        <div>
+            <h3 class="text-center titulo1"><u>FICHEROS DE LA UNIDAD</u></h3>
+        </div>
+        }
+        @if (isCenad() !== isUnidad()) {
+        <div class="text-end">
+            <button class="btn text-white" data-bs-toggle="modal" data-bs-target="#modal-nuevo-fichero">
+                <span>Nuevo</span>
+                @if (isCenad()) {
+                <b> Fichero de CENAD/CMT</b>
+                } @else {
+                <b> Fichero de Unidad</b>
+                }
+            </button>
+        </div>
+        }
+    </div>
+    <hr class="w-100 mt-2" />
+    <div class="row ms-5 p-0">
+        <div class="col col-md-12">
+            <div class="row mt-2 titulos">
+                <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
+                    <b>NOMBRE</b>
+                </div>
+                <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
+                    <b>CATEGORÍA DE FICHERO</b>
+                </div>
+                <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5 titulo">
+                    <b>DESCRIPCIÓN</b>
+                </div>
+                <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 titulo text-center">
+                    <b>DESCARGA</b>
+                </div>
+            </div>
+            @for (f of documentacion(); track f.idString) {
+            <p>{{f.nombre}}</p>
+            <!--
+      <app-fichero [fichero]="f" [idRecurso]="idRecurso()!" />
+      -->
+            }
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal-nuevo-fichero" tabindex="-1" aria-labelledby="modal-nuevo-fichero-Label"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modal-nuevo-fichero-Label">Nuevo Fichero</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="ficheroForm">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label titulo1"><b>NOMBRE DEL FICHERO<sup
+                                    class="text-danger">*</sup></b></label>
+                        <input type="text" id="nombre" class="form-control" formControlName="nombre" />
+                        @if (nombre?.touched && nombre?.invalid) {
+                        <span class="text-danger">El nombre es obligatorio</span>
+                        }
+                    </div>
+                    <!-- Categoría de fichero -->
+                    <div class="mb-3">
+                        <label class="form-label titulo1"><b>CATEGORÍA DE FICHERO<sup
+                                    class="text-danger">*</sup></b></label>
+                        <select class="form-select" formControlName="categoriaFichero">
+                            <option [ngValue]="null">Seleccione una categoría de fichero</option>
+                            @for (c of categoriasFichero(); track c.idString) {
+                            <option [ngValue]="c">{{ c.nombre }}</option>
+                            }
+                        </select>
+                        @if (categoriaFichero?.touched && categoriaFichero?.invalid) {
+                        <div class="text-danger">Selecciona una categoría</div>
+                        }
+                    </div>
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label class="form-label titulo1"><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
+                        <textarea class="form-control letra" formControlName="descripcion"></textarea>
+                        @if (descripcion?.touched && descripcion?.invalid) {
+                        <div class="text-danger">La descripción es obligatoria.</div>
+                        }
+                    </div>
+                    <!-- Archivo -->
+                    <div class="mb-3">
+                        <label class="titulo1"><b>ARCHIVO<sup class="text-danger">*</sup></b> (Máx:
+                            {{ sizeMaxDocSolicitud() }} MB)</label>
+                        <div class="d-flex">
+                            <input type="file" accept="*" (change)="onFileChange($event)" #fileInput hidden />
+                            <button type="button" class="btn" (click)="fileInput.click()">
+                                Seleccionar archivo
+                            </button>
+                            @if (archivoFile()) {
+                            <div class="mt-2 ms-2">
+                                <small class="text-muted">Archivo seleccionado: {{ archivoFile()?.name }}</small>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" [disabled]="ficheroForm.invalid"
+                    (click)="crearFichero()">
+                    Crear Fichero
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

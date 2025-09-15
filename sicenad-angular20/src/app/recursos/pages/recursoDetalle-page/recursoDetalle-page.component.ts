@@ -117,7 +117,7 @@ export class RecursoDetallePageComponent {
         }
       });
     });
-    // Cargar elos ficheros del recurso
+    // Cargar los ficheros del recurso
     this.recargarFicheros();
   }
 

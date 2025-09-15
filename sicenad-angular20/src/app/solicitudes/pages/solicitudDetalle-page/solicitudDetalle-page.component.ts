@@ -1,9 +1,11 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
+import { FicherosSolicitudComponent } from '@app/ficheros/components/ficherosSolicitud/ficherosSolicitud.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
 import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
 import { OrquestadorService } from '@services/orquestadorService';
@@ -16,7 +18,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-solicitudDetalle',
-  imports: [RouterLink, ReactiveFormsModule, FontAwesomeModule],
+  imports: [RouterLink, ReactiveFormsModule, FontAwesomeModule, FicherosSolicitudComponent],
   templateUrl: './solicitudDetalle-page.component.html',
   styleUrls: ['./solicitudDetalle-page.component.css'],
 })
@@ -32,12 +34,16 @@ export class SolicitudDetallePageComponent {
   private utilService = inject(UtilService);
   private orquestadorService = inject(OrquestadorService);
 
+  @ViewChild('topScroll') topScroll!: ElementRef<HTMLDivElement>;
+
   faVolver = this.iconoStore.faVolver;
   readonly routesPaths = RoutesPaths;
 
   estados = signal<string[]>(this.utils.estadosSolicitud());
   recursos = computed(() => this.cenadStore.recursos());
   recurso = signal<Recurso | null>(null);
+  documentacionCenad = signal<FicheroSolicitud[]>([]);
+  documentacionUnidad = signal<FicheroSolicitud[]>([]);
   usuarioLogueado = computed(() => this.usuarioLogueadoStore.usuarioLogueado());
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
@@ -115,6 +121,8 @@ export class SolicitudDetallePageComponent {
         }
       });
     });
+    this.recargarDocumentacionCenad();
+    this.recargarDocumentacionUnidad();
   }
 
   cargarSolicitud(): void {
@@ -133,6 +141,26 @@ export class SolicitudDetallePageComponent {
       fechaFin: this.utilService.formatDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) || new Date(),
       fechaFinDocumentacion: this.utilService.formatDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || null,
       estado: this.solicitud()?.estado || ''
+    });
+  }
+
+  recargarDocumentacionCenad() {
+    this.orquestadorService.loadDocumentacionCenad(this.idSolicitud()).subscribe({
+      next: (ficheros) => {
+        this.documentacionCenad.set(ficheros ?? []);
+      },
+      error: () => {
+      }
+    });
+  }
+
+  recargarDocumentacionUnidad() {
+    this.orquestadorService.loadDocumentacionUnidad(this.idSolicitud()).subscribe({
+      next: (ficheros) => {
+        this.documentacionUnidad.set(ficheros ?? []);
+      },
+      error: () => {
+      }
     });
   }
 
@@ -161,7 +189,7 @@ export class SolicitudDetallePageComponent {
       },
       error: (error) => {
         console.error('Error borrando Solicitud:', error);
-      }    
+      }
     });
   }
 }

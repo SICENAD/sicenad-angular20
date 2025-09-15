@@ -1,0 +1,117 @@
+import { Component, computed, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RoutesPaths } from '@app/app.routes';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
+import { OrquestadorService } from '@services/orquestadorService';
+import { AuthStore } from '@stores/auth.store';
+import { CenadStore } from '@stores/cenad.store';
+import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
+import { IconosStore } from '@stores/iconos.store';
+import { UtilsStore } from '@stores/utils.store';
+
+@Component({
+  selector: 'app-ficherosSolicitud',
+  imports: [ReactiveFormsModule],
+  templateUrl: './ficherosSolicitud.component.html',
+  styleUrls: ['./ficherosSolicitud.component.css'],
+})
+export class FicherosSolicitudComponent {
+  private auth = inject(AuthStore);
+  private datosPrincipalesStore = inject(DatosPrincipalesStore);
+  private cenadStore = inject(CenadStore);
+  private utils = inject(UtilsStore);
+  private iconoStore = inject(IconosStore);
+  private orquestadorService = inject(OrquestadorService);
+  private fb = inject(FormBuilder);
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  archivoFile = signal<File | null>(null);
+
+  faDownload = this.iconoStore.faDownload;
+  readonly routesPaths = RoutesPaths;
+
+  // Estado base
+  categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
+  sizeMaxDocSolicitud = computed(() => this.utils.sizeMaxDocSolicitud());
+  cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
+  isUnidad = computed(() => this.auth.rol() === RolUsuario.Normal);
+
+  documentacion = input<FicheroSolicitud[]>();
+  isCenad = input<boolean>();
+  idSolicitud = input<string>();
+  output = output<void>();
+
+  ficheroForm: FormGroup = this.fb.group({
+    nombre: ['', Validators.required],
+    descripcion: ['', Validators.required],
+    categoriaFichero: [null, Validators.required],
+    nombreArchivo: [null, Validators.required]
+  });
+
+  get nombre() { return this.ficheroForm.get('nombre'); }
+  get descripcion() { return this.ficheroForm.get('descripcion'); }
+  get categoriaFichero() { return this.ficheroForm.get('categoriaFichero'); }
+  get nombreArchivo() { return this.ficheroForm.get('nombreArchivo'); }
+
+  onFileChange(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.ficheroForm.patchValue({ nombreArchivo: file });
+      this.archivoFile.set(file);
+    } else {
+      this.ficheroForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+    }
+  }
+
+  descargar(fichero: FicheroSolicitud): void {
+    const archivo = fichero.nombreArchivo;
+    const idCenad = this.cenadVisitado()!.idString;
+    const idSolicitud = this.idSolicitud() || '';
+    if (!archivo) {
+      console.warn('No hay archivo para descargar');
+      return;
+    }
+    this.orquestadorService.getArchivoSolicitud(archivo, idCenad, idSolicitud).subscribe({
+      next: () => {
+        console.log(`Archivo ${archivo} descargado correctamente`);
+      },
+      error: (err) => {
+        console.error('Error descargando el archivo', err);
+      }
+    });
+  }
+
+  crearFichero() {
+    if (this.ficheroForm.invalid) {
+      this.ficheroForm.markAllAsTouched();
+      return;
+    }
+    const idCenad = this.cenadVisitado()?.idString || '';
+    const idSolicitud = this.idSolicitud() || '';
+    const { nombre, descripcion, categoriaFichero, nombreArchivo } = this.ficheroForm.value;
+    if (this.isCenad()) {
+      this.orquestadorService.crearFicheroSolicitudCenad(nombre, descripcion, nombreArchivo, categoriaFichero.idString, idCenad, idSolicitud).subscribe(success => {
+        if (success) {
+          this.ficheroForm.reset();
+          this.output.emit(); // notificamos al padre
+          if (this.fileInput) this.fileInput.nativeElement.value = '';
+        } else {
+          console.error('Error al crear el fichero');
+        }
+      });
+    } else {
+      this.orquestadorService.crearFicheroSolicitudCenad(nombre, descripcion, nombreArchivo, categoriaFichero.idString, idCenad, idSolicitud).subscribe(success => {
+        if (success) {
+          this.ficheroForm.reset();
+          this.output.emit(); // notificamos al padre
+          if (this.fileInput) this.fileInput.nativeElement.value = '';
+        } else {
+          console.error('Error al crear el fichero');
+        }
+      });
+    }
+
+  }
+}
