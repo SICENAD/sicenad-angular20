@@ -2,7 +2,7 @@ import { Component, computed, effect, ElementRef, inject, signal, ViewChild } fr
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
-import { FicherosSolicitudComponent } from '@app/ficheros/components/ficherosSolicitud/ficherosSolicitud.component';
+import { FicherosSolicitudComponent } from '@app/ficheros/components/ficherosSolicitud/ficherosSolicitud/ficherosSolicitud.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';

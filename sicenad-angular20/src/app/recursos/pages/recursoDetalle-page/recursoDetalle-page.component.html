@@ -67,8 +67,8 @@
         }
       </div>
       <!--aqui insertare la vista de ficheros del gestor, un listado donde crearlos y editarlos...-->
-      <app-ficheros [btnVista]="btnVista()" [ficheros]="ficheros()" [idRecurso]="idRecurso()"
-        (output)="recargarFicheros()"></app-ficheros>
+      <app-ficherosRecurso [btnVista]="btnVista()" [ficheros]="ficheros()" [idRecurso]="idRecurso()"
+        (output)="recargarFicheros()"/>
       <div class="form-row justify-content-between pt-3">
         <div class="col-lg-5 col-md-12 mb-4">
           <button type="button" (click)="actualizarRecurso()" data-bs-dismiss="modal" class="btn text-white">
@@ -87,7 +87,7 @@
       <p class="texto ms-3">{{ recurso()?.descripcion }}</p>
     </div>
     <!--ahora tendria que recorrer los ficheros clasificados por categoria de fichero...con enlaces de descarga o modales si son imagenes-->
-    <app-ficheros [btnVista]="btnVista()" [ficheros]="ficheros()" [idRecurso]="idRecurso()" />
+    <app-ficherosRecurso [btnVista]="btnVista()" [ficheros]="ficheros()" [idRecurso]="idRecurso()" />
     <div class="titulo">
       <h4 class="text-center"><b>CALENDARIO</b></h4>
       <hr />

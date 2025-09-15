@@ -1554,7 +1554,7 @@ export class OrquestadorService {
     );
   }
 
-  loadFicheroSeleccionado(idFichero: string): Observable<FicheroRecurso | null> {
+  loadFicheroRecursoSeleccionado(idFichero: string): Observable<FicheroRecurso | null> {
     return this.ficheroService.getFicheroRecursoSeleccionado(idFichero).pipe(
       catchError(err => {
         console.error('Error cargando el recurso', err);

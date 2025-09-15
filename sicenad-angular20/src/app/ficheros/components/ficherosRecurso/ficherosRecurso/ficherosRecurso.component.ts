@@ -1,5 +1,5 @@
 import { Component, computed, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
-import { FicheroComponent } from '../fichero/fichero.component';
+import { FicheroRecursoComponent } from '../../ficherosRecurso/ficheroRecurso/ficheroRecurso.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { RoutesPaths } from '@app/app.routes';
@@ -13,12 +13,12 @@ import { forkJoin, map } from 'rxjs';
 import { UtilService } from '@services/utilService';
 
 @Component({
-  selector: 'app-ficheros',
-  imports: [FicheroComponent, ReactiveFormsModule],
-  templateUrl: './ficheros.component.html',
-  styleUrls: ['./ficheros.component.css'],
+  selector: 'app-ficherosRecurso',
+  imports: [FicheroRecursoComponent, ReactiveFormsModule],
+  templateUrl: './ficherosRecurso.component.html',
+  styleUrls: ['./ficherosRecurso.component.css'],
 })
-export class FicherosComponent {
+export class FicherosRecursoComponent {
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
   private utils = inject(UtilsStore);

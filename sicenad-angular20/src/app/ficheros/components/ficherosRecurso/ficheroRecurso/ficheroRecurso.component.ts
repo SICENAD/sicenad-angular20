@@ -1,5 +1,4 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { FicheroModalComponent } from '../ficheroModal/ficheroModal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { OrquestadorService } from '@services/orquestadorService';
@@ -7,14 +6,15 @@ import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { CategoriaFichero } from '@interfaces/models/categoriaFichero';
+import { FicheroRecursoModalComponent } from '../ficheroRecursoModal/ficheroRecursoModal.component';
 
 @Component({
-  selector: 'app-fichero',
-  imports: [FicheroModalComponent, FontAwesomeModule],
-  templateUrl: './fichero.component.html',
-  styleUrls: ['./fichero.component.css'],
+  selector: 'app-ficheroRecurso',
+  imports: [FicheroRecursoModalComponent, FontAwesomeModule],
+  templateUrl: './ficheroRecurso.component.html',
+  styleUrls: ['./ficheroRecurso.component.css'],
 })
-export class FicheroComponent {
+export class FicheroRecursoComponent {
   private cenadStore = inject(CenadStore);
   private iconoStore = inject(IconosStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
@@ -70,7 +70,7 @@ export class FicheroComponent {
   }
 
   recargarFichero() {
-    this.orquestadorService.loadFicheroSeleccionado(this.ficheroSignal()!.idString).subscribe({
+    this.orquestadorService.loadFicheroRecursoSeleccionado(this.ficheroSignal()!.idString).subscribe({
       next: (ficheroActualizado) => {
         this.ficheroSignal.set(ficheroActualizado ?? undefined);
       },

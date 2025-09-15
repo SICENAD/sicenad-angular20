@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
-import { FicherosComponent } from '@app/ficheros/components/ficheros/ficheros.component';
+import { FicherosRecursoComponent } from '@app/ficheros/components/ficherosRecurso/ficherosRecurso/ficherosRecurso.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { Categoria } from '@interfaces/models/categoria';
@@ -17,7 +17,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-recursoDetalle',
-  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosComponent],
+  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosRecursoComponent],
   templateUrl: './recursoDetalle-page.component.html',
   styleUrls: ['./recursoDetalle-page.component.css']
 })

@@ -9,12 +9,12 @@ import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
 
 @Component({
-  selector: 'app-ficheroModal',
+  selector: 'app-ficheroRecursoModal',
   imports: [FontAwesomeModule, ReactiveFormsModule],
-  templateUrl: './ficheroModal.component.html',
-  styleUrls: ['./ficheroModal.component.css'],
+  templateUrl: './ficheroRecursoModal.component.html',
+  styleUrls: ['./ficheroRecursoModal.component.css'],
 })
-export class FicheroModalComponent {
+export class FicheroRecursoModalComponent {
   private utils = inject(UtilsStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
