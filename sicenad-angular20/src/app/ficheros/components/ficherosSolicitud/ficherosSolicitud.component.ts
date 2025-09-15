@@ -47,16 +47,16 @@ export class FicherosSolicitudComponent {
   });
   today = new Date();
 
-isFechaPosteriorAHoy(): boolean {
-  const fechaStr = this.solicitud()?.fechaFinDocumentacion;
-  if (!fechaStr) return true;
-  const fecha = new Date(fechaStr);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  fecha.setHours(0, 0, 0, 0);
+  isFechaPosteriorAHoy(): boolean {
+    const fechaStr = this.solicitud()?.fechaFinDocumentacion;
+    if (!fechaStr) return true;
+    const fecha = new Date(fechaStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    fecha.setHours(0, 0, 0, 0);
 
-  return fecha.getTime() >= today.getTime();
-}
+    return fecha.getTime() >= today.getTime();
+  }
 
   documentacion = input<FicheroSolicitud[]>();
   isCenad = input<boolean>();

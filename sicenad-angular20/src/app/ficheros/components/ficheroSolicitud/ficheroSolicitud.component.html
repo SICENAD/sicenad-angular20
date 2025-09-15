@@ -1,20 +1,27 @@
 <hr class="w-100" />
 @if (ficheroSignal()) {
 <div class="row">
-    <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
-        {{ ficheroSignal()?.nombre }}
-    <!--   <app-ficheroModal [fichero]="ficheroSignal()" [idRecurso]="idRecurso()" (output)="recargarFichero()" /> -->
-    </div>
-    @if (categoriaFichero()) {
-    <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
-        {{ categoriaFichero()?.nombre }}
-    </div>
+  <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+    {{ ficheroSignal()?.nombre }}
+    @if (isFechaPosteriorAHoy()) {
+    <app-ficheroSolicitudModal
+      [fichero]="ficheroSignal()"
+      [idSolicitud]="idSolicitud()"
+      [isCenad]="isCenad()"
+      (output)="recargarFichero()"
+    />
     }
-    <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5">
-        {{ ficheroSignal()?.descripcion }}
-    </div>
-    <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 text-center">
-        <a (click)="descargar()"><fa-icon [icon]="faDownload"></fa-icon></a>
-    </div>
+  </div>
+  @if (categoriaFichero()) {
+  <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+    {{ categoriaFichero()?.nombre }}
+  </div>
+  }
+  <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5">
+    {{ ficheroSignal()?.descripcion }}
+  </div>
+  <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 text-center">
+    <a (click)="descargar()"><fa-icon [icon]="faDownload"></fa-icon></a>
+  </div>
 </div>
 }

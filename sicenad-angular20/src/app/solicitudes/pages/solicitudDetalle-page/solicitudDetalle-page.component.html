@@ -10,7 +10,7 @@
     </a>
     <h1 class="w-100 text-center mb-0">EDITAR SOLICITUD del recurso {{ recurso()?.nombre }}</h1>
   </div>
-  <div class="formulario" #topScroll>
+  <div class="formulario pb-3" #topScroll>
     <form [formGroup]="solicitudForm">
       <!--cuando se abra como no editable todo el form sera de lectura-->
       <fieldset [disabled]="!isEditable()">

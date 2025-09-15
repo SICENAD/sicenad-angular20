@@ -1,16 +1,17 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CategoriaFichero } from '@interfaces/models/categoriaFichero';
-import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
+import { FicheroSolicitudModalComponent } from '../ficheroSolicitudModal/ficheroSolicitudModal.component';
+import { Solicitud } from '@interfaces/models/solicitud';
 
 @Component({
   selector: 'app-ficheroSolicitud',
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, FicheroSolicitudModalComponent],
   templateUrl: './ficheroSolicitud.component.html',
   styleUrls: ['./ficheroSolicitud.component.css'],
 })
@@ -25,10 +26,25 @@ export class FicheroSolicitudComponent {
 
   fichero = input.required<FicheroSolicitud>();
   ficheroSignal = signal<FicheroSolicitud | undefined>(undefined);
+  solicitud = input.required<Solicitud>();
   idSolicitud = input.required<string>();
+  isCenad = input<boolean>();
   output = output<void>();
   categoriaFichero = signal<CategoriaFichero | null>(null);
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
+
+  today = new Date();
+
+  isFechaPosteriorAHoy(): boolean {
+    const fechaStr = this.solicitud()?.fechaFinDocumentacion;
+    if (!fechaStr) return true;
+    const fecha = new Date(fechaStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    fecha.setHours(0, 0, 0, 0);
+
+    return fecha.getTime() >= today.getTime();
+  }
 
   descargar(): void {
     const archivo = this.ficheroSignal()?.nombreArchivo;

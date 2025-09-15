@@ -47,7 +47,7 @@
         </div>
       </div>
       @for (f of documentacion(); track f.idString) {
-      <app-ficheroSolicitud [fichero]="f" [idSolicitud]="idSolicitud()!" />
+      <app-ficheroSolicitud [fichero]="f" [idSolicitud]="idSolicitud()!" [isCenad]="isCenad()" [solicitud]="solicitud()!" />
       } }
     </div>
   </div>
