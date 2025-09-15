@@ -45,10 +45,18 @@ export class FicherosSolicitudComponent {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
   });
   today = new Date();
-  fechaFinDocumentacion(): Date | null {
-  const fecha = this.solicitud()?.fechaFinDocumentacion;
-  return fecha ? new Date(fecha) : null;
+
+isFechaPosteriorAHoy(): boolean {
+  const fechaStr = this.solicitud()?.fechaFinDocumentacion;
+  if (!fechaStr) return true;
+  const fecha = new Date(fechaStr);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  fecha.setHours(0, 0, 0, 0);
+
+  return fecha.getTime() >= today.getTime();
 }
+
   documentacion = input<FicheroSolicitud[]>();
   isCenad = input<boolean>();
   idSolicitud = input<string>();

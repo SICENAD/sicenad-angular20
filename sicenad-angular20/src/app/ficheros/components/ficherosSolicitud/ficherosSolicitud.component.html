@@ -10,7 +10,7 @@
     </div>
     } @if (isCenad() !== (isAdminEsteCenad() || isGestorEsteCenad())) { } @else {
     <div class="text-end">
-      @if (fechaFinDocumentacion() && today < fechaFinDocumentacion()!) {
+@if (isFechaPosteriorAHoy()) {
       <button class="btn text-white" data-bs-toggle="modal" data-bs-target="#modal-nuevo-fichero">
         <span>Nuevo</span>
         @if (isCenad()) {
