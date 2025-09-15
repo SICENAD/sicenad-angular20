@@ -1,14 +1,13 @@
 <div class="container mt-4">
   <div class="d-flex align-items-center position-relative mb-2">
-  <!-- Botón volver a la página anterior -->
-  <a
-      class="nav-link volver position-absolute start-0"
-    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
-  >
-    <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-    <strong>Volver</strong>
-  </a>
-  <h1 class="w-100 text-center mb-0">EDITAR SOLICITUD del recurso {{ recurso()?.nombre }}</h1></div>
+    <!-- Botón volver a la página anterior -->
+    <a class="nav-link volver position-absolute start-0"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]">
+      <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+      <strong>Volver</strong>
+    </a>
+    <h1 class="w-100 text-center mb-0">EDITAR SOLICITUD del recurso {{ recurso()?.nombre }}</h1>
+  </div>
   <div>
     <form class="formulario" [formGroup]="solicitudForm">
       <!--cuando se abra como no editable todo el form sera de lectura-->
@@ -20,49 +19,28 @@
           </div>
           <div class="col-lg-2 col-md-12">
             <label>Jefe Unidad Usuaria: <sup class="text-danger">*</sup></label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="jefeUnidadUsuaria"
-              placeholder="Jefe UCO Usuaria"
-              name="jefeUcoUsuaria"
-            />
+            <input type="text" class="form-control" formControlName="jefeUnidadUsuaria" placeholder="Jefe UCO Usuaria"
+              name="jefeUcoUsuaria" />
             @if (jefeUnidadUsuaria?.touched && jefeUnidadUsuaria?.invalid) {
             <span class="text-danger">El Jefe de UCO es obligatorio</span>
             }
           </div>
           <div class="col-lg-2 col-md-12">
             <label for="fechaSolicitud">Fecha Solicitud: <sup class="text-danger"></sup></label>
-            <input
-              type="date"
-              class="form-control"
-              formControlName="fechaSolicitud"
-              name="fechaSol"
-              readonly
-            />
+            <input type="date" class="form-control" formControlName="fechaSolicitud" name="fechaSol" readonly />
           </div>
           <div class="col-lg-2 col-md-12">
             <label>POC para el EJERCICIO: <sup class="text-danger">*</sup></label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="pocEjercicio"
-              placeholder="POC para el Ejercicio"
-              name="pocEjercicio"
-            />
+            <input type="text" class="form-control" formControlName="pocEjercicio" placeholder="POC para el Ejercicio"
+              name="pocEjercicio" />
             @if (pocEjercicio?.touched && pocEjercicio?.invalid) {
             <span class="text-danger">El POC para el Ejercicio es obligatorio</span>
             }
           </div>
           <div class="col-lg-2 col-md-12">
             <label>Redactor (Teléfono): <sup class="text-danger">*</sup></label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="tlfnRedactor"
-              placeholder="RCT UCO/ RCT durante EX"
-              name="tlfnRedactor"
-            />
+            <input type="text" class="form-control" formControlName="tlfnRedactor" placeholder="RCT UCO/ RCT durante EX"
+              name="tlfnRedactor" />
             @if (tlfnRedactor?.touched && tlfnRedactor?.invalid) {
             <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
             }
@@ -91,24 +69,16 @@
         <div class="row py-2 mt-2 justify-content-center me-3">
           <div class="col-lg-12 col-md-12">
             <label>Observaciones:</label>
-            <textarea
-              class="form-control"
-              name="observaciones"
-              formControlName="observaciones"
-              placeholder="Observaciones de la UCO"
-            >
+            <textarea class="form-control" name="observaciones" formControlName="observaciones"
+              placeholder="Observaciones de la UCO">
             </textarea>
           </div>
         </div>
         <div class="row py-2 mt-2 justify-content-center me-3">
           <div class="col-lg-12 col-md-12">
             <label>Observaciones del CENAD/CMT:</label>
-            <textarea
-              class="form-control"
-              name="observacionesCenad"
-              formControlName="observacionesCenad"
-              placeholder="Observaciones del CENAD/CMT"
-            >
+            <textarea class="form-control" name="observacionesCenad" formControlName="observacionesCenad"
+              placeholder="Observaciones del CENAD/CMT" [readOnly]="!isAdminEsteCenad() && !isGestorEsteCenad()">
             </textarea>
           </div>
         </div>
@@ -117,11 +87,7 @@
             <label class="me-2 mb-0">
               <b>Estado de la solicitud:</b>
             </label>
-            <select
-              class="form-select form-select-sm w-auto"
-              aria-label="estado"
-              formControlName="estado"
-            >
+            <select class="form-select form-select-sm w-auto" aria-label="estado" formControlName="estado">
               @for (e of estados(); track e) {
               <option [ngValue]="e">
                 {{ e }}
@@ -135,13 +101,8 @@
             <label class="me-2 mb-0">
               <b>Fecha Fin Documentación: <sup class="text-danger">*</sup></b>
             </label>
-            <input
-              type="date"
-              class="form-control w-auto"
-              formControlName="fechaFinDocumentacion"
-              name="fechaFinDocumentacion"
-              [readOnly]="!isAdminEsteCenad() && !isGestorEsteCenad()"
-            />
+            <input type="date" class="form-control w-auto" formControlName="fechaFinDocumentacion"
+              name="fechaFinDocumentacion" [readOnly]="!isAdminEsteCenad() && !isGestorEsteCenad()" />
           </div>
         </div>
         <div class="mb-4">
@@ -160,26 +121,14 @@
     </form>
   </div>
   <div class="mt-3">
-    <a
-      class="btn btn-secondary me-2"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
-      >Cerrar
+    <a class="btn btn-secondary me-2"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]">Cerrar
     </a>
     @if (isEditable()) {
-    <button
-      class="btn btn-danger"
-      [attr.data-bs-target]="'#' + idModalEliminar()"
-      data-bs-toggle="modal"
-    >
+    <button class="btn btn-danger me-2" [attr.data-bs-target]="'#' + idModalEliminar()" data-bs-toggle="modal">
       Borrar Solicitud
     </button>
-    <button
-      type="button"
-      (click)="editarSolicitud()"
-      data-bs-dismiss="modal"
-      class="btn btn-success"
-      [disabled]="solicitudForm.invalid"
-    >
+    <button type="button" (click)="editarSolicitud()" class="btn btn-success" [disabled]="solicitudForm.invalid">
       Guardar Solicitud
     </button>
     }
@@ -198,12 +147,7 @@
       <div class="modal-body">¿Desea eliminar la solicitud de {{ recurso()?.nombre }}?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button
-          type="button"
-          (click)="borrarSolicitud()"
-          data-bs-dismiss="modal"
-          class="btn btn-danger"
-        >
+        <button type="button" (click)="borrarSolicitud()" data-bs-dismiss="modal" class="btn btn-danger">
           Borrar
         </button>
       </div>

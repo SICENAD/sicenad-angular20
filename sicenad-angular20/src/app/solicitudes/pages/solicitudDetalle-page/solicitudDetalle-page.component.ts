@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
@@ -21,7 +21,7 @@ import { UtilsStore } from '@stores/utils.store';
   styleUrls: ['./solicitudDetalle-page.component.css'],
 })
 export class SolicitudDetallePageComponent {
-
+  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private auth = inject(AuthStore);
   private cenadStore = inject(CenadStore);
@@ -136,16 +136,17 @@ export class SolicitudDetallePageComponent {
     });
   }
 
- editarSolicitud() {
+  editarSolicitud() {
     if (this.solicitudForm.invalid) {
       this.solicitudForm.markAllAsTouched();
       return;
     }
-    const { observaciones, observacionesCenad, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaSolicitud, fechaInicio, fechaFin, fechaFinDocumentacion, estado } = this.solicitudForm.value;
+    const { observaciones, observacionesCenad, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, fechaFinDocumentacion, estado } = this.solicitudForm.value;
     this.orquestadorService.actualizarSolicitud(observaciones, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, estado, this.cenadVisitado()!.idString, this.idSolicitud(), observacionesCenad, fechaFinDocumentacion).subscribe({
       next: res => {
         if (res) {
           console.log(`Solicitud del recurso ${this.recurso()?.nombre} actualizada correctamente.`);
+          this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
         }
       },
       error: (error) => {
@@ -154,7 +155,13 @@ export class SolicitudDetallePageComponent {
     });
   }
   borrarSolicitud() {
-    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString).subscribe(() => {
+    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString).subscribe({
+      next: res => {
+        res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
+      },
+      error: (error) => {
+        console.error('Error borrando Solicitud:', error);
+      }    
     });
   }
 }

@@ -152,12 +152,7 @@ a.volver:hover {
     /* casi toda la pantalla, pero con margen */
 }
 
-.modal-content {
-    height: 100vh;
-    /* Ocupa el 100% de la altura de la pantalla */
-    border-radius: 0;
-    /* Quita esquinas redondeadas para fullscreen */
-}
+
 
 .modal-body {
     overflow-y: auto;
