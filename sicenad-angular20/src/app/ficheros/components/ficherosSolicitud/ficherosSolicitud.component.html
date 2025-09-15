@@ -47,10 +47,7 @@
         </div>
       </div>
       @for (f of documentacion(); track f.idString) {
-      <p>{{ f.nombre }}</p>
-      <!--
-      <app-fichero [fichero]="f" [idRecurso]="idRecurso()!" />
-      -->
+      <app-ficheroSolicitud [fichero]="f" [idSolicitud]="idSolicitud()!" />
       } }
     </div>
   </div>

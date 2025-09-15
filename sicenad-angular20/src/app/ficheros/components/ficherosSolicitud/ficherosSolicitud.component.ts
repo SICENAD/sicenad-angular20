@@ -11,10 +11,11 @@ import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UtilsStore } from '@stores/utils.store';
+import { FicheroSolicitudComponent } from '../ficheroSolicitud/ficheroSolicitud.component';
 
 @Component({
   selector: 'app-ficherosSolicitud',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FicheroSolicitudComponent],
   templateUrl: './ficherosSolicitud.component.html',
   styleUrls: ['./ficherosSolicitud.component.css'],
 })
