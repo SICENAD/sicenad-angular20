@@ -136,10 +136,10 @@ export class SolicitudDetallePageComponent {
       jefeUnidadUsuaria: this.solicitud()?.jefeUnidadUsuaria || '',
       pocEjercicio: this.solicitud()?.pocEjercicio || '',
       tlfnRedactor: this.solicitud()?.tlfnRedactor || '',
-      fechaSolicitud: this.utilService.formatDate(this.solicitud()?.fechaSolicitud?.toString()) || new Date(),
-      fechaInicio: this.utilService.formatDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()) || new Date(),
-      fechaFin: this.utilService.formatDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) || new Date(),
-      fechaFinDocumentacion: this.utilService.formatDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || null,
+      fechaSolicitud: this.utilService.isoToLocalDate(this.solicitud()?.fechaSolicitud?.toString()) || new Date(),
+      fechaInicio: this.utilService.isoToLocalDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()) || new Date(),
+      fechaFin: this.utilService.isoToLocalDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) || new Date(),
+      fechaFinDocumentacion: this.utilService.isoToLocalDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || null,
       estado: this.solicitud()?.estado || ''
     });
   }
@@ -183,7 +183,7 @@ export class SolicitudDetallePageComponent {
     });
   }
   borrarSolicitud() {
-    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString).subscribe({
+    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString, this.solicitud()!.estado).subscribe({
       next: res => {
         res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
       },

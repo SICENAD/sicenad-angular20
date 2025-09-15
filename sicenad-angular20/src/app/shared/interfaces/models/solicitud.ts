@@ -12,11 +12,11 @@ export interface Solicitud {
   tlfnRedactor: string;
   unidadUsuaria: string;
   estado: string;
-  fechaSolicitud?: Date;
-  fechaUltModSolicitud?: Date;
-  fechaHoraInicioRecurso?: Date;
-  fechaHoraFinRecurso?: Date;
-  fechaFinDocumentacion?: Date;
+  fechaSolicitud?: Date | string;
+  fechaUltModSolicitud?: Date | string;
+  fechaHoraInicioRecurso?: Date | string;
+  fechaHoraFinRecurso?: Date | string;
+  fechaFinDocumentacion?: Date | string;
   cenad?: Cenad;
   usuarioNormal?: UsuarioNormal;
   documentacionCenad?: FicheroSolicitud[];

@@ -3,11 +3,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RoutesPaths } from '@app/app.routes';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
+import { Solicitud } from '@interfaces/models/solicitud';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
+import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UtilsStore } from '@stores/utils.store';
 
 @Component({
@@ -20,6 +22,7 @@ export class FicherosSolicitudComponent {
   private auth = inject(AuthStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
+  private usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   private utils = inject(UtilsStore);
   private iconoStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
@@ -35,11 +38,21 @@ export class FicherosSolicitudComponent {
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
   sizeMaxDocSolicitud = computed(() => this.utils.sizeMaxDocSolicitud());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
-  isUnidad = computed(() => this.auth.rol() === RolUsuario.Normal);
-
+  isGestorEsteCenad = computed(() => {
+    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
+  });
+  isAdminEsteCenad = computed(() => {
+    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
+  });
+  today = new Date();
+  fechaFinDocumentacion(): Date | null {
+  const fecha = this.solicitud()?.fechaFinDocumentacion;
+  return fecha ? new Date(fecha) : null;
+}
   documentacion = input<FicheroSolicitud[]>();
   isCenad = input<boolean>();
   idSolicitud = input<string>();
+  solicitud = input<Solicitud | null>();
   output = output<void>();
 
   ficheroForm: FormGroup = this.fb.group({

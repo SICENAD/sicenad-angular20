@@ -25,80 +25,79 @@ export class UtilService {
     }
   }
 
-    // ----------------- FORMATEO DE TEXTOS -----------------
-    toTitleCase(str: string): string {
-      return str
-        .toLowerCase()
-        .split(' ')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    }
+  // ----------------- FORMATEO DE TEXTOS -----------------
+  toTitleCase(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
 
-    toSentenceCase(str: string): string {
-      if (!str) return '';
-      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    }
+  toSentenceCase(str: string): string {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
 
-    // ----------------- FORMATEO DE FECHAS -----------------
-    formatearFechaHora(fechaISO: string | Date): string {
-      const fecha = new Date(fechaISO);
-      const dia = String(fecha.getUTCDate()).padStart(2, '0');
-      const mes = String(fecha.getUTCMonth() + 1).padStart(2, '0');
-      const year = fecha.getUTCFullYear();
-      const horas = String(fecha.getUTCHours()).padStart(2, '0');
-      const minutos = String(fecha.getUTCMinutes()).padStart(2, '0');
-      const segundos = String(fecha.getUTCSeconds()).padStart(2, '0');
-      return `${dia}-${mes}-${year} ${horas}:${minutos}:${segundos}`;
-    }
+  // ----------------- FORMATEO DE FECHAS -----------------
+  pad = (n: number) => String(n).padStart(2, '0');
 
-    formatearFecha(fechaSQL: any | null | undefined): string {
-      if (!fechaSQL) return '';
-      const [fecha] = fechaSQL.split(' ');
-      const [anio, mes, dia] = fecha.split('-');
-      return `${dia}-${mes}-${anio}`;
-    }
+  isoToLocalDate(iso?: string | null): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return `${d.getFullYear()}-${this.pad(d.getMonth() + 1)}-${this.pad(d.getDate())}`; // YYYY-MM-DD
+  }
 
-    toDate(fechaISO: string | Date): string {
-      return new Date(fechaISO).toISOString().split('T')[0];
-    }
+  isoToLocalDateTime(iso?: string | null): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return `${d.getFullYear()}-${this.pad(d.getMonth() + 1)}-${this.pad(d.getDate())}T${this.pad(d.getHours())}:${this.pad(d.getMinutes())}`; // YYYY-MM-DDTHH:mm
+  }
 
-    toInstant(fechaString: string): string {
-      return new Date(fechaString).toISOString();
-    }
+  fechaDiaMesYear(iso?: string | Date): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return `${this.pad(d.getDate())}-${this.pad(d.getMonth() + 1)}-${d.getFullYear()}`; // DD-MM-YYYY
+  }
 
-    parseDate(dateString: string | null | undefined): Date | null {
-      if (!dateString) return null;
+  /**
+   * Convierte "YYYY-MM-DD" (date input) en UTC ISO completo con "T00:00:00Z"
+   */
+  localDateToIso(dateString?: string | null): string | null {
+    if (!dateString) return null;
 
-      const match = dateString.match(
-        /^(\d{2})-(\d{2})-(\d{4})(?: (\d{2}):(\d{2})(?::(\d{2}))?)?$/
-      );
-      if (match) {
-        const [, day, month, year, hour = '00', minute = '00', second = '00'] = match;
-        return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
-      }
+    // Interpreta como local a las 00:00
+    const [year, month, day] = dateString.split('-').map(Number);
+    const localDate = new Date(year, month - 1, day);
 
-      if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
-        return new Date(dateString.replace(' ', 'T'));
-      }
+    return localDate.toISOString(); // => UTC
+  }
 
-      return null;
-    }
+  /**
+   * Convierte "YYYY-MM-DDTHH:mm" (datetime-local input) en UTC ISO completo
+   */
+  localDateTimeToIso(dateTimeString?: string | Date | null): string | null {
+    if (!dateTimeString) return null;
 
-    formatDate(dateString: string | null | undefined): string {
-      const date = this.parseDate(dateString);
-      if (!date || isNaN(date.getTime())) return '';
-      return date.toISOString().slice(0, 10);
-    }
+    const date = new Date(dateTimeString);
+    // construir string manual sin milisegundos
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
-    formatDateTime(dateString: string | null | undefined): string {
-      const date = this.parseDate(dateString);
-      if (!date || isNaN(date.getTime())) return '';
-      return date.toISOString().slice(0, 16);
-    }
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+  }
 
-    // ----------------- PATH PUBLIC -----------------
-    baseNormalizada(): string {
-      const base = environment.publicPath || '/';
-      return base.endsWith('/') ? base : base + '/';
-    }
+
+  // ----------------- PATH PUBLIC -----------------
+  baseNormalizada(): string {
+    const base = environment.publicPath || '/';
+    return base.endsWith('/') ? base : base + '/';
+  }
 }

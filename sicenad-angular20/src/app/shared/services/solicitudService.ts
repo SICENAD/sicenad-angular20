@@ -64,10 +64,10 @@ export class SolicitudService {
       jefeUnidadUsuaria: jefeUnidadUsuaria,
       pocEjercicio: pocEjercicio,
       tlfnRedactor: tlfnRedactor,
-      fechaSolicitud: this.utilService.formatearFechaHora(fechaSolicitud),
-      fechaUltModSolicitud: this.utilService.formatearFechaHora(fechaSolicitud),
-      fechaHoraInicioRecurso: this.utilService.formatearFechaHora(fechaHoraInicioRecurso),
-      fechaHoraFinRecurso: this.utilService.formatearFechaHora(fechaHoraFinRecurso),
+      fechaSolicitud: this.utilService.localDateTimeToIso(fechaSolicitud),
+      fechaUltModSolicitud: this.utilService.localDateTimeToIso(fechaSolicitud),
+      fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
+      fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
       estado: estado,
       recurso: `${this.apiService.getUrlApi()}/recursos/${idRecurso}`,
       usuarioNormal: `${this.apiService.getUrlApi()}/usuarios_normal/${idUsuarioNormal}`
@@ -97,7 +97,7 @@ export class SolicitudService {
     fechaFinDocumentacion: Date
   ): Observable<any> {
     const endpoint = `/solicitudes/${idSolicitud}`;
-    const fechaFinDocumentacionCondicional = fechaFinDocumentacion ? this.utilService.formatearFechaHora(fechaFinDocumentacion) : null;
+    const fechaFinDocumentacionCondicional = fechaFinDocumentacion ? this.utilService.localDateTimeToIso(fechaFinDocumentacion) : null;
     const body: any = {
         observaciones: observaciones,
         observacionesCenad: observacionesCenad,
@@ -105,9 +105,9 @@ export class SolicitudService {
         pocEjercicio: pocEjercicio,
         tlfnRedactor: tlfnRedactor,
         fechaFinDocumentacion: fechaFinDocumentacionCondicional,
-        fechaUltModSolicitud: this.utilService.formatearFechaHora(new Date()),
-        fechaHoraInicioRecurso: this.utilService.formatearFechaHora(fechaHoraInicioRecurso),
-        fechaHoraFinRecurso: this.utilService.formatearFechaHora(fechaHoraFinRecurso),
+        fechaUltModSolicitud: this.utilService.localDateTimeToIso(new Date()),
+        fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
+        fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
         estado: estado
     };
     return this.apiService.peticionConToken<any>(endpoint, 'PATCH', body).pipe(

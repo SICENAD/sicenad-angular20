@@ -286,7 +286,7 @@ export class OrquestadorService {
     return this.solicitudService.getSolicitudesPorEstado(idCenad, estado).pipe(
       catchError(err => {
         console.error('Error cargando solicitudes', err);
-        switch(estado) {
+        switch (estado) {
           case 'Borrador':
             this.cenadStore.clearSolicitudesBorrador();
             break;
@@ -1110,7 +1110,7 @@ export class OrquestadorService {
     );
   }
 
- // --- CRUD Solicitud ---
+  // --- CRUD Solicitud ---
   crearSolicitud(
     observaciones: string,
     unidadUsuaria: string,
@@ -1126,22 +1126,34 @@ export class OrquestadorService {
     idUsuarioNormal: string
   ): Observable<any> {
     return this.solicitudService.crearSolicitud(
-    observaciones,
-    unidadUsuaria,
-    jefeUnidadUsuaria,
-    pocEjercicio,
-    tlfnRedactor,
-    fechaSolicitud,
-    fechaHoraInicioRecurso,
-    fechaHoraFinRecurso,
-    estado,
-    idRecurso,
-    idUsuarioNormal,
+      observaciones,
+      unidadUsuaria,
+      jefeUnidadUsuaria,
+      pocEjercicio,
+      tlfnRedactor,
+      fechaSolicitud,
+      fechaHoraInicioRecurso,
+      fechaHoraFinRecurso,
+      estado,
+      idRecurso,
+      idUsuarioNormal,
     ).pipe(
       tap(res => {
         if (res) {
           this.loadAllSolicitudes(idCenad).pipe(
             tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
+          ).subscribe();
+          this.loadAllSolicitudesEstado(idCenad, estado).pipe(
+            tap(solicitudes => {
+              switch (estado) {
+                case 'Borrador':
+                  this.cenadStore.setSolicitudesBorrador(solicitudes);
+                  break;
+                case 'Solicitada':
+                  this.cenadStore.setSolicitudesSolicitada(solicitudes);
+                  break;
+              }
+            })
           ).subscribe();
           console.log(`Solicitud creada correctamente.`);
         } else {
@@ -1165,21 +1177,36 @@ export class OrquestadorService {
     fechaFinDocumentacion: Date
   ): Observable<any> {
     return this.solicitudService.editarSolicitud(
-    observaciones,
-    jefeUnidadUsuaria,
-    pocEjercicio,
-    tlfnRedactor,
-    fechaHoraInicioRecurso,
-    fechaHoraFinRecurso,
-    estado,
-    idSolicitud,
-    observacionesCenad,
-    fechaFinDocumentacion
+      observaciones,
+      jefeUnidadUsuaria,
+      pocEjercicio,
+      tlfnRedactor,
+      fechaHoraInicioRecurso,
+      fechaHoraFinRecurso,
+      estado,
+      idSolicitud,
+      observacionesCenad,
+      fechaFinDocumentacion
     ).pipe(
       tap(res => {
         if (res) {
           this.loadAllSolicitudes(idCenad).pipe(
             tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
+          ).subscribe();
+          this.loadAllSolicitudesEstado(idCenad, "Borrador").pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudesBorrador(solicitudes))
+          ).subscribe();
+          this.loadAllSolicitudesEstado(idCenad, "Solicitada").pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudesSolicitada(solicitudes))
+          ).subscribe();
+          this.loadAllSolicitudesEstado(idCenad, "Rechazada").pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudesRechazada(solicitudes))
+          ).subscribe();
+          this.loadAllSolicitudesEstado(idCenad, "Validada").pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudesValidada(solicitudes))
+          ).subscribe();
+          this.loadAllSolicitudesEstado(idCenad, "Cancelada").pipe(
+            tap(solicitudes => this.cenadStore.setSolicitudesCancelada(solicitudes))
           ).subscribe();
           console.log(`Solicitud ${idSolicitud} actualizada correctamente.`);
         } else {
@@ -1189,13 +1216,36 @@ export class OrquestadorService {
     );
   }
 
-  borrarSolicitud(idSolicitud: string, idCenad: string): Observable<any> {
+  borrarSolicitud(idSolicitud: string, idCenad: string, estado: string): Observable<any> {
     return this.solicitudService.deleteSolicitud(idSolicitud).pipe(
       tap(res => {
         if (res) {
           console.log(`Solicitud con id ${idSolicitud} borrada correctamente.`);
           this.loadAllSolicitudes(idCenad).pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
+            tap(solicitudes => {
+              this.cenadStore.setSolicitudes(solicitudes);
+              this.loadAllSolicitudesEstado(idCenad, estado).pipe(
+                tap(solicitudes => {
+                  switch (estado) {
+                    case 'Borrador':
+                      this.cenadStore.setSolicitudesBorrador(solicitudes);
+                      break;
+                    case 'Solicitada':
+                      this.cenadStore.setSolicitudesSolicitada(solicitudes);
+                      break;
+                    case 'Rechazada':
+                      this.cenadStore.setSolicitudesRechazada(solicitudes);
+                      break;
+                    case 'Validada':
+                      this.cenadStore.setSolicitudesValidada(solicitudes);
+                      break;
+                    case 'Cancelada':
+                      this.cenadStore.setSolicitudesCancelada(solicitudes);
+                      break;
+                  }
+                })
+              ).subscribe();
+            })
           ).subscribe();
         } else {
           console.warn(`Hubo un problema borrando la solicitud con id ${idSolicitud}.`);

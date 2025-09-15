@@ -23,7 +23,7 @@ export class SolicitudComponent {
   private cenadStore = inject(CenadStore);
   private usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   private iconoStore = inject(IconosStore);
-  private utilService = inject(UtilService);
+   utilService = inject(UtilService);
   private orquestadorService = inject(OrquestadorService);
 
   faEdit = this.iconoStore.faEdit;
@@ -49,9 +49,9 @@ export class SolicitudComponent {
 
   solicitud = input<Solicitud>();
   isEditable = computed(() => this.solicitud()?.estado === 'Borrador' || (this.solicitud()?.estado === 'Solicitada' && (this.isAdminEsteCenad() || this.isGestorEsteCenad())));
-  fechaSolicitudString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaSolicitud));
-  fechaInicioString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaHoraInicioRecurso));
-  fechaFinString = signal<string>(this.utilService.formatearFecha(this.solicitud()?.fechaHoraFinRecurso));
+  fechaSolicitudString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaSolicitud));
+  fechaInicioString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraInicioRecurso));
+  fechaFinString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraFinRecurso));
 
     constructor() {
     // Este effect ahora se ejecuta en un contexto válido
