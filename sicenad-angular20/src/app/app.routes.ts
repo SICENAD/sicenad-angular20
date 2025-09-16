@@ -5,21 +5,9 @@ import { HomeComponent } from '@app/home-cenads_provincia/pages/home-page/home-p
 import { CenadPageComponent } from './cenad-visitado/pages/cenad-page/cenad-page.component';
 import { CenadHomeComponent } from './cenad-visitado/components/cenad-home/cenad-home.component';
 import { NotFoundComponent } from '@shared/components/core/not-found/not-found.component';
-import { CenadsPageComponent } from './cenads/pages/cenads-page/cenads-page.component';
-import { SuperadministradorPageComponent } from './superadministrador/pages/superadministrador-page/superadministrador-page.component';
-import { ArmasPageComponent } from './armas/pages/armas-page/armas-page.component';
-import { UnidadesPageComponent } from './unidades/pages/unidades-page/unidades-page.component';
-import { TiposFormularioPageComponent } from './tiposFormulario/pages/tiposFormulario-page/tiposFormulario-page.component';
-import { CategoriasFicheroPageComponent } from './categoriasFichero/pages/categoriasFichero-pages/categoriasFichero-page.component';
-import { UsuariosPageComponent } from './usuarios/pages/usuarios-page/usuarios-page.component';
-import { CartografiasPageComponent } from './cartografias/pages/cartografias-page/cartografias-page.component';
-import { NormativasPageComponent } from './normativas/pages/normativas-page/normativas-page.component';
-import { InfoCenadComponent } from './infoCenad/pages/infoCenad/infoCenad.component';
-import { CategoriasPageComponent } from './categorias/pages/categorias-page/categorias-page.component';
-import { RecursosPageComponent } from './recursos/pages/recursos-page/recursos-page.component';
-import { RecursoDetallePageComponent } from './recursos/pages/recursoDetalle-page/recursoDetalle-page.component';
-import { SolicitudesPageComponent } from './solicitudes/pages/solicitudes-page/solicitudes-page.component';
-import { SolicitudDetallePageComponent } from './solicitudes/pages/solicitudDetalle-page/solicitudDetalle-page.component';
+import { authGuard } from '@shared/guards/auth.guard';
+import { superadministradorGuard } from '@shared/guards/superadministrador.guard';
+import { adminCenadGuard } from '@shared/guards/adminCenad.guard';
 
 //uso "alias" para las rutas para desde el resto del codigo llamar a estas constantes y si en un futuro modificamos los path de las rutas solo habra que modificar esta constante y nada de los componentes que usan los RouterLinks...
 export const RoutesPaths = {
@@ -62,43 +50,46 @@ export const routes: Routes = [
   },
   {
     path: 'superadministrador',
-    component: SuperadministradorPageComponent,
+    loadComponent: () => import('./superadministrador/pages/superadministrador-page/superadministrador-page.component').then(m => m.SuperadministradorPageComponent),
+    canActivate: [authGuard],
+    canMatch: [superadministradorGuard],
     children: [
       {
         path: '',
-       //component: CenadsPageComponent
-         redirectTo: RoutesPaths.cenads,
-         pathMatch: 'full'
+        //component: CenadsPageComponent
+        redirectTo: RoutesPaths.cenads,
+        pathMatch: 'full'
       },
       {
         path: RoutesPaths.armas,
-        component: ArmasPageComponent
+        loadComponent: () => import('./armas/pages/armas-page/armas-page.component').then(m => m.ArmasPageComponent)
       },
       {
         path: RoutesPaths.categoriasFichero,
-        component: CategoriasFicheroPageComponent
+        loadComponent: () => import('./categoriasFichero/pages/categoriasFichero-page/categoriasFichero-page.component').then(m => m.CategoriasFicheroPageComponent)
       },
       {
         path: RoutesPaths.tiposFormulario,
-        component: TiposFormularioPageComponent
+        loadComponent: () => import('./tiposFormulario/pages/tiposFormulario-page/tiposFormulario-page.component').then(m => m.TiposFormularioPageComponent)
       },
       {
         path: RoutesPaths.cenads,
-        component: CenadsPageComponent
+        loadComponent: () => import('./cenads/pages/cenads-page/cenads-page.component').then(m => m.CenadsPageComponent)
       },
       {
         path: RoutesPaths.usuariosSuper,
-        component: UsuariosPageComponent
+        loadComponent: () => import('./usuarios/pages/usuarios-page/usuarios-page.component').then(m => m.UsuariosPageComponent)
       },
       {
         path: RoutesPaths.unidadesSuper,
-        component: UnidadesPageComponent
+        loadComponent: () => import('./unidades/pages/unidades-page/unidades-page.component').then(m => m.UnidadesPageComponent)
       }
     ]
   },
   {
     path: 'cenad/:idCenad',
     component: CenadPageComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -106,35 +97,36 @@ export const routes: Routes = [
       },
       {
         path: RoutesPaths.infoCenad,
-        component: InfoCenadComponent
+        loadComponent: () => import('./infoCenad/pages/infoCenad-page/infoCenad-page.component').then(m => m.InfoCenadPageComponent)
       },
       {
         path: RoutesPaths.normativas,
-        component: NormativasPageComponent
+        loadComponent: () => import('./normativas/pages/normativas-page/normativas-page.component').then(m => m.NormativasPageComponent)
       },
       {
         path: RoutesPaths.cartografias,
-        component: CartografiasPageComponent
+        loadComponent: () => import('./cartografias/pages/cartografias-page/cartografias-page.component').then(m => m.CartografiasPageComponent)
       },
       {
         path: RoutesPaths.categorias,
-        component: CategoriasPageComponent
+        canActivate: [adminCenadGuard],
+        loadComponent: () => import('./categorias/pages/categorias-page/categorias-page.component').then(m => m.CategoriasPageComponent)
       },
       {
         path: RoutesPaths.recursos,
-        component: RecursosPageComponent
+        loadComponent: () => import('./recursos/pages/recursos-page/recursos-page.component').then(m => m.RecursosPageComponent)
       },
       {
         path: `${RoutesPaths.recursos}/:idRecurso`,
-        component: RecursoDetallePageComponent
+        loadComponent: () => import('./recursos/pages/recursoDetalle-page/recursoDetalle-page.component').then(m => m.RecursoDetallePageComponent)
       },
       {
         path: RoutesPaths.solicitudes,
-        component: SolicitudesPageComponent
+        loadComponent: () => import('./solicitudes/pages/solicitudes-page/solicitudes-page.component').then(m => m.SolicitudesPageComponent)
       },
       {
         path: `${RoutesPaths.solicitudes}/:idSolicitud`,
-        component: SolicitudDetallePageComponent
+        loadComponent: () => import('./solicitudes/pages/solicitudDetalle-page/solicitudDetalle-page.component').then(m => m.SolicitudDetallePageComponent)
       },
       {
         path: RoutesPaths.calendario,
@@ -142,11 +134,13 @@ export const routes: Routes = [
       },
       {
         path: RoutesPaths.usuariosCenad,
-        component: UsuariosPageComponent
+        canActivate: [adminCenadGuard],
+        loadComponent: () => import('./usuarios/pages/usuarios-page/usuarios-page.component').then(m => m.UsuariosPageComponent)
       },
       {
         path: RoutesPaths.unidadesCenad,
-        component: UnidadesPageComponent
+        canActivate: [adminCenadGuard],
+        loadComponent: () => import('./unidades/pages/unidades-page/unidades-page.component').then(m => m.UnidadesPageComponent)
       }
     ]
   },

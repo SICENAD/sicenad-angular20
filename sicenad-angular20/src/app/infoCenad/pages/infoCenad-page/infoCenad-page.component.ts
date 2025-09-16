@@ -14,10 +14,10 @@ import { UtilsStore } from '@stores/utils.store';
 @Component({
   selector: 'app-infoCenad',
   imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink],
-  templateUrl: './infoCenad.component.html',
-  styleUrls: ['./infoCenad.component.css']
+  templateUrl: './infoCenad-page.component.html',
+  styleUrls: ['./infoCenad-page.component.css']
 })
-export class InfoCenadComponent {
+export class InfoCenadPageComponent {
   private auth = inject(AuthStore);
   private cenadStore = inject(CenadStore);
   private usuarioLogueado = inject(UsuarioLogueadoStore);
