@@ -1,18 +1,20 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { UtilsStore } from '@stores/utils.store';
 import { firstValueFrom } from 'rxjs';
+import { tokenApiInterceptor } from '@shared/interceptors/tokenApi.interceptor';
+import { globalHttpErrorInterceptor } from '@shared/interceptors/globalHttpError.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(), // Provee HttpClient a toda la app
+    provideHttpClient(withInterceptors([tokenApiInterceptor, globalHttpErrorInterceptor])), // Provee HttpClient a toda la app
     provideAnimations(),
     provideToastr({
       positionClass: 'toast-top-right', // posición de los toasts
