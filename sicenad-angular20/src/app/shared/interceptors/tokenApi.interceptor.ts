@@ -4,10 +4,14 @@ import { AuthStore } from '@stores/auth.store';
 
 export const tokenApiInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthStore);
+  //const token = localStorage.getItem('token');
   const token = auth.token();
-  if (token) {
-    const authReq = req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) });
-    return next(authReq);
+  if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
+    return next(req);
+  }
+  if (token !== null && token !== '') {
+    const updatedReq = req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) });
+    return next(updatedReq);
   }
   return next(req);
 };

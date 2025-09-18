@@ -35,8 +35,8 @@ export class ApiService {
   public postSinToken<T>(endpoint: string, body: any): Observable<T> {
     const urlBase = this.utils.urlApi();
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      'Accept': 'application/json'
+    //  'Content-Type': 'application/json; charset=utf-8',
+     // 'Accept': 'application/json'
     });
     return this.http.post<T>(`${urlBase}${endpoint}`, body, { headers }).pipe(
       catchError((err) => {
@@ -56,12 +56,12 @@ export class ApiService {
     const urlBase = this.utils.urlApi();
     const token = this.auth.token();
     const headersObj: Record<string, string> = {
-      Authorization: `Bearer ${token}`,
+      //Authorization: `Bearer ${token}`,
     };
 
     if (!isFile) {
-      headersObj['Content-Type'] = 'application/json; charset=utf-8';
-      headersObj['Accept'] = 'application/json';
+     // headersObj['Content-Type'] = 'application/json; charset=utf-8';
+     // headersObj['Accept'] = 'application/json';
     }
 
     const headers = new HttpHeaders(headersObj);
@@ -84,7 +84,9 @@ export class ApiService {
       default:
         if (isFile) {
           // Indicamos que la respuesta será un blob
-          observable = this.http.get(`${urlBase}${endpoint}`, { headers, responseType: 'blob' as 'json' }) as Observable<T>;
+         // observable = this.http.get(`${urlBase}${endpoint}`, { headers, responseType: 'blob' as 'json' }) as Observable<T>;
+                   observable = this.http.get<T>(`${urlBase}${endpoint}`, { headers });
+
         } else {
           observable = this.http.get<T>(`${urlBase}${endpoint}`, { headers });
         }

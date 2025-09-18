@@ -23,7 +23,7 @@
     <hr />
     @for (f of c.ficheros; track f.idString) {
     <div>
-      <a (click)="descargar(f)" class="texto href ms-3">{{ f.nombre }}</a>
+      <a (click)="descargar(f)" class="texto href ms-3 download-link">{{ f.nombre }}</a>
     </div>
     }
   </div>

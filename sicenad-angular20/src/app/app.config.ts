@@ -8,13 +8,14 @@ import { UtilsStore } from '@stores/utils.store';
 import { firstValueFrom } from 'rxjs';
 import { tokenApiInterceptor } from '@shared/interceptors/tokenApi.interceptor';
 import { globalHttpErrorInterceptor } from '@shared/interceptors/globalHttpError.interceptor';
+import { filesInterceptor } from '@shared/interceptors/files.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([tokenApiInterceptor, globalHttpErrorInterceptor])), // Provee HttpClient a toda la app
+    provideHttpClient(withInterceptors([tokenApiInterceptor, filesInterceptor, globalHttpErrorInterceptor])), // Provee HttpClient a toda la app
     provideAnimations(),
     provideToastr({
       positionClass: 'toast-top-right', // posición de los toasts
