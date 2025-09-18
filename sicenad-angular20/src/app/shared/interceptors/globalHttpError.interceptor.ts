@@ -5,13 +5,12 @@ import { retry, tap } from 'rxjs';
 
 export const globalHttpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const utilService = inject(UtilService);
-    return next(req).pipe(
-      retry({count: 3, delay: 1000}),
-      tap({
-        error: (error: HttpErrorResponse) => {
-          utilService.toast(error.message, 'error');
-        }
-  })
+  return next(req).pipe(
+    retry({ count: 3, delay: 1000 }),
+    tap({
+      error: (error: HttpErrorResponse) => {
+        utilService.toast(error.message, 'error');
+      }
+    })
   );
-
 }

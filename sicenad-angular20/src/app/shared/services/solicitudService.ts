@@ -11,7 +11,7 @@ export class SolicitudService {
 
   getAll(idCenad: string): Observable<Solicitud[]> {
     const endpoint = `/cenads/${idCenad}/solicitudes?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class SolicitudService {
 
   getSolicitudesPorEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
     const endpoint = `/cenads/${idCenad}/solicitudesEstado/${estado}?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
       map(res => {
         console.log(`Solicitudes recibidas con estado ${estado}:`, res);
         return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
@@ -38,7 +38,7 @@ export class SolicitudService {
 
   getSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
     const endpoint = `/solicitudes/${idSolicitud}`;
-    return this.apiService.peticionConToken<Solicitud>(endpoint, 'GET').pipe(
+    return this.apiService.request<Solicitud>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -72,7 +72,7 @@ export class SolicitudService {
       recurso: `${this.apiService.getUrlApi()}/recursos/${idRecurso}`,
       usuarioNormal: `${this.apiService.getUrlApi()}/usuarios_normal/${idUsuarioNormal}`
     };
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado la solicitud`, 'success');
@@ -110,7 +110,7 @@ export class SolicitudService {
         fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
         estado: estado
     };
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', body).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado la solicitud`, 'success');
@@ -124,7 +124,7 @@ export class SolicitudService {
 
   deleteSolicitud(idSolicitud: string): Observable<any> {
     const endpoint = `/solicitudes/${idSolicitud}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let solicitud = res;
         this.utilService.toast(`Se ha eliminado la solicitud ${solicitud?.id}`, 'success');

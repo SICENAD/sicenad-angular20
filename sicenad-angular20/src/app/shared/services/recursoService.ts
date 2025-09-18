@@ -11,7 +11,7 @@ export class RecursoService {
 
   getAll(idCenad: string): Observable<Recurso[]> {
     const endpoint = `/cenads/${idCenad}/recursos?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class RecursoService {
 
   getRecursosDeCategoria(idCategoria: string): Observable<Recurso[]> {
     const endpoint = `/categorias/${idCategoria}/recursos?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -37,7 +37,7 @@ export class RecursoService {
 
   getRecursosDeSubcategorias(idCategoria: string): Observable<Recurso[]> {
     const endpoint = `/categorias/${idCategoria}/recursosDeSubcategorias?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -50,7 +50,7 @@ export class RecursoService {
 
   getRecursosDeGestor(idGestor: string): Observable<Recurso[]> {
     const endpoint = `/usuarios_gestor/${idGestor}/recursos?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -63,7 +63,7 @@ export class RecursoService {
 
   getRecursoSeleccionado(idRecurso: string): Observable<Recurso | null> {
     const endpoint = `/recursos/${idRecurso}`;
-    return this.apiService.peticionConToken<Recurso>(endpoint, 'GET').pipe(
+    return this.apiService.request<Recurso>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -71,7 +71,7 @@ export class RecursoService {
 
   getRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
     const endpoint = `/solicitudes/${idSolicitud}/recurso`;
-    return this.apiService.peticionConToken<Recurso>(endpoint, 'GET').pipe(
+    return this.apiService.request<Recurso>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -87,7 +87,7 @@ export class RecursoService {
       categoria: `${this.apiService.getUrlApi()}/categorias/${idCategoria}`,
       usuarioGestor: `${this.apiService.getUrlApi()}/usuarios_gestor/${idGestor}`
     };
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado el recurso ${nombre}`, 'success');
@@ -109,7 +109,7 @@ export class RecursoService {
       categoria: `${this.apiService.getUrlApi()}/categorias/${idCategoria}`,
       usuarioGestor: `${this.apiService.getUrlApi()}/usuarios_gestor/${idGestor}`
     }
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', body).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el recurso ${nombre}`, 'success');
@@ -130,7 +130,7 @@ export class RecursoService {
       conDatosEspecificosSolicitud: conDatosEspecificosSolicitud,
       datosEspecificosSolicitud: datosEspecificosSolicitud
     }
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', body).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el recurso ${nombre}`, 'success');
@@ -144,7 +144,7 @@ export class RecursoService {
 
   deleteRecurso(idRecurso: string): Observable<any> {
     const endpoint = `/recursos/${idRecurso}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let recurso = res;
         this.utilService.toast(`Se ha eliminado el recurso ${recurso?.nombre}`, 'success');

@@ -4,7 +4,6 @@ import { AuthStore } from '@stores/auth.store';
 
 export const tokenApiInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthStore);
-  //const token = localStorage.getItem('token');
   const token = auth.token();
   if (req.url.includes('/auth/login') || req.url.includes('/auth/register')) {
     return next(req);
@@ -14,4 +13,4 @@ export const tokenApiInterceptor: HttpInterceptorFn = (req, next) => {
     return next(updatedReq);
   }
   return next(req);
-};
+}

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { inject, Injectable, Injector } from "@angular/core";
 import { AuthStore } from "@stores/auth.store";
 import { catchError, map, Observable, throwError } from "rxjs";
@@ -22,76 +22,33 @@ export class ApiService {
   getUrlApi(): string {
     const value = this.localStorageService.getItem<string>('urlApi');
     if (value && value.trim()) return value;
-
-    // Fallback definitivo
-    // return environment.apiUrl;
-    // o si tienes utils:
-    // return this.utils.urlApi();
-
     return '';
   }
 
-  // --- REQUEST POST SIN TOKEN GENERAL (REGISTRO Y LOGIN) ---
-  public postSinToken<T>(endpoint: string, body: any): Observable<T> {
-    const urlBase = this.utils.urlApi();
-    const headers = new HttpHeaders({
-    //  'Content-Type': 'application/json; charset=utf-8',
-     // 'Accept': 'application/json'
-    });
-    return this.http.post<T>(`${urlBase}${endpoint}`, body, { headers }).pipe(
-      catchError((err) => {
-        console.error('Error en postSinToken:', err);
-        throw err;
-      })
-    );
-  }
-
-  // --- REQUEST CON TOKEN GENERAL ---
-  private requestConToken<T>(
+  // --- REQUEST GENERAL ---
+  request<T>(
     endpoint: string,
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     body?: any,
-    isFile: boolean = false
   ): Observable<T> {
-    const urlBase = this.utils.urlApi();
-    const token = this.auth.token();
-    const headersObj: Record<string, string> = {
-      //Authorization: `Bearer ${token}`,
-    };
-
-    if (!isFile) {
-     // headersObj['Content-Type'] = 'application/json; charset=utf-8';
-     // headersObj['Accept'] = 'application/json';
-    }
-
-    const headers = new HttpHeaders(headersObj);
-
     let observable: Observable<T>;
     switch (method) {
       case 'POST':
-        observable = this.http.post<T>(`${urlBase}${endpoint}`, body || {}, { headers });
+        observable = this.http.post<T>(`${this.utils.urlApi()}${endpoint}`, body || {});
         break;
       case 'PUT':
-        observable = this.http.put<T>(`${urlBase}${endpoint}`, body || {}, { headers });
+        observable = this.http.put<T>(`${this.utils.urlApi()}${endpoint}`, body || {});
         break;
       case 'PATCH':
-        observable = this.http.patch<T>(`${urlBase}${endpoint}`, body || {}, { headers });
+        observable = this.http.patch<T>(`${this.utils.urlApi()}${endpoint}`, body || {});
         break;
       case 'DELETE':
-        observable = this.http.delete<T>(`${urlBase}${endpoint}`, { headers });
+        observable = this.http.delete<T>(`${this.utils.urlApi()}${endpoint}`);
         break;
       case 'GET':
       default:
-        if (isFile) {
-          // Indicamos que la respuesta será un blob
-         // observable = this.http.get(`${urlBase}${endpoint}`, { headers, responseType: 'blob' as 'json' }) as Observable<T>;
-                   observable = this.http.get<T>(`${urlBase}${endpoint}`, { headers });
-
-        } else {
-          observable = this.http.get<T>(`${urlBase}${endpoint}`, { headers });
-        }
+          observable = this.http.get<T>(`${this.utils.urlApi()}${endpoint}`);
     }
-
     return observable.pipe(
       catchError(async (err) => {
         if (err.status === 401 || err.status === 403) {
@@ -104,29 +61,12 @@ export class ApiService {
     );
   }
 
-  // --- Métodos públicos ---
-  public peticionConToken<T>(
-    url: string,
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
-    body?: any
-  ): Observable<T> {
-    return this.requestConToken<T>(url, method, body, false);
-  }
-
-  public peticionArchivoCarpetaConToken<T>(
-    url: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    body?: any
-  ): Observable<T> {
-    return this.requestConToken<T>(url, method, body, true);
-  }
-
   // ----------------- ARCHIVOS -----------------
   mostrarArchivo(url: string): Observable<Blob> {
-    return this.peticionArchivoCarpetaConToken<Blob>(url, 'GET', null);
+    return this.request<Blob>(url, 'GET', null);
   }
   descargarArchivo(urlDownload: string, nombreArchivo: string): Observable<void> {
-    return this.peticionArchivoCarpetaConToken<Blob>(urlDownload, 'GET', null).pipe(
+    return this.request<Blob>(urlDownload, 'GET', null).pipe(
       map((blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -147,8 +87,7 @@ export class ApiService {
   subirArchivo(urlUpload: string, archivo: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', archivo);
-
-    return this.peticionArchivoCarpetaConToken<any>(urlUpload, 'POST', formData).pipe(
+    return this.request<any>(urlUpload, 'POST', formData).pipe(
       map(res => res.nombreArchivo),
       catchError(err => {
         if (err.status === 413) alert('El archivo tiene un tamaño superior al permitido');
@@ -158,7 +97,7 @@ export class ApiService {
   }
 
   private borrarRecurso(url: string, mensajeError: string): Observable<any> {
-    return this.peticionArchivoCarpetaConToken<any>(url, 'GET').pipe(
+    return this.request<any>(url, 'GET').pipe(
       catchError(err => {
         if (err.status === 400) alert(mensajeError);
         return throwError(() => err);

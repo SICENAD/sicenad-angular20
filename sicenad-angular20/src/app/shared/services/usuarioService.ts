@@ -21,17 +21,17 @@ export class UsuarioService {
   // --- REQUEST LOGIN ---
   public login(username: string, password: string): Observable<LoginResponse> {
     const endpoint = `/auth/login`;
-    return this.apiService.postSinToken<LoginResponse>(endpoint, { username, password });
+    return this.apiService.request<LoginResponse>(endpoint,'POST', { username, password });
   }
   // --- REQUEST REGISTER ---
   public register(username: string, password: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, rol: string): Observable<RegisterResponse> {
     const endpoint = `/auth/register`;
-    return this.apiService.postSinToken<RegisterResponse>(endpoint, { username, password, tfno, email, emailAdmitido, descripcion, rol });
+    return this.apiService.request<RegisterResponse>(endpoint,'POST', { username, password, tfno, email, emailAdmitido, descripcion, rol });
   }
 
   getAll(): Observable<Usuario[]> {
     const endpoint = `/usuarios?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios: Usuario[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { usuarios: Usuario[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -43,7 +43,7 @@ export class UsuarioService {
   }
   getAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
     const endpoint = `/usuarios_superadministrador?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_superadministrador: UsuarioSuperAdministrador[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { usuarios_superadministrador: UsuarioSuperAdministrador[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_superadministrador.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -56,7 +56,7 @@ export class UsuarioService {
 
   getAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
     const endpoint = `/usuarios_administrador?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_administrador: UsuarioAdministrador[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { usuarios_administrador: UsuarioAdministrador[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_administrador.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -69,7 +69,7 @@ export class UsuarioService {
 
   getAllUsuariosGestor(): Observable<UsuarioGestor[]> {
     const endpoint = `/usuarios_gestor?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_gestor.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -82,7 +82,7 @@ export class UsuarioService {
 
   getAllUsuariosGestorCenad(idCenad: string): Observable<UsuarioGestor[]> {
     const endpoint = `/cenads/${idCenad}/usuariosGestores?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_gestor.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -95,7 +95,7 @@ export class UsuarioService {
 
   getAllUsuariosNormal(): Observable<UsuarioNormal[]> {
     const endpoint = `/usuarios_normal?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { usuarios_normal: UsuarioNormal[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { usuarios_normal: UsuarioNormal[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.usuarios_normal.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -108,7 +108,7 @@ export class UsuarioService {
 
   getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
     const endpoint = `/cenads/${idCenad}/usuarioAdministrador`;
-    return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
+    return this.apiService.request<UsuarioAdministrador>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -116,7 +116,7 @@ export class UsuarioService {
 
   getUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
     const endpoint = `/usuarios_administrador/search/findByUsername?username=${username}`;
-    return this.apiService.peticionConToken<UsuarioAdministrador>(endpoint, 'GET').pipe(
+    return this.apiService.request<UsuarioAdministrador>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -124,7 +124,7 @@ export class UsuarioService {
 
   getUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
     const endpoint = `/usuarios_gestor/search/findByUsername?username=${username}`;
-    return this.apiService.peticionConToken<UsuarioGestor>(endpoint, 'GET').pipe(
+    return this.apiService.request<UsuarioGestor>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -132,7 +132,7 @@ export class UsuarioService {
 
   getUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
     const endpoint = `/recursos/${idRecurso}/usuarioGestor`;
-    return this.apiService.peticionConToken<UsuarioGestor>(endpoint, 'GET').pipe(
+    return this.apiService.request<UsuarioGestor>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -140,7 +140,7 @@ export class UsuarioService {
 
   getUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
     const endpoint = `/usuarios_normal/search/findByUsername?username=${username}`;
-    return this.apiService.peticionConToken<UsuarioNormal>(endpoint, 'GET').pipe(
+    return this.apiService.request<UsuarioNormal>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -149,7 +149,7 @@ export class UsuarioService {
 
   editarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {
     const endpoint = `/usuarios_superadministrador/${idUsuarioSuperadministrador}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
@@ -164,7 +164,7 @@ export class UsuarioService {
   editarUsuarioAdministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioAdministrador: string): Observable<any> {
     const endpoint = `/usuarios_administrador/${idUsuarioAdministrador}`;
     const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
@@ -179,7 +179,7 @@ export class UsuarioService {
   editarUsuarioGestor(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioGestor: string): Observable<any> {
     const endpoint = `/usuarios_gestor/${idUsuarioGestor}`;
     const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
@@ -194,7 +194,7 @@ export class UsuarioService {
   editarUsuarioNormal(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUnidad: string, idUsuarioNormal: string): Observable<any> {
     const endpoint = `/usuarios_normal/${idUsuarioNormal}`;
     const unidad = `${this.apiService.getUrlApi()}/unidades/${idUnidad}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, unidad }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, unidad }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
@@ -208,7 +208,7 @@ export class UsuarioService {
 
   deleteUsuario(idUsuario: string): Observable<any> {
     const endpoint = `/usuarios/${idUsuario}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         if (res) {
           console.log(`Usuario con id ${idUsuario} eliminado correctamente.`);
@@ -231,14 +231,14 @@ export class UsuarioService {
     switch (rol) {
       case RolUsuario.Administrador: {
         const usuario: UsuarioAdministrador = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_administrador/search/findByUsername?username=${username}`,
             'GET',
             null
           )
         );
         const cenad: Cenad = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_administrador/${usuario.idString}/cenad`,
             'GET',
             null
@@ -248,14 +248,14 @@ export class UsuarioService {
       }
       case RolUsuario.Gestor: {
         const usuario: UsuarioGestor = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_gestor/search/findByUsername?username=${username}`,
             'GET',
             null
           )
         );
         const cenad: Cenad = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_gestor/${usuario.idString}/cenad`,
             'GET',
             null
@@ -265,14 +265,14 @@ export class UsuarioService {
       }
       case RolUsuario.Normal: {
         const usuario: UsuarioNormal = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_normal/search/findByUsername?username=${username}`,
             'GET',
             null
           )
         );
         const unidad: Unidad = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_normal/${usuario.idString}/unidad`,
             'GET',
             null
@@ -282,7 +282,7 @@ export class UsuarioService {
       }
       case RolUsuario.Superadministrador: {
         const usuario: UsuarioSuperAdministrador = await firstValueFrom(
-          this.apiService.peticionConToken(
+          this.apiService.request(
             `/usuarios_superadministrador/search/findByUsername?username=${username}`,
             'GET',
             null

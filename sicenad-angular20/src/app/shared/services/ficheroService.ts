@@ -15,7 +15,7 @@ export class FicheroService {
     const endpoint = idRecurso ? `/recursos/${idRecurso}/ficheros?size=1000`
       : isCenad ? `/solicitudes/${idSolicitud}/documentacionCenad?size=1000`
         : `/solicitudes/${idSolicitud}/documentacionUnidad?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { ficheros: Fichero[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { ficheros: Fichero[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.ficheros.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -28,7 +28,7 @@ export class FicheroService {
 
   getFicheroSeleccionado(idFichero: string): Observable<Fichero | null> {
     const endpoint = `/ficheros/${idFichero}`;
-    return this.apiService.peticionConToken<Fichero>(endpoint, 'GET').pipe(
+    return this.apiService.request<Fichero>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -46,7 +46,7 @@ export class FicheroService {
     if (idSolicitud) {
       isCenad ? (body.solicitudRecursoCenad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`) : (body.solicitudRecursoUnidad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`);
     }
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
         const idFichero = resCrear.idString;
         if (!archivo) return of(true);
@@ -55,7 +55,7 @@ export class FicheroService {
           switchMap((nombreArchivo: string) => {
             if (!nombreArchivo) return of(false);
             const endpointCartografia = `${endpoint}/${idFichero}`;
-            return this.apiService.peticionConToken<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
+            return this.apiService.request<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
               tap(() => {
                 this.utilService.toast(`Se ha creado el fichero ${nombre}`, 'success');
               }),
@@ -88,7 +88,7 @@ export class FicheroService {
     };
     const patchFichero = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-      return this.apiService.peticionConToken<any>(endpointFichero, 'PATCH', body).pipe(
+      return this.apiService.request<any>(endpointFichero, 'PATCH', body).pipe(
         tap(() => {
           this.utilService.toast(`Se ha editado el fichero ${nombre}`, 'success');
         }),
@@ -123,7 +123,7 @@ export class FicheroService {
     const endpointFichero = `/ficheros/${idFichero}`;
     const endpointArchivo = idRecurso ? `/files/${idCenad}/borrarDocRecurso/${idRecurso}/${nombreArchivo}` : `/files/${idCenad}/borrarDocSolicitud/${idSolicitud}/${nombreArchivo}`;
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
-      switchMap(() => this.apiService.peticionConToken<any>(endpointFichero, 'DELETE')),
+      switchMap(() => this.apiService.request<any>(endpointFichero, 'DELETE')),
       tap(res => {
         let fichero = res;
         this.utilService.toast(`Se ha eliminado el archivo ${fichero?.nombre}`, 'success');

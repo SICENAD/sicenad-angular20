@@ -11,7 +11,7 @@ export class CategoriaFicheroService {
 
   getAll(): Observable<CategoriaFichero[]> {
     const endpoint = `/categorias_fichero?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias_fichero: CategoriaFichero[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { categorias_fichero: CategoriaFichero[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias_fichero.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class CategoriaFicheroService {
 
   getCategoriaFicheroDeFichero(idFichero: string): Observable<CategoriaFichero | null> {
     const endpoint = `/ficheros/${idFichero}/categoriaFichero`;
-    return this.apiService.peticionConToken<CategoriaFichero>(endpoint, 'GET').pipe(
+    return this.apiService.request<CategoriaFichero>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -32,7 +32,7 @@ export class CategoriaFicheroService {
 
   crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable<any> {
     const endpoint = `/categorias_fichero`;
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipo, descripcion }).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipo, descripcion }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado la categoría de fichero ${nombre}`, 'success');
@@ -46,7 +46,7 @@ export class CategoriaFicheroService {
 
   editarCategoriaFichero(nombre: string, tipo: number, descripcion: string, idCategoriaFichero: string): Observable<any> {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), tipo, descripcion }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), tipo, descripcion }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado la categoría de fichero ${nombre}`, 'success');
@@ -59,7 +59,7 @@ export class CategoriaFicheroService {
   }
   deleteCategoriaFichero(idCategoriaFichero: string): Observable<any> {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let categoriaFichero = res;
         this.utilService.toast(`Se ha eliminado la categoría de fichero ${categoriaFichero?.nombre}`, 'success');

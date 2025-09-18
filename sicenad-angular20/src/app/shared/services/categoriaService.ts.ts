@@ -11,7 +11,7 @@ export class CategoriaService {
 
   getAll(idCenad: string): Observable<Categoria[]> {
     const endpoint = `/cenads/${idCenad}/categorias?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class CategoriaService {
 
   getAllCategoriasPadre(idCenad: string): Observable<Categoria[]> {
     const endpoint = `/cenads/${idCenad}/categoriasPadre?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -37,7 +37,7 @@ export class CategoriaService {
 
   getSubCategorias(idCategoria: string): Observable<Categoria[]> {
     const endpoint = `/categorias/${idCategoria}/subcategorias?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -50,7 +50,7 @@ export class CategoriaService {
 
   getSubCategoriasAnidadas(idCategoria: string): Observable<Categoria[]> {
     const endpoint = `/categorias/${idCategoria}/subcategoriasAnidadas?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -63,7 +63,7 @@ export class CategoriaService {
 
   getCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
     const endpoint = `/categorias/${idCategoria}`;
-    return this.apiService.peticionConToken<Categoria>(endpoint, 'GET').pipe(
+    return this.apiService.request<Categoria>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -71,7 +71,7 @@ export class CategoriaService {
 
   getCategoriaPadre(idCategoria: string): Observable<Categoria | null> {
     const endpoint = `/categorias/${idCategoria}/categoriaPadre`;
-    return this.apiService.peticionConToken<Categoria>(endpoint, 'GET').pipe(
+    return this.apiService.request<Categoria>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -79,7 +79,7 @@ export class CategoriaService {
 
   getCategoriaDeRecurso(idRecurso: string): Observable<Categoria | null> {
     const endpoint = `/recursos/${idRecurso}/categoria`;
-    return this.apiService.peticionConToken<Categoria>(endpoint, 'GET').pipe(
+    return this.apiService.request<Categoria>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -94,7 +94,7 @@ export class CategoriaService {
     }
     idCategoriaPadre != '' &&
       (body.categoriaPadre = `${this.apiService.getUrlApi()}/categorias/${idCategoriaPadre}`);
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado la categoría ${nombre}`, 'success');
@@ -115,7 +115,7 @@ export class CategoriaService {
       if (idCategoriaPadre != null && idCategoriaPadre != undefined && idCategoriaPadre != '') {
         (body.categoriaPadre = `${this.apiService.getUrlApi()}/categorias/${idCategoriaPadre}`)
       }
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', body).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado la categoría ${nombre}`, 'success');
@@ -128,7 +128,7 @@ export class CategoriaService {
   }
   deleteCategoria(idCategoria: string): Observable<any> {
     const endpoint = `/categorias/${idCategoria}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let categoria = res;
         this.utilService.toast(`Se ha eliminado la categoría ${categoria?.nombre}`, 'success');

@@ -11,7 +11,7 @@ export class UnidadService {
 
   getAll(): Observable<Unidad[]> {
     const endpoint = `/unidades?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { unidades: Unidad[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { unidades: Unidad[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.unidades.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class UnidadService {
 
   getUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
     const endpoint = `/usuarios_normal/${idUsuarioNormal}/unidad`;
-    return this.apiService.peticionConToken<Unidad>(endpoint, 'GET').pipe(
+    return this.apiService.request<Unidad>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -32,7 +32,7 @@ export class UnidadService {
 
   crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable<any> {
     const endpoint = `/unidades`;
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion, email, tfno, direccion, poc }).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion, email, tfno, direccion, poc }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado la unidad ${nombre}`, 'success');
@@ -46,7 +46,7 @@ export class UnidadService {
 
   editarUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string, idUnidad: string): Observable<any> {
     const endpoint = `/unidades/${idUnidad}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion, email: email.toLowerCase(), tfno, direccion, poc: poc.toUpperCase() }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion, email: email.toLowerCase(), tfno, direccion, poc: poc.toUpperCase() }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado la unidad ${nombre}`, 'success');
@@ -59,7 +59,7 @@ export class UnidadService {
   }
   deleteUnidad(idUnidad: string): Observable<any> {
     const endpoint = `/unidades/${idUnidad}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let unidad = res;
         this.utilService.toast(`Se ha eliminado la unidad ${unidad?.nombre}`, 'success');

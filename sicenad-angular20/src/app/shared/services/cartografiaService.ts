@@ -13,7 +13,7 @@ export class CartografiaService {
 
   getAll(idCenad: string): Observable<Cartografia[]> {
     const endpoint = `/cenads/${idCenad}/cartografias?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { cartografias: Cartografia[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { cartografias: Cartografia[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.cartografias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -26,7 +26,7 @@ export class CartografiaService {
 
   getCartografiaSeleccionada(idCartografia: string): Observable<Cartografia | null> {
     const endpoint = `/cartografias/${idCartografia}`;
-    return this.apiService.peticionConToken<Cartografia>(endpoint, 'GET').pipe(
+    return this.apiService.request<Cartografia>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -47,7 +47,7 @@ export class CartografiaService {
       categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${this.utils.categoriaFicheroCartografia()}`,
       cenad: `${this.apiService.getUrlApi()}/cenads/${idCenad}`
     };
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
         const idCartografia = resCrear.idString;
         if (!archivo) return of(true);
@@ -56,7 +56,7 @@ export class CartografiaService {
           switchMap((nombreArchivo: string) => {
             if (!nombreArchivo) return of(false);
             const endpointCartografia = `${endpoint}/${idCartografia}`;
-            return this.apiService.peticionConToken<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
+            return this.apiService.request<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
               tap(() => {
                 this.utilService.toast(`Se ha creado la cartografía ${nombre}`, 'success');
               }),
@@ -87,7 +87,7 @@ export class CartografiaService {
     };
     const patchCartografia = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-      return this.apiService.peticionConToken<any>(endpointCartografia, 'PATCH', body).pipe(
+      return this.apiService.request<any>(endpointCartografia, 'PATCH', body).pipe(
         tap(() => {
           this.utilService.toast(`Se ha editado la cartografía ${nombre}`, 'success');
         }),
@@ -121,7 +121,7 @@ export class CartografiaService {
     const endpointCartografia = `/cartografias/${idCartografia}`;
     const endpointArchivo = `/files/${idCenad}/borrarCartografia/${nombreArchivo}`;
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
-      switchMap(() => this.apiService.peticionConToken<any>(endpointCartografia, 'DELETE')),
+      switchMap(() => this.apiService.request<any>(endpointCartografia, 'DELETE')),
       tap(res => {
         let cartografia = res;
         this.utilService.toast(`Se ha eliminado la cartografía ${cartografia?.nombre}`, 'success');

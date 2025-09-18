@@ -11,7 +11,7 @@ export class TipoFormularioService {
 
   getAll(): Observable<TipoFormulario[]> {
     const endpoint = `/tipos_formulario?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { tipos_formulario: TipoFormulario[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { tipos_formulario: TipoFormulario[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.tipos_formulario.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class TipoFormularioService {
 
   getTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
     const endpoint = `/recursos/${idRecurso}/tipoFormulario`;
-    return this.apiService.peticionConToken<TipoFormulario>(endpoint, 'GET').pipe(
+    return this.apiService.request<TipoFormulario>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -32,7 +32,7 @@ export class TipoFormularioService {
 
   crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
     const endpoint = `/tipos_formulario`;
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion }).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado el tipo de formulario ${nombre}`, 'success');
@@ -46,7 +46,7 @@ export class TipoFormularioService {
 
   editarTipoFormulario(nombre: string, descripcion: string, idTipoFormulario: string): Observable<any> {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el tipo de formulario ${nombre}`, 'success');
@@ -59,7 +59,7 @@ export class TipoFormularioService {
   }
   deleteTipoFormulario(idTipoFormulario: string): Observable<any> {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let tipoFormulario = res;
         this.utilService.toast(`Se ha eliminado el tipo de formulario ${tipoFormulario?.nombre}`, 'success');

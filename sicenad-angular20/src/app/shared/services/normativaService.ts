@@ -13,7 +13,7 @@ export class NormativaService {
 
   getAll(idCenad: string): Observable<Normativa[]> {
     const endpoint = `/cenads/${idCenad}/normativas?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { ficheros: Normativa[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { ficheros: Normativa[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.ficheros.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -26,7 +26,7 @@ export class NormativaService {
 
   getNormativaSeleccionada(idNormativa: string): Observable<Normativa | null> {
     const endpoint = `/ficheros/${idNormativa}`;
-    return this.apiService.peticionConToken<Normativa>(endpoint, 'GET').pipe(
+    return this.apiService.request<Normativa>(endpoint, 'GET').pipe(
       map(res => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError(err => { console.error(err); return of(null); })
     );
@@ -45,7 +45,7 @@ export class NormativaService {
       categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${this.utils.categoriaFicheroCartografia()}`,
       cenad: `${this.apiService.getUrlApi()}/cenads/${idCenad}`
     };
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', body).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
         const idNormativa = resCrear.idString;
         if (!archivo) return of(true);
@@ -54,7 +54,7 @@ export class NormativaService {
           switchMap((nombreArchivo: string) => {
             if (!nombreArchivo) return of(false);
             const endpointNormativa = `${endpoint}/${idNormativa}`;
-            return this.apiService.peticionConToken<any>(endpointNormativa, 'PATCH', { nombreArchivo }).pipe(
+            return this.apiService.request<any>(endpointNormativa, 'PATCH', { nombreArchivo }).pipe(
               tap(() => {
                 this.utilService.toast(`Se ha creado la normativa ${nombre}`, 'success');
               }),
@@ -83,7 +83,7 @@ export class NormativaService {
     };
     const patchNormativa = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-      return this.apiService.peticionConToken<any>(endpointNormativa, 'PATCH', body).pipe(
+      return this.apiService.request<any>(endpointNormativa, 'PATCH', body).pipe(
         tap(() => {
           this.utilService.toast(`Se ha editado la normativa ${nombre}`, 'success');
         }),
@@ -117,7 +117,7 @@ export class NormativaService {
     const endpointNormativa = `/ficheros/${idNormativa}`;
     const endpointArchivo = `/files/${idCenad}/borrarNormativa/${nombreArchivo}`;
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
-      switchMap(() => this.apiService.peticionConToken<any>(endpointNormativa, 'DELETE')),
+      switchMap(() => this.apiService.request<any>(endpointNormativa, 'DELETE')),
       tap(res => {
         let normativa = res;
         this.utilService.toast(`Se ha eliminado la normativa ${normativa?.nombre}`, 'success');

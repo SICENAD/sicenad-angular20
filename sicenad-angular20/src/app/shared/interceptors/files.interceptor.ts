@@ -1,4 +1,3 @@
-// src/app/interceptors/files.interceptor.ts
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const filesInterceptor: HttpInterceptorFn = (req, next) => {
@@ -30,4 +29,4 @@ export const filesInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
   return next(updatedReq);
-};
+}

@@ -11,7 +11,7 @@ export class ArmaService {
 
   getAll(): Observable<Arma[]> {
     const endpoint = `/armas?size=1000`;
-    return this.apiService.peticionConToken<{ _embedded: { armas: Arma[] } }>(endpoint, 'GET').pipe(
+    return this.apiService.request<{ _embedded: { armas: Arma[] } }>(endpoint, 'GET').pipe(
       map(res =>
         res._embedded?.armas.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
@@ -24,7 +24,7 @@ export class ArmaService {
 
   crearArma(nombre: string, tipoTiro: string): Observable<any> {
     const endpoint = `/armas`;
-    return this.apiService.peticionConToken<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipoTiro }).pipe(
+    return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipoTiro }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha creado el arma ${nombre}`, 'success');
@@ -38,7 +38,7 @@ export class ArmaService {
 
   editarArma(nombre: string, tipoTiro: string, idArma: string): Observable<any> {
     const endpoint = `/armas/${idArma}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), tipoTiro }).pipe(
+    return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), tipoTiro }).pipe(
       map(res => !!res),
       tap(() => {
         this.utilService.toast(`Se ha modificado el arma ${nombre}`, 'success');
@@ -51,7 +51,7 @@ export class ArmaService {
   }
   deleteArma(idArma: string): Observable<any> {
     const endpoint = `/armas/${idArma}`;
-    return this.apiService.peticionConToken<any>(endpoint, 'DELETE').pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(res => {
         let arma = res;
         this.utilService.toast(`Se ha eliminado el arma ${arma?.nombre}`, 'success');
