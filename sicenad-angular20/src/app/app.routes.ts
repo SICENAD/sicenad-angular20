@@ -131,7 +131,7 @@ export const routes: Routes = [
       },
       {
         path: RoutesPaths.calendario,
-        component: CalendarioComponent
+        loadComponent: () => import('./calendarios/calendario/calendario.component').then(m => m.CalendarioComponent)
       },
       {
         path: RoutesPaths.usuariosCenad,
