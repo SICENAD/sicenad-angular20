@@ -1,1 +1,80 @@
-<p>calendario-page works!</p>,
+<div class="container mt-4">
+    <!-- Botón volver -->
+    <div class="d-flex align-items-center mb-3">
+        <!-- Botón volver a la página anterior -->
+        <a class="nav-link volver me-auto" [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]">
+            <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+            <strong>Volver</strong>
+        </a>
+    </div>
+
+    <h2 class="text-center mb-4">Calendario de Solicitudes</h2>
+
+  <!-- Botones para cambiar vista -->
+  <div class="d-flex justify-content-center gap-3 mb-4">
+    <button class="btn btn-primary" (click)="cambiarVista('month')">Mes</button>
+    <button class="btn btn-secondary" (click)="cambiarVista('week')">Semana</button>
+    <button class="btn btn-info" (click)="cambiarVista('day')">Día</button>
+  </div>
+
+  <!-- Calendario dinámico -->
+  @if (calendarVisible()) {
+    <div class="card shadow p-3 mb-4">
+      @if (view() === 'month') {
+        <mwl-calendar-month-view
+          [viewDate]="viewDate()"
+          [events]="events()"
+          [refresh]="refresh"
+          [activeDayIsOpen]="true">
+        </mwl-calendar-month-view>
+      }
+
+      @if (view() === 'week') {
+        <mwl-calendar-week-view
+          [viewDate]="viewDate()"
+          [events]="events()"
+          [refresh]="refresh">
+        </mwl-calendar-week-view>
+      }
+
+      @if (view() === 'day') {
+        <mwl-calendar-day-view
+          [viewDate]="viewDate()"
+          [events]="events()"
+          [refresh]="refresh">
+        </mwl-calendar-day-view>
+      }
+    </div>
+  }
+
+  <!-- Tabla con listado de eventos -->
+  <div class="mt-4">
+    <h4 class="text-center">Listado de Solicitudes</h4>
+    @if (events().length === 0) {
+      <p class="text-center text-muted">No hay solicitudes registradas.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Título</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (evento of events(); track evento.id) {
+              <tr>
+                <td>{{ evento.start | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ evento.end | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ evento.title }}</td>
+                <td>{{ evento.meta.estado }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
