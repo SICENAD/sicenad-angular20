@@ -1,0 +1,40 @@
+<h5 class="text-center">FILTRAR POR CATEGORÍAS</h5>
+<!-- Botones de categorías -->
+<div class="row mb-3">
+  <div class="col text-center">
+    <!-- Botón "Todos" -->
+    <button class="btn me-2" (click)="limpiarCategoria()" [class.active]="!categoriaSeleccionada()">
+      Todos
+    </button>
+    @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
+    <!-- Botón "Volver a categoría anterior" -->
+    <button class="btn me-2 volver" (click)="volverCategoriaAnterior()">
+      <fa-icon class="volver" [icon]="faSubir"></fa-icon>
+    </button>
+    } @if (categoriaSeleccionada()) {
+    <!-- Categoría seleccionada actual -->
+    <button class="btn me-2 categoriaSeleccionada" disabled>
+      {{ categoriaSeleccionada()?.nombre }}
+    </button>
+    } @if (!categoriaSeleccionada()) {
+    <!-- Si no hay categoría seleccionada, mostrar las categorías raíz -->
+    <ng-container>
+      @for (cat of categoriasPadre() ; track cat.idString) {
+      <button class="btn me-2" (click)="seleccionarCategoria(cat)">
+        {{ cat.nombre }}
+      </button>
+      }
+    </ng-container>
+    } @else {
+    <b>SUBCATEGORÍAS: </b>
+    <!-- Subcategorías directas -->
+    <ng-container>
+      @for (sub of subcategorias(); track sub.idString ) {
+      <button class="btn btn-outline-secondary me-2" (click)="seleccionarCategoria(sub)">
+        {{ sub.nombre }}
+      </button>
+      }
+    </ng-container>
+    }
+  </div>
+</div>

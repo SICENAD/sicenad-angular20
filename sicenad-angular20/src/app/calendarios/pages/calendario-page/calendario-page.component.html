@@ -9,68 +9,11 @@
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
       <strong>Volver</strong>
     </a>
-
     <!-- Título centrado -->
     <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES DEL {{ cenadVisitado()?.nombre }}</h1>
   </div>
-
-  <!-- Filtro de búsqueda -->
-  <div class="row mb-3">
-    <div class="col-md-6 mx-auto">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Filtrar recursos por nombre..."
-        [value]="filtro()"
-        (input)="filtro.set($any($event.target).value)"
-      />
-    </div>
-  </div>
-  <h5 class="text-center">FILTRAR POR CATEGORÍAS</h5>
-  <!-- Botones de categorías -->
-  <div class="row mb-3">
-    <div class="col text-center">
-      <!-- Botón "Todos" -->
-      <button
-        class="btn me-2"
-        (click)="limpiarCategoria()"
-        [class.active]="!categoriaSeleccionada()"
-      >
-        Todos
-      </button>
-      @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
-      <!-- Botón "Volver a categoría anterior" -->
-      <button class="btn me-2 volver" (click)="volverCategoriaAnterior()">
-        <fa-icon class="volver" [icon]="faSubir"></fa-icon>
-      </button>
-      } @if (categoriaSeleccionada()) {
-      <!-- Categoría seleccionada actual -->
-      <button class="btn me-2 categoriaSeleccionada" disabled>
-        {{ categoriaSeleccionada()?.nombre }}
-      </button>
-      } @if (!categoriaSeleccionada()) {
-      <!-- Si no hay categoría seleccionada, mostrar las categorías raíz -->
-      <ng-container>
-        @for (cat of categoriasPadre() ; track cat.idString) {
-        <button class="btn me-2" (click)="seleccionarCategoria(cat)">
-          {{ cat.nombre }}
-        </button>
-        }
-      </ng-container>
-      } @else {
-      <b>SUBCATEGORÍAS: </b>
-      <!-- Subcategorías directas -->
-      <ng-container>
-        @for (sub of subcategorias(); track sub.idString ) {
-        <button class="btn btn-outline-secondary me-2" (click)="seleccionarCategoria(sub)">
-          {{ sub.nombre }}
-        </button>
-        }
-      </ng-container>
-      }
-    </div>
-  </div>
-  @if (recursosFiltrados().length > 0) {
+  <app-filtroRecursos (recursosFiltradosChange)="actualizarRecursosFiltrados($event)" />
+  @if (recursosFiltrados.length > 0) {
   <div class="d-flex align-items-center mb-3">
     <label for="selectRecurso" class="me-2 mb-0 titulo"><b>Selecciona un recurso:</b></label>
     <div class="select-wrapper">
@@ -80,7 +23,7 @@
         class="titulo1"
       >
         <option [value]="''" class="titulo1">Selecciona un recurso</option>
-        @for (r of recursosFiltrados(); track r.idString) {
+        @for (r of recursosFiltrados; track r.idString) {
         <option [value]="r.idString" class="titulo1">{{ r.nombre }}</option>
         }
       </select>
