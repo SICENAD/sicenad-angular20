@@ -1,18 +1,18 @@
 <div class="container mt-4">
   <!-- Botón volver -->
-<div class="position-relative mb-4">
-  <!-- Botón volver a la página anterior -->
-  <a
-    class="nav-link volver position-absolute start-0"
-    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
-  >
-    <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-    <strong>Volver</strong>
-  </a>
+  <div class="position-relative mb-4">
+    <!-- Botón volver a la página anterior -->
+    <a
+      class="nav-link volver position-absolute start-0"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    >
+      <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+      <strong>Volver</strong>
+    </a>
 
-  <!-- Título centrado -->
-  <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES</h1>
-</div>
+    <!-- Título centrado -->
+    <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES</h1>
+  </div>
 
   <!-- Filtro de búsqueda -->
   <div class="row mb-3">
@@ -107,6 +107,7 @@
       [cellTemplate]="customMonthCell"
       [activeDayIsOpen]="true"
       [weekStartsOn]="1"
+      (eventClicked)="onEventClick($event.event)"
     >
     </mwl-calendar-month-view>
     } @case ('week') {
@@ -115,10 +116,16 @@
       [events]="events()"
       [refresh]="refresh"
       [weekStartsOn]="1"
+      (eventClicked)="onEventClick($event.event)"
     >
     </mwl-calendar-week-view>
     } @case ('day') {
-    <mwl-calendar-day-view [viewDate]="viewDate()" [events]="events()" [refresh]="refresh">
+    <mwl-calendar-day-view
+      [viewDate]="viewDate()"
+      [events]="events()"
+      [refresh]="refresh"
+      (eventClicked)="onEventClick($event.event)"
+    >
     </mwl-calendar-day-view>
     } }
   </div>
@@ -127,7 +134,7 @@
   <!-- Tabla con listado de eventos -->
   <div class="mt-4">
     <h4 class="text-center">Listado de Solicitudes</h4>
-    @if (events().length === 0) {
+    @if (eventosVisibles.length === 0) {
     <p class="text-center text-muted">No hay solicitudes registradas.</p>
     } @else {
     <div class="table-responsive">
@@ -136,12 +143,12 @@
           <tr>
             <th>Inicio</th>
             <th>Fin</th>
-            <th>Título</th>
+            <th>Unidad</th>
             <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          @for (evento of events(); track evento.id) {
+          @for (evento of eventosVisibles; track evento.id) {
           <tr>
             <td>{{ evento.start | date : 'dd/MM/yyyy HH:mm' }}</td>
             <td>{{ evento.end | date : 'dd/MM/yyyy HH:mm' }}</td>
@@ -161,7 +168,11 @@
   </div>
   <div class="cal-events-day">
     @for (event of day.events; track event.idString) {
-    <div class="cal-event-bar" [ngStyle]="getEventStyle(event, day.date)">
+    <div
+      class="cal-event-bar"
+      [ngStyle]="getEventStyle(event, day.date)"
+      (click)="onEventClick(event)"
+    >
       {{ event.title }}
     </div>
     }

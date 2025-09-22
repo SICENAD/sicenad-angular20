@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CalendarDayViewComponent, CalendarEvent, CalendarMonthViewComponent, CalendarView, CalendarWeekViewComponent } from 'angular-calendar';
-import { addHours } from 'date-fns';
+import { addHours, endOfDay, startOfDay } from 'date-fns';
 import { OrquestadorService } from '@services/orquestadorService';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -16,6 +16,7 @@ import { Subject } from 'rxjs';
 import { CalendarHeaderComponent } from '@app/calendarios/components/calendarHeader/calendarHeader.component';
 import { Categoria } from '@interfaces/models/categoria';
 import { Recurso } from '@interfaces/models/recurso';
+import { Solicitud } from '@interfaces/models/solicitud';
 
 @Component({
   selector: 'app-calendario',
@@ -35,7 +36,6 @@ import { Recurso } from '@interfaces/models/recurso';
   providers: [DatePipe]
 })
 export class CalendarioPageComponent {
-  [x: string]: any;
   // Servicios y stores
   private orquestadorService = inject(OrquestadorService);
   private router = inject(Router);
@@ -52,7 +52,6 @@ export class CalendarioPageComponent {
   faSubir = this.iconoStore.faSubir;
 
   /** Signals para estados */
-  idSolicitud = signal('');
   recursoSeleccionado = signal<Recurso | null>(null);
 
   isAutenticado = signal(false);
@@ -66,7 +65,7 @@ export class CalendarioPageComponent {
   categoriasPadre = computed(() => this.cenadStore.categoriasPadre());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   unidades = computed(() => this.datosPrincipalesStore.unidades());
-  solicitudes = computed(() => this.cenadStore.solicitudes());
+  solicitudes = signal<Solicitud[]>([]);
   solicitudesValidadas = computed(() => this.cenadStore.solicitudesValidada());
   // solicitudesPlanificadas = computed(() => this.cenadStore.solicitudesPlanificada());
   solicitudesSolicitadas = computed(() => this.cenadStore.solicitudesSolicitada());
@@ -104,7 +103,7 @@ export class CalendarioPageComponent {
   /** Inicialización principal */
   private initComponent() {
     this.comprobarUser();
-    this.cargarEventos();
+    //this.cargarEventos();
   }
 
   /** Comprueba la sesión del usuario */
@@ -197,7 +196,7 @@ export class CalendarioPageComponent {
     };
   }
 
-// Categoría seleccionada
+  // Categoría seleccionada
   categoriaSeleccionada = signal<Categoria | null>(null);
   subcategorias = signal<Categoria[]>([]);
   recursosCategoriaSeleccionada = signal<Recurso[]>([]);
@@ -282,22 +281,74 @@ export class CalendarioPageComponent {
     return this.categoriasPadre().some(c => c.idString === categoria.idString);
   }
 
-seleccionarRecurso(id: string) {
-  const recurso = this.recursosFiltrados().find(r => r.idString === id) || null;
-  this.recursoSeleccionado.set(recurso);
-}
+  seleccionarRecurso(id: string) {
+    const recurso = this.recursosFiltrados().find(r => r.idString === id) || null;
+    this.recursoSeleccionado.set(recurso);
+    this.cargarEventosDeRecurso(recurso!.idString);
+  }
 
+  cargarEventosDeRecurso(idRecurso: string) {
+    this.orquestadorService.loadSolicitudesDeRecurso(idRecurso).subscribe({
+      next: (solicitudes) => {
+        this.solicitudes.set(solicitudes ?? []);
+        const eventos: CalendarEvent[] = [];
+        // Añadir solicitudes
+        this.solicitudes().forEach((solicitud: Solicitud) => {
+          eventos.push(this.mapSolicitudToEvent(solicitud, solicitud.estado));
+        });
+        this.events.set(eventos);
+        this.refresh.next();
+      },
+      error: (err) => {
+        console.error('Error cargando solicitudes de recurso', err);
+        this.solicitudes.set([]);
+      }
+    });
+  }
 
+  get eventosVisibles(): CalendarEvent[] {
+    const fecha = this.viewDate();
+    let inicio: Date;
+    let fin: Date;
 
+    switch (this.view()) {
+      case 'month':
+        // Para mes: mostrar todos los eventos que tengan algún día dentro del mes actual
+        inicio = new Date(fecha.getFullYear(), fecha.getMonth(), 1, 0, 0, 0, 0);
+        fin = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0, 23, 59, 59, 999);
+        break;
+      case 'week':
+        // Para semana: mostrar eventos entre el lunes y el domingo de la semana de viewDate
+        const day = fecha.getDay(); // 0 = domingo, 1 = lunes, ...
+        const diffToMonday = day === 0 ? -6 : 1 - day;
+        inicio = startOfDay(new Date(fecha));
+        inicio.setDate(inicio.getDate() + diffToMonday);
+        fin = endOfDay(new Date(inicio));
+        fin.setDate(fin.getDate() + 6);
+        break;
+      case 'day':
+        inicio = startOfDay(fecha);
+        fin = endOfDay(fecha);
+        break;
+      default:
+        inicio = startOfDay(fecha);
+        fin = endOfDay(fecha);
+    }
 
+    return this.events().filter(evento => {
+      const eventoInicio = evento.start;
+      const eventoFin = evento.end || evento.start;
+      // Retornar solo si hay algún solapamiento con el rango visible
+      return eventoFin >= inicio && eventoInicio <= fin;
+    })
+      .sort((a, b) => (a.start.getTime() - b.start.getTime())); // Ordenar por fecha de inicio ascendente
+  }
 
-
-
-
-
-
-
-
+  onEventClick(event: CalendarEvent) {
+    if (event.id) {
+      this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes, event.id]);
+    }
+  }
 
 
 

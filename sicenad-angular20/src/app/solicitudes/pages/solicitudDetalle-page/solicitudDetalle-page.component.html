@@ -1,15 +1,30 @@
 <div class="container mt-4">
-  <div class="d-flex align-items-center position-relative mb-2">
-    <!-- Botón volver a la página anterior -->
+  <div class="d-flex align-items-center position-relative mb-2 pb-3">
+  <!-- Contenedor de botones en columna -->
+  <div class="position-absolute start-0 d-flex flex-column">
+    <!-- Botón volver a solicitudes -->
     <a
-      class="nav-link volver position-absolute start-0"
+      class="nav-link volver"
       [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-      <strong>Volver</strong>
+      <strong>Volver Solicitudes</strong>
     </a>
-    <h1 class="w-100 text-center mb-0">EDITAR SOLICITUD del recurso {{ recurso()?.nombre }}</h1>
+    <!-- Botón volver al calendario -->
+    <a
+      class="nav-link volver"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.calendario]"
+    >
+      <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
+      <strong>Volver Calendario</strong>
+    </a>
   </div>
+  <!-- Título centrado -->
+  <h1 class="w-100 text-center mb-0">
+    SOLICITUD del recurso {{ recurso()?.nombre }}
+  </h1>
+</div>
+
   <div class="formulario pb-3" #topScroll>
     <form [formGroup]="solicitudForm">
       <!--cuando se abra como no editable todo el form sera de lectura-->
@@ -168,11 +183,6 @@
     </div>
   </div>
   <div class="mt-3">
-    <a
-      class="btn btn-secondary me-2"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
-      >Cerrar
-    </a>
     @if (isEditable()) {
     <button
       class="btn btn-danger me-2"

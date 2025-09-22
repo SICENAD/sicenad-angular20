@@ -3,21 +3,21 @@
 
     <div class="d-flex justify-content-center gap-3 mb-4">
         <button
-            class="btn btn-primary"
+            class="btn"
             (click)="viewChange.emit(CalendarView.Month)"
             [class.active]="view() === CalendarView.Month"
         >
             Mes
         </button>
         <button
-            class="btn btn-secondary"
+            class="btn"
             (click)="viewChange.emit(CalendarView.Week)"
             [class.active]="view() === CalendarView.Week"
         >
             Semana
         </button>
         <button
-            class="btn btn-info text-white"
+            class="btn"
             (click)="viewChange.emit(CalendarView.Day)"
             [class.active]="view() === CalendarView.Day"
         >

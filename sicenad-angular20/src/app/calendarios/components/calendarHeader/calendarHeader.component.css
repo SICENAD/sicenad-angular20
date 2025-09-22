@@ -2,3 +2,19 @@
     font-weight: bold;
     color: yellow !important;
 }
+
+.btn {
+    background: #3a5a40;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    color: white;
+}
+.btn:hover {
+    background-color: #a3b18a;
+}
+.btn.active {
+    background-color: red;
+}
+button.active:hover {
+    background-color: red;
+}

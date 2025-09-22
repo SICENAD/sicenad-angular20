@@ -45,7 +45,6 @@ export class OrquestadorService {
   private auth = inject(AuthStore);
   private usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   private cenadStore = inject(CenadStore);
-
   private cenadService = inject(CenadService);
   private categoriaFicheroService = inject(CategoriaFicheroService);
   private tipoFormularioService = inject(TipoFormularioService);
@@ -1259,6 +1258,15 @@ export class OrquestadorService {
       catchError(err => {
         console.error('Error cargando la solicitud', err);
         return of(null);
+      })
+    );
+  }
+
+  loadSolicitudesDeRecurso(idRecurso: string): Observable<Solicitud[] | null> {
+    return this.solicitudService.getSolicitudesDeRecurso(idRecurso).pipe(
+      catchError(err => {
+        console.error('Error cargando solicitudes del recurso', err);
+        return of([]);
       })
     );
   }
