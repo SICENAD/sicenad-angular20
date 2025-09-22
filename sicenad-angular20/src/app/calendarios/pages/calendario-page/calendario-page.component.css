@@ -1,3 +1,47 @@
+.cal-event .cal-event-title, .mwl-calendar-week-view .cal-event,
+.mwl-calendar-day-view .cal-event {
+  color: black !important;
+  font-weight: bold !important;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-events {
+  margin-top: 2px;
+}
+
+.cal-day-number {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.cal-events-day {
+  position: relative;
+  height: 24px; /* Franja para mostrar eventos */
+  margin-top: 4px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cal-event-bar, .p-1.rounded {
+  border-radius: 4px;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+.cal-event-bar:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+
 h2 {
   margin: 0;
   font-size: 16px;
@@ -16,6 +60,15 @@ li {
 b {
   /* used for event dates/times */
   margin-right: 3px;
+}
+
+a.volver {
+  color: #3A5A40;
+  font-size: 18px;
+}
+
+a.volver:hover {
+  color: #A3B18A;
 }
 
 .app {

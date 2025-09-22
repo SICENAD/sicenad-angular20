@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, Provider, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, Provider, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -14,19 +14,19 @@ import {
   CalendarEventTitleFormatter,
   CalendarUtils,
   CalendarA11y,
-  //CalendarMonthViewComponent,
-  //CalendarWeekViewComponent,
-  //CalendarDayViewComponent,
-  //CalendarMonthViewHeaderComponent,
   DateAdapter
 } from 'angular-calendar';
 // Usamos las clases por defecto de angular-calendar
 import {
-  CalendarDateFormatter as DefaultCalendarDateFormatter,
   CalendarEventTitleFormatter as DefaultCalendarEventTitleFormatter,
   CalendarUtils as DefaultCalendarUtils,
   CalendarA11y as DefaultCalendarA11y
-} from 'angular-calendar';import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+} from 'angular-calendar'; import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { CustomDateFormatter } from '@shared/customFormat/customDateFormatter';
+
+registerLocaleData(localeEs, 'es');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -63,9 +63,10 @@ export const appConfig: ApplicationConfig = {
 export function provideAngularCalendar(): Provider[] {
   return [
     { provide: DateAdapter, useFactory: adapterFactory },
-    { provide: CalendarDateFormatter, useClass: DefaultCalendarDateFormatter },
+    { provide: CalendarDateFormatter, useClass: CustomDateFormatter },
     { provide: CalendarEventTitleFormatter, useClass: DefaultCalendarEventTitleFormatter },
     { provide: CalendarUtils, useClass: DefaultCalendarUtils },
-    { provide: CalendarA11y, useClass: DefaultCalendarA11y }
+    { provide: CalendarA11y, useClass: DefaultCalendarA11y },
+    { provide: LOCALE_ID, useValue: 'es' }
   ];
 }

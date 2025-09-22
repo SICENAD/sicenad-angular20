@@ -1,0 +1,56 @@
+<div class="row text-center">
+    <h3>{{ getFormattedTitle(view(), viewDate(), locale()) }}</h3>
+
+    <div class="d-flex justify-content-center gap-3 mb-4">
+        <button
+            class="btn btn-primary"
+            (click)="viewChange.emit(CalendarView.Month)"
+            [class.active]="view() === CalendarView.Month"
+        >
+            Mes
+        </button>
+        <button
+            class="btn btn-secondary"
+            (click)="viewChange.emit(CalendarView.Week)"
+            [class.active]="view() === CalendarView.Week"
+        >
+            Semana
+        </button>
+        <button
+            class="btn btn-info text-white"
+            (click)="viewChange.emit(CalendarView.Day)"
+            [class.active]="view() === CalendarView.Day"
+        >
+            Día
+        </button>
+    </div>
+    <div class="d-flex justify-content-center gap-3 mb-4">
+        <button
+            class="px-3 py-1 bg-gray-200 rounded"
+            mwlCalendarPreviousView
+            [view]="view()"
+            [viewDate]="viewDate()"
+            (viewDateChange)="onViewDateChange($event)"
+        >
+            Anterior
+    </button>
+        <button
+            class="px-3 py-1 bg-gray-200 rounded"
+            mwlCalendarToday
+            [viewDate]="viewDate()"
+            (viewDateChange)="onViewDateChange($event)"
+        >
+            Hoy
+</button>
+        <button
+            class="px-3 py-1 bg-gray-200 rounded"
+            mwlCalendarNextView
+            [view]="view()"
+            [viewDate]="viewDate()"
+            (viewDateChange)="onViewDateChange($event)"
+        >
+            Siguiente
+        </button>
+    </div>
+</div>
+<br />
