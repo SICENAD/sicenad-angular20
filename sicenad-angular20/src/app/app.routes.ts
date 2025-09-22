@@ -8,7 +8,6 @@ import { NotFoundComponent } from '@shared/components/core/not-found/not-found.c
 import { authGuard } from '@shared/guards/auth.guard';
 import { superadministradorGuard } from '@shared/guards/superadministrador.guard';
 import { adminCenadGuard } from '@shared/guards/adminCenad.guard';
-import { CalendarioComponent } from './calendarios/calendario/calendario.component';
 
 //uso "alias" para las rutas para desde el resto del codigo llamar a estas constantes y si en un futuro modificamos los path de las rutas solo habra que modificar esta constante y nada de los componentes que usan los RouterLinks...
 export const RoutesPaths = {

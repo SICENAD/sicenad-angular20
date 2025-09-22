@@ -17,6 +17,7 @@ import { CalendarHeaderComponent } from '@app/calendarios/components/calendarHea
 import { Categoria } from '@interfaces/models/categoria';
 import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
+import { EVENT_COLORS } from '@interfaces/enums/colors.enum';
 
 @Component({
   selector: 'app-calendario',
@@ -79,6 +80,7 @@ export class CalendarioPageComponent {
 
   /** Subject para refrescar la vista */
   refresh = new Subject<void>();
+  eventColors = EVENT_COLORS as Record<string, { primary: string; secondary: string }>;
 
   /** Método ejemplo para añadir un evento dinámicamente */
   addEvento() {
@@ -147,19 +149,9 @@ export class CalendarioPageComponent {
       end: solicitud.fechaHoraFinRecurso
         ? new Date(solicitud.fechaHoraFinRecurso)
         : addHours(new Date(solicitud.fechaHoraInicioRecurso), 2),
-      color: this.estadoColors[estado] || { primary: '#6c757d', secondary: '#e2e3e5' },
+      color: this.eventColors[estado] || { primary: '#6c757d', secondary: '#e2e3e5' },
       meta: solicitud
     };
-  }
-
-  private estadoColors: Record<string, { primary: string; secondary: string }> = {
-    'Borrador': { primary: '#6c757d', secondary: '#e2e3e5' },      // Gris
-    'Solicitada': { primary: '#ffc107', secondary: '#fff3cd' },    // Amarillo
-    'Validada': { primary: '#28a745', secondary: '#d4edda' },      // Verde
-    'Cancelada': { primary: '#dc3545', secondary: '#f8d7da' },     // Rojo
-    'Rechazada': { primary: '#343a40', secondary: '#e9ecef' },     // Oscuro
-    'Planificación': { primary: '#17a2b8', secondary: '#d1ecf1' },// Azul verdoso
-    'Mantenimiento': { primary: '#fd7e14', secondary: '#ffe5d0' }  // Naranja
   }
 
   /** Devuelve el estilo CSS para posicionar la barra del evento dentro de la celda */
