@@ -11,7 +11,7 @@
     </a>
 
     <!-- Título centrado -->
-    <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES</h1>
+    <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES DEL {{ cenadVisitado()?.nombre }}</h1>
   </div>
 
   <!-- Filtro de búsqueda -->
@@ -89,92 +89,5 @@
   } @else {
   <div class="text-muted mt-3">No se encontraron recursos.</div>
   }
-  <app-calendarHeader
-    [view]="view()"
-    [viewDate]="viewDate()"
-    (viewChange)="view.set($event)"
-    (viewDateChange)="viewDate.set($event)"
-  ></app-calendarHeader>
-
-  <!-- Calendario dinámico -->
-  @if (calendarVisible()) {
-  <div class="card shadow p-3 mb-4">
-    @switch (view()) { @case ('month') {
-    <mwl-calendar-month-view
-      [viewDate]="viewDate()"
-      [events]="events()"
-      [refresh]="refresh"
-      [cellTemplate]="customMonthCell"
-      [activeDayIsOpen]="true"
-      [weekStartsOn]="1"
-      (eventClicked)="onEventClick($event.event)"
-    >
-    </mwl-calendar-month-view>
-    } @case ('week') {
-    <mwl-calendar-week-view
-      [viewDate]="viewDate()"
-      [events]="events()"
-      [refresh]="refresh"
-      [weekStartsOn]="1"
-      (eventClicked)="onEventClick($event.event)"
-    >
-    </mwl-calendar-week-view>
-    } @case ('day') {
-    <mwl-calendar-day-view
-      [viewDate]="viewDate()"
-      [events]="events()"
-      [refresh]="refresh"
-      (eventClicked)="onEventClick($event.event)"
-    >
-    </mwl-calendar-day-view>
-    } }
-  </div>
-  }
-
-  <!-- Tabla con listado de eventos -->
-  <div class="mt-4">
-    <h4 class="text-center">Listado de Solicitudes</h4>
-    @if (eventosVisibles.length === 0) {
-    <p class="text-center text-muted">No hay solicitudes registradas.</p>
-    } @else {
-    <div class="table-responsive">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th>Inicio</th>
-            <th>Fin</th>
-            <th>Unidad</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (evento of eventosVisibles; track evento.id) {
-          <tr>
-            <td>{{ evento.start | date : 'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ evento.end | date : 'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ evento.title }}</td>
-            <td>{{ evento.meta.estado }}</td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    }
-  </div>
+  <app-calendarioComponente [solicitudes]="solicitudes()" />
 </div>
-<ng-template #customMonthCell let-day="day">
-  <div class="cal-cell-top">
-    <span class="cal-day-number">{{ day.date | date : 'd' }}</span>
-  </div>
-  <div class="cal-events-day">
-    @for (event of day.events; track event.idString) {
-    <div
-      class="cal-event-bar"
-      [ngStyle]="getEventStyle(event, day.date)"
-      (click)="onEventClick(event)"
-    >
-      {{ event.title }}
-    </div>
-    }
-  </div>
-</ng-template>
