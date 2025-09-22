@@ -211,3 +211,42 @@ label.ver-todas {
   text-shadow: 1px 1px 2px wheat;
   font-size: x-large;
 }
+.btn {
+    background: #3A5A40;
+    padding: 0.5;
+    font-size: 14px;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #A3B18A;
+}
+.categoriaSeleccionada {
+    font-weight: bold;
+    font-size: large;
+}
+
+.titulo {
+    color: #3A5A40;
+    font-weight: bold;
+}
+
+.titulo1 {
+    color: #588157;
+}
+
+h1, h5 {
+    color: #354f52;
+    font-weight: bold;
+}
+
+.select-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.select-wrapper select {
+  width: auto;        /* ancho automático según contenido */
+  min-width: 200px;   /* ancho mínimo opcional */
+  max-width: 100%;    /* que no sobresalga del contenedor */
+}
