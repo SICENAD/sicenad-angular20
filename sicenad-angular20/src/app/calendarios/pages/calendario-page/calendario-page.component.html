@@ -21,6 +21,7 @@
         id="selectRecurso"
         (change)="seleccionarRecurso($any($event.target).value)"
         class="titulo1"
+        #selectRecurso
       >
         <option [value]="''" class="titulo1">Selecciona un recurso</option>
         @for (r of recursosFiltrados; track r.idString) {

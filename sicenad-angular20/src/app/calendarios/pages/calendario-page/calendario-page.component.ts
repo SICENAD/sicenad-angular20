@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -13,6 +13,7 @@ import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
 import { CalendarioComponent } from '@app/calendarios/components/calendario/calendario.component';
 import { FiltroRecursosComponent } from "@app/recursos/components/filtroRecursos/filtroRecursos.component";
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-calendario',
@@ -40,6 +41,9 @@ export class CalendarioPageComponent {
   /** Icono FontAwesome */
   faVolver = this.iconoStore.faVolver;
 
+  /** Referencia directa al select */
+  @ViewChild('selectRecurso') selectRecurso!: ElementRef<HTMLSelectElement>;
+
   /** Signals para estados */
   recursoSeleccionado = signal<Recurso | null>(null);
 
@@ -50,7 +54,9 @@ export class CalendarioPageComponent {
   isSuperAdmin = signal(false);
 
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
-  solicitudes = signal<Solicitud[]>([]);
+  recursos = computed(() => this.cenadStore.recursos());
+  solicitudesCenad = computed(() => this.cenadStore.solicitudes());
+  solicitudes = signal<Solicitud[]>(this.solicitudesCenad());
 
   constructor() {
     //this.initComponent();
@@ -79,17 +85,24 @@ export class CalendarioPageComponent {
     this.isSuperAdmin.set(this.usuarioLogueadoStore.usuarioLogueado()?.rol === 'Superadministrador');
   }
 
-  recursosFiltrados: Recurso[] = [];
+  recursosFiltrados: Recurso[] = this.recursos();
 
   actualizarRecursosFiltrados(lista: Recurso[]) {
     this.recursosFiltrados = lista;
     console.log('Recursos filtrados desde el hijo:', lista);
+    // Limpiar selección y solicitudes
+    this.recursoSeleccionado.set(null);
+    this.cargarEventosDeRecursos(lista);
+    // Resetear el select directamente en el DOM
+    if (this.selectRecurso?.nativeElement) {
+      this.selectRecurso.nativeElement.value = '';
+    }
   }
 
   seleccionarRecurso(id: string) {
     const recurso = this.recursosFiltrados.find(r => r.idString === id) || null;
     this.recursoSeleccionado.set(recurso);
-    this.cargarEventosDeRecurso(recurso!.idString);
+    recurso ? this.cargarEventosDeRecurso(recurso!.idString) : this.solicitudes.set([]);
   }
 
   cargarEventosDeRecurso(idRecurso: string) {
@@ -99,6 +112,31 @@ export class CalendarioPageComponent {
       },
       error: (err) => {
         console.error('Error cargando solicitudes de recurso', err);
+        this.solicitudes.set([]);
+      }
+    });
+  }
+
+  cargarEventosDeRecursos(recursos: Recurso[]) {
+    if (!recursos || recursos.length === 0) {
+      this.solicitudes.set([]);
+      return;
+    }
+    // Crear un array de observables, uno por cada recurso
+    const solicitudesObservables = recursos.map(recurso =>
+      this.orquestadorService.loadSolicitudesDeRecurso(recurso.idString)
+    );
+    // Ejecutar todas las llamadas en paralelo
+    forkJoin(solicitudesObservables).subscribe({
+      next: (resultados) => {
+        // 'resultados' es un array de Solicitud[] o null
+        const todasLasSolicitudes: Solicitud[] = resultados
+          .flat() // Une todos los arrays en uno solo
+          .filter((solicitud): solicitud is Solicitud => solicitud != null); // ✅ Filtra nulos de forma segura
+        this.solicitudes.set(todasLasSolicitudes);
+      },
+      error: (err) => {
+        console.error('Error cargando solicitudes de múltiples recursos', err);
         this.solicitudes.set([]);
       }
     });

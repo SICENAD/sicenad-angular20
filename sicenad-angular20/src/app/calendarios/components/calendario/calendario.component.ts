@@ -25,15 +25,13 @@ import { EVENT_COLORS } from '@interfaces/enums/colors.enum';
   providers: [DatePipe]
 })
 export class CalendarioComponent {
-  // Stores
   private router = inject(Router);
   private cenadStore = inject(CenadStore);
 
   readonly routesPaths = RoutesPaths;
 
-  /** Signals para estados */
-  cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   solicitudes = input<Solicitud[]>();
+  cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
 
   /** Configuración angular-calendar */
   view = signal<CalendarView>(CalendarView.Month); // vista por defecto: mes
@@ -44,25 +42,12 @@ export class CalendarioComponent {
   refresh = new Subject<void>();
   eventColors = EVENT_COLORS as Record<string, { primary: string; secondary: string }>;
 
-  /** Método ejemplo para añadir un evento dinámicamente */
-  addEvento() {
-    this.events.update(eventos => [
-      ...eventos,
-      {
-        start: new Date(),
-        title: 'Nuevo evento',
-        color: { primary: '#1e90ff', secondary: '#D1E8FF' }
-      }
-    ]);
-    this.refresh.next(); // <- Aquí notificamos al calendario
-  }
-
   constructor() {
     effect(() => {
       const eventos: CalendarEvent[] = [];
       // Añadir solicitudes
       this.solicitudes()?.forEach(solicitud => {
-        eventos.push(this.mapSolicitudToEvent(solicitud, solicitud.estado));
+        eventos.push(this.mapSolicitudToEvent(solicitud));
       });
       this.events.set(eventos);
       this.refresh.next();
@@ -70,15 +55,15 @@ export class CalendarioComponent {
   }
 
   /** Convertir solicitud en evento de angular-calendar */
-  private mapSolicitudToEvent(solicitud: any, estado: string): CalendarEvent {
+  private mapSolicitudToEvent(solicitud: Solicitud): CalendarEvent {
     return {
       id: solicitud.idString,
       title: solicitud.unidadUsuaria,
-      start: new Date(solicitud.fechaHoraInicioRecurso),
+      start: new Date(solicitud.fechaHoraInicioRecurso || ''),
       end: solicitud.fechaHoraFinRecurso
         ? new Date(solicitud.fechaHoraFinRecurso)
-        : addHours(new Date(solicitud.fechaHoraInicioRecurso), 2),
-      color: this.eventColors[estado] || { primary: '#6c757d', secondary: '#e2e3e5' },
+        : addHours(new Date(solicitud.fechaHoraInicioRecurso || ''), 2),
+      color: this.eventColors[solicitud.estado] || { primary: '#6c757d', secondary: '#e2e3e5' },
       meta: solicitud
     };
   }

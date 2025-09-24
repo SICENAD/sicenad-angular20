@@ -114,8 +114,8 @@ export class FiltroRecursosComponent {
   limpiarCategoria() {
     this.categoriaSeleccionada.set(null);
     this.subcategorias.set([]);
-    this.recursosCategoriaSeleccionada.set([]);
-    this.recursosFiltradosChange.emit([]);
+    this.recursosCategoriaSeleccionada.set(this.recursos());
+    this.recursosFiltradosChange.emit(this.recursos());
     this.categoriaSeleccionadaChange.emit(null);
   }
 
