@@ -14,6 +14,7 @@ import { Solicitud } from '@interfaces/models/solicitud';
 import { CalendarioComponent } from '@app/calendarios/components/calendario/calendario.component';
 import { FiltroRecursosComponent } from "@app/recursos/components/filtroRecursos/filtroRecursos.component";
 import { forkJoin } from 'rxjs';
+import { SolicitudNuevaModalComponent } from "@app/solicitudes/components/solicitudNuevaModal/solicitudNuevaModal.component";
 
 @Component({
   selector: 'app-calendario',
@@ -23,8 +24,9 @@ import { forkJoin } from 'rxjs';
     FontAwesomeModule,
     RouterLink,
     CalendarioComponent,
-    FiltroRecursosComponent
-  ],
+    FiltroRecursosComponent,
+    SolicitudNuevaModalComponent
+],
   templateUrl: './calendario-page.component.html',
   styleUrls: ['./calendario-page.component.css'],
   providers: [DatePipe]
@@ -97,6 +99,11 @@ export class CalendarioPageComponent {
     if (this.selectRecurso?.nativeElement) {
       this.selectRecurso.nativeElement.value = '';
     }
+  }
+
+  actualizarSolicitudesDesdeNuevaSolicitud(lista: Solicitud[]) {
+    this.solicitudes.set(lista);
+    console.log('Solicitudes filtradas desde el hijo:', lista);
   }
 
   seleccionarRecurso(id: string) {

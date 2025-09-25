@@ -1,0 +1,218 @@
+@if (usuarioLogueado()?.rol === misRoles.Superadministrador) {
+<button
+  class="btn text-white ms-auto"
+  data-bs-toggle="modal"
+  data-bs-target="#modal-nueva-solicitud"
+>
+  Nueva <b>Palnificación</b>
+</button>
+} @else {
+<button
+  class="btn text-white ms-auto"
+  data-bs-toggle="modal"
+  data-bs-target="#modal-nueva-solicitud"
+>
+  Nueva <b>Solicitud</b>
+</button>
+}
+<div
+  class="modal fade"
+  id="modal-nueva-solicitud"
+  tabindex="-1"
+  aria-labelledby="modal-nueva-solicitud-Label"
+  aria-hidden="true"
+  (hidden.bs.modal)="resetForm()"
+>
+  <div class="modal-dialog modal-xxl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal-nueva-solicitud-Label">Nueva Solicitud</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="formulario" [formGroup]="solicitudForm">
+          <div class="row py-2 justify-content-between">
+            <div class="col-lg-2 col-md-12">
+              <label class="me-2">Unidad Solicitante: <sup class="text-danger">*</sup></label>
+              @if (usuarioLogueado()?.rol !== misRoles.Normal) {
+              <select class="form-select" aria-label="unidad" formControlName="unidad">
+                <option [ngValue]="null">Seleccione una unidad</option>
+                @for (u of unidades(); track u.idString) {
+                <option [ngValue]="u">{{ u.nombre }}</option>
+                }
+              </select>
+              } @else {
+              <label class="form-control">{{ miUnidad()?.nombre }}</label>
+              }
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label>Jefe Unidad Usuaria: <sup class="text-danger">*</sup></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="jefeUnidadUsuaria"
+                placeholder="Jefe UCO Usuaria"
+                name="jefeUcoUsuaria"
+              />
+              @if (jefeUnidadUsuaria?.touched && jefeUnidadUsuaria?.invalid) {
+              <span class="text-danger">El Jefe de UCO es obligatorio</span>
+              }
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label for="fechaSolicitud">Fecha Solicitud: <sup class="text-danger"></sup></label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="fechaSolicitud"
+                name="fechaSolicitud"
+              />
+              @if (fechaSolicitud?.touched && fechaSolicitud?.invalid) {
+              <span class="text-danger">La fecha de solicitud es obligatoria</span>
+              }
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label>POC para el EJERCICIO: <sup class="text-danger">*</sup></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="pocEjercicio"
+                placeholder="POC para el Ejercicio"
+                name="pocEjercicio"
+              />
+              @if (pocEjercicio?.touched && pocEjercicio?.invalid) {
+              <span class="text-danger">El POC para el Ejercicio es obligatorio</span>
+              }
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label>Redactor (Teléfono): <sup class="text-danger">*</sup></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="tlfnRedactor"
+                placeholder="RCT UCO/ RCT durante EX"
+                name="tlfnRedactor"
+              />
+              @if (tlfnRedactor?.touched && tlfnRedactor?.invalid) {
+              <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+              }
+            </div>
+          </div>
+          <div class="row py-2 mt-2 justify-content-between">
+            <div class="col-lg-4 col-md-12">
+              @if (historialCategorias().length > 0) {
+              <label class="d-block me-2 mt-2">
+                Categoría Seleccionada:
+                <strong>{{
+                  historialCategorias()[historialCategorias().length - 1].nombre.toUpperCase()
+                }}</strong>
+              </label>
+              }
+              <label class="me-5">Categoría: <sup class="text-danger me-3">*</sup></label>
+              @if ((categoriasFiltradas() || []).length > 0) {
+              <select
+                [formControlName]="'categoria'"
+                (change)="onCategoriaChange($event)"
+                class="form-select mb-3"
+              >
+                <option [ngValue]="null" disabled>Selecciona una categoría</option>
+                @for (c of categoriasFiltradas(); track c.idString) {
+                <option [ngValue]="c">
+                  {{ c.nombre.toUpperCase() }}
+                </option>
+                }
+              </select>
+              }
+              <div class="d-flex gap-2 mb-2">
+                @if (historialCategorias().length > 0) {
+                <button (click)="retroceder()" class="btn btn-secondary">Atrás</button>
+                <button (click)="borrarFiltros()" class="btn btn-danger">Borrar filtros</button>
+                }
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+              <label>Recurso: <sup class="text-danger me-2">*</sup></label>
+              <select name="recursos" id="recursos" formControlName="recurso">
+                <option [ngValue]="null" disabled selected>Selecciona un recurso</option>
+                @for (recurso of recursos(); track recurso.idString) {
+                <option [ngValue]="recurso">
+                  {{ recurso.nombre }}
+                </option>
+                }
+              </select>
+              @if (recurso?.touched && recurso?.invalid) {
+              <span class="text-danger">El recurso es obligatorio</span>
+              }
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label for="fechaInicio">Fecha-Hora Inicio: <sup class="text-danger"></sup></label>
+              <input type="datetime-local" class="form-control" formControlName="fechaInicio" />
+              @if (fechaInicio?.touched && fechaInicio?.invalid) {
+              <span class="text-danger">La fecha de inicio es obligatoria</span>
+              }
+            </div>
+            <div class="col-lg-2 col-md-12">
+              <label for="fechaFin">Fecha-Hora Fin: <sup class="text-danger"></sup></label>
+              <input type="datetime-local" class="form-control" formControlName="fechaFin" />
+              @if (fechaFin?.touched && fechaFin?.invalid) {
+              <span class="text-danger">La fecha de fin es obligatoria</span>
+              }
+            </div>
+          </div>
+          <div class="row py-2 mt-2 justify-content-center me-3">
+            <div class="col-lg-12 col-md-12">
+              <label>Observaciones:</label>
+              <textarea
+                class="form-control"
+                name="observacionesUco"
+                formControlName="observaciones"
+                placeholder="Observaciones de la UCO"
+              >
+              </textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          (click)="resetForm()"
+        >
+          Cerrar
+        </button>
+        @if (usuarioLogueado()?.rol === misRoles.Superadministrador) {
+        <button
+          type="button"
+          (click)="crearPlanificacion()"
+          data-bs-dismiss="modal"
+          class="btn btn-primary"
+          [disabled]="solicitudForm.invalid"
+        >
+          Crear Planificación
+        </button>
+        } @else if (isAdminEsteCenad() || isGestorEsteCenad()) {
+        <button
+          type="button"
+          (click)="crearYEnviarSolicitud()"
+          data-bs-dismiss="modal"
+          class="btn btn-primary"
+          [disabled]="solicitudForm.invalid"
+        >
+          Crear y Enviar Solicitud
+        </button>
+        } @else {
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-dismiss="modal"
+          [disabled]="solicitudForm.invalid"
+          (click)="crearSolicitud()"
+        >
+          Crear Solicitud (Borrador)
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
