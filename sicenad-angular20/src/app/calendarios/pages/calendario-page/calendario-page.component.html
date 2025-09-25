@@ -12,12 +12,7 @@
     <!-- Título centrado -->
     <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES DEL {{ cenadVisitado()?.nombre }}</h1>
     <!-- Botón crear solicitud -->
-    <app-solicitudNuevaModal (solicitudesChange)="actualizarSolicitudesDesdeNuevaSolicitud($event)" class="text-end position-absolute end-0"/>
-
-    @if (isSuperAdmin()) {
-    <!-- Botón crear planificación -->
-    <app-solicitudNuevaModal (solicitudesChange)="actualizarSolicitudesDesdeNuevaSolicitud($event)" class="text-end position-absolute end-0"/>
-    }
+    <app-solicitudNuevaModal (solicitudesChange)="actualizarSolicitudesDesdeNuevaSolicitud($event)" class="position-absolute end-0"/>
   </div>
   @if (isSuperAdmin()) {
   <div>

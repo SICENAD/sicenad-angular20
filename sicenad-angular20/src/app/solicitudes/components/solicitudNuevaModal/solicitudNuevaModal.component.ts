@@ -1,10 +1,8 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RoutesPaths } from '@app/app.routes';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
-import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { OrquestadorService } from '@services/orquestadorService';
@@ -29,7 +27,6 @@ export class SolicitudNuevaModalComponent {
 
   readonly misRoles = RolUsuario;
   solicitudesChange = output<Solicitud[]>();
-
 
   unidades = computed(() => this.datosPrincipalesStore.unidades());
   categorias = computed(() => this.cenadStore.categorias());
