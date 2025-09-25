@@ -2,36 +2,35 @@
   <!-- Botón volver -->
   <div class="position-relative mb-4">
     <!-- Botón volver a la página anterior -->
-    <a
-      class="nav-link volver position-absolute start-0"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
-    >
+    <a class="nav-link volver position-absolute start-0"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]">
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
       <strong>Volver</strong>
     </a>
     <!-- Título centrado -->
     <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES DEL {{ cenadVisitado()?.nombre }}</h1>
   </div>
-  <app-filtroRecursos (recursosFiltradosChange)="actualizarRecursosFiltrados($event)" />
-  @if (recursosFiltrados.length > 0) {
-  <div class="d-flex align-items-center mb-3">
-    <label for="selectRecurso" class="me-2 mb-0 titulo"><b>Selecciona un recurso:</b></label>
-    <div class="select-wrapper">
-      <select
-        id="selectRecurso"
-        (change)="seleccionarRecurso($any($event.target).value)"
-        class="titulo1"
-        #selectRecurso
-      >
-        <option [value]="''" class="titulo1">Selecciona un recurso</option>
-        @for (r of recursosFiltrados; track r.idString) {
-        <option [value]="r.idString" class="titulo1">{{ r.nombre }}</option>
-        }
-      </select>
-    </div>
+  <div hidden> <!-- calendario de planificacion para superadministradores, las planificadas de momento lo dejo en hidden -->
+    <app-calendarioComponente [solicitudes]="solicitudes()" />
   </div>
-  } @else {
-  <div class="text-muted mt-3">No se encontraron recursos.</div>
-  }
-  <app-calendarioComponente [solicitudes]="solicitudes()" />
+ <div>
+    <app-filtroRecursos (recursosFiltradosChange)="actualizarRecursosFiltrados($event)" />
+    @if (recursosFiltrados.length > 0) {
+    <div class="d-flex align-items-center mb-3">
+      <label for="selectRecurso" class="me-2 mb-0 titulo"><b>Selecciona un recurso:</b></label>
+      <div class="select-wrapper">
+        <select id="selectRecurso" (change)="seleccionarRecurso($any($event.target).value)" class="titulo1"
+          #selectRecurso>
+          <option [value]="''" class="titulo1">Selecciona un recurso</option>
+          @for (r of recursosFiltrados; track r.idString) {
+          <option [value]="r.idString" class="titulo1">{{ r.nombre }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    } @else {
+    <div class="text-muted mt-3">No se encontraron recursos.</div>
+    }
+    <app-calendarioComponente [solicitudes]="solicitudes()" />
+  </div>
 </div>

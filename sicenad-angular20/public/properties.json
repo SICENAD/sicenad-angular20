@@ -17,11 +17,42 @@
         "1:10000",
         "1:25000",
         "1:50000"
-    ], "estadosSolicitud": [
+    ],
+    "estadosSolicitud": [
         "Borrador",
         "Solicitada",
         "Rechazada",
         "Validada",
         "Cancelada"
-    ]
+    ],
+    "coloresCalendario": {
+        "Borrador": {
+            "primary": "#6c757d",
+            "secondary": "#e2e3e5"
+        },
+        "Solicitada": {
+            "primary": "#FFC0CB",
+            "secondary": "#fff3cd"
+        },
+        "Validada": {
+            "primary": "#28a745",
+            "secondary": "#d4edda"
+        },
+        "Cancelada": {
+            "primary": "#dc3545",
+            "secondary": "#f8d7da"
+        },
+        "Rechazada": {
+            "primary": "#343a40",
+            "secondary": "#e9ecef"
+        },
+        "Planificación": {
+            "primary": "#17a2b8",
+            "secondary": "#d1ecf1"
+        },
+        "Mantenimiento": {
+            "primary": "#fd7e14",
+            "secondary": "#ffe5d0"
+        }
+    }
 }

@@ -8,7 +8,7 @@ import { RoutesPaths } from '@app/app.routes';
 import { Subject } from 'rxjs';
 import { CalendarHeaderComponent } from '@app/calendarios/components/calendarHeader/calendarHeader.component';
 import { Solicitud } from '@interfaces/models/solicitud';
-import { EVENT_COLORS } from '@interfaces/enums/colors.enum';
+import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-calendarioComponente',
@@ -27,11 +27,13 @@ import { EVENT_COLORS } from '@interfaces/enums/colors.enum';
 export class CalendarioComponent {
   private router = inject(Router);
   private cenadStore = inject(CenadStore);
+  private utilsStore = inject(UtilsStore);
 
   readonly routesPaths = RoutesPaths;
 
   solicitudes = input<Solicitud[]>();
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
+  colores = this.utilsStore.coloresCalendario;
 
   /** Configuración angular-calendar */
   view = signal<CalendarView>(CalendarView.Month); // vista por defecto: mes
@@ -40,7 +42,6 @@ export class CalendarioComponent {
 
   /** Subject para refrescar la vista */
   refresh = new Subject<void>();
-  eventColors = EVENT_COLORS as Record<string, { primary: string; secondary: string }>;
 
   constructor() {
     effect(() => {
@@ -63,7 +64,7 @@ export class CalendarioComponent {
       end: solicitud.fechaHoraFinRecurso
         ? new Date(solicitud.fechaHoraFinRecurso)
         : addHours(new Date(solicitud.fechaHoraInicioRecurso || ''), 2),
-      color: this.eventColors[solicitud.estado] || { primary: '#6c757d', secondary: '#e2e3e5' },
+      color: this.colores()[solicitud.estado] || { primary: '#6c757d', secondary: '#e2e3e5' },
       meta: solicitud
     };
   }

@@ -99,6 +99,7 @@ export class UtilsStore {
   tiposTiro = computed(() => this.properties()?.tiposTiro || []);
   escalasCartografia = computed(() => this.properties()?.escalasCartografia || []);
   estadosSolicitud = computed(() => this.properties()?.estadosSolicitud || []);
+  coloresCalendario = computed(() => this.properties()?.coloresCalendario || {});
 
   // --- PARSE SEGURO ---
   parseJSON<T>(json: string | null, fallback: T): T {
