@@ -32,7 +32,7 @@ import jakarta.persistence.EntityManagerFactory;
 @Configuration
 @PropertySource({ "classpath:config/rest.properties", "classpath:config/jackson.properties", "classpath:config/archivos.properties",
 "classpath:config/mail.properties", "classpath:config/gestionBBDD.properties"
-	, "classpath:config/passwordsBD.properties" 
+	//, "classpath:config/passwordsBD.properties" 
 	})
 @ComponentScan({"es.mde"})
 @EnableTransactionManagement
