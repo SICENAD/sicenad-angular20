@@ -6,7 +6,9 @@
   "description": "Aplicación para la gestión de campos de maniobras",
   "lang": "es-ES",
   "display": "standalone",
-  "display_override": ["window-controls-overlay"],
+  "display_override": [
+    "window-controls-overlay"
+  ],
   "theme_color": "#6a9257",
   "background_color": "#d4d4d4",
   "icons": [
@@ -35,17 +37,32 @@
       "type": "image/png"
     },
     {
-      "src": "img/pwa/screenshot_clienteslist.png",
+      "src": "img/pwa/screenshot_selec_Cenad.png",
       "sizes": "1500x900",
       "type": "image/png"
     },
     {
-      "src": "img/pwa/screenshot_prestacionesdemascotas.png",
+      "src": "img/pwa/screenshot_cenadHome.png",
       "sizes": "1500x900",
       "type": "image/png"
     },
     {
-      "src": "img/pwa/screenshot_mascotascards.png",
+      "src": "img/pwa/screenshot_recursos.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_recursoDetalle.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_calendario.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_solicitudes.png",
       "sizes": "1500x900",
       "type": "image/png"
     },
@@ -56,19 +73,37 @@
       "form_factor": "wide"
     },
     {
-      "src": "img/pwa/screenshot_clienteslist.png",
+      "src": "img/pwa/screenshot_selec_Cenad.png",
       "sizes": "1500x900",
       "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "img/pwa/screenshot_prestacionesdemascotas.png",
+      "src": "img/pwa/screenshot_cenadHome.png",
       "sizes": "1500x900",
       "type": "image/png",
       "form_factor": "wide"
     },
     {
-      "src": "img/pwa/screenshot_mascotascards.png",
+      "src": "img/pwa/screenshot_recursos.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/pwa/screenshot_recursoDetalle.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/pwa/screenshot_calendario.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/pwa/screenshot_solicitudes.png",
       "sizes": "1500x900",
       "type": "image/png",
       "form_factor": "wide"
