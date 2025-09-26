@@ -30,7 +30,7 @@ public class Fichero {
 	private String idString;
 	private String nombre;
 	private String nombreArchivo;
-//	@Lob
+	@Lob
 	private String descripcion;
 	private String imagen; // campo no usado
 	@ManyToOne(fetch = FetchType.LAZY)

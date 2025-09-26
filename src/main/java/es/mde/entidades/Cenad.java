@@ -34,7 +34,7 @@ public class Cenad {
 	private String idString;
 	private String nombre;
 	private int provincia;
-//	@Lob	
+	@Lob	
 	private String descripcion;
 	private String direccion;
 	private String tfno;

@@ -34,9 +34,9 @@ public class Recurso {
 	private Long id;
 	private String idString;
 	private String nombre;
-//	@Lob	
+	@Lob	
 	private String descripcion;
-//	@Lob	
+	@Lob	
 	private String otros;
 	@OneToMany(cascade = CascadeType.ALL, targetEntity = Fichero.class, mappedBy = "recurso")
 	private Collection<Fichero> ficheros = new ArrayList<>();
