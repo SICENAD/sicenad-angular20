@@ -57,7 +57,8 @@
               "optimization": {
                 "scripts": true,
                 "styles": true
-              }
+              },
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,

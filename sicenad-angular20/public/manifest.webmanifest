@@ -1,0 +1,77 @@
+{
+  "name": "sicenad-angular20",
+  "short_name": "sicenad-angular20",
+  "scope": "./",
+  "start_url": "./",
+  "description": "Aplicación para la gestión de campos de maniobras",
+  "lang": "es-ES",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay"],
+  "theme_color": "#6a9257",
+  "background_color": "#d4d4d4",
+  "icons": [
+    {
+      "src": "img/pwa/apple-touch-icon-60x60.png",
+      "sizes": "60x60",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/android-chrome-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "img/pwa/screenshot_inicio.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_clienteslist.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_prestacionesdemascotas.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_mascotascards.png",
+      "sizes": "1500x900",
+      "type": "image/png"
+    },
+    {
+      "src": "img/pwa/screenshot_inicio.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/pwa/screenshot_clienteslist.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/pwa/screenshot_prestacionesdemascotas.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/pwa/screenshot_mascotascards.png",
+      "sizes": "1500x900",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}
