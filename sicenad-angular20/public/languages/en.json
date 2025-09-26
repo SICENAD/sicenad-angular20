@@ -1,0 +1,11 @@
+{
+  "comun": {
+    "seleccionaIdioma": "Select language: ",
+    "mostrarIdioma": "Show language",
+    "ALERT_MSG": "You clicked the button in English"
+  },
+  "armas": {
+    "ejemplo1": "ejemplo 1 de armas ingles",
+    "ejemplo2": "ejemplo 2 de armas ingles"
+  }
+}

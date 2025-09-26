@@ -1,4 +1,35 @@
 <header>
+  <span class="d-flex mb-2">
+    <h5 class="me-3">{{ 'comun.seleccionaIdioma' | translate }}</h5>
+    <span class="dropdown">
+      <button
+        class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center rounded-pill px-3"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <img [src]="getBandera(idiomaActual())" width="20" height="15" alt="Bandera" class="me-2" />
+        {{ getEtiqueta(idiomaActual()) }}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        @for (idioma of idiomasDisponibles(); track idioma) {
+        <li>
+          <a
+            class="dropdown-item d-flex align-items-center"
+            href="#"
+            (click)="cambiarIdioma(idioma.codigo); $event.preventDefault()"
+          >
+            <img [src]="idioma.bandera" width="20" height="15" class="me-2" />
+            {{ idioma.etiqueta }}
+          </a>
+        </li>
+        }
+      </ul>
+    </span>
+    <button class="btn btn-outline-secondary rounded-pill px-3 ms-4" (click)="mostrarAlert()">
+      {{ 'comun.mostrarIdioma' | translate }}
+    </button>
+  </span>
   @if (token()) {
   <p class="alert alert-success">
     {{ username() }} autenticado en la API como {{ identificacion() }}
@@ -7,7 +38,9 @@
   } @else {
   <p class="alert alert-danger">
     Usuario NO autenticado en la API
-    <button class="btn btn-danger ms-2 me-3" [routerLink]="routesPaths.login">Iniciar sesión</button>
+    <button class="btn btn-danger ms-2 me-3" [routerLink]="routesPaths.login">
+      Iniciar sesión
+    </button>
     Necesitas iniciar sesión para poder acceder a los distintos CENAD,s/CMT,s
   </p>
   }

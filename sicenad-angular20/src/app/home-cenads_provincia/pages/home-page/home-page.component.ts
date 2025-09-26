@@ -3,10 +3,11 @@ import { UtilsStore } from '@stores/utils.store';
 import { ResultadoCenadsProvinciaComponent } from '../../components/resultado-cenads-provincia/resultado-cenads-provincia.component';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { LocalStorageService } from '@services/localStorageService';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
-  imports: [ResultadoCenadsProvinciaComponent],
+  imports: [ResultadoCenadsProvinciaComponent, TranslateModule],
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css'],
 })

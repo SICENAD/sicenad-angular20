@@ -100,6 +100,7 @@ export class UtilsStore {
   escalasCartografia = computed(() => this.properties()?.escalasCartografia || []);
   estadosSolicitud = computed(() => this.properties()?.estadosSolicitud || []);
   coloresCalendario = computed(() => this.properties()?.coloresCalendario || {});
+  idiomasDisponibles = computed(() => this.properties()?.idiomasDisponibles || []);
 
   // --- PARSE SEGURO ---
   parseJSON<T>(json: string | null, fallback: T): T {

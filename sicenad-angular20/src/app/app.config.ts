@@ -1,11 +1,11 @@
-import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, Provider, provideZoneChangeDetection, isDevMode } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, Provider, provideZoneChangeDetection, isDevMode, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { UtilsStore } from '@stores/utils.store';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { tokenApiInterceptor } from '@shared/interceptors/tokenApi.interceptor';
 import { globalHttpErrorInterceptor } from '@shared/interceptors/globalHttpError.interceptor';
 import { filesInterceptor } from '@shared/interceptors/files.interceptor';
@@ -26,6 +26,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { CustomDateFormatter } from '@shared/customFormat/customDateFormatter';
 import { provideServiceWorker } from '@angular/service-worker';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 registerLocaleData(localeEs, 'es');
 
@@ -53,13 +54,23 @@ export const appConfig: ApplicationConfig = {
         return () => firstValueFrom(utils.cargarPropiedadesIniciales());
       },
       deps: [UtilsStore],
-    }, provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }),
+    },
+    importProvidersFrom(
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        }
+      })
+    ),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }), provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ]
 };
 
@@ -76,4 +87,15 @@ export function provideAngularCalendar(): Provider[] {
     { provide: CalendarA11y, useClass: DefaultCalendarA11y },
     { provide: LOCALE_ID, useValue: 'es' }
   ];
+}
+
+/**
+ * Configuración global de traducciones
+ */
+export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
+  return {
+    getTranslation: (lang: string): Observable<any> => {
+      return http.get(`/languages/${lang}.json`);
+    }
+  };
 }
