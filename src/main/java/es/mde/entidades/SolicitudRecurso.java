@@ -44,8 +44,10 @@ public class SolicitudRecurso {
 	private Long id;
 	private String idString;
 	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String observaciones;
 	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String observacionesCenad;
 	private String jefeUnidadUsuaria;
 	private String pocEjercicio;
