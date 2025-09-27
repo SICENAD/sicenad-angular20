@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { CalendarEvent } from 'angular-calendar';
 
+
+
+
+
+// lo dejo por aqui por si quiero enredar con esto pero actualmente no se usa
 @Injectable({ providedIn: 'root' })
 export class EventosService {
   private readonly API_URL = 'https://jsonplaceholder.typicode.com/posts'; // ⚠️ Reemplaza con tu API real
