@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '@environments/environment';
@@ -6,6 +6,17 @@ import { environment } from '@environments/environment';
 @Injectable({ providedIn: 'root' })
 export class UtilsStore {
   private http = inject(HttpClient);
+
+  constructor() {
+    // Cada vez que cambien los colores, actualizamos las variables CSS
+    effect(() => {
+      const colores = this.coloresDisponibles();
+      const root = document.documentElement;
+      Object.entries(colores).forEach(([key, value]) => {
+        root.style.setProperty(`--${key}`, value as string);
+      });
+    });
+  }
 
   // --- STATE ---
   private _properties = signal<any | null>(null);
@@ -98,6 +109,7 @@ export class UtilsStore {
   estadosSolicitud = computed(() => this.properties()?.estadosSolicitud || []);
   coloresCalendario = computed(() => this.properties()?.coloresCalendario || {});
   idiomasDisponibles = computed(() => this.properties()?.idiomasDisponibles || []);
+  coloresDisponibles = computed(() => this.properties()?.coloresDisponibles || {});
 
   // --- PARSE SEGURO ---
   parseJSON<T>(json: string | null, fallback: T): T {

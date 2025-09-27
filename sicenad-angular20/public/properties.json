@@ -71,5 +71,21 @@
       "etiqueta": "Français",
       "bandera": "img/banderas/fr.svg"
     }
-  ]
+  ],
+  "coloresDisponibles": {
+    "color1": "#A3B18A",
+    "color2": "#588157",
+    "color3": "#3A5A40",
+    "color4": "yellow",
+    "color5": "red",
+    "color6": "white",
+    "color7": "#354f52",
+    "color8": "black",
+    "color9": "yellowgreen",
+    "color10": "#52796f",
+    "color11": "#84a98c",
+    "color12": "#344E41",
+    "color13": "maroon",
+    "color14": "#d3e7b0"
+  }
 }

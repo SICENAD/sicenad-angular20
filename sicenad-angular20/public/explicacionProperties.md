@@ -10,3 +10,4 @@ La variable `escalasCartografia` representa las distintas escalas de cartografí
 La variable `estadosSolicitud` representa los distintos estados en los que puede estar una solicitud.
 La variable `coloresCalendario` representa los colores asignados en el calendario según el tipo de solicitud.
 La variable `idiomasDisponibles` enumera los idiomas disponibles de la aplicación. Para añadir idiomas también hay que añadir el `idioma.json` y la imagen de la bandera.
+La variable `coloresDisponibles` enumera los colores disponibles de la aplicación. Podemos poner la paleta y si cambiamos la paleta entera...
