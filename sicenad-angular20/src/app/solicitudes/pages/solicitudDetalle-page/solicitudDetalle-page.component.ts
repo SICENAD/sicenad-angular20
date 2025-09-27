@@ -61,6 +61,7 @@ export class SolicitudDetallePageComponent {
   _idModalEliminar = signal('modal-solicitud-eliminar-' + this.idSolicitud());
   idModal = computed(() => this._idModal() + this.idSolicitud());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idSolicitud());
+  estadoInicial = '';
 
   solicitudForm: FormGroup = this.fb.group({
     observaciones: [''],
@@ -138,6 +139,7 @@ export class SolicitudDetallePageComponent {
       fechaFinDocumentacion: this.utilService.isoToLocalDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || null,
       estado: this.solicitud()?.estado || ''
     });
+    this.estadoInicial = this.solicitud()?.estado || '';
   }
 
   recargarDocumentacionCenad() {
@@ -169,6 +171,7 @@ export class SolicitudDetallePageComponent {
     this.orquestadorService.actualizarSolicitud(observaciones, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, estado, this.cenadVisitado()!.idString, this.idSolicitud(), observacionesCenad, fechaFinDocumentacion).subscribe({
       next: res => {
         if (res) {
+          this.estadoInicial !== estado && this.orquestadorService.notificarCambioEstado(this.solicitud()!.idString).subscribe();
           console.log(`Solicitud del recurso ${this.recurso()?.nombre} actualizada correctamente.`);
           this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
         }
@@ -178,7 +181,7 @@ export class SolicitudDetallePageComponent {
       }
     });
   }
-  
+
   borrarSolicitud() {
     this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString, this.solicitud()!.estado).subscribe({
       next: res => {

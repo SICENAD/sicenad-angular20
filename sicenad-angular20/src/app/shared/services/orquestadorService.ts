@@ -36,6 +36,8 @@ import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
 import { FicheroService } from "./ficheroService";
 import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
 import { FicheroSolicitud } from "@interfaces/models/ficheroSolicitud";
+import { NotificacionResponse } from "@interfaces/responses/notificacionResponse";
+import { NotificacionService } from "./notificacionService";
 
 
 @Injectable({ providedIn: 'root' })
@@ -57,6 +59,7 @@ export class OrquestadorService {
   private normativaService = inject(NormativaService);
   private solicitudService = inject(SolicitudService);
   private ficheroService = inject(FicheroService);
+  private notificacionService = inject(NotificacionService);
 
   /** Garantiza que el store tenga urlApi válida antes de usar servicios */
   private ensureUrlApi() {
@@ -331,6 +334,16 @@ export class OrquestadorService {
       catchError(err => {
         console.error('Error cargando cenad visitado', err);
         this.cenadStore.clearCenadVisitado();
+        return of(null);
+      })
+    );
+  }
+
+  // --- NOTIFICACIONES ---
+  notificarCambioEstado(idSolicitud: string): Observable<NotificacionResponse | null> {
+    return this.notificacionService.notificarCambioEstado(idSolicitud).pipe(
+      catchError(err => {
+        console.error('Error notificando cambio de estado', err);
         return of(null);
       })
     );

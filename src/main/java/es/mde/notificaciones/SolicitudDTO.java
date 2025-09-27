@@ -47,7 +47,7 @@ public class SolicitudDTO {
 				+ meses[toCalendar(solicitudRecurso.getFechaHoraFinRecurso()).get(Calendar.MONTH)].toUpperCase()
 				+ toCalendar(solicitudRecurso.getFechaHoraFinRecurso()).get(Calendar.YEAR);
 		this.subject = "Solicitud de la unidad " + solicitudRecurso.getUsuarioNormal().getUnidad().getNombre()
-				+ " del recurso " + recurso + "del CENAD/CMT "
+				+ " del recurso " + recurso + " del CENAD/CMT "
 				+ solicitudRecurso.getRecurso().getCategoria().getCenad().getNombre() + " (" + periodo + ")";
 		this.estado = solicitudRecurso.getEstado();
 		this.cenad = solicitudRecurso.getRecurso().getCategoria().getCenad().getNombre();
