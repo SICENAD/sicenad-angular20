@@ -18,11 +18,6 @@
     font-weight: bold;
 }
 
-h5 {
-    color: #354f52;
-    font-weight: bold;
-}
-
 a.volver {
     color: #3A5A40;
     font-size: 18px;
@@ -30,17 +25,6 @@ a.volver {
 
 a.volver:hover {
     color: #A3B18A;
-}
-
-.row {
-    height: auto;
-    padding: auto;
-    margin: auto;
-}
-
-hr {
-    margin-bottom: 0;
-    margin-top: 1;
 }
 
 .modal {

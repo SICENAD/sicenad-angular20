@@ -11,5 +11,4 @@ import { RoutesPaths } from '@app/app.routes';
 export class ResultadoCenadsProvinciaComponent {
   readonly routesPaths = RoutesPaths;
   cenad = input.required<{ idString: string; nombre: string }>();
-
 }

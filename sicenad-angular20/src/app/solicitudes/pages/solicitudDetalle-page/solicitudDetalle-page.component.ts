@@ -48,11 +48,9 @@ export class SolicitudDetallePageComponent {
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
   });
-
   isGestorEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
   });
-
   isAdminEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
   });
@@ -128,8 +126,6 @@ export class SolicitudDetallePageComponent {
   cargarSolicitud(): void {
     if (!this.solicitud()) return;
     // Cargar los valores básicos
-
-
     this.solicitudForm.patchValue({
       observaciones: this.solicitud()?.observaciones || '',
       observacionesCenad: this.solicitud()?.observacionesCenad || '',
@@ -182,6 +178,7 @@ export class SolicitudDetallePageComponent {
       }
     });
   }
+  
   borrarSolicitud() {
     this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString, this.solicitud()!.estado).subscribe({
       next: res => {

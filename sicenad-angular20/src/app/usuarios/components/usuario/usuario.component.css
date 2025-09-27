@@ -1,11 +1,6 @@
-div,
-div a {
+div {
   color: #A3B18A;
   font-weight: bold
-}
-
-v-icon:hover {
-  color: #588157;
 }
 
 .row {

@@ -8,27 +8,6 @@
     background-color: #a3b18a;
 }
 
-.titulos {
-    color: #3a5a40;
-    font-weight: bold;
-    font-size: small;
-}
-
-.titulo1 {
-    color: #588157;
-}
-
-h5 {
-    color: #354f52;
-    font-weight: bold;
-}
-
-.modal {
-    max-height: 100%;
-    max-width: 100%;
-    margin: auto;
-}
-
 .row {
     height: auto;
     padding: auto;
@@ -40,55 +19,12 @@ hr {
     margin-top: 0;
 }
 
-hr.separacion {
-    margin-bottom: 1;
-    margin-top: 5;
-    border: 2px solid #354f52;
-}
-
-select {
-    color: #588157;
-}
-
-label span {
-    color: #3a5a40;
-    font-weight: bold;
-}
-
 div.validadas,
 div.canceladas,
 div.solicitadas,
 div.rechazadas,
 div.borrador {
     border: 3px solid #354f52;
-}
-
-.titulo-solicitadas {
-    margin-top: 5px;
-    color: #3a5a40;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px #a3b18a;
-    background-color: #dad7cd;
-}
-
-hr.titulo-solicitadas {
-    color: #a3b18a;
-    border: 4px;
-    border-style: double;
-}
-
-.titulo-validadas {
-    margin-top: 5px;
-    color: blanchedalmond;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px #344e41;
-    background-color: #588157;
-}
-
-hr.titulo-validadas {
-    color: #588157;
-    border: 4px;
-    border-style: double;
 }
 
 .titulo-rechazadas {
@@ -105,37 +41,11 @@ hr.titulo-rechazadas {
     border-style: double;
 }
 
-.titulo-canceladas,
-.titulo-borrador {
-    margin-top: 10px;
-    color: #dad7cd;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px black;
-    background-color: #344e41;
-}
-
-hr.titulo-canceladas,
-hr.titulo-borrador {
-    color: #dad7cd;
-    border: 4px;
-    border-style: double;
-}
-
 h6.no-permiso {
     color: #a3b18a;
     text-shadow: #344e41;
     font-weight: bold;
     font-size: x-large;
-}
-
-label.ver-todas {
-    font-size: medium;
-}
-
-.ver-todas:hover {
-    color: aquamarine;
-    font-weight: bold;
-    text-shadow: 10px 10px 20px yellowgreen;
 }
 
 a.volver {
@@ -145,30 +55,4 @@ a.volver {
 
 a.volver:hover {
     color: #a3b18a;
-}
-
-.modal-xxl {
-    max-width: 95%;
-    /* casi toda la pantalla, pero con margen */
-}
-
-.modal-content {
-    height: 100vh;
-    /* Ocupa el 100% de la altura de la pantalla */
-    border-radius: 0;
-    /* Quita esquinas redondeadas para fullscreen */
-}
-
-.modal-body {
-    overflow-y: auto;
-    /* Scroll solo si el contenido se pasa */
-    max-height: calc(100vh - 120px);
-    /* Deja espacio para header y footer */
-}
-
-.formulario {
-    color: #3a5a40;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px #a3b18a;
-    background-color: #dad7cd;
 }

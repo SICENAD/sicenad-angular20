@@ -31,34 +31,25 @@ export class RegisterComponent {
   get username() {
     return this.registerForm.get('username');
   }
-
   get password() {
     return this.registerForm.get('password');
   }
-
   get tfno() {
     return this.registerForm.get('tfno');
   }
-
   get email() {
     return this.registerForm.get('email');
   }
-
   get descripcion() {
     return this.registerForm.get('descripcion');
   }
-
   get emailAdmitido() {
     return this.registerForm.get('emailAdmitido');
   }
 
-
-
   passwordForRegisterFromUser = signal('');
 
   async solicitudRegistro() {
-
-
     if (this.registerForm.invalid) {
       alert('Por favor, completa todos los campos correctamente.');
       return;

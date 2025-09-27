@@ -5,7 +5,6 @@ import { environment } from '@environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UtilsStore {
-
   private http = inject(HttpClient);
 
   // --- STATE ---
@@ -85,12 +84,10 @@ export class UtilsStore {
     const val = this.properties()?.sizeMaxDocRecurso;
     return val != null ? Number(val) : 0;
   });
-
   sizeMaxDocSolicitud = computed<number>(() => {
     const val = this.properties()?.sizeMaxDocSolicitud;
     return val != null ? Number(val) : 0;
   });
-
   sizeMaxCartografia = computed<number>(() => {
     const val = this.properties()?.sizeMaxCartografia;
     return val != null ? Number(val) : 0;

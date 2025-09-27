@@ -70,7 +70,6 @@ export class OrquestadorService {
   initializeDatosPrincipales(): void {
     this.datosStore.loadFromLocalStorage();
     this.ensureUrlApi();            // <-- clave
-
     this.getDatosPrincipales().subscribe();
     this.datosStore.setUrlApi(this.utils.urlApi());
     this.datosStore.setMinutosExpiracionLocalStorage(this.utils.minutosExpiracionLocalStorage());
@@ -1684,6 +1683,7 @@ export class OrquestadorService {
       })
     );
   }
+
   crearFicheroSolicitudCenad(
     nombre: string,
     descripcion: string,
@@ -1829,6 +1829,7 @@ export class OrquestadorService {
   getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<void> {
     return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
   }
+  
   getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<Blob> {
     return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
   }

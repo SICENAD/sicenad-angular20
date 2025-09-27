@@ -10,7 +10,6 @@ import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-cenad-home',
-  standalone: true,
   imports: [RouterLink, FontAwesomeModule],
   templateUrl: './cenad-home.component.html',
   styleUrls: ['./cenad-home.component.css']

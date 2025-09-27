@@ -59,6 +59,12 @@ export class UsuarioModalComponent {
     descripcion: ['', Validators.required],
   });
 
+  get username() { return this.usuarioForm.get('username'); }
+  get tfno() { return this.usuarioForm.get('tfno'); }
+  get email() { return this.usuarioForm.get('email'); }
+  get emailAdmitido() { return this.usuarioForm.get('emailAdmitido'); }
+  get descripcion() { return this.usuarioForm.get('descripcion'); }
+  
   ngOnInit(): void {
     if (this.usuario()) {
       this.usuarioForm.patchValue({
@@ -70,12 +76,6 @@ export class UsuarioModalComponent {
       });
     }
   }
-
-  get username() { return this.usuarioForm.get('username'); }
-  get tfno() { return this.usuarioForm.get('tfno'); }
-  get email() { return this.usuarioForm.get('email'); }
-  get emailAdmitido() { return this.usuarioForm.get('emailAdmitido'); }
-  get descripcion() { return this.usuarioForm.get('descripcion'); }
 
   editarUsuario() {
     if (this.usuarioForm.invalid) {
@@ -163,6 +163,7 @@ export class UsuarioModalComponent {
         console.error('Rol no reconocido al actualizar usuario:', this.usuario()?.rol);
     }
   }
+
   borrarUsuario() {
     switch (this.usuario()?.rol) {
       case RolUsuario.Superadministrador:

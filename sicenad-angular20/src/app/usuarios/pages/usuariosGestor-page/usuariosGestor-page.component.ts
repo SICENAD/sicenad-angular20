@@ -53,7 +53,6 @@ export class UsuariosGestorPageComponent {
       return;
     }
     const { username, password, tfno, email, emailAdmitido, descripcion } = this.usuarioForm.value;
-
     this.orquestadorService.registerUsuarioGestor(
       username,
       password,
@@ -66,12 +65,10 @@ export class UsuariosGestorPageComponent {
       next: (res) => {
         console.log('Registro correcto:', res);
         this.usuarioForm.reset();
-
       },
       error: (err) => {
         console.error('Error en registro:', err);
       }
     });
-
   }
 }

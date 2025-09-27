@@ -71,7 +71,6 @@ export class UsuariosNormalPageComponent {
       next: (res) => {
         console.log('Registro correcto:', res);
         this.usuarioForm.reset();
-
       },
       error: (err) => {
         console.error('Error en registro:', err);

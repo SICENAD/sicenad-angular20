@@ -48,6 +48,13 @@ export class RecursoModalComponent {
     usuarioGestor: [null, Validators.required]
   });
 
+  get nombre() { return this.recursoForm.get('nombre'); }
+  get descripcion() { return this.recursoForm.get('descripcion'); }
+  get otros() { return this.recursoForm.get('otros'); }
+  get categoria() { return this.recursoForm.get('categoria'); }
+  get tipoFormulario() { return this.recursoForm.get('tipoFormulario'); }
+  get usuarioGestor() { return this.recursoForm.get('usuarioGestor'); }
+
   constructor() {
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
@@ -99,23 +106,16 @@ export class RecursoModalComponent {
     });
   }
 
-
   ngOnInit(): void {
     if (!this.recurso()) return;
 
     // Cargar los valores básicos
     this.recursoForm.patchValue({
       nombre: this.recurso()?.nombre || '',
-      descripcion: this.recurso()?.descripcion || ''
+      descripcion: this.recurso()?.descripcion || '',
+      otros: this.recurso()?.otros || ''
     });
   }
-
-  get nombre() { return this.recursoForm.get('nombre'); }
-  get descripcion() { return this.recursoForm.get('descripcion'); }
-  get otros() { return this.recursoForm.get('otros'); }
-  get categoria() { return this.recursoForm.get('categoria'); }
-  get tipoFormulario() { return this.recursoForm.get('tipoFormulario'); }
-  get usuarioGestor() { return this.recursoForm.get('usuarioGestor'); }
 
   editarRecurso() {
     if (this.recursoForm.invalid) {
@@ -139,6 +139,7 @@ export class RecursoModalComponent {
       }
     });
   }
+  
   borrarRecurso() {
     this.orquestadorService.borrarRecurso(this.idRecurso(), this.cenadVisitado()!.idString).subscribe(() => {
       this.output.emit(); // notificamos al padre

@@ -18,7 +18,6 @@ export class UsuarioLogueadoStore {
   unidad = this.localStorageService.computedAntiExpiracionLocalStorage(this._unidad);
   usuarioLogueado = this.localStorageService.computedAntiExpiracionLocalStorage(this._usuarioLogueado);
 
-
 // --- EFFECTS ---
   private persist = effect(() => {
     this.localStorageService.setItem('cenadPropio', this._cenadPropio());
@@ -52,6 +51,3 @@ export class UsuarioLogueadoStore {
     this.clearUsuario();
   }
 }
-
-
-

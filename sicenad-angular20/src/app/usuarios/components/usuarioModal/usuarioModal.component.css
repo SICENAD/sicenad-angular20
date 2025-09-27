@@ -1,25 +1,11 @@
-.passwordHelp {
-  font-size: small;
-  color: red;
-}
-div,
-div a {
+
+div {
   color: #A3B18A;
   font-weight: bold;
 }
 
 fa-icon:hover, p {
   color: #588157;
-}
-.row {
-  height: auto;
-  padding: auto;
-  margin: auto;
-}
-
-hr {
-  margin-bottom: 0;
-  margin-top: 0;
 }
 
 .btn {

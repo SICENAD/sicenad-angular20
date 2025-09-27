@@ -124,5 +124,4 @@ export class FiltroRecursosComponent {
     if (!categoria) return false; // Si no hay categoría seleccionada, no es padre
     return this.categoriasPadre().some(c => c.idString === categoria.idString);
   }
-
 }

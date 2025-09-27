@@ -36,6 +36,13 @@ export class UnidadModalComponent {
     poc: ['', Validators.required]
   });
 
+  get nombre() { return this.unidadForm.get('nombre'); }
+  get descripcion() { return this.unidadForm.get('descripcion'); }
+  get email() { return this.unidadForm.get('email'); }
+  get tfno() { return this.unidadForm.get('tfno'); }
+  get direccion() { return this.unidadForm.get('direccion'); }
+  get poc() { return this.unidadForm.get('poc'); }
+  
 ngOnInit(): void {
     if (this.unidad()) {
       this.unidadForm.patchValue({
@@ -48,13 +55,6 @@ ngOnInit(): void {
       });
     }
   }
-
-  get nombre() { return this.unidadForm.get('nombre'); }
-  get descripcion() { return this.unidadForm.get('descripcion'); }
-  get email() { return this.unidadForm.get('email'); }
-  get tfno() { return this.unidadForm.get('tfno'); }
-  get direccion() { return this.unidadForm.get('direccion'); }
-  get poc() { return this.unidadForm.get('poc'); }
 
   editarUnidad() {
     if (this.unidadForm.invalid) {
@@ -74,6 +74,7 @@ ngOnInit(): void {
       }
     });
   }
+
   borrarUnidad() {
     this.orquestadorService.borrarUnidad(this.idUnidad()).subscribe(() => {
       this.output.emit(); // notificamos al padre

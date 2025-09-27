@@ -11,10 +11,8 @@ import { IconosStore } from '@stores/iconos.store';
   styleUrls: ['./not-found.component.css']
 })
 export class NotFoundComponent {
-
   private iconos = inject(IconosStore);
 
   faHome =this.iconos.faHome;
   readonly routesPaths = RoutesPaths;
-
 }

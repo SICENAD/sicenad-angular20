@@ -10,9 +10,6 @@
     background-color: #A3B18A;
 }
 
-/* h3 {
-  color: #354f52; font-weight: bold
-} */
 .titulo,
 .texto {
     color: #3A5A40;
@@ -72,32 +69,12 @@ div.titulos {
     background-color: #DAD7CD;
 }
 
-figure {
-    display: inline-block;
-}
-
 .texto {
     white-space: pre-wrap;
 }
 
 h3 {
     color: #3A5A40;
-}
-
-img.cenad {
-    display: block;
-    width: 365px;
-    height: 533px;
-    align-content: center;
-    margin: auto;
-    padding-bottom: 2px;
-}
-
-div.informacion {
-    border: 6px solid #354f52;
-    border-top: 0px;
-    border-bottom: 0px;
-    border-right: 0px;
 }
 
 .modal-xxl {

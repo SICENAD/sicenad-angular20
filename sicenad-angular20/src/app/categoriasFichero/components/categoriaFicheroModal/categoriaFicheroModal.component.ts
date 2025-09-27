@@ -33,7 +33,11 @@ export class CategoriaFicheroModalComponent {
     descripcion: ['', Validators.required],
   });
 
-ngOnInit(): void {
+  get nombre() { return this.categoriaFicheroForm.get('nombre'); }
+  get tipo() { return this.categoriaFicheroForm.get('tipo'); }
+  get descripcion() { return this.categoriaFicheroForm.get('descripcion'); }
+
+  ngOnInit(): void {
     if (this.categoriaFichero()) {
       this.categoriaFicheroForm.patchValue({
         nombre: this.categoriaFichero()?.nombre || '',
@@ -42,10 +46,6 @@ ngOnInit(): void {
       });
     }
   }
-
-  get nombre() { return this.categoriaFicheroForm.get('nombre'); }
-  get tipo() { return this.categoriaFicheroForm.get('tipo'); }
-  get descripcion() { return this.categoriaFicheroForm.get('descripcion'); }
 
   editarCategoriaFichero() {
     if (this.categoriaFicheroForm.invalid) {

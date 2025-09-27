@@ -47,6 +47,14 @@ export class CenadModalComponent {
     escudo: [null] // archivo opcional, se reemplaza si se carga uno nuevo
   });
 
+  get nombre() { return this.cenadForm.get('nombre'); }
+  get provincia() { return this.cenadForm.get('provincia'); }
+  get direccion() { return this.cenadForm.get('direccion'); }
+  get tfno() { return this.cenadForm.get('tfno'); }
+  get email() { return this.cenadForm.get('email'); }
+  get descripcion() { return this.cenadForm.get('descripcion'); }
+  get escudo() { return this.cenadForm.get('escudo'); }
+
   private esperarYCargarEscudo = void effect(() => {
     this.escudoActual.set(this.cenad()?.escudo || '');
     const escudo = this.cenad()?.escudo;
@@ -71,13 +79,6 @@ export class CenadModalComponent {
       });
     }
   }
-  get nombre() { return this.cenadForm.get('nombre'); }
-  get provincia() { return this.cenadForm.get('provincia'); }
-  get direccion() { return this.cenadForm.get('direccion'); }
-  get tfno() { return this.cenadForm.get('tfno'); }
-  get email() { return this.cenadForm.get('email'); }
-  get descripcion() { return this.cenadForm.get('descripcion'); }
-  get escudo() { return this.cenadForm.get('escudo'); }
 
   onFileChange(event: any) {
     const file: File = event.target.files[0];

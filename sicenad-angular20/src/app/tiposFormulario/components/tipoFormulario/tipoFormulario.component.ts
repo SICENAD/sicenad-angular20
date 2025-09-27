@@ -9,6 +9,5 @@ import { TipoFormulario } from '@interfaces/models/tipoFormulario';
   styleUrls: ['./tipoFormulario.component.css']
 })
 export class TipoFormularioComponent {
-
     tipoFormulario = input.required<TipoFormulario>();
 }

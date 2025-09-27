@@ -11,6 +11,7 @@ export class CustomDateFormatter extends CalendarDateFormatter {
   override weekViewColumnHeader({ date, locale }: DateFormatterParams): string {
     return formatDate(date, 'EEEE', locale ?? 'es'); // Lunes, Martes...
   }
+  
   /**
    * Segunda línea: fecha en formato "22 sept"
    */

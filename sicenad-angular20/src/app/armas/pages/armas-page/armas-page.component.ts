@@ -47,7 +47,6 @@ export class ArmasPageComponent {
       } else {
         console.error('Error al crear el arma');
       }
-
     });
   }
 }

@@ -10,5 +10,4 @@ import { Arma } from '@interfaces/models/arma';
 })
 export class ArmaComponent {
     arma = input.required<Arma>();
-
 }

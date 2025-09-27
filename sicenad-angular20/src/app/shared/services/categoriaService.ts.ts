@@ -126,6 +126,7 @@ export class CategoriaService {
       })
     );
   }
+
   deleteCategoria(idCategoria: string): Observable<any> {
     const endpoint = `/categorias/${idCategoria}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
@@ -139,11 +140,4 @@ export class CategoriaService {
       })
     );
   }
-
-
-
-
-
-
-
 }

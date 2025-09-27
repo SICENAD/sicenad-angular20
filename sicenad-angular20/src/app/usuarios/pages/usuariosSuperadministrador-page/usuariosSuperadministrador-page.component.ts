@@ -11,7 +11,6 @@ import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
   styleUrls: ['./usuariosSuperadministrador-page.component.css']
 })
 export class UsuariosSuperadministradorPageComponent {
-
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   usuariosSuperadministrador = computed(() => this.datosPrincipalesStore.usuariosSuperadministrador());
   readonly routesPaths = RoutesPaths;

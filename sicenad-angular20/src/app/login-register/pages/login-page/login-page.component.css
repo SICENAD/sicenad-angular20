@@ -3,14 +3,6 @@
   color: #a3b18a;
 }
 
-.login-form {
-  max-width: 300px;
-  /* Controla el ancho */
-  text-align: left;
-  /* Alinea el contenido a la izquierda */
-  font-weight: bold;
-}
-
 .btn-primary {
   background: #a3b18a;
   border: none;

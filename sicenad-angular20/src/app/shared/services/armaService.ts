@@ -49,6 +49,7 @@ export class ArmaService {
       })
     );
   }
+  
   deleteArma(idArma: string): Observable<any> {
     const endpoint = `/armas/${idArma}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(

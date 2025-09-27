@@ -50,6 +50,12 @@ export class InfoCenadPageComponent {
     infoCenad: [null] // archivo opcional, se reemplaza si se carga uno nuevo
   });
 
+  get direccion() { return this.cenadForm.get('direccion'); }
+  get tfno() { return this.cenadForm.get('tfno'); }
+  get email() { return this.cenadForm.get('email'); }
+  get descripcion() { return this.cenadForm.get('descripcion'); }
+  get infoCenad() { return this.cenadForm.get('infoCenad'); }
+
   private esperarYCargarInfoCenad = void effect(() => {
     this.infoCenadActual.set(this.cenadVisitado()?.infoCenad || '');
     const infoCenad = this.cenadVisitado()?.infoCenad;
@@ -89,11 +95,6 @@ export class InfoCenadPageComponent {
       });
     }
   }
-  get direccion() { return this.cenadForm.get('direccion'); }
-  get tfno() { return this.cenadForm.get('tfno'); }
-  get email() { return this.cenadForm.get('email'); }
-  get descripcion() { return this.cenadForm.get('descripcion'); }
-  get infoCenad() { return this.cenadForm.get('infoCenad'); }
 
   onFileChange(event: any) {
     const file: File = event.target.files[0];

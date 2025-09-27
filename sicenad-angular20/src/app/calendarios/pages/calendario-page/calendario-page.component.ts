@@ -58,7 +58,7 @@ export class CalendarioPageComponent {
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   recursos = computed(() => this.cenadStore.recursos());
   solicitudesCenad = computed(() => this.cenadStore.solicitudes());
-  solicitudes = signal<Solicitud[]>(this.solicitudesCenad());
+  solicitudes = signal<Solicitud[]>(this.cenadStore.solicitudesValidada());
 
   constructor() {
     //this.initComponent();
@@ -72,7 +72,6 @@ export class CalendarioPageComponent {
   /** Comprueba la sesión del usuario */
   private comprobarUser() {
     this.isAutenticado.set(this.auth.isAuthenticated());
-
     if (!this.isAutenticado()) {
       this.isUsuarioNormal.set(false);
       this.isAdministrador.set(false);
@@ -80,7 +79,6 @@ export class CalendarioPageComponent {
       this.isSuperAdmin.set(false);
       return;
     }
-
     this.isAdministrador.set(this.usuarioLogueadoStore.usuarioLogueado()?.rol === 'Administrador');
     this.isGestor.set(this.usuarioLogueadoStore.usuarioLogueado()?.rol === 'Gestor');
     this.isUsuarioNormal.set(this.usuarioLogueadoStore.usuarioLogueado()?.rol === 'Normal');
@@ -148,5 +146,4 @@ export class CalendarioPageComponent {
       }
     });
   }
-
 }

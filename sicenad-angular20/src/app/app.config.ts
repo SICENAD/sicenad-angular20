@@ -35,7 +35,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([tokenApiInterceptor, filesInterceptor, globalHttpErrorInterceptor])), // Provee HttpClient a toda la app
+    provideHttpClient(withInterceptors([tokenApiInterceptor, filesInterceptor
+      //, globalHttpErrorInterceptor  // no lo quiero usar de momento
+    ])), // Provee HttpClient a toda la app
     provideAnimations(),
     provideAngularCalendar(), // Configuración global de angular-calendar
     // Configuración global de ngx-toastr

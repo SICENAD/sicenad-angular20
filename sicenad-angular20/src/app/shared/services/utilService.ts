@@ -7,7 +7,6 @@ export class UtilService {
   private toastr = inject(ToastrService);
 
   // ----------------- TOAST -----------------
-
   toast(str: string, tipo: string) {
     switch (tipo) {
       case 'warning':
@@ -68,11 +67,9 @@ export class UtilService {
    */
   localDateToIso(dateString?: string | null): string | null {
     if (!dateString) return null;
-
     // Interpreta como local a las 00:00
     const [year, month, day] = dateString.split('-').map(Number);
     const localDate = new Date(year, month - 1, day);
-
     return localDate.toISOString(); // => UTC
   }
 
@@ -81,7 +78,6 @@ export class UtilService {
    */
   localDateTimeToIso(dateTimeString?: string | Date | null): string | null {
     if (!dateTimeString) return null;
-
     const date = new Date(dateTimeString);
     // construir string manual sin milisegundos
     const year = date.getUTCFullYear();
@@ -90,10 +86,8 @@ export class UtilService {
     const hours = String(date.getUTCHours()).padStart(2, '0');
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
   }
-
 
   // ----------------- PATH PUBLIC -----------------
   baseNormalizada(): string {

@@ -23,7 +23,7 @@ export class SolicitudComponent {
   private cenadStore = inject(CenadStore);
   private usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   private iconoStore = inject(IconosStore);
-   utilService = inject(UtilService);
+  utilService = inject(UtilService);
   private orquestadorService = inject(OrquestadorService);
 
   faEdit = this.iconoStore.faEdit;
@@ -38,11 +38,9 @@ export class SolicitudComponent {
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
   });
-
   isGestorEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
   });
-
   isAdminEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
   });
@@ -53,20 +51,18 @@ export class SolicitudComponent {
   fechaInicioString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraInicioRecurso));
   fechaFinString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraFinRecurso));
 
-    constructor() {
+  constructor() {
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
       const solicitudActual = this.solicitud();
       const recursos = this.recursos();
-      if (!recursos  || !solicitudActual) return;
-
+      if (!recursos || !solicitudActual) return;
       // Cargar la categoría del recurso
       this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.idString).subscribe({
         next: (recurso) => {
           const recursoRef = recurso
             ? recursos.find(r => r.idString === recurso.idString) || null
             : null;
-
           this.recurso.set(recursoRef);
         },
         error: () => {

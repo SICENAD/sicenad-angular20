@@ -3,17 +3,11 @@ h1 {
   font-weight: bold;
 }
 
-h3, fa-icon.fa-2x:hover {
+fa-icon:hover {
   color: #3A5A40;
 }
 
-.nav {
-  position: relative;
-  margin: 0 30%;
-  text-align: left;
-  top: 40%;
-  transform: translateY(-50%);
-}
+
 
 fa-icon.menu {
   color: #DAD7CD;

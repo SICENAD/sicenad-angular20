@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './login-register/pages/register-page/register-page.component';
 import { LoginComponent } from './login-register/pages/login-page/login-page.component';
 import { HomeComponent } from '@app/home-cenads_provincia/pages/home-page/home-page.component';
 import { CenadPageComponent } from './cenad-visitado/pages/cenad-page/cenad-page.component';
@@ -32,7 +31,6 @@ export const RoutesPaths = {
   usuariosCenad: 'usuarios',
   unidadesCenad: 'unidades',
   notFound: '/not-found'
-
 };
 
 export const routes: Routes = [
@@ -42,7 +40,7 @@ export const routes: Routes = [
   },
   {
     path: 'register',
-    component: RegisterComponent
+    loadComponent: () => import('./login-register/pages/register-page/register-page.component').then(m => m.RegisterComponent)
   },
   {
     path: 'login',
@@ -56,7 +54,6 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        //component: CenadsPageComponent
         redirectTo: RoutesPaths.cenads,
         pathMatch: 'full'
       },
@@ -130,7 +127,6 @@ export const routes: Routes = [
       },
       {
         path: RoutesPaths.calendario,
-       // loadComponent: () => import('./calendarios/calendario/calendario.component').then(m => m.CalendarioComponent)
         loadComponent: () => import('./calendarios/pages/calendario-page/calendario-page.component').then(m => m.CalendarioPageComponent)
       },
       {

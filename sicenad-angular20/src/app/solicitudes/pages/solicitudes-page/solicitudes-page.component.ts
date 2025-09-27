@@ -31,11 +31,9 @@ export class SolicitudesPageComponent {
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
   });
-
   isGestorEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
   });
-
   isAdminEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
   });

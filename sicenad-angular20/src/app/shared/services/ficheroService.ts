@@ -97,7 +97,6 @@ export class FicheroService {
       );
     };
     if (!archivo) return patchFichero();
-
     const endpointUpload = idRecurso ? `/files/${idCenad}/subirDocRecurso/${idRecurso}` : `/files/${idCenad}/subirDocSolicitud/${idSolicitud}`;
     return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
       concatMap(nuevoFichero => {

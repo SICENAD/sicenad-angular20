@@ -1,11 +1,6 @@
-div,
-div a {
+div {
   color: #A3B18A;
   font-weight: bold;
-}
-
-fa-icon:hover {
-  color: #588157;
 }
 
 .row {
@@ -17,8 +12,4 @@ fa-icon:hover {
 hr {
   margin-bottom: 0;
   margin-top: 0;
-}
-
-.list:hover {
-  background-color: aqua;
 }

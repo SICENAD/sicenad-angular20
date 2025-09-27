@@ -10,5 +10,4 @@ import { RoutesPaths } from '@app/app.routes';
 })
 export class FooterComponent {
   readonly routesPaths = RoutesPaths;
-
 }

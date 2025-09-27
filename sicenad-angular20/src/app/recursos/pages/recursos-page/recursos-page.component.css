@@ -8,10 +8,6 @@
 .btn:hover {
     background-color: #A3B18A;
 }
-.categoriaSeleccionada {
-    font-weight: bold;
-    font-size: large;
-}
 
 .titulo {
     color: #3A5A40;
@@ -20,11 +16,6 @@
 
 .titulo1 {
     color: #588157;
-}
-
-h5 {
-    color: #354f52;
-    font-weight: bold;
 }
 
 a.volver {

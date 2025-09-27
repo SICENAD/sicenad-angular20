@@ -57,6 +57,7 @@ export class UnidadService {
       })
     );
   }
+  
   deleteUnidad(idUnidad: string): Observable<any> {
     const endpoint = `/unidades/${idUnidad}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(

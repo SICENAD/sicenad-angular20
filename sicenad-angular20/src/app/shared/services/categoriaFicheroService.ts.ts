@@ -57,6 +57,7 @@ export class CategoriaFicheroService {
       })
     );
   }
+  
   deleteCategoriaFichero(idCategoriaFichero: string): Observable<any> {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(

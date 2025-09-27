@@ -38,20 +38,22 @@ export class CategoriaModalComponent {
     categoriaPadre: [null]
   });
 
+  get nombre() { return this.categoriaForm.get('nombre'); }
+  get descripcion() { return this.categoriaForm.get('descripcion'); }
+  get categoriaPadre() { return this.categoriaForm.get('categoriaPadre'); }
+
   constructor() {
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
       const categorias = this.categorias();
       const categoriaActual = this.categoria();
       if (!categorias || !categoriaActual) return;
-
       // Cargar la categoría padre
       this.orquestadorService.loadCategoriaPadre(categoriaActual.idString).subscribe({
         next: (padre) => {
           const padreRef = padre
             ? categorias.find(c => c.idString === padre.idString) || null
             : null;
-
           this.categoriaForm.patchValue({ categoriaPadre: padreRef });
         },
         error: () => {
@@ -61,19 +63,14 @@ export class CategoriaModalComponent {
     });
   }
 
-ngOnInit(): void {
-  if (!this.categoria()) return;
-
-  // Cargar los valores básicos
-  this.categoriaForm.patchValue({
-    nombre: this.categoria()?.nombre || '',
-    descripcion: this.categoria()?.descripcion || ''
-  });
-}
-
-  get nombre() { return this.categoriaForm.get('nombre'); }
-  get descripcion() { return this.categoriaForm.get('descripcion'); }
-  get categoriaPadre() { return this.categoriaForm.get('categoriaPadre'); }
+  ngOnInit(): void {
+    if (!this.categoria()) return;
+    // Cargar los valores básicos
+    this.categoriaForm.patchValue({
+      nombre: this.categoria()?.nombre || '',
+      descripcion: this.categoria()?.descripcion || ''
+    });
+  }
 
   editarCategoria() {
     if (this.categoriaForm.invalid) {

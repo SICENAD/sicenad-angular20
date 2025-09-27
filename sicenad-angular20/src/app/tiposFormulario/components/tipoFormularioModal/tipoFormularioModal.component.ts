@@ -32,7 +32,10 @@ export class TipoformularioModalComponent {
     descripcion: ['', Validators.required]
   });
 
-ngOnInit(): void {
+  get nombre() { return this.tipoFormularioForm.get('nombre'); }
+  get descripcion() { return this.tipoFormularioForm.get('descripcion'); }
+
+  ngOnInit(): void {
     if (this.tipoFormulario()) {
       this.tipoFormularioForm.patchValue({
         nombre: this.tipoFormulario()?.nombre || '',
@@ -40,10 +43,6 @@ ngOnInit(): void {
       });
     }
   }
-
-  get nombre() { return this.tipoFormularioForm.get('nombre'); }
-  get descripcion() { return this.tipoFormularioForm.get('descripcion'); }
-
 
   editarTipoFormulario() {
     if (this.tipoFormularioForm.invalid) {
@@ -63,6 +62,7 @@ ngOnInit(): void {
       }
     });
   }
+
   borrarTipoFormulario() {
     this.orquestadorService.borrarTipoFormulario(this.idTipoFormulario()).subscribe(() => {
       this.output.emit(); // notificamos al padre

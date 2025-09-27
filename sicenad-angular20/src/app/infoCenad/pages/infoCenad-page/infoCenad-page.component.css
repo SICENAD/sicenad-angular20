@@ -6,15 +6,11 @@
     background-color: #A3B18A;
 }
 
-/* h3 {
-  color: #354f52; font-weight: bold
-} */
 .titulo,
 .texto {
     color: #3A5A40;
 }
 
-.titulo1,
 .letra {
     color: #588157;
 }
@@ -40,20 +36,8 @@ hr {
     margin-top: 0;
 }
 
-div.titulos {
-    background-color: #DAD7CD;
-}
-
-figure {
-    display: inline-block;
-}
-
 .texto {
     white-space: pre-wrap;
-}
-
-h3 {
-    color: #3A5A40;
 }
 
 img.cenad {

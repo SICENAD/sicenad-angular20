@@ -6,19 +6,13 @@
   background-color: #A3B18A;
 }
 
-.titulo,
-.texto {
+.titulo {
   color: #3A5A40;
 }
 
 .titulo1,
 .letra {
   color: #588157;
-}
-
-a.volver {
-  color: #3A5A40;
-  font-size: 18px;
 }
 
 a {
@@ -78,22 +72,6 @@ figure {
 
 h3 {
   color: #3A5A40;
-}
-
-img.cenad {
-  display: block;
-  width: 365px;
-  height: 533px;
-  align-content: center;
-  margin: auto;
-  padding-bottom: 2px;
-}
-
-div.informacion {
-  border: 6px solid #354f52;
-  border-top: 0px;
-  border-bottom: 0px;
-  border-right: 0px;
 }
 
 .close {

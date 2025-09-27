@@ -69,7 +69,6 @@ export class RecursosPageComponent {
 
   // Filtro
   filtro = signal<string>('');
-
   /** Recursos filtrados en función de categoría seleccionada y texto de búsqueda */
   recursosFiltrados = computed(() => {
     const term = this.filtro().toLowerCase();
@@ -109,5 +108,4 @@ export class RecursosPageComponent {
         error: (err) => console.error('Error en la creación de categoría', err)
       });
   }
-
 }

@@ -37,11 +37,9 @@ export class SolicitudNuevaModalComponent {
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
   });
-
   isGestorEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
   });
-
   isAdminEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
   });
@@ -164,7 +162,6 @@ export class SolicitudNuevaModalComponent {
       this.orquestadorService.loadRecursosDeSubcategorias(idCat).subscribe({
         next: (rec) => {
           const recursosCat = rec ?? [];
-
           this.cacheRecursos.update(cache => {
             const nuevo = new Map(cache);
             nuevo.set(idCat, recursosCat);
@@ -176,7 +173,6 @@ export class SolicitudNuevaModalComponent {
     }
     this.loading.set(false);
   }
-
 
   /** Borrar filtros y volver al estado inicial */
   borrarFiltros() {
@@ -231,7 +227,6 @@ export class SolicitudNuevaModalComponent {
       });
     }
     this.solicitudForm.patchValue({ categoria: null, recurso: null });
-
   }
 
   /** Carga recursos para retroceder en historial */

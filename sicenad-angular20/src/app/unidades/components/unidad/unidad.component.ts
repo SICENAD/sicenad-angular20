@@ -9,6 +9,5 @@ import { Unidad } from '@interfaces/models/unidad';
   styleUrls: ['./unidad.component.css']
 })
 export class UnidadComponent {
-
-    unidad = input.required<Unidad>();
+  unidad = input.required<Unidad>();
 }

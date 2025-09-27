@@ -24,7 +24,6 @@ export class ArmaModalComponent {
   arma = input<Arma>();
   output = output<void>();
 
-
   // --- State ---
   tiposTiro = computed(() => this.utils.tiposTiro());
   idArma = computed(() => this.arma()?.idString || '');
@@ -68,6 +67,7 @@ export class ArmaModalComponent {
       }
     });
   }
+  
   borrarArma() {
     this.orquestadorService.borrarArma(this.idArma()).subscribe(() => {
       this.output.emit(); // notificamos al padre

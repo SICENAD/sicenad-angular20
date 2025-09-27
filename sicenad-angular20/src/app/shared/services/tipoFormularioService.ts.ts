@@ -57,6 +57,7 @@ export class TipoFormularioService {
       })
     );
   }
+  
   deleteTipoFormulario(idTipoFormulario: string): Observable<any> {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
