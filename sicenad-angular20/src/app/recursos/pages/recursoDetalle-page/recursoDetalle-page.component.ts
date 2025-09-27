@@ -8,16 +8,18 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { Categoria } from '@interfaces/models/categoria';
 import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { Recurso } from '@interfaces/models/recurso';
+import { Solicitud } from '@interfaces/models/solicitud';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UtilsStore } from '@stores/utils.store';
+import { CalendarioComponent } from "@app/calendarios/components/calendario/calendario.component";
 
 @Component({
   selector: 'app-recursoDetalle',
-  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosRecursoComponent],
+  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosRecursoComponent, CalendarioComponent],
   templateUrl: './recursoDetalle-page.component.html',
   styleUrls: ['./recursoDetalle-page.component.css']
 })
@@ -45,6 +47,7 @@ export class RecursoDetallePageComponent {
   categoria = signal<Categoria | null>(null);
   recurso = signal<Recurso | null>(null);
   ficheros = signal<FicheroRecurso[]>([]);
+  solicitudesValidadas = signal<Solicitud[]>([]);
 
   isGestorEsteRecurso = computed(() => {
     return (this.usuarioLogueado.usuarioLogueado()?.idString === this.idGestorDelRecurso()) && (this.auth.rol() === RolUsuario.Gestor);
@@ -119,6 +122,14 @@ export class RecursoDetallePageComponent {
     });
     // Cargar los ficheros del recurso
     this.recargarFicheros();
+    // Cargar las solicitudes validadas del recurso
+    this.orquestadorService.loadSolicitudesDeRecursoPorEstado(this.idRecurso(), 'Validada').subscribe({
+      next: (solicitudes) => {
+        this.solicitudesValidadas.set(solicitudes ?? []);
+      },
+      error: () => {
+      }
+    });
   }
 
   cambiaRol() {

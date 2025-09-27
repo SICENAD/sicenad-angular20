@@ -2,11 +2,15 @@ import { Injectable, effect, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
-export class TranslationService {
+export class IdiomaService {
   private translate = inject(TranslateService);
 
   // Signal para almacenar idioma actual
   idioma = signal<string>('es');
+
+  idiomaActual() {
+    return this.idioma();
+  }
 
   constructor() {
     this.init();
@@ -28,10 +32,6 @@ export class TranslationService {
 
   cambiarIdioma(idioma: string) {
     this.idioma.set(idioma);
-  }
-
-  idiomaActual() {
-    return this.idioma();
   }
 
   // Método para traducir dentro del TS

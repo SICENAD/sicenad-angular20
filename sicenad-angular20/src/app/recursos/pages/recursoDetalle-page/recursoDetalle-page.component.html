@@ -91,8 +91,7 @@
     <div class="titulo">
       <h4 class="text-center"><b>CALENDARIO</b></h4>
       <hr />
-      <a href="/manual.pdf" target="_blank" rel="noopener">
-        <p class="texto href ms-3">Calendario del recurso {{ recurso()?.nombre }}</p>
+      <a class="texto href ms-3" data-bs-toggle="modal" data-bs-target="#modal-calendario">Calendario del recurso {{ recurso()?.nombre }}
       </a>
     </div>
     <div class="titulo">
@@ -109,4 +108,22 @@
     }
   </div>
   }
+</div>
+<!-- Modal calendario -->
+<div class="modal fade" id="modal-calendario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xxl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Calendario del recurso {{ recurso()?.nombre }}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <app-calendarioComponente [solicitudes]="solicitudesValidadas()" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
 </div>

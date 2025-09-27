@@ -1,13 +1,13 @@
 import { Injectable, computed, inject, effect } from '@angular/core';
 import { Idioma } from '@interfaces/others/idioma';
-import { TranslationService } from '@services/translationService';
 import { UtilService } from '@services/utilService';
 import { UtilsStore } from './utils.store';
+import { IdiomaService } from '@services/idiomaService';
 
 @Injectable({ providedIn: 'root' })
 export class IdiomasStore {
   private utils = inject(UtilsStore);
-  private translation = inject(TranslationService);
+  private idiomaService = inject(IdiomaService);
   private utilService = inject(UtilService);
 
   // Idiomas disponibles: directamente desde el store de properties
@@ -21,22 +21,21 @@ export class IdiomasStore {
   });
 
   // Idioma actual (signal que delega en TranslationService)
-  idiomaActual = computed(() => this.translation.idioma());
+  idiomaActual = computed(() => this.idiomaService.idioma());
 
-   constructor() {
+  constructor() {
     // Cada vez que idiomasDisponibles cambie, sincronizamos con TranslationService
     effect(() => {
       const codigos = this.idiomasDisponibles().map(i => i.codigo);
-      this.translation.addIdiomas(codigos);
+      this.idiomaService.addIdiomas(codigos);
     });
   }
 
-  // Cambiar idioma
+  // Métodos
   cambiarIdioma(idioma: string) {
-    this.translation.cambiarIdioma(idioma);
+    this.idiomaService.cambiarIdioma(idioma);
   }
 
-  // Métodos
   getBandera(codigo: string) {
     const found = this.idiomasDisponibles().find(i => i.codigo === codigo);
     return found?.bandera || `${this.utilService.baseNormalizada()}img/banderas/default.svg`;
@@ -46,7 +45,8 @@ export class IdiomasStore {
     const found = this.idiomasDisponibles().find(i => i.codigo === codigo);
     return found?.etiqueta || codigo;
   }
+
   mostrarAlert() {
-    alert(this.translation.t('comun.ALERT_MSG'));
+    alert(this.idiomaService.t('comun.ALERT_MSG'));
   }
 }

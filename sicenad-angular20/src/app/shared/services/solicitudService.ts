@@ -50,6 +50,20 @@ export class SolicitudService {
     );
   }
 
+  getSolicitudesDeRecursoPorEstado(idRecurso: string, estado: string): Observable<Solicitud[]> {
+    const endpoint = `/recursos/${idRecurso}/solicitudesEstado/${estado}?size=1000`;
+    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
+      map(res => {
+        console.log(`Solicitudes recibidas para el recurso ${idRecurso} con estado ${estado}:`, res);
+        return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
+      }),
+      catchError(err => {
+        console.error(err);
+        return of([]);
+      })
+    );
+  }
+
   getSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
     const endpoint = `/solicitudes/${idSolicitud}`;
     return this.apiService.request<Solicitud>(endpoint, 'GET').pipe(

@@ -1,6 +1,7 @@
 .container-fluid {
-  padding-bottom: 80px;
+    padding-bottom: 80px;
 }
+
 .btn {
     background: #3A5A40;
 }
@@ -28,20 +29,27 @@ a.volver {
 }
 
 a {
-    text-decoration: none;      /* Sin subrayado */
-    color: #3A5A40;            /* Color por defecto */
+    text-decoration: none;
+    /* Sin subrayado */
+    color: #3A5A40;
+    /* Color por defecto */
 }
 
 a:visited {
-    color: #3A5A40;            /* Evita color morado */
+    color: #3A5A40;
+    /* Evita color morado */
 }
 
 a:hover {
-    color: #A3B18A;            /* Color al pasar el mouse */
+    color: #A3B18A;
+    /* Color al pasar el mouse */
+    cursor: pointer;
+    /* Cambia el cursor al pasar el mouse */
 }
 
 a:active {
-    color: #3A5A40;            /* Mantiene color al hacer clic */
+    color: #3A5A40;
+    /* Mantiene color al hacer clic */
 }
 
 a.volver:hover,
@@ -90,4 +98,23 @@ div.informacion {
     border-top: 0px;
     border-bottom: 0px;
     border-right: 0px;
+}
+
+.modal-xxl {
+    max-width: 95%;
+    /* casi toda la pantalla, pero con margen */
+}
+
+.modal-content {
+    height: 100vh;
+    /* Ocupa el 100% de la altura de la pantalla */
+    border-radius: 0;
+    /* Quita esquinas redondeadas para fullscreen */
+}
+
+.modal-body {
+    overflow-y: auto;
+    /* Scroll solo si el contenido se pasa */
+    max-height: calc(100vh - 120px);
+    /* Deja espacio para header y footer */
 }

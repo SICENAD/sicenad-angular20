@@ -1271,6 +1271,15 @@ export class OrquestadorService {
     );
   }
 
+  loadSolicitudesDeRecursoPorEstado(idRecurso: string, estado: string): Observable<Solicitud[] | null> {
+    return this.solicitudService.getSolicitudesDeRecursoPorEstado(idRecurso, estado).pipe(
+      catchError(err => {
+        console.error('Error cargando solicitudes del recurso', err);
+        return of([]);
+      })
+    );
+  }
+
   // --- CRUD Armas ---
   crearArma(nombre: string, tipoTiro: string): Observable<any> {
     return this.armaService.crearArma(nombre, tipoTiro).pipe(

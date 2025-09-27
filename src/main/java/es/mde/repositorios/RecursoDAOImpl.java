@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import es.mde.entidades.CategoriaFichero;
 import es.mde.entidades.Fichero;
+import es.mde.entidades.SolicitudRecurso;
 
 /**
- * Representa la clase implementada con los metodos personalizados de los recursos 
+ * Representa la clase implementada con los metodos personalizados de los
+ * recursos
+ * 
  * @author JOSE LUIS PUENTES ALAMOS - MIGUEL PRADA MUNOZ
  *
  */
@@ -22,10 +25,12 @@ public class RecursoDAOImpl implements RecursoDAOCustom {
 
 	@PersistenceContext
 	EntityManager entityManager;
-	
+
 	@Override
 	/**
-	 * Devuelve una lista de las categorias de ficheros que tienen los ficheros de un recurso
+	 * Devuelve una lista de las categorias de ficheros que tienen los ficheros de
+	 * un recurso
+	 * 
 	 * @param id Id del recurso
 	 */
 	public List<CategoriaFichero> getCategoriasFicheroDeRecurso(Long id) {
@@ -40,5 +45,19 @@ public class RecursoDAOImpl implements RecursoDAOCustom {
 			}
 		}
 		return categoriasFichero;
+	}
+
+	@Override
+	/**
+	 * Devuelve una lista de las solcitudes de un recurso y un estado
+	 * 
+	 * @param id Id del recurso
+	 * @param estado Estado de la solicitud
+	 */
+	public List<SolicitudRecurso> getSolicitudesDeRecursoPorEstado(Long id, String estado) {
+
+		List<SolicitudRecurso> solicitudes = new ArrayList<SolicitudRecurso>();
+		solicitudes = this.recursoDAO.findById(id).get().getSolicitudes().stream().filter(s -> s.getEstado().equalsIgnoreCase(estado)).collect(Collectors.toList());
+		return solicitudes;
 	}
 }
