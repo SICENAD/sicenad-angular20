@@ -1,25 +1,25 @@
 a.volver {
-  color: #3A5A40;
+  color: var(--color3);
   font-size: 18px;
 }
 
 a.volver:hover {
-  color: #A3B18A;
+  color: var(--color1);
 }
 
 .titulo {
   text-align: center;
   margin-top: 5px;
-  color: #3A5A40;
+  color: var(--color3);
   font-weight: bold;
 }
 
 .titulo1 {
-  color: #588157;
+  color: var(--color1);
 }
 
 h1 {
-  color: #354f52;
+  color: var(--color3);
   font-weight: bold;
 }
 

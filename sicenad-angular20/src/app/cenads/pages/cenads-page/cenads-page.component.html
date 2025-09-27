@@ -101,7 +101,7 @@
               ><b>ESCUDO<sup class="text-danger">*</sup></b> (Máx: {{ sizeMaxEscudo() }} MB)</label
             >
             <input type="file" accept="image/*" (change)="onFileChange($event)" #fileInput hidden />
-            <button type="button" class="btn" (click)="fileInput.click()">
+            <button type="button" class="btn ms-3" (click)="fileInput.click()">
               Seleccionar archivo
             </button>
           </div>
@@ -120,10 +120,10 @@
           }
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn"
             data-bs-dismiss="modal"
             [disabled]="cenadForm.invalid"
             (click)="crearCenad()"

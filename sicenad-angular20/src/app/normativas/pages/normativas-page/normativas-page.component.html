@@ -9,7 +9,7 @@
     <u>NORMATIVA DEL {{ cenadVisitado()?.nombre }}</u>
   </h3>
   @if (isAdminEsteCenad()) {
-  <button class="btn text-white ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nueva-normativa">
+  <button class="btn ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nueva-normativa">
     Nueva <b>Normativa</b>
   </button>
   }
@@ -83,10 +83,10 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn"
             data-bs-dismiss="modal"
             [disabled]="normativaForm.invalid"
             (click)="crearNormativa()"

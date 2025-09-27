@@ -1,57 +1,60 @@
 .container-fluid {
-    padding-bottom: 80px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .btn {
-    background: #3A5A40;
+    background: var(--color3);
+    color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #A3B18A;
+    background-color: var(--color1);
 }
 
-.titulo,
+h1, .titulo,
 .texto {
-    color: #3A5A40;
+    color: var(--color3);
 }
 
 .titulo1,
 .letra {
-    color: #588157;
+    color: var(--color1);
 }
 
 a.volver {
-    color: #3A5A40;
+    color: var(--color3);
     font-size: 18px;
 }
 
 a {
     text-decoration: none;
     /* Sin subrayado */
-    color: #3A5A40;
+    color: var(--color3);
     /* Color por defecto */
 }
 
 a:visited {
-    color: #3A5A40;
+    color: var(--color3);
     /* Evita color morado */
 }
 
 a:hover {
-    color: #A3B18A;
+    color: var(--color1);
     /* Color al pasar el mouse */
     cursor: pointer;
     /* Cambia el cursor al pasar el mouse */
 }
 
 a:active {
-    color: #3A5A40;
+    color: var(--color3);
     /* Mantiene color al hacer clic */
 }
 
 a.volver:hover,
 .href:hover {
-    color: #A3B18A;
+    color: var(--color1);
 }
 
 .row {
@@ -65,16 +68,12 @@ hr {
     margin-top: 0;
 }
 
-div.titulos {
-    background-color: #DAD7CD;
-}
-
 .texto {
     white-space: pre-wrap;
 }
 
 h3 {
-    color: #3A5A40;
+    color: var(--color3);
 }
 
 .modal-xxl {

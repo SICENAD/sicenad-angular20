@@ -1,16 +1,8 @@
-h2,
-div.resultado {
-    color: #354f52;
-}
-
-.bienvenido,
-.select-provincia {
-    color: #52796f;
-}
-
+h2, .bienvenido,
+.select-provincia, 
 .seleccione,
 .busqueda {
-    color: #84a98c;
+    color: var(--color2);
 }
 
 div.interactivo {
@@ -22,13 +14,13 @@ div.interactivo {
 }
 
 div.filtro {
-    border: 6px solid #354f52;
+    border: 6px solid var(--color3);
     border-top: 0px;
     border-bottom: 0px;
     border-right: 0px;
 }
 
-.no-existe {
-    color: #52796f;
+.no-existe, div.resultado {
+    color: var(--color1);
     font-weight: 700;
 }

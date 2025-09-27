@@ -1,18 +1,19 @@
 .btn {
-    background: #3A5A40;
+    background: var(--color3);
+    color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #A3B18A;
+    background-color: var(--color1);
 }
 
-.titulo {
-    color: #3A5A40;
+.titulo, h1 {
+    color: var(--color3);
 }
 
 .titulo1,
 .letra {
-    color: #588157;
+    color: var(--color3);
 }
 
 .row {
@@ -27,11 +28,11 @@ hr {
 }
 
 div.titulos {
-    background-color: #DAD7CD;
+    background-color: var(--color11);
 }
 
 h3 {
-    color: #3A5A40;
+    color: var(--color3);
 }
 
 .close {

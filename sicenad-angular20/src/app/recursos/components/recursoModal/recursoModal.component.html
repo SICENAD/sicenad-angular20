@@ -71,10 +71,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
@@ -82,7 +82,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-success"
+          class="btn"
           (click)="editarRecurso()"
           data-bs-dismiss="modal"
           [disabled]="recursoForm.invalid"
@@ -103,10 +103,10 @@
       </div>
       <div class="modal-body">¿Desea eliminar {{ recurso()!.nombre }}?</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           (click)="borrarRecurso()"
           data-bs-dismiss="modal"
         >

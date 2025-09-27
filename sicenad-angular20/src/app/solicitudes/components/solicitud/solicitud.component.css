@@ -1,5 +1,5 @@
 .titulo1 {
-  color: #A3B18A;
+  color: var(--color1);
 }
 
 .titulo1 a {
@@ -15,5 +15,5 @@
 }
 
 fa-icon:hover {
-  color: #588157;
+  color: var(--color3);
 }

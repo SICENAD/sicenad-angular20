@@ -1,26 +1,29 @@
 .container {
   padding: 20px;
-  color: #a3b18a;
+  color: var(--color3);
 }
 
 .btn-primary {
-  background: #a3b18a;
+  background: var(--color3);
   border: none;
   font-size: 14px;
-  color: white;
+  color: var(--color11);
   padding: 8px 16px;
 }
 
 .btn-primary:hover {
-  background-color: #588157;
+  background-color: var(--color1);
 }
 
 .link-personalizado {
-  color: #a3b18a;
+  color: var(--color3);
   text-decoration: underline;
   font-weight: bold;
 }
 
+.link-personalizado:hover {
+  color: var(--color1);
+}
 h1 {
-  color: #588157;
+  color: var(--color2);
 }

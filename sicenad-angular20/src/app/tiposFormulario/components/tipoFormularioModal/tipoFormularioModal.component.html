@@ -33,10 +33,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
@@ -44,7 +44,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-success"
+          class="btn"
           (click)="editarTipoFormulario()"
           data-bs-dismiss="modal"
           [disabled]="tipoFormularioForm.invalid"
@@ -65,10 +65,10 @@
       </div>
       <div class="modal-body">¿Desea eliminar {{ tipoFormulario()?.nombre }}?</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           (click)="borrarTipoFormulario()"
           data-bs-dismiss="modal"
         >

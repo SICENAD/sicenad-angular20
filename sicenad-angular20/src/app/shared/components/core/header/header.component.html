@@ -3,7 +3,7 @@
     <h5 class="me-3">{{ 'comun.seleccionaIdioma' | translate }}</h5>
     <span class="dropdown">
       <button
-        class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center rounded-pill px-3"
+        class="btn dropdown-toggle d-flex align-items-center rounded-pill px-3"
         type="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
@@ -26,19 +26,19 @@
         }
       </ul>
     </span>
-    <button class="btn btn-outline-secondary rounded-pill px-3 ms-4" (click)="mostrarAlert()">
+    <button class="btn rounded-pill px-3 ms-4" (click)="mostrarAlert()">
       {{ 'comun.mostrarIdioma' | translate }}
     </button>
   </span>
   @if (token()) {
   <p class="alert alert-success">
     {{ username() }} autenticado en la API como {{ identificacion() }}
-    <button class="btn btn-success ms-3" (click)="logout()">Cerrar sesión</button>
+    <button class="btn ms-3" (click)="logout()">Cerrar sesión</button>
   </p>
   } @else {
   <p class="alert alert-danger">
     Usuario NO autenticado en la API
-    <button class="btn btn-danger ms-2 me-3" [routerLink]="routesPaths.login">
+    <button class="btn ms-2 me-3" [routerLink]="routesPaths.login">
       Iniciar sesión
     </button>
     Necesitas iniciar sesión para poder acceder a los distintos CENAD,s/CMT,s

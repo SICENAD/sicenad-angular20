@@ -175,7 +175,7 @@
       <div class="modal-footer">
         <button
           type="button"
-          class="btn btn-secondary"
+          class="btn"
           data-bs-dismiss="modal"
           (click)="resetForm()"
         >
@@ -186,7 +186,7 @@
           type="button"
           (click)="crearPlanificacion()"
           data-bs-dismiss="modal"
-          class="btn btn-primary"
+          class="btn"
           [disabled]="solicitudForm.invalid"
         >
           Crear Planificación
@@ -196,7 +196,7 @@
           type="button"
           (click)="crearYEnviarSolicitud()"
           data-bs-dismiss="modal"
-          class="btn btn-primary"
+          class="btn"
           [disabled]="solicitudForm.invalid"
         >
           Crear y Enviar Solicitud
@@ -204,7 +204,7 @@
         } @else {
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn"
           data-bs-dismiss="modal"
           [disabled]="solicitudForm.invalid"
           (click)="crearSolicitud()"

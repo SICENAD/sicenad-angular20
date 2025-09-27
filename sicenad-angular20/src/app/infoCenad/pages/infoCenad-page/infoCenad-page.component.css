@@ -1,28 +1,29 @@
 .btn {
-    background: #3A5A40;
+    background: var(--color3);
+    color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #A3B18A;
+    background-color: var(--color1);
 }
 
 .titulo,
 .texto {
-    color: #3A5A40;
+    color: var(--color3);
 }
 
 .letra {
-    color: #588157;
+    color: var(--color1);
 }
 
 a.volver {
-    color: #3A5A40;
+    color: var(--color3);
     font-size: 18px;
 }
 
 a.volver:hover,
 .href:hover {
-    color: #A3B18A;
+    color: var(--color1);
 }
 
 .row {
@@ -50,7 +51,7 @@ img.cenad {
 }
 
 div.informacion {
-    border: 6px solid #354f52;
+    border: 6px solid var(--color2);
     border-top: 0px;
     border-bottom: 0px;
     border-right: 0px;

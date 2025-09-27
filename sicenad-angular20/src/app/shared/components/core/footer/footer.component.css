@@ -1,11 +1,11 @@
 footer {
-  background: #A3B18A;
+  background: var(--color1);
 }
 
 footer a {
-  color: #344E41;
+  color: var(--color3);
 }
 
 footer a:hover {
-  color: white;
+  color: var(--color11);
 }

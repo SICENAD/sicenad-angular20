@@ -1,35 +1,25 @@
 h1 {
-  color: #344E41;
+  color: var(--color3);
   font-weight: bold;
 }
 
-fa-icon:hover {
-  color: #3A5A40;
-}
-
-
-
-fa-icon.menu {
-  color: #DAD7CD;
-}
-
 div.titulo {
-  background-color: #A3B18A;
+  background-color: var(--color1);
   text-align: center;
   height: 5em;
   align-items: center;
 }
 
 div.menu a {
-  color: #588157;
+  color: var(--color3);
   font-weight: bold;
   font-size: 18px;
   margin-top: 12px;
   margin-right: 20px;
 }
 
-div a:hover {
-  color: yellowgreen;
+div a:hover, fa-icon:hover {
+  color: var(--color13);
 }
 
 li.home {
@@ -42,7 +32,7 @@ div.menu a.home {
 }
 
 div.consultar {
- width: 320px !important;
+  width: 320px !important;
 }
 
 div.otros {
@@ -50,24 +40,24 @@ div.otros {
 }
 
 .dropdown-menu {
-   display: none;
-   position: relative;
+  display: none;
+  position: relative;
 }
 
 .dropdown:hover .dropdown-menu {
-   display: block;
+  display: block;
 }
 
 div.submenu {
-   display: none !important;
-   position: relative;
+  display: none !important;
+  position: relative;
 }
 
 .dropdown-submenu:hover .submenu {
-   display: block !important;
-   position: relative;
+  display: block !important;
+  position: relative;
 }
 
 .homePrincipal {
-  cursor:pointer;
+  cursor: pointer;
 }

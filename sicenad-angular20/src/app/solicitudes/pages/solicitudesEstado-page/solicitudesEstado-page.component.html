@@ -37,7 +37,6 @@
   <h6 class="no-existen">NO EXISTEN</h6>
 </div>
 }
-<hr [class]="`w-100 titulo-${claseEstado()}`" />
 @if (mostrarModal()) {
 <!-- Modal -->
 <div class="modal fade" [class]="{ show: mostrarModal() }" style="display: block">
@@ -78,7 +77,7 @@
         }
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn" (click)="cerrarModal()">Cerrar</button>
       </div>
     </div>
   </div>

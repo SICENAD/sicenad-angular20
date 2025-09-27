@@ -1,5 +1,6 @@
-div{
-  color: #A3B18A; font-weight: bold
+div {
+  color: var(--color1);
+  font-weight: bold
 }
 
 .row {

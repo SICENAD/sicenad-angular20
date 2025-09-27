@@ -1,13 +1,3 @@
-.btn {
-    background: #588157;
-    padding: 0.5;
-    font-size: 14px;
-}
-
-.btn:hover {
-    background-color: #a3b18a;
-}
-
 .row {
     height: auto;
     padding: auto;
@@ -24,35 +14,21 @@ div.canceladas,
 div.solicitadas,
 div.rechazadas,
 div.borrador {
-    border: 3px solid #354f52;
-}
-
-.titulo-rechazadas {
-    margin-top: 10px;
-    color: maroon;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px wheat;
-    background-color: #a3b18a;
-}
-
-hr.titulo-rechazadas {
-    color: #344e41;
-    border: 4px;
-    border-style: double;
+    border: 3px solid var(--color8);
 }
 
 h6.no-permiso {
-    color: #a3b18a;
-    text-shadow: #344e41;
+    color: var(--color1);
+    text-shadow: var(--color7);
     font-weight: bold;
     font-size: x-large;
 }
 
 a.volver {
-    color: #3a5a40;
-    font-size: 14px;
+    color: var(--color3);
+    font-size: 18px;
 }
 
 a.volver:hover {
-    color: #a3b18a;
+    color: var(--color1);
 }

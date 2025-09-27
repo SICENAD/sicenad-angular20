@@ -1,21 +1,22 @@
 .btn {
-    background: #588157;
+    background: var(--color3);
     padding: 0.5;
     font-size: 14px;
+    color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #a3b18a;
+    background-color: var(--color1);
 }
 
 .titulos {
-    color: #3a5a40;
+    color: var(--color3);
     font-weight: bold;
     font-size: small;
 }
 
 h5 {
-    color: #354f52;
+    color: var(--color8);
     font-weight: bold;
 }
 
@@ -41,8 +42,8 @@ hr {
 }
 
 h6.no-existen {
-    color: #a3b18a;
-    text-shadow: #344e41;
+    color: var(--color1);
+    text-shadow: var(--color7);
     font-weight: bold;
     font-size: x-large;
 }
@@ -52,7 +53,6 @@ label.ver-todas {
 }
 
 .ver-todas:hover {
-    color: aquamarine;
+    color: var(--color14);
     font-weight: bold;
-    text-shadow: 10px 10px 20px yellowgreen;
 }

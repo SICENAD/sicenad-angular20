@@ -35,7 +35,7 @@
     <div class="modal-content">
       <form [formGroup]="tipoFormularioForm">
         <div class="modal-header">
-          <h1 class="modal-title fs-5">Nuevo Tipo de Formulario</h1>
+          <h1 class="modal-title fs-5 titulo">Nuevo Tipo de Formulario</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -61,10 +61,10 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn"
             data-bs-dismiss="modal"
             [disabled]="tipoFormularioForm.invalid"
             (click)="crearTipoFormulario()"

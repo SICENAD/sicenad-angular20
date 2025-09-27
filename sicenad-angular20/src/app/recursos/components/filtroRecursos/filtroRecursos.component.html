@@ -30,7 +30,7 @@
     <!-- Subcategorías directas -->
     <ng-container>
       @for (sub of subcategorias(); track sub.idString ) {
-      <button class="btn btn-outline-secondary me-2" (click)="seleccionarCategoria(sub)">
+      <button class="btn me-2" (click)="seleccionarCategoria(sub)">
         {{ sub.nombre }}
       </button>
       }

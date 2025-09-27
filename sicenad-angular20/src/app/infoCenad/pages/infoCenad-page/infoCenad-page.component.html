@@ -12,7 +12,7 @@
   <div class="row align-items-start mt-0 pt-0">
     @if (isAdminEsteCenad()) {
     <div class="col-3">
-      <button class="btn text-white" (click)="cambiaRol()">Cambiar a Vista {{ btnVista() }}</button>
+      <button class="btn" (click)="cambiaRol()">Cambiar a Vista {{ btnVista() }}</button>
     </div>
     }
   </div>
@@ -21,7 +21,7 @@
   <div>
     <form [formGroup]="cenadForm">
       <div class="row py-2">
-        <div class="col-lg-4 col-md-12">
+        <div class="col-lg-4 col-md-12 pt-3">
           <label class="titulo"
             ><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label
           >
@@ -134,7 +134,7 @@
             type="button"
             (click)="editarInfoCenad()"
             data-bs-dismiss="modal"
-            class="btn text-white"
+            class="btn"
           >
             Guardar
           </button>

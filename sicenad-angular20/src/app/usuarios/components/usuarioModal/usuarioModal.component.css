@@ -1,22 +1,26 @@
-
 div {
-  color: #A3B18A;
+  color: var(--color1);
   font-weight: bold;
 }
 
-fa-icon:hover, p {
-  color: #588157;
+h1, h5 {
+  color: var(--color3);
+  font-weight: bold;
+}
+
+fa-icon:hover {
+  color: var(--color3);
 }
 
 .btn {
-  background: #A3B18A;
+  background: var(--color3);
   padding: 0.5;
   font-size: 14px;
-  color: white;
+  color: var(--color11);
 }
 
 .btn:hover {
-  background-color: #588157;
-  color: white;
+  background-color: var(--color1);
+  color: var(--color11);
   text-decoration: none;
 }

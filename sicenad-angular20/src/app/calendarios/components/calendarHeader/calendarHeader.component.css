@@ -1,20 +1,23 @@
 .active {
     font-weight: bold;
-    color: yellow !important;
+    color: var(--color15) !important;
 }
 
 .btn {
-    background: #3a5a40;
+    background: var(--color3);
     padding: 0.5rem 1rem;
     font-size: 14px;
-    color: white;
+    color: var(--color11);
 }
 .btn:hover {
-    background-color: #a3b18a;
+    background-color: var(--color1);
 }
 .btn.active {
-    background-color: red;
+    background-color: var(--color10);
 }
 button.active:hover {
-    background-color: red;
+    background-color: var(--color10);
+}
+h3 {
+    color: var(--color3);
 }

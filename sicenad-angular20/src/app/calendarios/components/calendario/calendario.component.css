@@ -1,6 +1,6 @@
 .cal-event .cal-event-title, .mwl-calendar-week-view .cal-event,
 .mwl-calendar-day-view .cal-event {
-  color: black !important;
+  color: var(--color12) !important;
   font-weight: bold !important;
   font-size: 0.75rem;
   white-space: nowrap;
@@ -21,7 +21,7 @@
   position: relative;
   height: 24px; /* Franja para mostrar eventos */
   margin-top: 4px;
-  background: #f8f9fa;
+  background: var(--color11);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -51,4 +51,18 @@ b {
   max-width: auto;
   max-height: min-content;
   margin: 0 auto;
+}
+
+h4 {
+  color: var(--color2);
+  font-weight: bold;
+}
+
+th {
+  color: var(--color3);
+  font-weight: bold;
+}
+
+td {
+  color: var(--color1);
 }

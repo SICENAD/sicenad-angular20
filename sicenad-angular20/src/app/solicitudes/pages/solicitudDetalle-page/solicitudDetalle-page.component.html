@@ -185,7 +185,7 @@
   <div class="mt-3">
     @if (isEditable()) {
     <button
-      class="btn btn-danger me-2"
+      class="btn me-2"
       [attr.data-bs-target]="'#' + idModalEliminar()"
       data-bs-toggle="modal"
     >
@@ -194,7 +194,7 @@
     <button
       type="button"
       (click)="editarSolicitud()"
-      class="btn btn-success"
+      class="btn"
       [disabled]="solicitudForm.invalid"
     >
       Guardar Solicitud
@@ -214,12 +214,12 @@
       </div>
       <div class="modal-body">¿Desea eliminar la solicitud de {{ recurso()?.nombre }}?</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
           (click)="borrarSolicitud()"
           data-bs-dismiss="modal"
-          class="btn btn-danger"
+          class="btn"
         >
           Borrar
         </button>

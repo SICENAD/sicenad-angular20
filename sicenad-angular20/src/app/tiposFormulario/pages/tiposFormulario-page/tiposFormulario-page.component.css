@@ -1,30 +1,31 @@
 .btn {
-    background: #3A5A40;
+    background: var(--color3);
     padding: 0.5;
     font-size: 14px;
+    color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #A3B18A;
+    background-color: var(--color1);
 }
 
-.titulo {
-    color: #3A5A40;
+.titulo, h1 {
+    color: var(--color3);
     font-weight: bold;
 }
 
 .titulo1 {
-    color: #588157;
+    color: var(--color1);
     font-weight: bold;
 }
 
 a.volver {
-    color: #3A5A40;
+    color: var(--color3);
     font-size: 18px;
 }
 
 a.volver:hover {
-    color: #A3B18A;
+    color: var(--color1);
 }
 
 .row {

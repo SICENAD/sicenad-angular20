@@ -1,11 +1,12 @@
 .btn {
-    background: #588157;
-    padding: 0.5;
-    font-size: 14px;
+  background: var(--color3);
+  padding: 0.5;
+  font-size: 14px;
+  color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #a3b18a;
+  background-color: var(--color1);
 }
 
 .modal {
@@ -20,11 +21,9 @@
     margin: auto;
 }
 
-
 select {
-    color: #588157;
+    color: var(--color3);
 }
-
 
 .modal-xxl {
     max-width: 95%;
@@ -46,8 +45,8 @@ select {
 }
 
 .formulario {
-    color: #3a5a40;
+    color: var(--color3);
     font-weight: bold;
-    text-shadow: 1px 1px 1px #a3b18a;
-    background-color: #dad7cd;
+    text-shadow: 1px 1px 1px var(--color1);
+    background-color: var(--color11);
 }

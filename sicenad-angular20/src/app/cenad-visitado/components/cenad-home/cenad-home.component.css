@@ -1,5 +1,5 @@
 h3 {
-  color: #3A5A40;
+    color: var(--color3);
 }
 
 img.cenad {
@@ -12,26 +12,18 @@ img.cenad {
 }
 
 div.enlaces {
-  border: 6px solid #354f52;
+  border: 6px solid var(--color3);
   border-top: 0px;
   border-bottom: 0px;
   border-right: 0px;
 }
 
 div a {
-  color: #588157;
+  color: var(--color2);
   font-weight: bold;
   font-size: 20px;
 }
 
-div.menu a {
-  color: #588157;
-  font-weight: bold;
-  font-size: 18px;
-  margin-top: 12px;
-  margin-right: 20px;
-}
-
 div a:hover {
-  color: yellowgreen;
+  color: var(--color13);
 }

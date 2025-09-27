@@ -1,9 +1,6 @@
-div, div a {
-  color: #A3B18A; font-weight: bold
-}
-
-fa-icon:hover {
-  color: #588157;
+div {
+  color: var(--color1);
+  font-weight: bold
 }
 
 .row {
@@ -17,6 +14,3 @@ hr {
   margin-top: 0;
 }
 
-a {
-  cursor: pointer;
-}

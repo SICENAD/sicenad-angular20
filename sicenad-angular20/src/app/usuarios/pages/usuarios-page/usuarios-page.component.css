@@ -1,15 +1,15 @@
 .titulo {
-    color: #3A5A40;
+    color: var(--color3);
     font-weight: bold;
 }
 
 a.volver {
-    color: #3A5A40;
+    color: var(--color3);
     font-size: 18px;
 }
 
 a.volver:hover {
-    color: #A3B18A;
+    color: var(--color1);
 }
 
 .row {
@@ -19,7 +19,7 @@ a.volver:hover {
 }
 
 div.filtro {
-    border: 6px solid #588157;
+    border: 6px solid var(--color2);
     border-top: 0px;
     border-bottom: 0px;
     border-right: 0px;

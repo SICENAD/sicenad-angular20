@@ -1,11 +1,11 @@
 div,
 div a {
-  color: #A3B18A;
+  color: var(--color1);
   font-weight: bold
 }
 
 fa-icon:hover {
-  color: #588157;
+  color: var(--color3);
 }
 
 hr {

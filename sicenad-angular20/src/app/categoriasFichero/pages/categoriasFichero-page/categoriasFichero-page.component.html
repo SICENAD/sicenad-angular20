@@ -54,7 +54,7 @@
           </div>
           <!-- Tipo -->
           <div class="mb-3">
-            <label class="titulo me-2"
+            <label class="titulo1 me-2"
               ><b>TIPO<sup class="text-danger">*</sup></b></label
             >
             <select aria-label="tipo" class="form-control letra" formControlName="tipo">
@@ -75,10 +75,10 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn"
             data-bs-dismiss="modal"
             [disabled]="categoriaFicheroForm.invalid"
             (click)="crearCategoriaFichero()"

@@ -138,10 +138,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn"
           data-bs-dismiss="modal"
           [disabled]="ficheroForm.invalid"
           (click)="crearFichero()"
@@ -167,7 +167,6 @@
           (click)="hide()"
         ></button>
       </div>
-
       <!-- Cuerpo -->
       <div class="modal-body">
         <figure>
@@ -181,15 +180,13 @@
           </figcaption>
         </figure>
       </div>
-
       <!-- Footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="hide()">Cerrar</button>
+        <button type="button" class="btn" (click)="hide()">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
-
 <!-- Fondo modal -->
 <div class="modal-backdrop fade show"></div>
 }

@@ -45,10 +45,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
@@ -56,7 +56,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-success"
+          class="btn"
           (click)="editarCategoriaFichero()"
           data-bs-dismiss="modal"
           [disabled]="categoriaFicheroForm.invalid"
@@ -77,10 +77,10 @@
       </div>
       <div class="modal-body">¿Desea eliminar {{ categoriaFichero()?.nombre }}?</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           (click)="borrarCategoriaFichero()"
           data-bs-dismiss="modal"
         >

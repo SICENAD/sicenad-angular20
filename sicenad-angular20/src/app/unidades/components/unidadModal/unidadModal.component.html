@@ -76,10 +76,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
@@ -87,7 +87,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-success"
+          class="btn"
           (click)="editarUnidad()"
           data-bs-dismiss="modal"
           [disabled]="unidadForm.invalid"
@@ -108,10 +108,10 @@
       </div>
       <div class="modal-body">¿Desea eliminar {{ unidad()?.nombre }}?</div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button
           type="button"
-          class="btn btn-danger"
+          class="btn"
           (click)="borrarUnidad()"
           data-bs-dismiss="modal"
         >

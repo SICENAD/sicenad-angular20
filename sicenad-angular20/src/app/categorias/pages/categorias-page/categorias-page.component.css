@@ -1,41 +1,41 @@
 h4 {
-    color: #A3B18A;
-}
-h4 b {
-    color: #3A5A40;
+    color: var(--color1);
 }
 
 .btn {
-    background: #3A5A40;
+    background: var(--color3);
     padding: 0.5;
     font-size: 14px;
+    color: var(--color11);
 }
 
 .btn:hover {
-    background-color: #A3B18A;
+    background-color: var(--color1);
 }
 
-.titulo {
-    color: #3A5A40;
+.titulo, h1, h4 b {
+    color: var(--color3);
     font-weight: bold;
 }
 
 .titulo1 {
-    color: #588157;
+    color: var(--color1);
+    font-weight: bold;
 }
 
 a.volver {
-    color: #3A5A40;
+    color: var(--color3);
     font-size: 18px;
 }
 
 a.volver:hover {
-    color: #A3B18A;
+    color: var(--color1);
 }
 
 .row {
     height: auto;
     padding: auto;
+    margin: auto;
 }
 
 hr {
@@ -48,7 +48,4 @@ hr {
     max-width: 100%;
     margin: auto;
 }
-strong {
-      color: #3A5A40;
 
-}
