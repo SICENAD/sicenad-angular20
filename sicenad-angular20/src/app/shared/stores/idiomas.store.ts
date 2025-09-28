@@ -38,7 +38,7 @@ export class IdiomasStore {
 
   getBandera(codigo: string) {
     const found = this.idiomasDisponibles().find(i => i.codigo === codigo);
-    return found?.bandera || `${this.utilService.baseNormalizada()}img/banderas/default.svg`;
+    return found?.bandera || `${this.utilService.baseNormalizada()}img/banderas/es.svg`;
   }
 
   getEtiqueta(codigo: string) {

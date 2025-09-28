@@ -1,6 +1,6 @@
 <!-- Botón para abrir modal -->
 <a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
-  <fa-icon class="fa" [icon]="faEdit"></fa-icon>
+  <fa-icon class="fa" [icon]="faEditUser"></fa-icon>
 </a>
 <!-- Modal Editar Usuario Superadministrador -->
 <div class="modal fade" [id]="idModal()" tabindex="-1">
@@ -84,6 +84,7 @@
           class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
+          [hidden]="isMiUsuario()"
         >
           Borrar Usuario
         </button>

@@ -23,11 +23,13 @@ export class UsuarioModalComponent {
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
 
-  faEdit = this.iconos.faEdit;
+  faEditUser = this.iconos.faEditUser;
+
   // --- Inputs / Outputs ---
   usuario = input<Usuario>();
   cenad = input<Cenad | undefined>();
   unidad = input<Unidad | undefined>();
+  isMiUsuario = input<boolean>(false);
   output = output<void>();
 
   get usuarioTipado(): UsuarioSuperAdministrador | UsuarioAdministrador | UsuarioGestor | UsuarioNormal {
