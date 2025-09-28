@@ -12,6 +12,7 @@ import { Cenad } from "@interfaces/models/cenad";
 import { Unidad } from "@interfaces/models/unidad";
 import { UtilService } from "./utilService";
 import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
+import { ChangePasswordResponse } from "@interfaces/responses/changePasswordResponse";
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -27,6 +28,12 @@ export class UsuarioService {
   public register(username: string, password: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, rol: string): Observable<RegisterResponse> {
     const endpoint = `/auth/register`;
     return this.apiService.request<RegisterResponse>(endpoint,'POST', { username, password, tfno, email, emailAdmitido, descripcion, rol });
+  }
+
+  // --- REQUEST CHANGE PASSWORD ---
+  public changePassword(idUsuario: string, password: string): Observable<ChangePasswordResponse> {
+    const endpoint = `/auth/change-password`;
+    return this.apiService.request<ChangePasswordResponse>(endpoint, 'POST', { idUsuario, password });
   }
 
   getAll(): Observable<Usuario[]> {

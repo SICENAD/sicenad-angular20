@@ -96,7 +96,7 @@ public class AuthService {
 		usuario.setPassword(passwordEncoder.encode(request.getPassword()));
 		usuarioDAO.save(usuario);
 		
-		AuthResponseChangePassword authResponse = new AuthResponseChangePassword("Se ha cambiado el password a " + usuario.getUsername(),usuario.getRol().toString());
+		AuthResponseChangePassword authResponse = new AuthResponseChangePassword(usuario.getUsername(),usuario.getRol().toString());
 		return authResponse;
 	}
 

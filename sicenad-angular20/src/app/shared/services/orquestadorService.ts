@@ -38,6 +38,8 @@ import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
 import { FicheroSolicitud } from "@interfaces/models/ficheroSolicitud";
 import { NotificacionResponse } from "@interfaces/responses/notificacionResponse";
 import { NotificacionService } from "./notificacionService";
+import { ChangePasswordResponse } from "@interfaces/responses/changePasswordResponse";
+import { UtilService } from "./utilService";
 
 
 @Injectable({ providedIn: 'root' })
@@ -47,6 +49,7 @@ export class OrquestadorService {
   private auth = inject(AuthStore);
   private usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   private cenadStore = inject(CenadStore);
+  private utilService = inject(UtilService);
   private cenadService = inject(CenadService);
   private categoriaFicheroService = inject(CategoriaFicheroService);
   private tipoFormularioService = inject(TipoFormularioService);
@@ -564,6 +567,26 @@ export class OrquestadorService {
       }),
       catchError(err => {
         console.error('❌ Error registrando usuario', err);
+        throw err;
+      })
+    );
+  }
+
+  changePassword(
+    idUsuario: string,
+    password: string
+  ): Observable<ChangePasswordResponse> {
+    return this.usuarioService.changePassword(
+      idUsuario,
+      password
+    ).pipe(
+      tap(res => {
+        console.log('✅ Cambio de contraseña correcto', res);
+        this.utilService.toast(`Se ha modificado la contraseña`, 'success');
+      }),
+      catchError(err => {
+        console.error('❌ Error cambiando contraseña', err);
+        this.utilService.toast(`No se ha modificado la contraseña`, 'error');
         throw err;
       })
     );

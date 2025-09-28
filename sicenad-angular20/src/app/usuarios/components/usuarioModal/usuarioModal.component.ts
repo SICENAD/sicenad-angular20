@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
@@ -23,6 +23,8 @@ export class UsuarioModalComponent {
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
 
+  misRoles = RolUsuario;
+
   faEditUser = this.iconos.faEditUser;
 
   // --- Inputs / Outputs ---
@@ -34,13 +36,13 @@ export class UsuarioModalComponent {
 
   get usuarioTipado(): UsuarioSuperAdministrador | UsuarioAdministrador | UsuarioGestor | UsuarioNormal {
     switch (this.usuario()?.rol) {
-      case RolUsuario.Superadministrador:
+      case this.misRoles.Superadministrador:
         return this.usuario() as UsuarioSuperAdministrador;
-      case RolUsuario.Administrador:
+      case this.misRoles.Administrador:
         return this.usuario() as UsuarioAdministrador;
-      case RolUsuario.Gestor:
+      case this.misRoles.Gestor:
         return this.usuario() as UsuarioGestor;
-      case RolUsuario.Normal:
+      case this.misRoles.Normal:
       default:
         return this.usuario() as UsuarioNormal;
     }
@@ -52,6 +54,7 @@ export class UsuarioModalComponent {
   _idModalEliminar = signal('modal-usuario-eliminar-' + this.idUsuario());
   idModal = computed(() => this._idModal() + this.idUsuario());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idUsuario());
+  cambiarPassword = signal(false);
 
   usuarioForm: FormGroup = this.fb.group({
     username: ['', Validators.required],
@@ -59,6 +62,7 @@ export class UsuarioModalComponent {
     email: ['', [Validators.required, Validators.email]],
     emailAdmitido: [false],
     descripcion: ['', Validators.required],
+    password: ['']
   });
 
   get username() { return this.usuarioForm.get('username'); }
@@ -66,7 +70,14 @@ export class UsuarioModalComponent {
   get email() { return this.usuarioForm.get('email'); }
   get emailAdmitido() { return this.usuarioForm.get('emailAdmitido'); }
   get descripcion() { return this.usuarioForm.get('descripcion'); }
-  
+  get password() { return this.usuarioForm.get('password'); }
+
+  cambiarPasswordEffect = effect(() => {
+    if (!this.cambiarPassword()) {
+      this.usuarioForm.get('password')?.reset();
+    }
+  });
+
   ngOnInit(): void {
     if (this.usuario()) {
       this.usuarioForm.patchValue({
@@ -75,8 +86,27 @@ export class UsuarioModalComponent {
         email: this.usuario()?.email || '',
         emailAdmitido: this.usuario()?.emailAdmitido || false,
         descripcion: this.usuario()?.descripcion || '',
+        password: ''
       });
     }
+  }
+
+  changePassword(idUsuario: string, password: string) {
+    this.orquestadorService.changePassword(
+      idUsuario,
+      password
+    ).subscribe({
+      next: res => {
+        console.log('✅ Cambio de contraseña correcto', res);
+      },
+      error: err => {
+        console.error('❌ Error cambiando contraseña', err);
+      },
+      complete: () => {
+        this.usuarioForm.patchValue({ password: '' });
+        this.cambiarPassword.set(false);
+      }
+    });
   }
 
   editarUsuario() {
@@ -84,9 +114,10 @@ export class UsuarioModalComponent {
       this.usuarioForm.markAllAsTouched();
       return;
     }
-    const { username, tfno, email, emailAdmitido, descripcion } = this.usuarioForm.value;
+    const { username, tfno, email, emailAdmitido, descripcion, password } = this.usuarioForm.value;
+    const idUsuario = this.usuario()!.idString;
     switch (this.usuario()?.rol) {
-      case RolUsuario.Superadministrador:
+      case this.misRoles.Superadministrador:
         this.orquestadorService.actualizarUsuarioSuperadministrador(
           username,
           tfno,
@@ -98,13 +129,14 @@ export class UsuarioModalComponent {
           next: res => {
             if (res) {
               console.log(`Usuario Superadministrador ${username} actualizado correctamente.`);
+              password && this.changePassword(idUsuario, password);
               this.output.emit(); // notificamos al padre
             }
           },
           error: error => console.error('Error actualizando Usuario Superadministrador:', error)
         });
         break;
-      case RolUsuario.Administrador:
+      case this.misRoles.Administrador:
         this.orquestadorService.actualizarUsuarioAdministrador(
           username,
           tfno,
@@ -117,13 +149,14 @@ export class UsuarioModalComponent {
           next: res => {
             if (res) {
               console.log(`Usuario Administrador ${username} actualizado correctamente.`);
-              this.output.emit();
+              password && this.changePassword(idUsuario, password);
+              this.output.emit(); // notificamos al padre
             }
           },
           error: error => console.error('Error actualizando Usuario Administrador:', error)
         });
         break;
-      case RolUsuario.Gestor:
+      case this.misRoles.Gestor:
         this.orquestadorService.actualizarUsuarioGestor(
           username,
           tfno,
@@ -136,13 +169,14 @@ export class UsuarioModalComponent {
           next: res => {
             if (res) {
               console.log(`Usuario Gestor ${username} actualizado correctamente.`);
-              this.output.emit();
+              password && this.changePassword(idUsuario, password);
+              this.output.emit(); // notificamos al padre
             }
           },
           error: error => console.error('Error actualizando Usuario Gestor:', error)
         });
         break;
-      case RolUsuario.Normal:
+      case this.misRoles.Normal:
         this.orquestadorService.actualizarUsuarioNormal(
           username,
           tfno,
@@ -155,7 +189,8 @@ export class UsuarioModalComponent {
           next: res => {
             if (res) {
               console.log(`Usuario Normal ${username} actualizado correctamente.`);
-              this.output.emit();
+              password && this.changePassword(idUsuario, password);
+              this.output.emit(); // notificamos al padre
             }
           },
           error: error => console.error('Error actualizando Usuario Normal:', error)
@@ -168,25 +203,25 @@ export class UsuarioModalComponent {
 
   borrarUsuario() {
     switch (this.usuario()?.rol) {
-      case RolUsuario.Superadministrador:
+      case this.misRoles.Superadministrador:
         this.orquestadorService.borrarUsuarioSuperadministrador(this.idUsuario()).subscribe(() => {
           console.log('Usuario Superadministrador borrado correctamente.');
           this.output.emit();
         });
         break;
-      case RolUsuario.Administrador:
+      case this.misRoles.Administrador:
         this.orquestadorService.borrarUsuarioAdministrador(this.idUsuario()).subscribe(() => {
           console.log('Usuario Administrador borrado correctamente.');
           this.output.emit();
         });
         break;
-      case RolUsuario.Gestor:
+      case this.misRoles.Gestor:
         this.orquestadorService.borrarUsuarioGestor(this.cenad()?.idString || '', this.idUsuario()).subscribe(() => {
           console.log('Usuario Gestor borrado correctamente.');
           this.output.emit();
         });
         break;
-      case RolUsuario.Normal:
+      case this.misRoles.Normal:
         this.orquestadorService.borrarUsuarioNormal(this.idUsuario()).subscribe(() => {
           console.log('Usuario Normal borrado correctamente.');
           this.output.emit();

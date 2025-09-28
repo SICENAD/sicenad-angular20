@@ -1,33 +1,31 @@
 package es.mde.security.auth;
 
-import es.mde.security.usuarios.Rol;
-
 public class AuthResponseChangePassword {
 
-	private String mensaje;
-	private String rolUsuario;
+	private String username;
+	private String rol;
 
 	public AuthResponseChangePassword() {
 	}
 
-	public AuthResponseChangePassword(String mensaje, String rol) {
-		this.mensaje = mensaje;
-		this.rolUsuario = rol;
+	public AuthResponseChangePassword(String username, String rol) {
+		this.username = username;
+		this.rol = rol;
 	}
 
-	public String getMensaje() {
-		return mensaje;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public String getRolUsuario() {
-		return rolUsuario;
+	public String getRol() {
+		return rol;
 	}
 
-	public void setRolUsuario(String rolUsuario) {
-		this.rolUsuario = rolUsuario;
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 }

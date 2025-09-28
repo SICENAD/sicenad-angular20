@@ -3,7 +3,7 @@ div {
   font-weight: bold;
 }
 
-h1, h5 {
+h1, h5, p {
   color: var(--color3);
   font-weight: bold;
 }
