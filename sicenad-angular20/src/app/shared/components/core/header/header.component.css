@@ -10,3 +10,6 @@ header {
 .btn:hover {
   background: var(--color1);
 }
+p {
+  color: var(--color2);
+}
