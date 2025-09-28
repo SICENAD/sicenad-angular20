@@ -1,12 +1,13 @@
 {
   "name": "sicenad-angular20",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve -o",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+  "start": "ng serve -o",
+  "start:prod": "ng serve --configuration production --port 4201",
+  "build": "ng build",
+  "build:prod": "ng build --configuration production",
+  "watch": "ng build --watch --configuration development",
+  "test": "ng test"
   },
   "prettier": {
     "printWidth": 100,
