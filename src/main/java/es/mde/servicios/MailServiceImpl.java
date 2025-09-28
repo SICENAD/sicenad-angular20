@@ -36,6 +36,6 @@ public class MailServiceImpl implements MailService {
 		} catch (Exception e) {
 			return "correo fallido" + e.getMessage();
 		}
-		return "correo enviado";
+		return "Correo enviado a " + to;
 	}
 }

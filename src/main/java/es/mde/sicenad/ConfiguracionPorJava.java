@@ -273,6 +273,7 @@ public class ConfiguracionPorJava {
 		mailSender.setPassword(password);
 
 		Properties props = mailSender.getJavaMailProperties();
+	    props.put("mail.from", direccion); // remitente por defecto
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");

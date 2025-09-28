@@ -1,12 +1,18 @@
 package es.mde.rest;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.mde.models.EmailRequest;
 import es.mde.notificaciones.Notificar;
 import es.mde.notificaciones.SolicitudDTO;
+import es.mde.servicios.MailService;
+import jakarta.mail.MessagingException;
 
 /**
  * Controlador encargado del envio de notificaciones
@@ -15,8 +21,13 @@ import es.mde.notificaciones.SolicitudDTO;
  *
  */
 @RestController
-//@RequestMapping(path = "/api/notificar")
 public class NotificacionController {
+	
+	private MailService mailService; 
+	
+	public NotificacionController (MailService mailService) {
+		this.mailService = mailService;
+	}
 	
 	@GetMapping("/api/notificar/{id}")
 	public SolicitudDTO enviarNotificacion(@PathVariable Long id) {
@@ -27,7 +38,16 @@ public class NotificacionController {
 		
 	}
 	
-	
+	@PostMapping("/api/notificar")
+    @ResponseBody
+    public ResponseEntity<String> enviarEmail(@RequestBody EmailRequest emailRequest) throws MessagingException {
+        return ResponseEntity.ok(mailService.enviarNotificacion(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getBody()));
+    }
+		
+		
+		
+		
+
 	
 	
 	
