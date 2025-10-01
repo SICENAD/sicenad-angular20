@@ -4,12 +4,14 @@ import { ApiService } from "./apiService";
 import { Normativa } from "@interfaces/models/normativa";
 import { UtilsStore } from "@stores/utils.store";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class NormativaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
-  private utils = inject(UtilsStore)
+  private utils = inject(UtilsStore);
+  private idiomaService = inject(IdiomaService);
 
   getAll(idCenad: string): Observable<Normativa[]> {
     const endpoint = `/cenads/${idCenad}/normativas?size=1000`;
@@ -55,8 +57,9 @@ export class NormativaService {
             if (!nombreArchivo) return of(false);
             const endpointNormativa = `${endpoint}/${idNormativa}`;
             return this.apiService.request<any>(endpointNormativa, 'PATCH', { nombreArchivo }).pipe(
-              tap(() => {
-                this.utilService.toast(`Se ha creado la normativa ${nombre}`, 'success');
+              tap(async () => {
+                const mensaje = await this.idiomaService.tVars('normativas.normativaCreada', { nombre });
+                this.utilService.toast(mensaje, 'success');
               }),
               map(() => true)
             );
@@ -84,8 +87,9 @@ export class NormativaService {
     const patchNormativa = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
       return this.apiService.request<any>(endpointNormativa, 'PATCH', body).pipe(
-        tap(() => {
-          this.utilService.toast(`Se ha editado la normativa ${nombre}`, 'success');
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('normativas.normativaModificada', { nombre });
+          this.utilService.toast(mensaje, 'success');
         }),
         map(() => nombreArchivo),
         catchError(err => { console.error(err); return of(null); })
@@ -118,9 +122,10 @@ export class NormativaService {
     const endpointArchivo = `/files/${idCenad}/borrarNormativa/${nombreArchivo}`;
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.request<any>(endpointNormativa, 'DELETE')),
-      tap(res => {
+      tap(async res => {
         let normativa = res;
-        this.utilService.toast(`Se ha eliminado la normativa ${normativa?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', { nombre: normativa?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

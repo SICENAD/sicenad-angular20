@@ -40,6 +40,7 @@ import { NotificacionResponse } from "@interfaces/responses/notificacionResponse
 import { NotificacionService } from "./notificacionService";
 import { ChangePasswordResponse } from "@interfaces/responses/changePasswordResponse";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 
 @Injectable({ providedIn: 'root' })
@@ -63,6 +64,7 @@ export class OrquestadorService {
   private solicitudService = inject(SolicitudService);
   private ficheroService = inject(FicheroService);
   private notificacionService = inject(NotificacionService);
+  private idiomaService = inject(IdiomaService);
 
   /** Garantiza que el store tenga urlApi válida antes de usar servicios */
   private ensureUrlApi() {
@@ -148,7 +150,7 @@ export class OrquestadorService {
   loadAllCenads(): Observable<Cenad[]> {
     return this.cenadService.getAll().pipe(
       catchError(err => {
-        console.error('Error cargando cenads', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCenads'), err);
         this.datosStore.clearCenads();
         return of([]);
       })
@@ -158,7 +160,7 @@ export class OrquestadorService {
   loadAllCategoriasFichero(): Observable<CategoriaFichero[]> {
     return this.categoriaFicheroService.getAll().pipe(
       catchError(err => {
-        console.error('Error cargando categorias de fichero', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCategoriasFichero'), err);
         this.datosStore.clearCategoriasFichero();
         return of([]);
       })
@@ -168,7 +170,7 @@ export class OrquestadorService {
   loadAllTiposFormulario(): Observable<TipoFormulario[]> {
     return this.tipoFormularioService.getAll().pipe(
       catchError(err => {
-        console.error('Error cargando tipos de formulario', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaTiposFormulario'), err);
         this.datosStore.clearTiposFormulario();
         return of([]);
       })
@@ -178,7 +180,7 @@ export class OrquestadorService {
   loadAllUnidades(): Observable<Unidad[]> {
     return this.unidadService.getAll().pipe(
       catchError(err => {
-        console.error('Error cargando unidades', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaUnidades'), err);
         this.datosStore.clearUnidades();
         return of([]);
       })
@@ -188,7 +190,7 @@ export class OrquestadorService {
   loadAllArmas(): Observable<Arma[]> {
     return this.armaService.getAll().pipe(
       catchError(err => {
-        console.error('Error cargando armas', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaArmas'), err);
         this.datosStore.clearArmas();
         return of([]);
       })
@@ -198,7 +200,7 @@ export class OrquestadorService {
   loadAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
     return this.usuarioService.getAllUsuariosSuperadministrador().pipe(
       catchError(err => {
-        console.error('Error cargando usuarios superadministrador', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaUsuariosSuperadministrador'), err);
         this.datosStore.clearUsuariosSuperadministrador();
         return of([]);
       })
@@ -208,7 +210,7 @@ export class OrquestadorService {
   loadAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
     return this.usuarioService.getAllUsuariosAdministrador().pipe(
       catchError(err => {
-        console.error('Error cargando usuarios administrador', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaUsuariosAdministrador'), err);
         this.datosStore.clearUsuariosAdministrador();
         return of([]);
       })
@@ -218,7 +220,7 @@ export class OrquestadorService {
   loadAllUsuariosNormal(): Observable<UsuarioNormal[]> {
     return this.usuarioService.getAllUsuariosNormal().pipe(
       catchError(err => {
-        console.error('Error cargando usuarios normal', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaUsuariosNormal'), err);
         this.datosStore.clearUsuariosNormal();
         return of([]);
       })
@@ -229,7 +231,7 @@ export class OrquestadorService {
   loadAllCategorias(idCenad: string): Observable<Categoria[]> {
     return this.categoriaService.getAll(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando categorias', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCategorias'), err);
         this.cenadStore.clearCategorias();
         return of([]);
       })
@@ -239,7 +241,7 @@ export class OrquestadorService {
   loadAllCategoriasPadre(idCenad: string): Observable<Categoria[]> {
     return this.categoriaService.getAllCategoriasPadre(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando categorias padre', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCategoriasPadre'), err);
         this.cenadStore.clearCategoriasPadre();
         return of([]);
       })
@@ -249,7 +251,7 @@ export class OrquestadorService {
   loadAllRecursos(idCenad: string): Observable<Recurso[]> {
     return this.recursoService.getAll(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando recursos', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         this.cenadStore.clearRecursos();
         return of([]);
       })
@@ -259,7 +261,7 @@ export class OrquestadorService {
   loadAllCartografias(idCenad: string): Observable<Cartografia[]> {
     return this.cartografiaService.getAll(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando cartografías', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCartografias'), err);
         this.cenadStore.clearCartografias();
         return of([]);
       })
@@ -269,7 +271,7 @@ export class OrquestadorService {
   loadAllNormativas(idCenad: string): Observable<Normativa[]> {
     return this.normativaService.getAll(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando normativas', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaNormativas'), err);
         this.cenadStore.clearNormativas();
         return of([]);
       })
@@ -279,7 +281,7 @@ export class OrquestadorService {
   loadAllSolicitudes(idCenad: string): Observable<Solicitud[]> {
     return this.solicitudService.getAll(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando solicitudes', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         this.cenadStore.clearSolicitudes();
         return of([]);
       })
@@ -289,7 +291,7 @@ export class OrquestadorService {
   loadAllSolicitudesEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
     return this.solicitudService.getSolicitudesPorEstado(idCenad, estado).pipe(
       catchError(err => {
-        console.error('Error cargando solicitudes', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         switch (estado) {
           case 'Borrador':
             this.cenadStore.clearSolicitudesBorrador();
@@ -315,7 +317,7 @@ export class OrquestadorService {
   loadAllUsuariosGestor(idCenad: string): Observable<UsuarioGestor[]> {
     return this.usuarioService.getAllUsuariosGestorCenad(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando usuarios gestor', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaUsuariosGestor'), err);
         this.cenadStore.clearUsuariosGestor();
         return of([]);
       })
@@ -325,7 +327,7 @@ export class OrquestadorService {
   loadUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
     return this.usuarioService.getUsuarioAdministradorCenad(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando usuario administrador', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaUsuarioAdministrador'), err);
         this.cenadStore.clearUsuarioAdministrador();
         return of(null);
       })
@@ -335,7 +337,7 @@ export class OrquestadorService {
   loadCenadVisitado(idCenad: string): Observable<Cenad | null> {
     return this.cenadService.getCenadSeleccionado(idCenad).pipe(
       catchError(err => {
-        console.error('Error cargando cenad visitado', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCenadVisitado'), err);
         this.cenadStore.clearCenadVisitado();
         return of(null);
       })
@@ -346,7 +348,7 @@ export class OrquestadorService {
   notificarCambioEstado(idSolicitud: string): Observable<NotificacionResponse | null> {
     return this.notificacionService.notificarCambioEstado(idSolicitud).pipe(
       catchError(err => {
-        console.error('Error notificando cambio de estado', err);
+        console.error(this.idiomaService.t('orquestador.errorNotificandoCambioEstado'), err);
         return of(null);
       })
     );
@@ -364,10 +366,10 @@ export class OrquestadorService {
       password
     ).pipe(
       tap(res => {
-        console.log('✅ Login correcto', res);
+        console.log(this.idiomaService.t('orquestador.loginCorrecto'), res);
       }),
       catchError(err => {
-        console.error('❌ Error logueando usuario', err);
+        console.error(this.idiomaService.t('orquestador.loginError'), err);
         throw err;
       })
     );
@@ -416,7 +418,9 @@ export class OrquestadorService {
         this.loadUsuarioAdministradorPorUsername(username).pipe(
           switchMap(usuario => {
             if (!usuario) {
-              console.warn(`No se encontró Usuario Administrador con username ${username} tras el registro.`);
+              this.idiomaService.tVars('orquestador.noUsernameAdmin', { username }).then(mensaje => {
+                console.warn(mensaje);
+              });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
             // Editamos el usuario para asignarle el CENAD
@@ -438,7 +442,7 @@ export class OrquestadorService {
         this.loadAllUsuariosAdministrador().subscribe();
       }),
       catchError(err => {
-        console.error('Error en registerUsuarioAdministrador:', err);
+        console.error(this.idiomaService.t('orquestador.errorRegistroAdmin'), err);
         return of(null as unknown as RegisterResponse);
       })
     );
@@ -466,7 +470,9 @@ export class OrquestadorService {
         this.loadUsuarioGestorPorUsername(username).pipe(
           switchMap(usuario => {
             if (!usuario) {
-              console.warn(`No se encontró Usuario Administrador con username ${username} tras el registro.`);
+              this.idiomaService.tVars('orquestador.noUsernameAdmin', { username }).then(mensaje => {
+                console.warn(mensaje);
+              });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
             // Editamos el usuario para asignarle el CENAD
@@ -488,7 +494,7 @@ export class OrquestadorService {
         this.loadAllUsuariosGestor(idCenad).subscribe();
       }),
       catchError(err => {
-        console.error('Error en registerUsuarioGestor:', err);
+        console.error(this.idiomaService.t('orquestador.errorRegistroGestor'), err);
         return of(null as unknown as RegisterResponse);
       })
     );
@@ -516,7 +522,9 @@ export class OrquestadorService {
         this.loadUsuarioNormalPorUsername(username).pipe(
           switchMap(usuario => {
             if (!usuario) {
-              console.warn(`No se encontró Usuario Normal con username ${username} tras el registro.`);
+              this.idiomaService.tVars('orquestador.noUsernameNormal', { username }).then(mensaje => {
+                console.warn(mensaje);
+              });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
             // Editamos el usuario para asignarle el CENAD
@@ -538,7 +546,7 @@ export class OrquestadorService {
         this.loadAllUsuariosNormal().subscribe();
       }),
       catchError(err => {
-        console.error('Error en registerUsuarioNormal:', err);
+        console.error(this.idiomaService.t('orquestador.errorRegistroNormal'), err);
         return of(null as unknown as RegisterResponse);
       })
     );
@@ -563,10 +571,10 @@ export class OrquestadorService {
       rol
     ).pipe(
       tap(res => {
-        console.log('✅ Registro correcto', res);
+        console.log(this.idiomaService.t('registerCorrecto'), res);
       }),
       catchError(err => {
-        console.error('❌ Error registrando usuario', err);
+        console.error(this.idiomaService.t('registerError'), err);
         throw err;
       })
     );
@@ -581,12 +589,12 @@ export class OrquestadorService {
       password
     ).pipe(
       tap(res => {
-        console.log('✅ Cambio de contraseña correcto', res);
-        this.utilService.toast(`Se ha modificado la contraseña`, 'success');
+        console.log(this.idiomaService.t('cambioContrasenaCorrecto'), res);
+        this.utilService.toast(this.idiomaService.t('cambioContrasenaCorrecto'), 'success');
       }),
       catchError(err => {
-        console.error('❌ Error cambiando contraseña', err);
-        this.utilService.toast(`No se ha modificado la contraseña`, 'error');
+        console.error(this.idiomaService.t('errorCambioContrasena'), err);
+        this.utilService.toast(this.idiomaService.t('errorCambioContrasena'), 'error');
         throw err;
       })
     );
@@ -1865,7 +1873,7 @@ export class OrquestadorService {
   getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<void> {
     return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
   }
-  
+
   getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<Blob> {
     return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
   }

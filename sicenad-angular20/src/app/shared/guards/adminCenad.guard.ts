@@ -2,11 +2,14 @@ import { inject } from "@angular/core";
 import { CanActivateFn, Router } from "@angular/router";
 import { RoutesPaths } from "@app/app.routes";
 import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
+import { IdiomaService } from "@services/idiomaService";
 import { UsuarioLogueadoStore } from "@stores/usuarioLogueado.store";
 
 export const adminCenadGuard: CanActivateFn = (route) => {
   const router = inject(Router);
   const usuarioLogueadoStore = inject(UsuarioLogueadoStore);
+  const idiomaService = inject(IdiomaService);
+  
 
   const idCenad = route.parent?.paramMap.get('idCenad');
 
@@ -18,7 +21,7 @@ export const adminCenadGuard: CanActivateFn = (route) => {
   if (usuario?.rol === RolUsuario.Administrador && cenadPropio?.idString === idCenad) {
     return true;
   } else {
-    alert('Debes ser administrador de este CENAD/CMT para acceder a esta página');
+    alert(idiomaService.t('administracion.debesAdminCenad'));
     return router.createUrlTree([RoutesPaths.home]);
   }
 };

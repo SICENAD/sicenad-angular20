@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Arma } from "@interfaces/models/arma";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class ArmaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(): Observable<Arma[]> {
     const endpoint = `/armas?size=1000`;
@@ -26,8 +28,9 @@ export class ArmaService {
     const endpoint = `/armas`;
     return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipoTiro }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha creado el arma ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('armas.armaCreada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -40,8 +43,9 @@ export class ArmaService {
     const endpoint = `/armas/${idArma}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), tipoTiro }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el arma ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('armas.armaModificada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -49,13 +53,14 @@ export class ArmaService {
       })
     );
   }
-  
+
   deleteArma(idArma: string): Observable<any> {
     const endpoint = `/armas/${idArma}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+      tap(async res => {
         let arma = res;
-        this.utilService.toast(`Se ha eliminado el arma ${arma?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('armas.armaEliminada', { nombre: arma?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

@@ -5,6 +5,7 @@ import { catchError, map, Observable, throwError } from "rxjs";
 import { UtilsStore } from "@stores/utils.store";
 import { UtilService } from "./utilService";
 import { LocalStorageService } from "./localStorageService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -13,6 +14,7 @@ export class ApiService {
   private injector = inject(Injector); // Injector general para inyección tardía
   private utilService = inject(UtilService);
   private localStorageService = inject(LocalStorageService);
+  private idiomaService = inject(IdiomaService);
 
   // Inyección tardía de AuthStore usando getter
   private get auth(): AuthStore {
@@ -52,7 +54,7 @@ export class ApiService {
     return observable.pipe(
       catchError(async (err) => {
         if (err.status === 401 || err.status === 403) {
-          this.utilService.toast('Sesión expirada. Por favor, inicia sesión de nuevo.', 'warning');
+          this.utilService.toast(this.idiomaService.t('sesionExpirada'), 'warning');
           await this.auth.logout();
 
         }
@@ -77,7 +79,7 @@ export class ApiService {
         return void 0; // Esto emite "void"
       }),
       catchError(err => {
-        alert('Error al descargar el archivo');
+        alert(this.idiomaService.t('errorDescarga'));
         console.error(err);
         return throwError(() => err);
       })
@@ -90,7 +92,7 @@ export class ApiService {
     return this.request<any>(urlUpload, 'POST', formData).pipe(
       map(res => res.nombreArchivo),
       catchError(err => {
-        if (err.status === 413) alert('El archivo tiene un tamaño superior al permitido');
+        if (err.status === 413) alert(this.idiomaService.t('errorTamanoArchivo'));
         return throwError(() => err);
       })
     );
@@ -106,10 +108,10 @@ export class ApiService {
   }
 
   borrarArchivo(urlUpload: string): Observable<any> {
-    return this.borrarRecurso(urlUpload, 'El archivo no ha sido borrado');
+    return this.borrarRecurso(urlUpload, this.idiomaService.t('errorBorrarArchivo'));
   }
 
   borrarCarpeta(urlUpload: string): Observable<any> {
-    return this.borrarRecurso(urlUpload, 'La carpeta no ha sido borrada');
+    return this.borrarRecurso(urlUpload, this.idiomaService.t('errorBorrarCarpeta'));
   }
 }

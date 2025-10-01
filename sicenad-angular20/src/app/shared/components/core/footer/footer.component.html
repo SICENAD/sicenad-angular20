@@ -3,13 +3,13 @@
     <div class="col-4 text-start ps-5">
       <a target="_blank" rel="noopener"
         href="manual.pdf">
-        <span>Manual de Usuario</span>
+        <span>{{ 'comun.manual' | translate }}</span>
       </a>
     </div>
     <div class="col-4 text-center">
       <a target="_blank" rel="noopener"
         href="http://intra.mdef.es/portal/intradef/Ministerio_de_Defensa/Ejercito_de_Tierra">
-        <span class="me-4">Ejército de Tierra</span>
+        <span class="me-4">{{ 'comun.ET' | translate }}</span>
       </a>
       <a target="_blank" rel="noopener"
         href="http://intra.mdef.es/portal/intradef/Ministerio_de_Defensa/Ejercito_de_Tierra_-_UCO/UCO/UCO:132">
@@ -18,7 +18,7 @@
     </div>
     <div class="col-4 text-end pe-5">
       <a [routerLink]="routesPaths.superadministrador">
-        <span>Superadministrador</span>
+        <span>{{ 'administracion.rol.Superadministrador' | translate }}</span>
       </a>
     </div>
   </div>

@@ -3,11 +3,13 @@ import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs
 import { ApiService } from "./apiService";
 import { Cenad } from "@interfaces/models/cenad";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(): Observable<Cenad[]> {
     const endpoint = `/cenads?size=1000`;
@@ -84,8 +86,9 @@ export class CenadService {
             if (!escudo) return of(false);
             const endpointCenad = `${endpoint}/${idCenad}`;
             return this.apiService.request<any>(endpointCenad, 'PATCH', { escudo }).pipe(
-              tap(() => {
-                this.utilService.toast(`Se ha creado el CENAD/CMT ${nombre}`, 'success');
+              tap(async () => {
+                const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', { nombre });
+                this.utilService.toast(mensaje, 'success');
               }),
               map(() => true)
             );
@@ -120,8 +123,9 @@ export class CenadService {
     const patchCenad = (): Observable<string | null> => {
       if (escudo) body.escudo = escudo;
       return this.apiService.request<any>(endpointCenad, 'PATCH', body).pipe(
-        tap(() => {
-          this.utilService.toast(`Se ha editado el CENAD/CMT ${nombre}`, 'success');
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('cenads.cenadEditado', { nombre });
+          this.utilService.toast(mensaje, 'success');
         }),
         map(() => escudo),
         catchError(err => { console.error(err); return of(null); })
@@ -154,9 +158,10 @@ export class CenadService {
     const endpointCarpeta = `/files/${idCenad}/borrarCarpetaCenad`;
     return this.apiService.borrarCarpeta(endpointCarpeta).pipe(
       switchMap(() => this.apiService.request<any>(endpointCenad, 'DELETE')),
-      tap(res => {
+      tap(async res => {
         let cenad = res;
-        this.utilService.toast(`Se ha eliminado el CENAD/CMT ${cenad?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('cenads.cenadEliminado', { nombre: cenad?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })
@@ -188,8 +193,9 @@ export class CenadService {
     const patchInfoCenad = (): Observable<string | null> => {
       if (infoCenad) body.infoCenad = infoCenad;
       return this.apiService.request<any>(endpointCenad, 'PATCH', body).pipe(
-        tap(() => {
-          this.utilService.toast(`Se ha editado la información del CENAD/CMT`, 'success');
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('cenads.infoCenadEditado');
+          this.utilService.toast(mensaje, 'success');
         }),
         map(() => infoCenad),
         catchError(err => {

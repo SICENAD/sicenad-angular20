@@ -25,19 +25,19 @@
   </span>
   @if (token()) {
   <p class="alert alert-success">
-    {{ username() }} autenticado en la API como {{ identificacion() }}
+    {{ username() }} {{ 'administracion.autenticadoComo' | translate }} {{ identificacion() }}
     @if (usuarioModal()) {
     <app-usuario-modal class="ms-2 me-2" [usuario]="usuarioModal()" [cenad]="cenadPropioModal()" [unidad]="unidadPropiaModal()" [isMiUsuario]="true" />
     }
-    <button class="btn ms-3" (click)="logout()">Cerrar sesión</button>
+    <button class="btn ms-3" (click)="logout()">{{ 'administracion.cerrarSesion' | translate }}</button>
   </p>
   } @else {
   <p class="alert alert-danger">
-    Usuario NO autenticado en la API
+    {{ 'administracion.noAutenticado' | translate }}
     <button class="btn ms-2 me-3" [routerLink]="routesPaths.login">
-      Iniciar sesión
+      {{ 'administracion.iniciarSesion' | translate }}
     </button>
-    Necesitas iniciar sesión para poder acceder a los distintos CENAD,s/CMT,s
+    {{ 'administracion.necesitasIniciarSesion' | translate }}
   </p>
   }
 </header>

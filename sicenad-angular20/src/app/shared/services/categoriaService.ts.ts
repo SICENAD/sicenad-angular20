@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Categoria } from "@interfaces/models/categoria";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(idCenad: string): Observable<Categoria[]> {
     const endpoint = `/cenads/${idCenad}/categorias?size=1000`;
@@ -96,8 +98,9 @@ export class CategoriaService {
       (body.categoriaPadre = `${this.apiService.getUrlApi()}/categorias/${idCategoriaPadre}`);
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha creado la categoría ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('categorias.categoriaCreada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -117,8 +120,9 @@ export class CategoriaService {
       }
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado la categoría ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('categorias.categoriaModificada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -130,9 +134,10 @@ export class CategoriaService {
   deleteCategoria(idCategoria: string): Observable<any> {
     const endpoint = `/categorias/${idCategoria}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+      tap(async res => {
         let categoria = res;
-        this.utilService.toast(`Se ha eliminado la categoría ${categoria?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('categorias.categoriaEliminada', { nombre: categoria?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

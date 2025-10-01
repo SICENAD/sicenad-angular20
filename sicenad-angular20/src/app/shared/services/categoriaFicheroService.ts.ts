@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { CategoriaFichero } from "@interfaces/models/categoriaFichero";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaFicheroService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(): Observable<CategoriaFichero[]> {
     const endpoint = `/categorias_fichero?size=1000`;
@@ -34,8 +36,9 @@ export class CategoriaFicheroService {
     const endpoint = `/categorias_fichero`;
     return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipo, descripcion }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha creado la categoría de fichero ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('categoriasFichero.categoriaFicheroCreada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -48,8 +51,9 @@ export class CategoriaFicheroService {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), tipo, descripcion }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado la categoría de fichero ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('categoriasFichero.categoriaFicheroModificada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -61,9 +65,10 @@ export class CategoriaFicheroService {
   deleteCategoriaFichero(idCategoriaFichero: string): Observable<any> {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+      tap(async res => {
         let categoriaFichero = res;
-        this.utilService.toast(`Se ha eliminado la categoría de fichero ${categoriaFichero?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('categoriasFichero.categoriaFicheroEliminada', { nombre: categoriaFichero?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

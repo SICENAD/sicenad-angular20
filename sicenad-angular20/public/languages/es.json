@@ -2,10 +2,116 @@
   "comun": {
     "seleccionaIdioma": "Seleccione el idioma: ",
     "mostrarIdioma": "Mostrar idioma",
-    "ALERT_MSG": "Has pulsado el botón en español"
+    "ALERT_MSG": "Has pulsado el botón en español",
+    "manual": "Manual de usuario",
+    "ET": "Ejército de Tierra",
+    "notFound": "Página no encontrada"    
+  },
+  "archivos": {
+    "subirArchivo": "Subir archivo",
+    "seleccionarArchivo": "Seleccionar archivo",
+    "archivoSeleccionado": "Archivo seleccionado:",
+    "eliminarArchivo": "Eliminar archivo",
+    "cargando": "Cargando...",
+    "errorCargar": "Error al cargar el archivo.",
+    "errorTipoArchivo": "Tipo de archivo no permitido.",
+    "errorTamanoArchivo": "El tamaño del archivo excede el límite permitido.",
+    "errorMultiplesArchivos": "Solo se permite subir un archivo a la vez.",
+    "errorNingunArchivo": "No se ha seleccionado ningún archivo.",
+    "exitoSubida": "Archivo subido con éxito.",
+    "modificado": "Archivo modificado con éxito.",
+    "errorSubida": "Error al subir el archivo.",
+    "descargarArchivo": "Descargar archivo",
+    "errorDescarga": "Error al descargar el archivo.",
+    "errorBorrarArchivo": "Error al borrar el archivo.",
+    "errorBorrarCarpeta": "Error al borrar la carpeta.",
+    "ficheroEliminado": "Se ha eliminado el archivo {{nombre}}"
+  },
+  "administracion": {
+    "rol": {
+      "rol": "Rol",
+      "Administrador": "Administrador",
+      "Gestor": "Gestor",
+      "Normal": "Normal",
+      "Superadministrador": "Superadministrador"
+    },
+    "autenticadoComo": "autenticado en la API como",
+    "noAutenticado": "Usuario NO autenticado en la API",
+    "cerrarSesion": "Cerrar sesión",
+    "iniciarSesion": "Iniciar sesión",
+    "necesitasIniciarSesion": "Necesitas iniciar sesión para poder acceder a los distintos CENAD,s/CMT,s",
+    "identificacionCenad": "{{rol}} del {{cenad}}",
+    "identificacionUnidad": "{{rol}} de la unidad {{unidad}}",
+    "debesAdminCenad": "Debes ser Administrador de un CENAD para acceder a esta página",
+    "debesSerSuperadmin": "Debes ser Superadministrador para acceder a esta página",
+    "sesionExpirada": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."
   },
   "armas": {
-    "ejemplo1": "ejemplo 1 de armas",
-    "ejemplo2": "ejemplo 2 de armas"
+    "armaCreada": "Se ha creado el arma {{nombre}}",
+    "armaModificada": "Se ha modificado el arma {{nombre}}",
+    "armaEliminada": "Se ha eliminado el arma {{nombre}}"
+  },
+  "cartografias": {
+    "cartografiaCreada": "Se ha creado la cartografía {{nombre}}",
+    "cartografiaModificada": "Se ha modificado la cartografía {{nombre}}",
+    "cartografiaEliminada": "Se ha eliminado la cartografía {{nombre}}"
+  },
+  "categoriasFichero": {
+    "categoriaFicheroCreada": "Se ha creado la categoría de fichero {{nombre}}",
+    "categoriaFicheroModificada": "Se ha modificado la categoría de fichero {{nombre}}",
+    "categoriaFicheroEliminada": "Se ha eliminado la categoría de fichero {{nombre}}"
+  },
+    "categorias": {
+    "categoriaCreada": "Se ha creado la categoría {{nombre}}",
+    "categoriaModificada": "Se ha modificado la categoría {{nombre}}",
+    "categoriaEliminada": "Se ha eliminado la categoría {{nombre}}"
+  },
+  "cenads": {
+    "cenadCreado": "Se ha creado el CENAD/CMT {{nombre}}",
+    "cenadEditado": "Se ha editado el CENAD/CMT {{nombre}}",
+    "cenadEliminado": "Se ha eliminado el CENAD/CMT {{nombre}}",
+    "infoCenadEditado": "Se ha editado la información del CENAD/CMT"
+  },
+  "normativas": {
+    "normativaCreada": "Se ha creado la normativa {{nombre}}",
+    "normativaModificada": "Se ha modificado la normativa {{nombre}}",
+    "normativaEliminada": "Se ha eliminado la normativa {{nombre}}"
+  },
+  "solicitudes": {
+    "solicitudCreada": "Se ha creado la solicitud {{nombre}}",
+    "solicitudModificada": "Se ha modificado la solicitud {{nombre}}",
+    "solicitudEliminada": "Se ha eliminado la solicitud {{nombre}}",
+    "notificacionCambioEstado": "Se ha notificado el cambio de estado para la solicitud {{id}}"
+  },
+  "orquestador": {
+    "errorCargaCenads": "Error al cargar los CENAD,s/CMT,s",
+    "errorCargaCategorias": "Error al cargar las categorías",
+    "errorCargaCategoriasPadre": "Error al cargar las categorías padre",
+    "errorCargaRecursos": "Error al cargar los recursos",
+    "errorCargaCartografias": "Error al cargar las cartografías",
+    "errorCargaNormativas": "Error al cargar las normativas",
+    "errorCargaSolicitudes": "Error al cargar las solicitudes",
+    "errorCargaTiposFormulario": "Error al cargar los tipos de formulario",
+    "errorCargaUnidades": "Error al cargar las unidades",
+    "errorCargaFicheros": "Error al cargar los ficheros",
+    "errorCargaUsuariosSuperadministrador": "Error al cargar los usuarios superadministrador",
+    "errorCargaUsuariosAdministrador": "Error al cargar los usuarios administrador",
+    "errorCargaUsuariosNormal": "Error al cargar los usuarios normal",
+    "errorCargaUsuariosGestor": "Error al cargar los usuarios gestor",
+    "errorCargaCenadVisitado": "Error al cargar el CENAD/CMT visitado",
+    "errorNotificandoCambioEstado": "Error notificando el cambio de estado de la solicitud",
+    "errorCargaArmas": "Error al cargar las armas",
+    "errorCargaCategoriasFichero": "Error al cargar las categorías de fichero",
+    "loginCorrecto": "Login correcto",
+    "loginError": "Error logueando usuario",
+    "registerCorrecto": "Registro correcto",
+    "registerError": "Error registrando usuario",
+    "noUsernameAdmin": "No se encontró Usuario Administrador con username {username} tras el registro",
+    "noUsernameNormal": "No se encontró Usuario Normal con username {username} tras el registro",
+    "errorRegistroAdmin": "Error registrando usuario Administrador: ",
+    "errorRegistroGestor": "Error registrando usuario Gestor: ",
+    "errorRegistroNormal": "Error registrando usuario Normal: ",
+    "cambioContrasenaCorrecto": "Cambio de contraseña correcto",
+    "errorCambioContrasena": "Error cambiando la contraseña"
   }
 }

@@ -4,12 +4,14 @@ import { ApiService } from "./apiService";
 import { Cartografia } from "@interfaces/models/cartografia";
 import { UtilsStore } from "@stores/utils.store";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class CartografiaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
-  private utils = inject(UtilsStore)
+  private utils = inject(UtilsStore);
+  private idiomaService = inject(IdiomaService);
 
   getAll(idCenad: string): Observable<Cartografia[]> {
     const endpoint = `/cenads/${idCenad}/cartografias?size=1000`;
@@ -57,8 +59,9 @@ export class CartografiaService {
             if (!nombreArchivo) return of(false);
             const endpointCartografia = `${endpoint}/${idCartografia}`;
             return this.apiService.request<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
-              tap(() => {
-                this.utilService.toast(`Se ha creado la cartografía ${nombre}`, 'success');
+              tap(async () => {
+                const mensaje = await this.idiomaService.tVars('cartografias.cartografiaCreada', { nombre });
+                this.utilService.toast(mensaje, 'success');
               }),
               map(() => true)
             );
@@ -88,8 +91,9 @@ export class CartografiaService {
     const patchCartografia = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
       return this.apiService.request<any>(endpointCartografia, 'PATCH', body).pipe(
-        tap(() => {
-          this.utilService.toast(`Se ha editado la cartografía ${nombre}`, 'success');
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('cartografias.cartografiaModificada', { nombre });
+          this.utilService.toast(mensaje, 'success');
         }),
         map(() => nombreArchivo),
         catchError(err => { console.error(err); return of(null); })
@@ -122,9 +126,10 @@ export class CartografiaService {
     const endpointArchivo = `/files/${idCenad}/borrarCartografia/${nombreArchivo}`;
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.request<any>(endpointCartografia, 'DELETE')),
-      tap(res => {
+      tap(async res => {
         let cartografia = res;
-        this.utilService.toast(`Se ha eliminado la cartografía ${cartografia?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('cartografias.cartografiaEliminada', { nombre: cartografia?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

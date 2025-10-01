@@ -5,11 +5,13 @@ import { UtilService } from "./utilService";
 import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
 import { FicheroSolicitud } from "@interfaces/models/ficheroSolicitud";
 import { Fichero } from "@interfaces/models/fichero";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class FicheroService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAllFicheros(idRecurso: string | null, idSolicitud: string | null, isCenad: boolean | null): Observable<Fichero[]> {
     const endpoint = idRecurso ? `/recursos/${idRecurso}/ficheros?size=1000`
@@ -56,8 +58,9 @@ export class FicheroService {
             if (!nombreArchivo) return of(false);
             const endpointCartografia = `${endpoint}/${idFichero}`;
             return this.apiService.request<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
-              tap(() => {
-                this.utilService.toast(`Se ha creado el fichero ${nombre}`, 'success');
+              tap(async () => {
+                const mensaje = await this.idiomaService.tVars('archivos.exitoSubida', { nombre });
+                this.utilService.toast(mensaje, 'success');
               }),
               map(() => true)
             );
@@ -89,8 +92,9 @@ export class FicheroService {
     const patchFichero = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
       return this.apiService.request<any>(endpointFichero, 'PATCH', body).pipe(
-        tap(() => {
-          this.utilService.toast(`Se ha editado el fichero ${nombre}`, 'success');
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('archivos.modificado', { nombre });
+          this.utilService.toast(mensaje, 'success');
         }),
         map(() => nombreArchivo),
         catchError(err => { console.error(err); return of(null); })
@@ -123,9 +127,10 @@ export class FicheroService {
     const endpointArchivo = idRecurso ? `/files/${idCenad}/borrarDocRecurso/${idRecurso}/${nombreArchivo}` : `/files/${idCenad}/borrarDocSolicitud/${idSolicitud}/${nombreArchivo}`;
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.request<any>(endpointFichero, 'DELETE')),
-      tap(res => {
+      tap(async res => {
         let fichero = res;
-        this.utilService.toast(`Se ha eliminado el archivo ${fichero?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('archivos.ficheroEliminado', { nombre: fichero?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),
       catchError(err => { console.error(err); return of(false); })

@@ -1,5 +1,6 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class IdiomaService {
@@ -34,9 +35,14 @@ export class IdiomaService {
     this.idioma.set(idioma);
   }
 
-  // Método para traducir dentro del TS
-  t(texto: string): string {
-    return this.translate.instant(texto);
+  // Traducción simple
+  t(clave: string): string {
+    return this.translate.instant(clave);
+  }
+
+  // Traducción con variables
+  async tVars(clave: string, params: Record<string, any> = {}): Promise<string> {
+    return firstValueFrom(this.translate.get(clave, params));
   }
 
   // Método que añade idiomas al TranslateService dinámicamente
