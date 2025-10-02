@@ -1031,7 +1031,7 @@ export class OrquestadorService {
     return this.categoriaService.deleteCategoria(idCategoria).pipe(
       tap(res => {
         if (res) {
-          this.idiomaService.tVars('categorias.categoriaEliminada', { nombre: idCategoria }).then(mensaje => {
+          this.idiomaService.tVars('categorias.categoriaEliminada').then(mensaje => {
             console.log(mensaje);
           });
           this.loadAllCategorias(idCenad).pipe(
@@ -1109,10 +1109,14 @@ export class OrquestadorService {
           this.loadAllRecursos(idCenad).pipe(
             tap(recursos => this.cenadStore.setRecursos(recursos))
           ).subscribe();
-          console.log(`Recurso ${nombre} creado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando el recurso ${nombre}.`);
-        }
+          this.idiomaService.tVars('recursos.recursoCreado', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
+                } else {
+          this.idiomaService.tVars('orquestador.errorCreandoRecurso', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
+                }
       })
     );
   }
@@ -1132,9 +1136,13 @@ export class OrquestadorService {
           this.loadAllRecursos(idCenad).pipe(
             tap(recursos => this.cenadStore.setRecursos(recursos))
           ).subscribe();
-          console.log(`Recurso ${nombre} actualizado correctamente.`);
+          this.idiomaService.tVars('recursos.recursoModificado', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el recurso ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoRecurso', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         }
       })
     );
@@ -1154,9 +1162,13 @@ export class OrquestadorService {
           this.loadAllRecursos(idCenad).pipe(
             tap(recursos => this.cenadStore.setRecursos(recursos))
           ).subscribe();
-          console.log(`Recurso ${nombre} actualizado correctamente.`);
+          this.idiomaService.tVars('recursos.recursoModificado', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el recurso ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoRecurso', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         }
       })
     );
@@ -1166,12 +1178,16 @@ export class OrquestadorService {
     return this.recursoService.deleteRecurso(idRecurso).pipe(
       tap(res => {
         if (res) {
-          console.log(`Recurso con id ${idRecurso} borrado correctamente.`);
+          this.idiomaService.tVars('recursos.recursoEliminado').then(mensaje => {
+            console.log(mensaje);
+          });
           this.loadAllRecursos(idCenad).pipe(
             tap(recursos => this.cenadStore.setRecursos(recursos))
           ).subscribe();
         } else {
-          console.warn(`Hubo un problema borrando el recurso con id ${idRecurso}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoRecurso', { id: idRecurso }).then(mensaje => {
+            console.log(mensaje);
+          });
         }
       })
     );
@@ -1180,7 +1196,7 @@ export class OrquestadorService {
   loadRecursosDeCategoria(idCategoria: string): Observable<Recurso[] | null> {
     return this.recursoService.getRecursosDeCategoria(idCategoria).pipe(
       catchError(err => {
-        console.error('Error cargando recursos de la categoría', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         return of([]);
       })
     );
@@ -1189,7 +1205,7 @@ export class OrquestadorService {
   loadRecursosDeSubcategorias(idCategoria: string): Observable<Recurso[] | null> {
     return this.recursoService.getRecursosDeSubcategorias(idCategoria).pipe(
       catchError(err => {
-        console.error('Error cargando recursos de las subcategorías', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         return of([]);
       })
     );
@@ -1198,7 +1214,7 @@ export class OrquestadorService {
   loadRecursosDeGestor(idGestor: string): Observable<Recurso[] | null> {
     return this.recursoService.getRecursosDeGestor(idGestor).pipe(
       catchError(err => {
-        console.error('Error cargando recursos del gestor', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         return of([]);
       })
     );
@@ -1207,7 +1223,7 @@ export class OrquestadorService {
   loadRecursoSeleccionado(idRecurso: string): Observable<Recurso | null> {
     return this.recursoService.getRecursoSeleccionado(idRecurso).pipe(
       catchError(err => {
-        console.error('Error cargando el recurso', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaRecurso'), err);
         return of(null);
       })
     );
@@ -1216,7 +1232,7 @@ export class OrquestadorService {
   loadRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
     return this.recursoService.getRecursoDeSolicitud(idSolicitud).pipe(
       catchError(err => {
-        console.error('Error cargando el recurso de solicitud', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaRecurso'), err);
         return of(null);
       })
     );

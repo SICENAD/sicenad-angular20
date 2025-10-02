@@ -112,6 +112,7 @@
     "errorCargaCategoria": "Error al cargar la categoría",
     "errorCargaCategoriaPadre": "Error al cargar la categoría padre",
     "errorCargaRecursos": "Error al cargar los recursos",
+    "errorCargaRecurso": "Error al cargar el recurso",
     "errorCargaCartografias": "Error al cargar las cartografías",
     "errorCargaNormativas": "Error al cargar las normativas",
     "errorCargaSolicitudes": "Error al cargar las solicitudes",
