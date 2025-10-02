@@ -663,7 +663,8 @@ export class OrquestadorService {
         } else {
           this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
             console.error(mensaje);
-          });        }
+          });
+        }
       })
     );
   }
@@ -819,9 +820,13 @@ export class OrquestadorService {
           this.loadAllCenads().pipe(
             tap(cenads => this.datosStore.setCenads(cenads))
           ).subscribe();
-          console.log(`Cenad ${nombre} creado correctamente.`);
+          this.idiomaService.tVars('cenads.cenadCreado', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema creando el cenad ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorCreandoCenad', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         }
       })
     );
@@ -853,9 +858,14 @@ export class OrquestadorService {
         if (res) {
           this.loadAllCenads().pipe(
             tap(cenads => this.datosStore.setCenads(cenads))
-          ).subscribe(); console.log(`Cenad ${nombre} actualizado correctamente.`);
+          ).subscribe();
+          this.idiomaService.tVars('cenads.cenadEditado', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el cenad ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoCenad', { nombre }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -865,12 +875,16 @@ export class OrquestadorService {
     return this.cenadService.deleteCenad(id).pipe(
       tap(res => {
         if (res) {
-          console.log(`Cenad con id ${id} borrado correctamente.`);
+          this.idiomaService.tVars('cenads.cenadEliminado', { id }).then(mensaje => {
+            console.log(mensaje);
+          });
           this.loadAllCenads().pipe(
             tap(cenads => this.datosStore.setCenads(cenads))
           ).subscribe();
         } else {
-          console.warn(`Hubo un problema borrando el cenad con id ${id}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoCenad', { id }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -903,9 +917,14 @@ export class OrquestadorService {
         if (res) {
           this.loadAllCenads().pipe(
             tap(cenads => this.datosStore.setCenads(cenads))
-          ).subscribe(); console.log(`Cenad ${nombre} actualizado correctamente.`);
+          ).subscribe();
+          this.idiomaService.tVars('cenads.cenadEditado', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el cenad ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoCenad', { nombre }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -918,7 +937,7 @@ export class OrquestadorService {
   loadCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
     return this.cenadService.getCenadDeAdministrador(idUsuarioAdministrador).pipe(
       catchError(err => {
-        console.error('Error cargando cenad del administrador', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCenad'), err);
         return of(null);
       })
     );
@@ -927,7 +946,7 @@ export class OrquestadorService {
   loadCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
     return this.cenadService.getCenadDeGestor(idUsuarioGestor).pipe(
       catchError(err => {
-        console.error('Error cargando cenad del gestor', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCenad'), err);
         return of(null);
       })
     );
@@ -936,7 +955,7 @@ export class OrquestadorService {
   loadCenadsSinAdmin(): Observable<Cenad[] | null> {
     return this.cenadService.getCenadsSinAdmin().pipe(
       catchError(err => {
-        console.error('Error cargando cenads', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCenads'), err);
         return of([]);
       })
     );
@@ -963,9 +982,13 @@ export class OrquestadorService {
           this.loadAllCategoriasPadre(idCenad).pipe(
             tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
           ).subscribe();
-          console.log(`Categoría ${nombre} creada correctamente.`);
+          this.idiomaService.tVars('categorias.categoriaCreada', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema creando la categoría ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorCreandoCategoria', { nombre }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -992,9 +1015,13 @@ export class OrquestadorService {
           this.loadAllCategoriasPadre(idCenad).pipe(
             tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
           ).subscribe();
-          console.log(`Categoría ${nombre} actualizada correctamente.`);
+          this.idiomaService.tVars('categorias.categoriaModificada', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando la categoría ${nombre}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoCategoria', { nombre }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -1004,7 +1031,9 @@ export class OrquestadorService {
     return this.categoriaService.deleteCategoria(idCategoria).pipe(
       tap(res => {
         if (res) {
-          console.log(`Categoría con id ${idCategoria} borrada correctamente.`);
+          this.idiomaService.tVars('categorias.categoriaEliminada', { nombre: idCategoria }).then(mensaje => {
+            console.log(mensaje);
+          });
           this.loadAllCategorias(idCenad).pipe(
             tap(categorias => this.cenadStore.setCategorias(categorias))
           ).subscribe();
@@ -1012,7 +1041,9 @@ export class OrquestadorService {
             tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
           ).subscribe();
         } else {
-          console.warn(`Hubo un problema borrando la categoría con id ${idCategoria}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoCategoria', { id: idCategoria }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -1021,8 +1052,8 @@ export class OrquestadorService {
   loadSubcategorias(idCategoria: string): Observable<Categoria[] | null> {
     return this.categoriaService.getSubCategorias(idCategoria).pipe(
       catchError(err => {
-        console.error('Error cargando subcategorías', err);
-        return of([]);
+            console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
+          return of([]);
       })
     );
   }
@@ -1030,7 +1061,7 @@ export class OrquestadorService {
   loadSubcategoriasAnidadas(idCategoria: string): Observable<Categoria[] | null> {
     return this.categoriaService.getSubCategoriasAnidadas(idCategoria).pipe(
       catchError(err => {
-        console.error('Error cargando subcategorías', err);
+            console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
         return of([]);
       })
     );
@@ -1039,7 +1070,7 @@ export class OrquestadorService {
   loadCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaSeleccionada(idCategoria).pipe(
       catchError(err => {
-        console.error('Error cargando la categoria', err);
+            console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
         return of(null);
       })
     );
@@ -1048,7 +1079,7 @@ export class OrquestadorService {
   loadCategoriaPadre(idCategoria: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaPadre(idCategoria).pipe(
       catchError(err => {
-        console.error('Error cargando la categoria padre', err);
+            console.error(this.idiomaService.t('orquestador.errorCargaCategoriaPadre'), err);
         return of(null);
       })
     );
@@ -1057,7 +1088,7 @@ export class OrquestadorService {
   loadCategoriaDeRecurso(idRecurso: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaDeRecurso(idRecurso).pipe(
       catchError(err => {
-        console.error('Error cargando la categoria de recurso', err);
+            console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
         return of(null);
       })
     );
