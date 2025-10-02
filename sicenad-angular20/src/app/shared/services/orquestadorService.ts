@@ -1283,9 +1283,9 @@ export class OrquestadorService {
               }
             })
           ).subscribe();
-          console.log(`Solicitud creada correctamente.`);
+          console.log(this.idiomaService.t('solicitudes.solicitudCreada'));
         } else {
-          console.warn(`Hubo un problema creando la solicitud.`);
+          console.warn(this.idiomaService.t('orquestador.errorCreandoSolicitud'));
         }
       })
     );
@@ -1336,9 +1336,9 @@ export class OrquestadorService {
           this.loadAllSolicitudesEstado(idCenad, "Cancelada").pipe(
             tap(solicitudes => this.cenadStore.setSolicitudesCancelada(solicitudes))
           ).subscribe();
-          console.log(`Solicitud ${idSolicitud} actualizada correctamente.`);
+          console.log(this.idiomaService.t('solicitudes.solicitudActualizada'));
         } else {
-          console.warn(`Hubo un problema actualizando la solicitud ${idSolicitud}.`);
+          console.warn(this.idiomaService.t('orquestador.errorActualizandoSolicitud'));
         }
       })
     );
@@ -1348,7 +1348,7 @@ export class OrquestadorService {
     return this.solicitudService.deleteSolicitud(idSolicitud).pipe(
       tap(res => {
         if (res) {
-          console.log(`Solicitud con id ${idSolicitud} borrada correctamente.`);
+          console.log(this.idiomaService.t('solicitudes.solicitudEliminada'));
           this.loadAllSolicitudes(idCenad).pipe(
             tap(solicitudes => {
               this.cenadStore.setSolicitudes(solicitudes);
@@ -1376,8 +1376,10 @@ export class OrquestadorService {
             })
           ).subscribe();
         } else {
-          console.warn(`Hubo un problema borrando la solicitud con id ${idSolicitud}.`);
-        }
+          this.idiomaService.tVars('recursos.recursoModificado', { id: idSolicitud }).then(mensaje => {
+            console.log(mensaje);
+          });
+       }
       })
     );
   }
@@ -1385,7 +1387,7 @@ export class OrquestadorService {
   loadSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
     return this.solicitudService.getSolicitudSeleccionada(idSolicitud).pipe(
       catchError(err => {
-        console.error('Error cargando la solicitud', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaSolicitud'), err);
         return of(null);
       })
     );
@@ -1394,7 +1396,7 @@ export class OrquestadorService {
   loadSolicitudesDeRecurso(idRecurso: string): Observable<Solicitud[] | null> {
     return this.solicitudService.getSolicitudesDeRecurso(idRecurso).pipe(
       catchError(err => {
-        console.error('Error cargando solicitudes del recurso', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         return of([]);
       })
     );
@@ -1403,7 +1405,7 @@ export class OrquestadorService {
   loadSolicitudesDeRecursoPorEstado(idRecurso: string, estado: string): Observable<Solicitud[] | null> {
     return this.solicitudService.getSolicitudesDeRecursoPorEstado(idRecurso, estado).pipe(
       catchError(err => {
-        console.error('Error cargando solicitudes del recurso', err);
+        console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         return of([]);
       })
     );

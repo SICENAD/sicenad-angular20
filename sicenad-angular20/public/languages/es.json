@@ -88,9 +88,9 @@
     "tipoFormularioEliminado": "Se ha eliminado el tipo de formulario {{nombre}}"
   },
   "solicitudes": {
-    "solicitudCreada": "Se ha creado la solicitud {{nombre}}",
-    "solicitudModificada": "Se ha modificado la solicitud {{nombre}}",
-    "solicitudEliminada": "Se ha eliminado la solicitud {{nombre}}",
+    "solicitudCreada": "Se ha creado la solicitud",
+    "solicitudModificada": "Se ha modificado la solicitud",
+    "solicitudEliminada": "Se ha eliminado la solicitud",
     "notificacionCambioEstado": "Se ha notificado el cambio de estado para la solicitud {{id}}"
   },
   "unidades": {
@@ -116,6 +116,7 @@
     "errorCargaCartografias": "Error al cargar las cartografías",
     "errorCargaNormativas": "Error al cargar las normativas",
     "errorCargaSolicitudes": "Error al cargar las solicitudes",
+    "errorCargaSolicitud": "Error al cargar la solicitud",
     "errorCargaTiposFormulario": "Error al cargar los tipos de formulario",
     "errorCargaUnidades": "Error al cargar las unidades",
     "errorCargaFicheros": "Error al cargar los ficheros",
@@ -154,8 +155,8 @@
     "errorCreandoTipoFormulario": "Error creando el tipo de formulario {{nombre}}", 
     "errorActualizandoTipoFormulario": "Error actualizando el tipo de formulario {{nombre}}",
     "errorBorrandoTipoFormulario": "Error borrando el tipo de formulario con id {{id}}",
-    "errorCreandoSolicitud": "Error creando la solicitud {{nombre}}",
-    "errorActualizandoSolicitud": "Error actualizando la solicitud {{nombre}}",
+    "errorCreandoSolicitud": "Error creando la solicitud",
+    "errorActualizandoSolicitud": "Error actualizando la solicitud",
     "errorBorrandoSolicitud": "Error borrando la solicitud con id {{id}}",
     "errorCreandoUnidad": "Error creando la unidad {{nombre}}",
     "errorActualizandoUnidad": "Error actualizando la unidad {{nombre}}",
