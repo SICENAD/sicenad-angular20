@@ -59,7 +59,7 @@
   "cartografias": {
     "cartografiaCreada": "Se ha creado la cartografía {{nombre}}",
     "cartografiaModificada": "Se ha modificado la cartografía {{nombre}}",
-    "cartografiaEliminada": "Se ha eliminado la cartografía {{id}}"
+    "cartografiaEliminada": "Se ha eliminado la cartografía {{nombreArchivo}}"
   },
   "categoriasFichero": {
     "categoriaFicheroCreada": "Se ha creado la categoría de fichero {{nombre}}",
@@ -80,7 +80,12 @@
   "normativas": {
     "normativaCreada": "Se ha creado la normativa {{nombre}}",
     "normativaModificada": "Se ha modificado la normativa {{nombre}}",
-    "normativaEliminada": "Se ha eliminado la normativa {{id}}"
+    "normativaEliminada": "Se ha eliminado la normativa {{nombreArchivo}}"
+  },
+  "ficheros": {
+    "ficheroCreado": "Se ha creado el fichero {{nombre}}",
+    "ficheroModificado": "Se ha modificado el fichero {{nombre}}",
+    "ficheroEliminado": "Se ha eliminado el fichero {{nombreArchivo}}"
   },
   "tiposFormulario": {
     "tipoFormularioCreado": "Se ha creado el tipo de formulario {{nombre}}",
@@ -118,8 +123,13 @@
     "errorCargaSolicitudes": "Error al cargar las solicitudes",
     "errorCargaSolicitud": "Error al cargar la solicitud",
     "errorCargaTiposFormulario": "Error al cargar los tipos de formulario",
+    "errorCargaTipoFormulario": "Error al cargar el tipo de formulario",
+    "errorCargaCategoriaFichero": "Error al cargar la categoría de fichero",
     "errorCargaUnidades": "Error al cargar las unidades",
+    "errorCargaUnidad": "Error al cargar la unidad",
+    "errorCargaArmas": "Error al cargar las armas",
     "errorCargaFicheros": "Error al cargar los ficheros",
+    "errorCargaFichero": "Error al cargar el fichero",
     "errorCargaUsuariosSuperadministrador": "Error al cargar los usuarios superadministrador",
     "errorCargaUsuariosAdministrador": "Error al cargar los usuarios administrador",
     "errorCargaUsuariosNormal": "Error al cargar los usuarios normal",
@@ -128,7 +138,6 @@
     "errorCargaCenadVisitado": "Error al cargar el CENAD/CMT visitado",
     "errorCargaCenad": "Error cargando el CENAD/CMT",
     "errorNotificandoCambioEstado": "Error notificando el cambio de estado de la solicitud",
-    "errorCargaArmas": "Error al cargar las armas",
     "errorCargaCategoriasFichero": "Error al cargar las categorías de fichero",
     "loginCorrecto": "Login correcto",
     "loginError": "Error logueando usuario",
@@ -151,7 +160,7 @@
     "errorBorrandoCategoria": "Error borrando la categoría con id {{id}}",
     "errorCreandoNormativa": "Error creando la normativa {{nombre}}",
     "errorActualizandoNormativa": "Error actualizando la normativa {{nombre}}",
-    "errorBorrandoNormativa": "Error borrando la normativa con id {{id}}",
+    "errorBorrandoNormativa": "Error borrando la normativa {{nombreArchivo}}",
     "errorCreandoTipoFormulario": "Error creando el tipo de formulario {{nombre}}", 
     "errorActualizandoTipoFormulario": "Error actualizando el tipo de formulario {{nombre}}",
     "errorBorrandoTipoFormulario": "Error borrando el tipo de formulario con id {{id}}",
@@ -169,10 +178,13 @@
     "errorBorrandoRecurso": "Error borrando el recurso con id {{id}}",
     "errorCreandoCartografia": "Error creando la cartografía {{nombre}}",
     "errorActualizandoCartografia": "Error actualizando la cartografía {{nombre}}",
-    "errorBorrandoCartografia": "Error borrando la cartografía con id {{id}}",
+    "errorBorrandoCartografia": "Error borrando la cartografía con {{nombreArchivo}}",
     "errorCreandoCategoriaFichero": "Error creando la categoría de fichero {{nombre}}",
     "errorActualizandoCategoriaFichero": "Error actualizando la categoría de fichero {{nombre}}",
     "errorBorrandoCategoriaFichero": "Error borrando la categoría de fichero con id {{id}}",
+    "errorCreandoFichero": "Error creando el fichero {{nombre}}",
+    "errorActualizandoFichero": "Error actualizando el fichero {{nombre}}",
+    "errorBorrandoFichero": "Error borrando el fichero {{nombreArchivo}}"
 
   }
 }
