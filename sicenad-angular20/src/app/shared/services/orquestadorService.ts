@@ -675,7 +675,7 @@ export class OrquestadorService {
           this.loadAllUsuariosAdministrador().pipe(
             tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
           ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+          this.idiomaService.tVars('usuarios.usuarioEliminado', { id }).then(mensaje => {
             console.error(mensaje);
           });
         } else {
@@ -735,7 +735,7 @@ export class OrquestadorService {
           this.loadAllUsuariosGestor(idCenad).pipe(
             tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
           ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+          this.idiomaService.tVars('usuarios.usuarioEliminado', { id: idUsuario }).then(mensaje => {
             console.error(mensaje);
           });
         } else {
@@ -784,7 +784,7 @@ export class OrquestadorService {
           this.loadAllUsuariosNormal().pipe(
             tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
           ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+          this.idiomaService.tVars('usuarios.usuarioEliminado', { id }).then(mensaje => {
             console.error(mensaje);
           });
         } else {
@@ -1031,7 +1031,7 @@ export class OrquestadorService {
     return this.categoriaService.deleteCategoria(idCategoria).pipe(
       tap(res => {
         if (res) {
-          this.idiomaService.tVars('categorias.categoriaEliminada').then(mensaje => {
+          this.idiomaService.tVars('categorias.categoriaEliminada', { id: idCategoria }).then(mensaje => {
             console.log(mensaje);
           });
           this.loadAllCategorias(idCenad).pipe(
@@ -1052,8 +1052,8 @@ export class OrquestadorService {
   loadSubcategorias(idCategoria: string): Observable<Categoria[] | null> {
     return this.categoriaService.getSubCategorias(idCategoria).pipe(
       catchError(err => {
-            console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
-          return of([]);
+        console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
+        return of([]);
       })
     );
   }
@@ -1061,7 +1061,7 @@ export class OrquestadorService {
   loadSubcategoriasAnidadas(idCategoria: string): Observable<Categoria[] | null> {
     return this.categoriaService.getSubCategoriasAnidadas(idCategoria).pipe(
       catchError(err => {
-            console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
+        console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
         return of([]);
       })
     );
@@ -1070,7 +1070,7 @@ export class OrquestadorService {
   loadCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaSeleccionada(idCategoria).pipe(
       catchError(err => {
-            console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
         return of(null);
       })
     );
@@ -1079,7 +1079,7 @@ export class OrquestadorService {
   loadCategoriaPadre(idCategoria: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaPadre(idCategoria).pipe(
       catchError(err => {
-            console.error(this.idiomaService.t('orquestador.errorCargaCategoriaPadre'), err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCategoriaPadre'), err);
         return of(null);
       })
     );
@@ -1088,7 +1088,7 @@ export class OrquestadorService {
   loadCategoriaDeRecurso(idRecurso: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaDeRecurso(idRecurso).pipe(
       catchError(err => {
-            console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
+        console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
         return of(null);
       })
     );
@@ -1112,11 +1112,11 @@ export class OrquestadorService {
           this.idiomaService.tVars('recursos.recursoCreado', { nombre }).then(mensaje => {
             console.log(mensaje);
           });
-                } else {
+        } else {
           this.idiomaService.tVars('orquestador.errorCreandoRecurso', { nombre }).then(mensaje => {
             console.log(mensaje);
           });
-                }
+        }
       })
     );
   }
@@ -1178,7 +1178,7 @@ export class OrquestadorService {
     return this.recursoService.deleteRecurso(idRecurso).pipe(
       tap(res => {
         if (res) {
-          this.idiomaService.tVars('recursos.recursoEliminado').then(mensaje => {
+          this.idiomaService.tVars('recursos.recursoEliminado', { id: idRecurso }).then(mensaje => {
             console.log(mensaje);
           });
           this.loadAllRecursos(idCenad).pipe(
@@ -1376,10 +1376,10 @@ export class OrquestadorService {
             })
           ).subscribe();
         } else {
-          this.idiomaService.tVars('recursos.recursoModificado', { id: idSolicitud }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorEliminandoSolicitud', { id: idSolicitud }).then(mensaje => {
             console.log(mensaje);
           });
-       }
+        }
       })
     );
   }
@@ -1419,656 +1419,670 @@ export class OrquestadorService {
           this.loadAllArmas().pipe(
             tap(armas => this.datosStore.setArmas(armas))
           ).subscribe();
-          console.log(`Arma ${nombre} creada correctamente.`);
+          this.idiomaService.tVars('armas.armaCreada', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema creando el arma ${nombre}.`);
-        }
+          this.idiomaService.tVars('orquestador.errorCreandoArma', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
+      }
       })
     );
-  }
-  actualizarArma(nombre: string, tipoTiro: string, idArma: string): Observable<any> {
-    return this.armaService.editarArma(nombre, tipoTiro, idArma).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllArmas().pipe(
-            tap(armas => this.datosStore.setArmas(armas))
-          ).subscribe();
-          console.log(`Arma ${nombre} actualizada correctamente.`);
+}
+
+actualizarArma(nombre: string, tipoTiro: string, idArma: string): Observable < any > {
+  return this.armaService.editarArma(nombre, tipoTiro, idArma).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllArmas().pipe(
+          tap(armas => this.datosStore.setArmas(armas))
+        ).subscribe();
+          this.idiomaService.tVars('armas.armaModificada', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el arma ${nombre}.`);
-        }
-      })
-    );
-  }
-  borrarArma(id: string): Observable<any> {
-    return this.armaService.deleteArma(id).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllArmas().pipe(
-            tap(armas => this.datosStore.setArmas(armas))
-          ).subscribe();
-          console.log(`Arma con id ${id} borrada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando el arma con id ${id}.`);
-        }
-      })
-    );
-  }
+          this.idiomaService.tVars('orquestador.errorActualizandoArma', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
+      }
+    })
+  );
+}
 
-  // --- CRUD Unidades ---
-  crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable<any> {
-    return this.unidadService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUnidades().pipe(
-            tap(unidades => this.datosStore.setUnidades(unidades))
-          ).subscribe();
-          console.log(`Unidad ${nombre} creada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando la unidad ${nombre}.`);
-        }
-      })
-    );
-  }
-  actualizarUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string, idUnidad: string): Observable<any> {
-    return this.unidadService.editarUnidad(nombre, descripcion, email, tfno, direccion, poc, idUnidad).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUnidades().pipe(
-            tap(unidades => this.datosStore.setUnidades(unidades))
-          ).subscribe();
-          console.log(`Unidad ${nombre} actualizada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando la unidad ${nombre}.`);
-        }
-      })
-    );
-  }
-  borrarUnidad(id: string): Observable<any> {
-    return this.unidadService.deleteUnidad(id).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUnidades().pipe(
-            tap(unidades => this.datosStore.setUnidades(unidades))
-          ).subscribe();
-          console.log(`Unidad con id ${id} borrada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando la unidad con id ${id}.`);
-        }
-      })
-    );
-  }
+borrarArma(id: string): Observable < any > {
+  return this.armaService.deleteArma(id).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllArmas().pipe(
+          tap(armas => this.datosStore.setArmas(armas))
+        ).subscribe();
+          this.idiomaService.tVars('armas.armaEliminada', { id }).then(mensaje => {
+            console.log(mensaje);
+          });
+      } else {
+        this.idiomaService.tVars('orquestador.errorBorrandoArma', { id }).then(mensaje => {
+          console.log(mensaje);
+        });
+      }
+    })
+  );
+}
 
-  loadUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
-    return this.unidadService.getUnidadDeUsuarioNormal(idUsuarioNormal).pipe(
-      catchError(err => {
-        console.error('Error cargando unidad del usuario normal', err);
-        return of(null);
-      })
-    );
-  }
+// --- CRUD Unidades ---
+crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable < any > {
+  return this.unidadService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllUnidades().pipe(
+          tap(unidades => this.datosStore.setUnidades(unidades))
+        ).subscribe();
+        console.log(`Unidad ${nombre} creada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando la unidad ${nombre}.`);
+      }
+    })
+  );
+}
+actualizarUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string, idUnidad: string): Observable < any > {
+  return this.unidadService.editarUnidad(nombre, descripcion, email, tfno, direccion, poc, idUnidad).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllUnidades().pipe(
+          tap(unidades => this.datosStore.setUnidades(unidades))
+        ).subscribe();
+        console.log(`Unidad ${nombre} actualizada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando la unidad ${nombre}.`);
+      }
+    })
+  );
+}
+borrarUnidad(id: string): Observable < any > {
+  return this.unidadService.deleteUnidad(id).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllUnidades().pipe(
+          tap(unidades => this.datosStore.setUnidades(unidades))
+        ).subscribe();
+        console.log(`Unidad con id ${id} borrada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema borrando la unidad con id ${id}.`);
+      }
+    })
+  );
+}
 
-  // --- CRUD TiposFormulario ---
+loadUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable < Unidad | null > {
+  return this.unidadService.getUnidadDeUsuarioNormal(idUsuarioNormal).pipe(
+    catchError(err => {
+      console.error('Error cargando unidad del usuario normal', err);
+      return of(null);
+    })
+  );
+}
 
-  loadTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
-    return this.tipoFormularioService.getTipoFormularioDeRecurso(idRecurso).pipe(
-      catchError(err => {
-        console.error('Error cargando tipo de formulario', err);
-        return of(null);
-      })
-    );
-  }
+// --- CRUD TiposFormulario ---
 
-  crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
-    return this.tipoFormularioService.crearTipoFormulario(nombre, descripcion).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllTiposFormulario().pipe(
-            tap(tipos => this.datosStore.setTiposFormulario(tipos))
-          ).subscribe();
-          console.log(`Tipo de formulario ${nombre} creado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando el tipo de formulario ${nombre}.`);
-        }
-      })
-    );
-  }
-  actualizarTipoFormulario(nombre: string, descripcion: string, idTipoFormulario: string): Observable<any> {
-    return this.tipoFormularioService.editarTipoFormulario(nombre, descripcion, idTipoFormulario).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllTiposFormulario().pipe(
-            tap(tipos => this.datosStore.setTiposFormulario(tipos))
-          ).subscribe();
-          console.log(`Tipo de formulario ${nombre} actualizado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando el tipo de formulario ${nombre}.`);
-        }
-      })
-    );
-  }
-  borrarTipoFormulario(id: string): Observable<any> {
-    return this.tipoFormularioService.deleteTipoFormulario(id).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllTiposFormulario().pipe(
-            tap(tipos => this.datosStore.setTiposFormulario(tipos))
-          ).subscribe();
-          console.log(`Tipo de formulario con id ${id} borrado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando el tipo de formulario con id ${id}.`);
-        }
-      })
-    );
-  }
+loadTipoFormularioDeRecurso(idRecurso: string): Observable < TipoFormulario | null > {
+  return this.tipoFormularioService.getTipoFormularioDeRecurso(idRecurso).pipe(
+    catchError(err => {
+      console.error('Error cargando tipo de formulario', err);
+      return of(null);
+    })
+  );
+}
 
-  // --- CRUD CategoriasFichero ---
-  loadCategoriaFicheroDeFichero(idFichero: string): Observable<CategoriaFichero | null> {
-    return this.categoriaFicheroService.getCategoriaFicheroDeFichero(idFichero).pipe(
-      catchError(err => {
-        console.error('Error cargando la categoria de fichero', err);
-        return of(null);
-      })
-    );
-  }
+crearTipoFormulario(nombre: string, descripcion: string): Observable < any > {
+  return this.tipoFormularioService.crearTipoFormulario(nombre, descripcion).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllTiposFormulario().pipe(
+          tap(tipos => this.datosStore.setTiposFormulario(tipos))
+        ).subscribe();
+        console.log(`Tipo de formulario ${nombre} creado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando el tipo de formulario ${nombre}.`);
+      }
+    })
+  );
+}
+actualizarTipoFormulario(nombre: string, descripcion: string, idTipoFormulario: string): Observable < any > {
+  return this.tipoFormularioService.editarTipoFormulario(nombre, descripcion, idTipoFormulario).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllTiposFormulario().pipe(
+          tap(tipos => this.datosStore.setTiposFormulario(tipos))
+        ).subscribe();
+        console.log(`Tipo de formulario ${nombre} actualizado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando el tipo de formulario ${nombre}.`);
+      }
+    })
+  );
+}
+borrarTipoFormulario(id: string): Observable < any > {
+  return this.tipoFormularioService.deleteTipoFormulario(id).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllTiposFormulario().pipe(
+          tap(tipos => this.datosStore.setTiposFormulario(tipos))
+        ).subscribe();
+        console.log(`Tipo de formulario con id ${id} borrado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema borrando el tipo de formulario con id ${id}.`);
+      }
+    })
+  );
+}
 
-  crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable<any> {
-    return this.categoriaFicheroService.crearCategoriaFichero(nombre, tipo, descripcion).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCategoriasFichero().pipe(
-            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
-          ).subscribe();
-          console.log(`Categoría de fichero ${nombre} creada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando la categoría de fichero ${nombre}.`);
-        }
-      })
-    );
-  }
-  actualizarCategoriaFichero(nombre: string, tipo: number, descripcion: string, idCategoriaFichero: string): Observable<any> {
-    return this.categoriaFicheroService.editarCategoriaFichero(nombre, tipo, descripcion, idCategoriaFichero).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCategoriasFichero().pipe(
-            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
-          ).subscribe();
-          console.log(`Categoría de fichero ${nombre} actualizada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando la categoría de fichero ${nombre}.`);
-        }
-      })
-    );
-  }
-  borrarCategoriaFichero(id: string): Observable<any> {
-    return this.categoriaFicheroService.deleteCategoriaFichero(id).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCategoriasFichero().pipe(
-            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
-          ).subscribe();
-          console.log(`Categoría de fichero con id ${id} borrada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando la categoría de fichero con id ${id}.`);
-        }
-      })
-    );
-  }
+// --- CRUD CategoriasFichero ---
+loadCategoriaFicheroDeFichero(idFichero: string): Observable < CategoriaFichero | null > {
+  return this.categoriaFicheroService.getCategoriaFicheroDeFichero(idFichero).pipe(
+    catchError(err => {
+      console.error('Error cargando la categoria de fichero', err);
+      return of(null);
+    })
+  );
+}
 
-  // --- CRUD Cartografias ---
-  crearCartografia(
-    nombre: string,
-    descripcion: string,
-    escala: string,
-    archivo: File,
-    idCenad: string
-  ): Observable<any> {
-    return this.cartografiaService.crearCartografia(
-      nombre,
-      descripcion,
-      escala,
-      archivo,
-      idCenad
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCartografias(idCenad).pipe(
-            tap(cartografias => this.cenadStore.setCartografias(cartografias))
-          ).subscribe();
-          console.log(`Cartografía ${nombre} creada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando la cartografía ${nombre}.`);
-        }
-      })
-    );
-  }
+crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable < any > {
+  return this.categoriaFicheroService.crearCategoriaFichero(nombre, tipo, descripcion).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllCategoriasFichero().pipe(
+          tap(categorias => this.datosStore.setCategoriasFichero(categorias))
+        ).subscribe();
+        console.log(`Categoría de fichero ${nombre} creada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando la categoría de fichero ${nombre}.`);
+      }
+    })
+  );
+}
+actualizarCategoriaFichero(nombre: string, tipo: number, descripcion: string, idCategoriaFichero: string): Observable < any > {
+  return this.categoriaFicheroService.editarCategoriaFichero(nombre, tipo, descripcion, idCategoriaFichero).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllCategoriasFichero().pipe(
+          tap(categorias => this.datosStore.setCategoriasFichero(categorias))
+        ).subscribe();
+        console.log(`Categoría de fichero ${nombre} actualizada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando la categoría de fichero ${nombre}.`);
+      }
+    })
+  );
+}
+borrarCategoriaFichero(id: string): Observable < any > {
+  return this.categoriaFicheroService.deleteCategoriaFichero(id).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllCategoriasFichero().pipe(
+          tap(categorias => this.datosStore.setCategoriasFichero(categorias))
+        ).subscribe();
+        console.log(`Categoría de fichero con id ${id} borrada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema borrando la categoría de fichero con id ${id}.`);
+      }
+    })
+  );
+}
 
-  actualizarCartografia(
-    nombre: string,
-    descripcion: string,
-    escala: string,
-    archivoCartografia: File | null,
-    archivoActual: string,
-    idCenad: string,
-    idCartografia: string
-  ): Observable<any> {
-    return this.cartografiaService.editarCartografia(
-      nombre,
-      descripcion,
-      escala,
-      archivoCartografia,
-      archivoActual,
-      idCenad,
-      idCartografia
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCartografias(idCenad).pipe(
-            tap(cartografias => this.cenadStore.setCartografias(cartografias))
-          ).subscribe(); console.log(`Cartografía ${nombre} actualizada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando la cartografía ${nombre}.`);
-        }
-      })
-    );
-  }
+// --- CRUD Cartografias ---
+crearCartografia(
+  nombre: string,
+  descripcion: string,
+  escala: string,
+  archivo: File,
+  idCenad: string
+): Observable < any > {
+  return this.cartografiaService.crearCartografia(
+    nombre,
+    descripcion,
+    escala,
+    archivo,
+    idCenad
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllCartografias(idCenad).pipe(
+          tap(cartografias => this.cenadStore.setCartografias(cartografias))
+        ).subscribe();
+        console.log(`Cartografía ${nombre} creada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando la cartografía ${nombre}.`);
+      }
+    })
+  );
+}
 
-  borrarCartografia(nombreArchivo: string, idCartografia: string, idCenad: string): Observable<any> {
-    return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, idCenad).pipe(
-      tap(res => {
-        if (res) {
-          console.log(`Cartografía ${nombreArchivo} borrada correctamente.`);
-          this.loadAllCartografias(idCenad).pipe(
-            tap(cartografias => this.cenadStore.setCartografias(cartografias))
-          ).subscribe();
-        } else {
-          console.warn(`Hubo un problema borrando la cartografía ${nombreArchivo}.`);
-        }
-      })
-    );
-  }
+actualizarCartografia(
+  nombre: string,
+  descripcion: string,
+  escala: string,
+  archivoCartografia: File | null,
+  archivoActual: string,
+  idCenad: string,
+  idCartografia: string
+): Observable < any > {
+  return this.cartografiaService.editarCartografia(
+    nombre,
+    descripcion,
+    escala,
+    archivoCartografia,
+    archivoActual,
+    idCenad,
+    idCartografia
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllCartografias(idCenad).pipe(
+          tap(cartografias => this.cenadStore.setCartografias(cartografias))
+        ).subscribe(); console.log(`Cartografía ${nombre} actualizada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando la cartografía ${nombre}.`);
+      }
+    })
+  );
+}
 
-  getArchivoCartografia(nombreArchivo: string, idCenad: string): Observable<void> {
-    return this.cartografiaService.getArchivoCartografia(nombreArchivo, idCenad);
-  }
+borrarCartografia(nombreArchivo: string, idCartografia: string, idCenad: string): Observable < any > {
+  return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, idCenad).pipe(
+    tap(res => {
+      if (res) {
+        console.log(`Cartografía ${nombreArchivo} borrada correctamente.`);
+        this.loadAllCartografias(idCenad).pipe(
+          tap(cartografias => this.cenadStore.setCartografias(cartografias))
+        ).subscribe();
+      } else {
+        console.warn(`Hubo un problema borrando la cartografía ${nombreArchivo}.`);
+      }
+    })
+  );
+}
 
-  // --- CRUD FicherosRecurso ---
-  loadFicherosDeRecurso(idRecurso: string): Observable<FicheroRecurso[] | null> {
-    return this.ficheroService.getAllFicherosDeRecurso(idRecurso).pipe(
-      catchError(err => {
-        console.error('Error cargando ficheros del recurso', err);
-        return of([]);
-      })
-    );
-  }
+getArchivoCartografia(nombreArchivo: string, idCenad: string): Observable < void> {
+  return this.cartografiaService.getArchivoCartografia(nombreArchivo, idCenad);
+}
 
-  loadFicheroRecursoSeleccionado(idFichero: string): Observable<FicheroRecurso | null> {
-    return this.ficheroService.getFicheroRecursoSeleccionado(idFichero).pipe(
-      catchError(err => {
-        console.error('Error cargando el recurso', err);
-        return of(null);
-      })
-    );
-  }
-  crearFicheroRecurso(
-    nombre: string,
-    descripcion: string,
-    archivo: File,
-    idCategoriaFichero: string,
-    idCenad: string,
-    idRecurso: string
-  ): Observable<any> {
-    return this.ficheroService.crearFicheroRecurso(
-      nombre,
-      descripcion,
-      archivo,
-      idCategoriaFichero,
-      idCenad,
-      idRecurso
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadFicherosDeRecurso(idRecurso).subscribe();
-          console.log(`Fichero ${nombre} creado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando el fichero ${nombre}.`);
-        }
-      })
-    );
-  }
+// --- CRUD FicherosRecurso ---
+loadFicherosDeRecurso(idRecurso: string): Observable < FicheroRecurso[] | null > {
+  return this.ficheroService.getAllFicherosDeRecurso(idRecurso).pipe(
+    catchError(err => {
+      console.error('Error cargando ficheros del recurso', err);
+      return of([]);
+    })
+  );
+}
 
-  actualizarFicheroRecurso(
-    nombre: string,
-    descripcion: string,
-    archivo: File | null,
-    nombreArchivoActual: string,
-    idCenad: string,
-    idRecurso: string,
-    idCategoriaFichero: string,
-    idFichero: string
-  ): Observable<any> {
-    return this.ficheroService.editarFicheroRecurso(
-      nombre,
-      descripcion,
-      archivo,
-      nombreArchivoActual,
-      idCenad,
-      idRecurso,
-      idCategoriaFichero,
-      idFichero
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadFicherosDeRecurso(idRecurso).subscribe();
-          console.log(`Fichero ${nombre} actualizado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
-        }
-      })
-    );
-  }
+loadFicheroRecursoSeleccionado(idFichero: string): Observable < FicheroRecurso | null > {
+  return this.ficheroService.getFicheroRecursoSeleccionado(idFichero).pipe(
+    catchError(err => {
+      console.error('Error cargando el recurso', err);
+      return of(null);
+    })
+  );
+}
+crearFicheroRecurso(
+  nombre: string,
+  descripcion: string,
+  archivo: File,
+  idCategoriaFichero: string,
+  idCenad: string,
+  idRecurso: string
+): Observable < any > {
+  return this.ficheroService.crearFicheroRecurso(
+    nombre,
+    descripcion,
+    archivo,
+    idCategoriaFichero,
+    idCenad,
+    idRecurso
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadFicherosDeRecurso(idRecurso).subscribe();
+        console.log(`Fichero ${nombre} creado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando el fichero ${nombre}.`);
+      }
+    })
+  );
+}
 
-  borrarFicheroRecurso(nombreArchivo: string, idFichero: string, idCenad: string, idRecurso: string): Observable<any> {
-    return this.ficheroService.deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso).pipe(
-      tap(res => {
-        if (res) {
-          this.loadFicherosDeRecurso(idRecurso).subscribe();
-          console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
-        }
-      })
-    );
-  }
+actualizarFicheroRecurso(
+  nombre: string,
+  descripcion: string,
+  archivo: File | null,
+  nombreArchivoActual: string,
+  idCenad: string,
+  idRecurso: string,
+  idCategoriaFichero: string,
+  idFichero: string
+): Observable < any > {
+  return this.ficheroService.editarFicheroRecurso(
+    nombre,
+    descripcion,
+    archivo,
+    nombreArchivoActual,
+    idCenad,
+    idRecurso,
+    idCategoriaFichero,
+    idFichero
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadFicherosDeRecurso(idRecurso).subscribe();
+        console.log(`Fichero ${nombre} actualizado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
+      }
+    })
+  );
+}
 
-  getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
-    return this.ficheroService.getArchivoRecurso(nombreArchivo, idCenad, idRecurso);
-  }
-  getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<Blob> {
-    return this.ficheroService.getImagenRecurso(nombreArchivo, idCenad, idRecurso);
-  }
+borrarFicheroRecurso(nombreArchivo: string, idFichero: string, idCenad: string, idRecurso: string): Observable < any > {
+  return this.ficheroService.deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso).pipe(
+    tap(res => {
+      if (res) {
+        this.loadFicherosDeRecurso(idRecurso).subscribe();
+        console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
+      }
+    })
+  );
+}
 
-  //--- CRUD FicherosSolicitud ---
-  loadDocumentacionCenad(idSolicitud: string): Observable<FicheroSolicitud[] | null> {
-    return this.ficheroService.getAllDocumentacionSolicitudCenad(idSolicitud).pipe(
-      catchError(err => {
-        console.error('Error cargando ficheros del recurso', err);
-        return of([]);
-      })
-    );
-  }
+getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable < void> {
+  return this.ficheroService.getArchivoRecurso(nombreArchivo, idCenad, idRecurso);
+}
+getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable < Blob > {
+  return this.ficheroService.getImagenRecurso(nombreArchivo, idCenad, idRecurso);
+}
 
-  loadDocumentacionUnidad(idSolicitud: string): Observable<FicheroSolicitud[] | null> {
-    return this.ficheroService.getAllDocumentacionSolicitudUnidad(idSolicitud).pipe(
-      catchError(err => {
-        console.error('Error cargando ficheros del recurso', err);
-        return of([]);
-      })
-    );
-  }
+//--- CRUD FicherosSolicitud ---
+loadDocumentacionCenad(idSolicitud: string): Observable < FicheroSolicitud[] | null > {
+  return this.ficheroService.getAllDocumentacionSolicitudCenad(idSolicitud).pipe(
+    catchError(err => {
+      console.error('Error cargando ficheros del recurso', err);
+      return of([]);
+    })
+  );
+}
 
-  loadFicheroSolicitudSeleccionado(idFichero: string): Observable<FicheroSolicitud | null> {
-    return this.ficheroService.getFicheroSolicitudSeleccionado(idFichero).pipe(
-      catchError(err => {
-        console.error('Error cargando el recurso', err);
-        return of(null);
-      })
-    );
-  }
+loadDocumentacionUnidad(idSolicitud: string): Observable < FicheroSolicitud[] | null > {
+  return this.ficheroService.getAllDocumentacionSolicitudUnidad(idSolicitud).pipe(
+    catchError(err => {
+      console.error('Error cargando ficheros del recurso', err);
+      return of([]);
+    })
+  );
+}
 
-  crearFicheroSolicitudCenad(
-    nombre: string,
-    descripcion: string,
-    archivo: File,
-    idCategoriaFichero: string,
-    idCenad: string,
-    idSolicitud: string
-  ): Observable<any> {
-    return this.ficheroService.crearFicheroSolicitudCenad(
-      nombre,
-      descripcion,
-      archivo,
-      idCategoriaFichero,
-      idCenad,
-      idSolicitud
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionCenad(idSolicitud).subscribe();
-          console.log(`Fichero ${nombre} creado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando el fichero ${nombre}.`);
-        }
-      })
-    );
-  }
+loadFicheroSolicitudSeleccionado(idFichero: string): Observable < FicheroSolicitud | null > {
+  return this.ficheroService.getFicheroSolicitudSeleccionado(idFichero).pipe(
+    catchError(err => {
+      console.error('Error cargando el recurso', err);
+      return of(null);
+    })
+  );
+}
 
-  crearFicheroSolicitudUnidad(
-    nombre: string,
-    descripcion: string,
-    archivo: File,
-    idCategoriaFichero: string,
-    idCenad: string,
-    idSolicitud: string
-  ): Observable<any> {
-    return this.ficheroService.crearFicheroSolicitudUnidad(
-      nombre,
-      descripcion,
-      archivo,
-      idCategoriaFichero,
-      idCenad,
-      idSolicitud
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionUnidad(idSolicitud).subscribe();
-          console.log(`Fichero ${nombre} creado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando el fichero ${nombre}.`);
-        }
-      })
-    );
-  }
+crearFicheroSolicitudCenad(
+  nombre: string,
+  descripcion: string,
+  archivo: File,
+  idCategoriaFichero: string,
+  idCenad: string,
+  idSolicitud: string
+): Observable < any > {
+  return this.ficheroService.crearFicheroSolicitudCenad(
+    nombre,
+    descripcion,
+    archivo,
+    idCategoriaFichero,
+    idCenad,
+    idSolicitud
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadDocumentacionCenad(idSolicitud).subscribe();
+        console.log(`Fichero ${nombre} creado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando el fichero ${nombre}.`);
+      }
+    })
+  );
+}
 
-  actualizarFicheroSolicitudCenad(
-    nombre: string,
-    descripcion: string,
-    archivo: File | null,
-    nombreArchivoActual: string,
-    idCenad: string,
-    idSolicitud: string,
-    idCategoriaFichero: string,
-    idFichero: string
-  ): Observable<any> {
-    return this.ficheroService.editarFicheroSolicitud(
-      nombre,
-      descripcion,
-      archivo,
-      nombreArchivoActual,
-      idCenad,
-      idSolicitud,
-      idCategoriaFichero,
-      idFichero
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionCenad(idSolicitud).subscribe();
-          console.log(`Fichero ${nombre} actualizado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
-        }
-      })
-    );
-  }
+crearFicheroSolicitudUnidad(
+  nombre: string,
+  descripcion: string,
+  archivo: File,
+  idCategoriaFichero: string,
+  idCenad: string,
+  idSolicitud: string
+): Observable < any > {
+  return this.ficheroService.crearFicheroSolicitudUnidad(
+    nombre,
+    descripcion,
+    archivo,
+    idCategoriaFichero,
+    idCenad,
+    idSolicitud
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadDocumentacionUnidad(idSolicitud).subscribe();
+        console.log(`Fichero ${nombre} creado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando el fichero ${nombre}.`);
+      }
+    })
+  );
+}
 
-  actualizarFicheroSolicitudUnidad(
-    nombre: string,
-    descripcion: string,
-    archivo: File | null,
-    nombreArchivoActual: string,
-    idCenad: string,
-    idSolicitud: string,
-    idCategoriaFichero: string,
-    idFichero: string
-  ): Observable<any> {
-    return this.ficheroService.editarFicheroSolicitud(
-      nombre,
-      descripcion,
-      archivo,
-      nombreArchivoActual,
-      idCenad,
-      idSolicitud,
-      idCategoriaFichero,
-      idFichero
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionUnidad(idSolicitud).subscribe();
-          console.log(`Fichero ${nombre} actualizado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
-        }
-      })
-    );
-  }
+actualizarFicheroSolicitudCenad(
+  nombre: string,
+  descripcion: string,
+  archivo: File | null,
+  nombreArchivoActual: string,
+  idCenad: string,
+  idSolicitud: string,
+  idCategoriaFichero: string,
+  idFichero: string
+): Observable < any > {
+  return this.ficheroService.editarFicheroSolicitud(
+    nombre,
+    descripcion,
+    archivo,
+    nombreArchivoActual,
+    idCenad,
+    idSolicitud,
+    idCategoriaFichero,
+    idFichero
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadDocumentacionCenad(idSolicitud).subscribe();
+        console.log(`Fichero ${nombre} actualizado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
+      }
+    })
+  );
+}
 
-  borrarFicheroSolicitudCenad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionCenad(idSolicitud).subscribe();
-          console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
-        }
-      })
-    );
-  }
+actualizarFicheroSolicitudUnidad(
+  nombre: string,
+  descripcion: string,
+  archivo: File | null,
+  nombreArchivoActual: string,
+  idCenad: string,
+  idSolicitud: string,
+  idCategoriaFichero: string,
+  idFichero: string
+): Observable < any > {
+  return this.ficheroService.editarFicheroSolicitud(
+    nombre,
+    descripcion,
+    archivo,
+    nombreArchivoActual,
+    idCenad,
+    idSolicitud,
+    idCategoriaFichero,
+    idFichero
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadDocumentacionUnidad(idSolicitud).subscribe();
+        console.log(`Fichero ${nombre} actualizado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando el fichero ${nombre}.`);
+      }
+    })
+  );
+}
 
-  borrarFicheroSolicitudUnidad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionUnidad(idSolicitud).subscribe();
-          console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
-        } else {
-          console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
-        }
-      })
-    );
-  }
+borrarFicheroSolicitudCenad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable < any > {
+  return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
+    tap(res => {
+      if (res) {
+        this.loadDocumentacionCenad(idSolicitud).subscribe();
+        console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
+      }
+    })
+  );
+}
 
-  getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<void> {
-    return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
-  }
+borrarFicheroSolicitudUnidad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable < any > {
+  return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
+    tap(res => {
+      if (res) {
+        this.loadDocumentacionUnidad(idSolicitud).subscribe();
+        console.log(`Fichero ${nombreArchivo} borrado correctamente.`);
+      } else {
+        console.warn(`Hubo un problema borrando el fichero ${nombreArchivo}.`);
+      }
+    })
+  );
+}
 
-  getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<Blob> {
-    return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
-  }
+getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable < void> {
+  return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
+}
 
-  // --- CRUD Normativas ---
-  crearNormativa(
-    nombre: string,
-    descripcion: string,
-    archivo: File,
-    idCenad: string
-  ): Observable<any> {
-    return this.normativaService.crearNormativa(
-      nombre,
-      descripcion,
-      archivo,
-      idCenad
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllNormativas(idCenad).pipe(
-            tap(normativas => this.cenadStore.setNormativas(normativas))
-          ).subscribe();
-          console.log(`Normativa ${nombre} creada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema creando la normativa ${nombre}.`);
-        }
-      })
-    );
-  }
+getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable < Blob > {
+  return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
+}
 
-  actualizarNormativa(
-    nombre: string,
-    descripcion: string,
-    archivoNormativa: File | null,
-    archivoActual: string,
-    idCenad: string,
-    idNormativa: string
-  ): Observable<any> {
-    return this.normativaService.editarNormativa(
-      nombre,
-      descripcion,
-      archivoNormativa,
-      archivoActual,
-      idCenad,
-      idNormativa
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllNormativas(idCenad).pipe(
-            tap(normativas => this.cenadStore.setNormativas(normativas))
-          ).subscribe();
-          console.log(`Normativa ${nombre} actualizada correctamente.`);
-        } else {
-          console.warn(`Hubo un problema actualizando la normativa ${nombre}.`);
-        }
-      })
-    );
-  }
+// --- CRUD Normativas ---
+crearNormativa(
+  nombre: string,
+  descripcion: string,
+  archivo: File,
+  idCenad: string
+): Observable < any > {
+  return this.normativaService.crearNormativa(
+    nombre,
+    descripcion,
+    archivo,
+    idCenad
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllNormativas(idCenad).pipe(
+          tap(normativas => this.cenadStore.setNormativas(normativas))
+        ).subscribe();
+        console.log(`Normativa ${nombre} creada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema creando la normativa ${nombre}.`);
+      }
+    })
+  );
+}
 
-  borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string): Observable<any> {
-    return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, idCenad).pipe(
-      tap(res => {
-        if (res) {
-          console.log(`Normativa ${nombreArchivo} borrada correctamente.`);
-          this.loadAllNormativas(idCenad).pipe(
-            tap(normativas => this.cenadStore.setNormativas(normativas))
-          ).subscribe();
-        } else {
-          console.warn(`Hubo un problema borrando la normativa ${nombreArchivo}.`);
-        }
-      })
-    );
-  }
+actualizarNormativa(
+  nombre: string,
+  descripcion: string,
+  archivoNormativa: File | null,
+  archivoActual: string,
+  idCenad: string,
+  idNormativa: string
+): Observable < any > {
+  return this.normativaService.editarNormativa(
+    nombre,
+    descripcion,
+    archivoNormativa,
+    archivoActual,
+    idCenad,
+    idNormativa
+  ).pipe(
+    tap(res => {
+      if (res) {
+        this.loadAllNormativas(idCenad).pipe(
+          tap(normativas => this.cenadStore.setNormativas(normativas))
+        ).subscribe();
+        console.log(`Normativa ${nombre} actualizada correctamente.`);
+      } else {
+        console.warn(`Hubo un problema actualizando la normativa ${nombre}.`);
+      }
+    })
+  );
+}
 
-  getArchivoNormativa(nombreArchivo: string, idCenad: string): Observable<void> {
-    return this.normativaService.getArchivoNormativa(nombreArchivo, idCenad);
-  }
+borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string): Observable < any > {
+  return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, idCenad).pipe(
+    tap(res => {
+      if (res) {
+        console.log(`Normativa ${nombreArchivo} borrada correctamente.`);
+        this.loadAllNormativas(idCenad).pipe(
+          tap(normativas => this.cenadStore.setNormativas(normativas))
+        ).subscribe();
+      } else {
+        console.warn(`Hubo un problema borrando la normativa ${nombreArchivo}.`);
+      }
+    })
+  );
+}
 
-  // --- GETTERS ---
-  getCenads(): Cenad[] { return this.datosStore.cenads(); }
-  getCategoriasFichero(): CategoriaFichero[] { return this.datosStore.categoriasFichero(); }
-  getTiposFormulario(): TipoFormulario[] { return this.datosStore.tiposFormulario(); }
-  getUnidades(): Unidad[] { return this.datosStore.unidades(); }
-  getArmas(): Arma[] { return this.datosStore.armas(); }
-  getUsuariosSuperadministrador(): UsuarioSuperAdministrador[] { return this.datosStore.usuariosSuperadministrador(); }
-  getUsuariosAdministrador(): UsuarioAdministrador[] { return this.datosStore.usuariosAdministrador(); }
-  getUsuariosNormal(): UsuarioNormal[] { return this.datosStore.usuariosNormal(); }
-  getUrlApi(): string | null { return this.datosStore.urlApi(); }
-  getUsuarioLogueado() { return this.usuarioLogueadoStore.usuarioLogueado(); }
-  getCenadPropio() { return this.usuarioLogueadoStore.cenadPropio(); }
-  getUnidad() { return this.usuarioLogueadoStore.unidad(); }
-  getcategoriasCenad(): Categoria[] { return this.cenadStore.categorias(); }
-  getcategoriasPadreCenad(): Categoria[] { return this.cenadStore.categoriasPadre(); }
-  getrecursosCenad(): Recurso[] { return this.cenadStore.recursos(); }
-  getcartografiasCenad(): Cartografia[] { return this.cenadStore.cartografias(); }
-  getnormativasCenad(): Normativa[] { return this.cenadStore.normativas(); }
-  getsolicitudesCenad(): Solicitud[] { return this.cenadStore.solicitudes(); }
-  getUsuariosGestorCenad(): UsuarioGestor[] { return this.cenadStore.usuariosGestor(); }
-  getUsuarioAdministradorCenad(): UsuarioAdministrador | null { return this.cenadStore.usuarioAdministrador(); }
-  getCenadVisitado(): Cenad | null { return this.cenadStore.cenadVisitado(); }
+getArchivoNormativa(nombreArchivo: string, idCenad: string): Observable < void> {
+  return this.normativaService.getArchivoNormativa(nombreArchivo, idCenad);
+}
+
+// --- GETTERS ---
+getCenads(): Cenad[] { return this.datosStore.cenads(); }
+getCategoriasFichero(): CategoriaFichero[] { return this.datosStore.categoriasFichero(); }
+getTiposFormulario(): TipoFormulario[] { return this.datosStore.tiposFormulario(); }
+getUnidades(): Unidad[] { return this.datosStore.unidades(); }
+getArmas(): Arma[] { return this.datosStore.armas(); }
+getUsuariosSuperadministrador(): UsuarioSuperAdministrador[] { return this.datosStore.usuariosSuperadministrador(); }
+getUsuariosAdministrador(): UsuarioAdministrador[] { return this.datosStore.usuariosAdministrador(); }
+getUsuariosNormal(): UsuarioNormal[] { return this.datosStore.usuariosNormal(); }
+getUrlApi(): string | null { return this.datosStore.urlApi(); }
+getUsuarioLogueado() { return this.usuarioLogueadoStore.usuarioLogueado(); }
+getCenadPropio() { return this.usuarioLogueadoStore.cenadPropio(); }
+getUnidad() { return this.usuarioLogueadoStore.unidad(); }
+getcategoriasCenad(): Categoria[] { return this.cenadStore.categorias(); }
+getcategoriasPadreCenad(): Categoria[] { return this.cenadStore.categoriasPadre(); }
+getrecursosCenad(): Recurso[] { return this.cenadStore.recursos(); }
+getcartografiasCenad(): Cartografia[] { return this.cenadStore.cartografias(); }
+getnormativasCenad(): Normativa[] { return this.cenadStore.normativas(); }
+getsolicitudesCenad(): Solicitud[] { return this.cenadStore.solicitudes(); }
+getUsuariosGestorCenad(): UsuarioGestor[] { return this.cenadStore.usuariosGestor(); }
+getUsuarioAdministradorCenad(): UsuarioAdministrador | null { return this.cenadStore.usuarioAdministrador(); }
+getCenadVisitado(): Cenad | null { return this.cenadStore.cenadVisitado(); }
 
   async getDatosDeUsuario() {
-    const rol = this.auth.rol()!;//obliga a que no sea nulo.si fuera nulo petaria, pero es que si fuera nulo no se ha logueado y no se lanza este metodo
-    const username = this.auth.username()!;
-    const { usuario, cenad, unidad } = await this.usuarioService.getDatosUsuario(rol, username);
-    this.usuarioLogueadoStore.setUsuario(usuario);
-    this.usuarioLogueadoStore.setCenadPropio(cenad ? cenad : null);
-    this.usuarioLogueadoStore.setUnidad(unidad ? unidad : null);
-  }
+  const rol = this.auth.rol()!;//obliga a que no sea nulo.si fuera nulo petaria, pero es que si fuera nulo no se ha logueado y no se lanza este metodo
+  const username = this.auth.username()!;
+  const { usuario, cenad, unidad } = await this.usuarioService.getDatosUsuario(rol, username);
+  this.usuarioLogueadoStore.setUsuario(usuario);
+  this.usuarioLogueadoStore.setCenadPropio(cenad ? cenad : null);
+  this.usuarioLogueadoStore.setUnidad(unidad ? unidad : null);
+}
 }

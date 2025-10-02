@@ -135,8 +135,7 @@ export class CategoriaService {
     const endpoint = `/categorias/${idCategoria}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(async res => {
-        let categoria = res;
-        const mensaje = await this.idiomaService.tVars('categorias.categoriaEliminada', { nombre: categoria?.nombre });
+        const mensaje = await this.idiomaService.tVars('categorias.categoriaEliminada', { id: idCategoria });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {

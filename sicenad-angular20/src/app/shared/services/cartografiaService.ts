@@ -127,8 +127,7 @@ export class CartografiaService {
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.request<any>(endpointCartografia, 'DELETE')),
       tap(async res => {
-        let cartografia = res;
-        const mensaje = await this.idiomaService.tVars('cartografias.cartografiaEliminada', { nombre: cartografia?.nombre });
+        const mensaje = await this.idiomaService.tVars('cartografias.cartografiaEliminada', { id: idCartografia });
         this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),

@@ -128,8 +128,7 @@ export class FicheroService {
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.request<any>(endpointFichero, 'DELETE')),
       tap(async res => {
-        let fichero = res;
-        const mensaje = await this.idiomaService.tVars('archivos.ficheroEliminado', { nombre: fichero?.nombre });
+        const mensaje = await this.idiomaService.tVars('archivos.ficheroEliminado', { id: idFichero });
         this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),

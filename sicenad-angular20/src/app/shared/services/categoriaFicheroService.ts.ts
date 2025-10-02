@@ -66,8 +66,7 @@ export class CategoriaFicheroService {
     const endpoint = `/categorias_fichero/${idCategoriaFichero}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(async res => {
-        let categoriaFichero = res;
-        const mensaje = await this.idiomaService.tVars('categoriasFichero.categoriaFicheroEliminada', { nombre: categoriaFichero?.nombre });
+        const mensaje = await this.idiomaService.tVars('categoriasFichero.categoriaFicheroEliminada', { id: idCategoriaFichero });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {

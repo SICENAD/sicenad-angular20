@@ -58,8 +58,7 @@ export class ArmaService {
     const endpoint = `/armas/${idArma}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(async res => {
-        let arma = res;
-        const mensaje = await this.idiomaService.tVars('armas.armaEliminada', { nombre: arma?.nombre });
+        const mensaje = await this.idiomaService.tVars('armas.armaEliminada', { id: idArma });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {

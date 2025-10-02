@@ -66,8 +66,7 @@ export class UnidadService {
     const endpoint = `/unidades/${idUnidad}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(async res => {
-        let unidad = res;
-        const mensaje = await this.idiomaService.tVars('unidades.unidadEliminada', { nombre: unidad?.nombre });
+        const mensaje = await this.idiomaService.tVars('unidades.unidadEliminada', { id: idUnidad });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {

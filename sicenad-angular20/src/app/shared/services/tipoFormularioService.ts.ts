@@ -65,9 +65,8 @@ export class TipoFormularioService {
   deleteTipoFormulario(idTipoFormulario: string): Observable<any> {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-     tap(async res => {
-        let tipoFormulario = res;
-        const mensaje = await this.idiomaService.tVars('tiposFormulario.tipoFormularioEliminado', { nombre: tipoFormulario?.nombre });
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('tiposFormulario.tipoFormularioEliminado', { id: idTipoFormulario });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {

@@ -224,8 +224,7 @@ export class UsuarioService {
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
       tap(async res => {
         if (res) {
-          let usuario = res;
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioEliminado', { username: usuario?.username });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioEliminado', { id: idUsuario });
           this.utilService.toast(mensaje, 'success');
         }
       }),

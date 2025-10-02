@@ -159,8 +159,7 @@ export class CenadService {
     return this.apiService.borrarCarpeta(endpointCarpeta).pipe(
       switchMap(() => this.apiService.request<any>(endpointCenad, 'DELETE')),
       tap(async res => {
-        let cenad = res;
-        const mensaje = await this.idiomaService.tVars('cenads.cenadEliminado', { nombre: cenad?.nombre });
+        const mensaje = await this.idiomaService.tVars('cenads.cenadEliminado', { id: idCenad });
         this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),

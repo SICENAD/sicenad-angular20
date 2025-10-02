@@ -49,43 +49,43 @@
   "armas": {
     "armaCreada": "Se ha creado el arma {{nombre}}",
     "armaModificada": "Se ha modificado el arma {{nombre}}",
-    "armaEliminada": "Se ha eliminado el arma {{nombre}}"
+    "armaEliminada": "Se ha eliminado el arma {{id}}"
   },
     "recursos": {
     "recursoCreado": "Se ha creado el recurso {{nombre}}",
     "recursoModificado": "Se ha modificado el recurso {{nombre}}",
-    "recursoEliminado": "Se ha eliminado el recurso {{nombre}}"
+    "recursoEliminado": "Se ha eliminado el recurso {{id}}"
   },
   "cartografias": {
     "cartografiaCreada": "Se ha creado la cartografía {{nombre}}",
     "cartografiaModificada": "Se ha modificado la cartografía {{nombre}}",
-    "cartografiaEliminada": "Se ha eliminado la cartografía {{nombre}}"
+    "cartografiaEliminada": "Se ha eliminado la cartografía {{id}}"
   },
   "categoriasFichero": {
     "categoriaFicheroCreada": "Se ha creado la categoría de fichero {{nombre}}",
     "categoriaFicheroModificada": "Se ha modificado la categoría de fichero {{nombre}}",
-    "categoriaFicheroEliminada": "Se ha eliminado la categoría de fichero {{nombre}}"
+    "categoriaFicheroEliminada": "Se ha eliminado la categoría de fichero {{id}}"
   },
     "categorias": {
     "categoriaCreada": "Se ha creado la categoría {{nombre}}",
     "categoriaModificada": "Se ha modificado la categoría {{nombre}}",
-    "categoriaEliminada": "Se ha eliminado la categoría {{nombre}}"
+    "categoriaEliminada": "Se ha eliminado la categoría {{id}}"
   },
   "cenads": {
     "cenadCreado": "Se ha creado el CENAD/CMT {{nombre}}",
     "cenadEditado": "Se ha editado el CENAD/CMT {{nombre}}",
-    "cenadEliminado": "Se ha eliminado el CENAD/CMT {{nombre}}",
+    "cenadEliminado": "Se ha eliminado el CENAD/CMT {{id}}",
     "infoCenadEditado": "Se ha editado la información del CENAD/CMT"
   },
   "normativas": {
     "normativaCreada": "Se ha creado la normativa {{nombre}}",
     "normativaModificada": "Se ha modificado la normativa {{nombre}}",
-    "normativaEliminada": "Se ha eliminado la normativa {{nombre}}"
+    "normativaEliminada": "Se ha eliminado la normativa {{id}}"
   },
   "tiposFormulario": {
     "tipoFormularioCreado": "Se ha creado el tipo de formulario {{nombre}}",
     "tipoFormularioModificado": "Se ha modificado el tipo de formulario {{nombre}}",
-    "tipoFormularioEliminado": "Se ha eliminado el tipo de formulario {{nombre}}"
+    "tipoFormularioEliminado": "Se ha eliminado el tipo de formulario {{id}}"
   },
   "solicitudes": {
     "solicitudCreada": "Se ha creado la solicitud",
@@ -96,11 +96,11 @@
   "unidades": {
     "unidadCreada": "Se ha creado la unidad {{nombre}}",
     "unidadModificada": "Se ha modificado la unidad {{nombre}}",
-    "unidadEliminada": "Se ha eliminado la unidad {{nombre}}"
+    "unidadEliminada": "Se ha eliminado la unidad {{id}}"
   },
   "usuarios": {
     "usuarioModificado": "Se ha modificado el usuario {{username}}",
-    "usuarioEliminado": "Se ha eliminado el usuario {{username}}",
+    "usuarioEliminado": "Se ha eliminado el usuario {{id}}",
     "usuarioEliminadoSinUsername": "Se ha eliminado el usuario",
     "rolDesconocido": "Rol desconocido: {{rol}}"
   },

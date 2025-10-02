@@ -114,7 +114,7 @@ export class RecursoService {
     }
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
-     tap(async () => {
+      tap(async () => {
         const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', { nombre });
         this.utilService.toast(mensaje, 'success');
       }),
@@ -136,7 +136,7 @@ export class RecursoService {
     }
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
-       tap(async () => {
+      tap(async () => {
         const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', { nombre });
         this.utilService.toast(mensaje, 'success');
       }),
@@ -150,9 +150,8 @@ export class RecursoService {
   deleteRecurso(idRecurso: string): Observable<any> {
     const endpoint = `/recursos/${idRecurso}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-           tap(async res => {
-        let recurso = res;
-        const mensaje = await this.idiomaService.tVars('recursos.recursoEliminado', { nombre: recurso?.nombre });
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('recursos.recursoEliminado', { id: idRecurso });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {

@@ -123,8 +123,7 @@ export class NormativaService {
     return this.apiService.borrarArchivo(endpointArchivo).pipe(
       switchMap(() => this.apiService.request<any>(endpointNormativa, 'DELETE')),
       tap(async res => {
-        let normativa = res;
-        const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', { nombre: normativa?.nombre });
+        const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', { id: idNormativa });
         this.utilService.toast(mensaje, 'success');
       }),
       map(() => true),

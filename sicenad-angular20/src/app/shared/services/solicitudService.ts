@@ -153,9 +153,8 @@ export class SolicitudService {
   deleteSolicitud(idSolicitud: string): Observable<any> {
     const endpoint = `/solicitudes/${idSolicitud}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-           tap(async res => {
-        let solicitud = res;
-        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada', { nombre: solicitud?.idString });
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada', { id: idSolicitud });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
