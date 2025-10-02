@@ -1,14 +1,17 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Arma } from '@interfaces/models/arma';
+import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-arma-modal',
-  imports: [FontAwesomeModule, ReactiveFormsModule],
+  imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './armaModal.component.html',
   styleUrls: ['./armaModal.component.css']
 })
@@ -18,6 +21,7 @@ export class ArmaModalComponent {
   private orquestadorService = inject(OrquestadorService);
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
+  private idiomaService = inject(IdiomaService);
 
   faEdit = this.iconos.faEdit;
   // --- Inputs / Outputs ---
@@ -58,16 +62,20 @@ export class ArmaModalComponent {
     this.orquestadorService.actualizarArma(nombre, tipoTiro, this.idArma()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Arma ${nombre} actualizada correctamente.`);
+          this.idiomaService.tVars('armas.armaActualizada', { nombre }).then(mensaje => {
+            console.log(mensaje);
+          });
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Arma:', error);
+        this.idiomaService.tVars('orquestador.errorActualizandoArma', { nombre }).then(mensaje => {
+          console.log(mensaje);
+        });
       }
     });
   }
-  
+
   borrarArma() {
     this.orquestadorService.borrarArma(this.idArma()).subscribe(() => {
       this.output.emit(); // notificamos al padre

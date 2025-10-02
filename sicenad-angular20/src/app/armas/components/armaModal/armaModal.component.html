@@ -7,17 +7,17 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Arma {{ arma()?.nombre }}</h5>
+        <h5 class="modal-title">{{'armas.editarArma' | translate}} {{ arma()?.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="armaForm">
           <div class="mb-3">
-            <label><b>ARMA<sup class="text-danger">*</sup></b></label>
+            <label><b>{{'armas.arma' | translate | uppercase}}<sup class="text-danger">*</sup></b></label>
             <input type="text" class="form-control" formControlName="nombre" />
           </div>
           <div class="mb-3">
-            <label><b>TIPO DE TIRO<sup class="text-danger">*</sup></b></label>
+            <label><b>{{'armas.tipoTiro' | translate | uppercase}}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="tipoTiro">
               @for (tipoTiro of tiposTiro(); track tipoTiro) {
               <option [value]="tipoTiro">{{ tipoTiro }}</option>
@@ -27,14 +27,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{'comun.cerrar' | translate}}</button>
         <button
           type="button"
           class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          Borrar Arma
+          {{'armas.borrar' | translate}}
         </button>
         <button
           type="button"
@@ -43,7 +43,7 @@
           data-bs-dismiss="modal"
           [disabled]="armaForm.invalid"
         >
-          Guardar Arma
+          {{'armas.guardar' | translate}}
         </button>
       </div>
     </div>
@@ -54,19 +54,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Arma {{ arma()?.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{'armas.borrar' | translate}} {{ arma()?.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ arma()?.nombre }}?</div>
+      <div class="modal-body">{{'armas.confirmarBorrado' | translate : { nombre: arma()?.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{'comun.cerrar' | translate}}</button>
         <button
           type="button"
           class="btn"
           (click)="borrarArma()"
           data-bs-dismiss="modal"
         >
-          Borrar
+          {{'comun.borrar' | translate}}
         </button>
       </div>
     </div>

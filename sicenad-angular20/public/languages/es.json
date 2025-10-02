@@ -5,7 +5,11 @@
     "ALERT_MSG": "Has pulsado el botón en español",
     "manual": "Manual de usuario",
     "ET": "Ejército de Tierra",
-    "notFound": "Página no encontrada"    
+    "notFound": "Página no encontrada",
+    "cerrar": "Cerrar",
+    "borrar": "Borrar",
+    "volver": "Volver",
+    "nombreObligatorio": "El nombre es obligatorio",
   },
   "archivos": {
     "subirArchivo": "Subir archivo",
@@ -49,7 +53,18 @@
   "armas": {
     "armaCreada": "Se ha creado el arma {{nombre}}",
     "armaModificada": "Se ha modificado el arma {{nombre}}",
-    "armaEliminada": "Se ha eliminado el arma {{id}}"
+    "armaEliminada": "Se ha eliminado el arma {{id}}",
+    "arma": "Arma",
+    "armas": "Armas",
+    "nuevoArma": "Nuevo arma",
+    "editarArma": "Editar arma",
+    "tipoTiro": "Tipo de tiro",
+    "borrar": "Borrar",
+    "confirmarBorrado": "¿Quieres borrar el arma {{nombre}}?",
+    "guardar": "Guardar Arma",
+    "gestionArmas": "Gestión de Armas",
+    "selectionarTipoTiro": "Selecciona un tipo de tiro",
+    "crearArma": "Crear Arma"
   },
     "recursos": {
     "recursoCreado": "Se ha creado el recurso {{nombre}}",

@@ -1,12 +1,12 @@
 <div class="d-flex align-items-center position-relative p-2 bg-light">
   <a class="nav-link volver me-auto" [routerLink]="routesPaths.superadministrador"
-    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>{{'comun.volver' | translate}}</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
-    <u>GESTIÓN DE ARMAS</u>
+    <u>{{'armas.gestionArmas' | translate | uppercase}}</u>
   </h3>
   <button class="btn text-white ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nuevo-arma">
-    Nuevo <b>Arma</b>
+    {{'armas.nuevoArma' | translate}}
   </button>
 </div>
 <hr class="w-100" />
@@ -14,10 +14,10 @@
   <div class="col col-md-12">
     <div class="row mt-2 titulos">
       <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 titulo">
-        <b>NOMBRE</b>
+        <b>{{'armas.arma' | translate | uppercase}}</b>
       </div>
       <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 titulo">
-        <b>TIPO DE TIRO</b>
+        <b>{{'armas.tipoTiro' | translate | uppercase}}</b>
       </div>
     </div>
     @for (a of armas(); track a.idString) {
@@ -31,34 +31,34 @@
     <div class="modal-content">
       <form [formGroup]="armaForm">
         <div class="modal-header">
-          <h1 class="modal-title fs-5">Nuevo Arma</h1>
+          <h1 class="modal-title fs-5">{{'armas.nuevoArma' | translate}}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
-            <label for="nombre" class="form-label titulo1"><b>ARMA<sup class="text-danger">*</sup></b></label>
+            <label for="nombre" class="form-label titulo1"><b>{{'armas.arma' | translate | uppercase}}<sup class="text-danger">*</sup></b></label>
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{'comun.nombreObligatorio' | translate}}</span>
             }
           </div>
           <!-- Tipo de Tiro -->
           <div class="mb-3">
-            <label class="titulo1"><b>TIPO DE TIRO<sup class="text-danger">*</sup></b></label>
+            <label class="titulo1"><b>{{'armas.tipoTiro' | translate | uppercase}}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="tipoTiro">
-              <option value="" disabled >Selecciona un tipo de tiro</option>
+              <option value="" disabled >{{'armas.selectionarTipoTiro' | translate}}</option>
               @for (tipoTiro of tiposTiro(); track tipoTiro) {
               <option [value]="tipoTiro">{{ tipoTiro }}</option>
               }
             </select>
             @if (tipoTiro?.touched && tipoTiro?.invalid) {
-            <div class="text-danger">Selecciona un tipo de tiro</div>
+            <div class="text-danger">{{'comun.seleccionarTipoTiro' | translate}}</div>
             }
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">{{'comun.cerrar' | translate}}</button>
           <button
             type="button"
             class="btn"
@@ -66,7 +66,7 @@
             [disabled]="armaForm.invalid"
             (click)="crearArma()"
           >
-            Crear Arma
+            {{'armas.crearArma' | translate}}
           </button>
         </div>
       </form>
