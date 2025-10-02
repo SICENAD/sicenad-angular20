@@ -470,7 +470,7 @@ export class OrquestadorService {
         this.loadUsuarioGestorPorUsername(username).pipe(
           switchMap(usuario => {
             if (!usuario) {
-              this.idiomaService.tVars('orquestador.noUsernameAdmin', { username }).then(mensaje => {
+              this.idiomaService.tVars('orquestador.noUsernameGestor', { username }).then(mensaje => {
                 console.warn(mensaje);
               });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
@@ -608,9 +608,13 @@ export class OrquestadorService {
           this.loadAllUsuariosSuperadministrador().pipe(
             tap(usuarios => this.datosStore.setUsuariosSuperadministrador(usuarios))
           ).subscribe();
-          console.log(`Usuario Superadministrador ${username} actualizado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el Usuario Superadministrador ${username}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -622,9 +626,13 @@ export class OrquestadorService {
           this.loadAllUsuariosSuperadministrador().pipe(
             tap(usuarios => this.datosStore.setUsuariosSuperadministrador(usuarios))
           ).subscribe();
-          console.log(`Usuario Superadministrador con id ${id} borrado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema borrando el Usuario Superadministrador con id ${id}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -634,7 +642,9 @@ export class OrquestadorService {
   loadUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
     return this.usuarioService.getUsuarioAdministradorPorUsername(username).pipe(
       catchError(err => {
-        console.error('Error cargando usuario administrador', err);
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+          console.error(mensaje);
+        });
         return of(null);
       })
     );
@@ -647,10 +657,13 @@ export class OrquestadorService {
           this.loadAllUsuariosAdministrador().pipe(
             tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
           ).subscribe();
-          console.log(`Usuario Administrador ${username} actualizado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el Usuario Administrador ${username}.`);
-        }
+          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
+            console.error(mensaje);
+          });        }
       })
     );
   }
@@ -661,9 +674,13 @@ export class OrquestadorService {
           this.loadAllUsuariosAdministrador().pipe(
             tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
           ).subscribe();
-          console.log(`Usuario Administrador con id ${id} borrado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema borrando el Usuario Administrador con id ${id}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -673,7 +690,9 @@ export class OrquestadorService {
   loadUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
     return this.usuarioService.getUsuarioGestorPorUsername(username).pipe(
       catchError(err => {
-        console.error('Error cargando usuario gestor', err);
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+          console.error(mensaje);
+        });
         return of(null);
       })
     );
@@ -682,7 +701,9 @@ export class OrquestadorService {
   loadUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
     return this.usuarioService.getUsuarioGestorDeRecurso(idRecurso).pipe(
       catchError(err => {
-        console.error('Error cargando usuario gestor', err);
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+          console.error(mensaje);
+        });
         return of(null);
       })
     );
@@ -695,9 +716,13 @@ export class OrquestadorService {
           this.loadAllUsuariosGestor(idCenad).pipe(
             tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
           ).subscribe();
-          console.log(`Usuario Gestor ${username} actualizado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el Usuario Gestor ${username}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -709,9 +734,13 @@ export class OrquestadorService {
           this.loadAllUsuariosGestor(idCenad).pipe(
             tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
           ).subscribe();
-          console.log(`Usuario Gestor con id ${idUsuario} borrado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema borrando el Usuario Gestor con id ${idUsuario}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id: idUsuario }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -721,7 +750,9 @@ export class OrquestadorService {
   loadUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
     return this.usuarioService.getUsuarioNormalPorUsername(username).pipe(
       catchError(err => {
-        console.error('Error cargando usuario normal', err);
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+          console.error(mensaje, err);
+        });
         return of(null);
       })
     );
@@ -734,9 +765,13 @@ export class OrquestadorService {
           this.loadAllUsuariosNormal().pipe(
             tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
           ).subscribe();
-          console.log(`Usuario Normal ${username} actualizado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema actualizando el Usuario Normal ${username}.`);
+          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );
@@ -748,9 +783,13 @@ export class OrquestadorService {
           this.loadAllUsuariosNormal().pipe(
             tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
           ).subscribe();
-          console.log(`Usuario Normal con id ${id} borrado correctamente.`);
+          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+            console.error(mensaje);
+          });
         } else {
-          console.warn(`Hubo un problema borrando el Usuario Normal con id ${id}.`);
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then(mensaje => {
+            console.error(mensaje);
+          });
         }
       })
     );

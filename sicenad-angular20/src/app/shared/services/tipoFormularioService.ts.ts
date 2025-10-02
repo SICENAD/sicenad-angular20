@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { TipoFormulario } from "@interfaces/models/tipoFormulario";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class TipoFormularioService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(): Observable<TipoFormulario[]> {
     const endpoint = `/tipos_formulario?size=1000`;
@@ -34,8 +36,9 @@ export class TipoFormularioService {
     const endpoint = `/tipos_formulario`;
     return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha creado el tipo de formulario ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('tiposFormulario.tipoFormularioCreado', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -48,8 +51,9 @@ export class TipoFormularioService {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el tipo de formulario ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('tiposFormulario.tipoFormularioModificado', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -57,13 +61,14 @@ export class TipoFormularioService {
       })
     );
   }
-  
+
   deleteTipoFormulario(idTipoFormulario: string): Observable<any> {
     const endpoint = `/tipos_formulario/${idTipoFormulario}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+     tap(async res => {
         let tipoFormulario = res;
-        this.utilService.toast(`Se ha eliminado el tipo de formulario ${tipoFormulario?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('tiposFormulario.tipoFormularioEliminado', { nombre: tipoFormulario?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

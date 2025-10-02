@@ -51,6 +51,11 @@
     "armaModificada": "Se ha modificado el arma {{nombre}}",
     "armaEliminada": "Se ha eliminado el arma {{nombre}}"
   },
+    "recursos": {
+    "recursoCreado": "Se ha creado el recurso {{nombre}}",
+    "recursoModificado": "Se ha modificado el recurso {{nombre}}",
+    "recursoEliminado": "Se ha eliminado el recurso {{nombre}}"
+  },
   "cartografias": {
     "cartografiaCreada": "Se ha creado la cartografía {{nombre}}",
     "cartografiaModificada": "Se ha modificado la cartografía {{nombre}}",
@@ -77,11 +82,27 @@
     "normativaModificada": "Se ha modificado la normativa {{nombre}}",
     "normativaEliminada": "Se ha eliminado la normativa {{nombre}}"
   },
+  "tiposFormulario": {
+    "tipoFormularioCreado": "Se ha creado el tipo de formulario {{nombre}}",
+    "tipoFormularioModificado": "Se ha modificado el tipo de formulario {{nombre}}",
+    "tipoFormularioEliminado": "Se ha eliminado el tipo de formulario {{nombre}}"
+  },
   "solicitudes": {
     "solicitudCreada": "Se ha creado la solicitud {{nombre}}",
     "solicitudModificada": "Se ha modificado la solicitud {{nombre}}",
     "solicitudEliminada": "Se ha eliminado la solicitud {{nombre}}",
     "notificacionCambioEstado": "Se ha notificado el cambio de estado para la solicitud {{id}}"
+  },
+  "unidades": {
+    "unidadCreada": "Se ha creado la unidad {{nombre}}",
+    "unidadModificada": "Se ha modificado la unidad {{nombre}}",
+    "unidadEliminada": "Se ha eliminado la unidad {{nombre}}"
+  },
+  "usuarios": {
+    "usuarioModificado": "Se ha modificado el usuario {{username}}",
+    "usuarioEliminado": "Se ha eliminado el usuario {{username}}",
+    "usuarioEliminadoSinUsername": "Se ha eliminado el usuario",
+    "rolDesconocido": "Rol desconocido: {{rol}}"
   },
   "orquestador": {
     "errorCargaCenads": "Error al cargar los CENAD,s/CMT,s",
@@ -98,6 +119,7 @@
     "errorCargaUsuariosAdministrador": "Error al cargar los usuarios administrador",
     "errorCargaUsuariosNormal": "Error al cargar los usuarios normal",
     "errorCargaUsuariosGestor": "Error al cargar los usuarios gestor",
+    "errorCargaUsuario": "Error al cargar el usuario",
     "errorCargaCenadVisitado": "Error al cargar el CENAD/CMT visitado",
     "errorNotificandoCambioEstado": "Error notificando el cambio de estado de la solicitud",
     "errorCargaArmas": "Error al cargar las armas",
@@ -112,6 +134,8 @@
     "errorRegistroGestor": "Error registrando usuario Gestor: ",
     "errorRegistroNormal": "Error registrando usuario Normal: ",
     "cambioContrasenaCorrecto": "Cambio de contraseña correcto",
-    "errorCambioContrasena": "Error cambiando la contraseña"
+    "errorCambioContrasena": "Error cambiando la contraseña",
+    "errorActualizandoUsuario": "Error actualizando usuario {{username}}",
+    "errorBorrandoUsuario": "Error borrando usuario {{id}}"
   }
 }

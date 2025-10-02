@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Solicitud } from "@interfaces/models/solicitud";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class SolicitudService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(idCenad: string): Observable<Solicitud[]> {
     const endpoint = `/cenads/${idCenad}/solicitudes?size=1000`;
@@ -40,7 +42,6 @@ export class SolicitudService {
     const endpoint = `/recursos/${idRecurso}/solicitudes?size=1000`;
     return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
       map(res => {
-        console.log(`Solicitudes recibidas para el recurso ${idRecurso}:`, res);
         return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
       }),
       catchError(err => {
@@ -54,7 +55,6 @@ export class SolicitudService {
     const endpoint = `/recursos/${idRecurso}/solicitudesEstado/${estado}?size=1000`;
     return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
       map(res => {
-        console.log(`Solicitudes recibidas para el recurso ${idRecurso} con estado ${estado}:`, res);
         return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
       }),
       catchError(err => {
@@ -103,7 +103,7 @@ export class SolicitudService {
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
       tap(() => {
-        this.utilService.toast(`Se ha creado la solicitud`, 'success');
+        this.utilService.toast(this.idiomaService.t('solicitudes.solicitudCreada'), 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -127,21 +127,21 @@ export class SolicitudService {
     const endpoint = `/solicitudes/${idSolicitud}`;
     const fechaFinDocumentacionCondicional = fechaFinDocumentacion ? this.utilService.localDateTimeToIso(fechaFinDocumentacion) : null;
     const body: any = {
-        observaciones: observaciones,
-        observacionesCenad: observacionesCenad,
-        jefeUnidadUsuaria: this.utilService.toTitleCase(jefeUnidadUsuaria),
-        pocEjercicio: pocEjercicio,
-        tlfnRedactor: tlfnRedactor,
-        fechaFinDocumentacion: fechaFinDocumentacionCondicional,
-        fechaUltModSolicitud: this.utilService.localDateTimeToIso(new Date()),
-        fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
-        fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
-        estado: estado
+      observaciones: observaciones,
+      observacionesCenad: observacionesCenad,
+      jefeUnidadUsuaria: this.utilService.toTitleCase(jefeUnidadUsuaria),
+      pocEjercicio: pocEjercicio,
+      tlfnRedactor: tlfnRedactor,
+      fechaFinDocumentacion: fechaFinDocumentacionCondicional,
+      fechaUltModSolicitud: this.utilService.localDateTimeToIso(new Date()),
+      fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
+      fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
+      estado: estado
     };
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
       tap(() => {
-        this.utilService.toast(`Se ha modificado la solicitud`, 'success');
+        this.utilService.toast(this.idiomaService.t('solicitudes.solicitudModificada'), 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -153,9 +153,10 @@ export class SolicitudService {
   deleteSolicitud(idSolicitud: string): Observable<any> {
     const endpoint = `/solicitudes/${idSolicitud}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+           tap(async res => {
         let solicitud = res;
-        this.utilService.toast(`Se ha eliminado la solicitud ${solicitud?.id}`, 'success');
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada', { nombre: solicitud?.idString });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

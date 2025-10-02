@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Unidad } from "@interfaces/models/unidad";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class UnidadService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(): Observable<Unidad[]> {
     const endpoint = `/unidades?size=1000`;
@@ -34,8 +36,9 @@ export class UnidadService {
     const endpoint = `/unidades`;
     return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion, email, tfno, direccion, poc }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha creado la unidad ${nombre}`, 'success');
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('unidades.unidadCreada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -48,8 +51,9 @@ export class UnidadService {
     const endpoint = `/unidades/${idUnidad}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion, email: email.toLowerCase(), tfno, direccion, poc: poc.toUpperCase() }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado la unidad ${nombre}`, 'success');
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('unidades.unidadModificada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -57,13 +61,14 @@ export class UnidadService {
       })
     );
   }
-  
+
   deleteUnidad(idUnidad: string): Observable<any> {
     const endpoint = `/unidades/${idUnidad}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+      tap(async res => {
         let unidad = res;
-        this.utilService.toast(`Se ha eliminado la unidad ${unidad?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('unidades.unidadEliminada', { nombre: unidad?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

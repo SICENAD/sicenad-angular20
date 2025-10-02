@@ -3,11 +3,13 @@ import { catchError, map, Observable, of, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Recurso } from "@interfaces/models/recurso";
 import { UtilService } from "./utilService";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class RecursoService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   getAll(idCenad: string): Observable<Recurso[]> {
     const endpoint = `/cenads/${idCenad}/recursos?size=1000`;
@@ -89,8 +91,9 @@ export class RecursoService {
     };
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha creado el recurso ${nombre}`, 'success');
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('recursos.recursoCreado', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -111,8 +114,9 @@ export class RecursoService {
     }
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el recurso ${nombre}`, 'success');
+     tap(async () => {
+        const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -132,8 +136,9 @@ export class RecursoService {
     }
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el recurso ${nombre}`, 'success');
+       tap(async () => {
+        const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -145,9 +150,10 @@ export class RecursoService {
   deleteRecurso(idRecurso: string): Observable<any> {
     const endpoint = `/recursos/${idRecurso}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+           tap(async res => {
         let recurso = res;
-        this.utilService.toast(`Se ha eliminado el recurso ${recurso?.nombre}`, 'success');
+        const mensaje = await this.idiomaService.tVars('recursos.recursoEliminado', { nombre: recurso?.nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);

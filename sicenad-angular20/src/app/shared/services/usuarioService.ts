@@ -13,21 +13,23 @@ import { Unidad } from "@interfaces/models/unidad";
 import { UtilService } from "./utilService";
 import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
 import { ChangePasswordResponse } from "@interfaces/responses/changePasswordResponse";
+import { IdiomaService } from "./idiomaService";
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
 
   // --- REQUEST LOGIN ---
   public login(username: string, password: string): Observable<LoginResponse> {
     const endpoint = `/auth/login`;
-    return this.apiService.request<LoginResponse>(endpoint,'POST', { username, password });
+    return this.apiService.request<LoginResponse>(endpoint, 'POST', { username, password });
   }
   // --- REQUEST REGISTER ---
   public register(username: string, password: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, rol: string): Observable<RegisterResponse> {
     const endpoint = `/auth/register`;
-    return this.apiService.request<RegisterResponse>(endpoint,'POST', { username, password, tfno, email, emailAdmitido, descripcion, rol });
+    return this.apiService.request<RegisterResponse>(endpoint, 'POST', { username, password, tfno, email, emailAdmitido, descripcion, rol });
   }
 
   // --- REQUEST CHANGE PASSWORD ---
@@ -158,8 +160,9 @@ export class UsuarioService {
     const endpoint = `/usuarios_superadministrador/${idUsuarioSuperadministrador}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', { username });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -173,8 +176,9 @@ export class UsuarioService {
     const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', { username });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -188,8 +192,9 @@ export class UsuarioService {
     const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', { username });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -203,8 +208,9 @@ export class UsuarioService {
     const unidad = `${this.apiService.getUrlApi()}/unidades/${idUnidad}`;
     return this.apiService.request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, unidad }).pipe(
       map(res => !!res),
-      tap(() => {
-        this.utilService.toast(`Se ha modificado el usuario ${username}`, 'success');
+      tap(async res => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', { username });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError(err => {
         console.error(err);
@@ -216,12 +222,11 @@ export class UsuarioService {
   deleteUsuario(idUsuario: string): Observable<any> {
     const endpoint = `/usuarios/${idUsuario}`;
     return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(res => {
+      tap(async res => {
         if (res) {
-          console.log(`Usuario con id ${idUsuario} eliminado correctamente.`);
           let usuario = res;
-          console.log(usuario);
-          this.utilService.toast(`Se ha eliminado el usuario ${usuario?.username}`, 'success');
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioEliminado', { username: usuario?.username });
+          this.utilService.toast(mensaje, 'success');
         }
       }),
       catchError(err => {
@@ -297,8 +302,10 @@ export class UsuarioService {
         );
         return { usuario };
       }
-      default:
-        throw new Error(`Rol desconocido: ${rol}`);
+      default: {
+        const mensaje = await this.idiomaService.tVars('usuarios.rolDesconocido', { rol });
+        throw new Error(mensaje);
+      }
     }
   }
 }
