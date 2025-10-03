@@ -1,5 +1,5 @@
 <div class="row text-center">
-    <h3>{{ getFormattedTitle(view(), viewDate(), locale()) }}</h3>
+    <h3>{{ getFormattedTitle(view(), viewDate(), locale()) }}</h3>{{locale()}} 
 
     <div class="d-flex justify-content-center gap-3 mb-4">
         <button
@@ -7,21 +7,21 @@
             (click)="viewChange.emit(CalendarView.Month)"
             [class.active]="view() === CalendarView.Month"
         >
-            Mes
+            {{'calendario.mes' | translate}}
         </button>
         <button
             class="btn"
             (click)="viewChange.emit(CalendarView.Week)"
             [class.active]="view() === CalendarView.Week"
         >
-            Semana
+            {{'calendario.semana' | translate}}
         </button>
         <button
             class="btn"
             (click)="viewChange.emit(CalendarView.Day)"
             [class.active]="view() === CalendarView.Day"
         >
-            Día
+            {{'calendario.dia' | translate}}
         </button>
     </div>
     <div class="d-flex justify-content-center gap-3 mb-4">
@@ -32,7 +32,7 @@
             [viewDate]="viewDate()"
             (viewDateChange)="onViewDateChange($event)"
         >
-            Anterior
+            {{'calendario.anterior' | translate}}
     </button>
         <button
             class="px-3 py-1 bg-gray-200 rounded"
@@ -40,7 +40,7 @@
             [viewDate]="viewDate()"
             (viewDateChange)="onViewDateChange($event)"
         >
-            Hoy
+            {{'calendario.hoy' | translate}}
 </button>
         <button
             class="px-3 py-1 bg-gray-200 rounded"
@@ -49,7 +49,7 @@
             [viewDate]="viewDate()"
             (viewDateChange)="onViewDateChange($event)"
         >
-            Siguiente
+            {{'calendario.siguiente' | translate}}
         </button>
     </div>
 </div>

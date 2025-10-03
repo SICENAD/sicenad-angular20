@@ -10,7 +10,7 @@
       <strong>Volver</strong>
     </a>
     <!-- Título centrado -->
-    <h1 class="text-center m-0">CALENDARIO DE SOLICITUDES DEL {{ cenadVisitado()?.nombre }}</h1>
+    <h1 class="text-center m-0">{{ 'calendario.calendarioSolicitudesDel' | translate |uppercase }} {{ cenadVisitado()?.nombre }}</h1>
     <!-- Botón crear solicitud -->
     <app-solicitudNuevaModal (solicitudesChange)="actualizarSolicitudesDesdeNuevaSolicitud($event)" class="position-absolute end-0"/>
   </div>
@@ -24,7 +24,7 @@
     <app-filtroRecursos (recursosFiltradosChange)="actualizarRecursosFiltrados($event)" />
     @if (recursosFiltrados.length > 0) {
     <div class="d-flex align-items-center mb-3">
-      <label for="selectRecurso" class="me-2 mb-0 titulo"><b>Selecciona un recurso:</b></label>
+      <label for="selectRecurso" class="me-2 mb-0 titulo"><b>{{ 'calendario.seleccionaRecurso' | translate }}:</b></label>
       <div class="select-wrapper">
         <select
           id="selectRecurso"
@@ -32,7 +32,7 @@
           class="titulo1"
           #selectRecurso
         >
-          <option [value]="''" class="titulo1">Selecciona un recurso</option>
+          <option [value]="''" class="titulo1">{{ 'calendario.seleccionaRecurso' | translate }}</option>
           @for (r of recursosFiltrados; track r.idString) {
           <option [value]="r.idString" class="titulo1">{{ r.nombre }}</option>
           }
@@ -40,7 +40,7 @@
       </div>
     </div>
     } @else {
-    <div class="text-muted mt-3">No se encontraron recursos.</div>
+    <div class="text-muted mt-3">{{ 'calendario.noRecursos' | translate }}</div>
     }
     <app-calendarioComponente [solicitudes]="solicitudes()" />
   </div>

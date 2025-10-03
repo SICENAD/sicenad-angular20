@@ -7,5 +7,14 @@
   "armas": {
     "ejemplo1": "ejemplo 1 de armas ingles",
     "ejemplo2": "ejemplo 2 de armas ingles"
+  },
+  "calendario": {
+    "mes": "Month",
+    "semana": "Week",
+    "dia": "Day",
+    "hoy": "Today",
+    "anterior": "Previous",
+    "siguiente": "Next",
+    "locale": "en"
   }
 }

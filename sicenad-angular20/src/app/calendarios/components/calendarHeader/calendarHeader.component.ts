@@ -1,6 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { UtilService } from '@services/utilService';
+import { IdiomasStore } from '@stores/idiomas.store';
 import { CalendarPreviousViewDirective, CalendarTodayDirective, CalendarNextViewDirective, CalendarView } from 'angular-calendar';
 
 @Component({
@@ -8,22 +10,24 @@ import { CalendarPreviousViewDirective, CalendarTodayDirective, CalendarNextView
     imports: [
         CalendarPreviousViewDirective,
         CalendarTodayDirective,
-        CalendarNextViewDirective
+        CalendarNextViewDirective,
+        TranslateModule
     ],
     templateUrl: './calendarHeader.component.html',
     styleUrls: ['./calendarHeader.component.css'],
 })
 export class CalendarHeaderComponent {
     private utilService = inject(UtilService);
+    private idiomaStore = inject(IdiomasStore);
     /** Inputs */
     view = input.required<CalendarView>();
     viewDate = input.required<Date>();
-    locale = input<string>('es');
 
     /** Outputs */
     viewChange = output<CalendarView>();
     viewDateChange = output<Date>();
 
+    locale = computed(() => this.idiomaStore.idiomaActual());
     CalendarView = CalendarView;
 
     /**
@@ -40,7 +44,7 @@ export class CalendarHeaderComponent {
     }
 
     // Formatea la fecha según la vista
-    getFormattedTitle(view: CalendarView, viewDate: Date, locale: string = 'es'): string {
+    getFormattedTitle(view: CalendarView, viewDate: Date, locale: string): string {
         const month = this.utilService.toTitleCase(formatDate(viewDate, 'LLLL', locale));
         const year = formatDate(viewDate, 'yyyy', locale);
         switch (view) {

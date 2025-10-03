@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { CalendarHeaderComponent } from '@app/calendarios/components/calendarHeader/calendarHeader.component';
 import { Solicitud } from '@interfaces/models/solicitud';
 import { UtilsStore } from '@stores/utils.store';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-calendarioComponente',
@@ -19,6 +20,7 @@ import { UtilsStore } from '@stores/utils.store';
     CalendarMonthViewComponent,
     CalendarWeekViewComponent,
     CalendarDayViewComponent,
+    TranslateModule
   ],
   templateUrl: './calendario.component.html',
   styleUrls: ['./calendario.component.css'],

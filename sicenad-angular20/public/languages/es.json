@@ -9,7 +9,19 @@
     "cerrar": "Cerrar",
     "borrar": "Borrar",
     "volver": "Volver",
-    "nombreObligatorio": "El nombre es obligatorio",
+    "nombreObligatorio": "El nombre es obligatorio"
+  },
+  "calendario": {
+    "mes": "Mes",
+    "semana": "Semana",
+    "dia": "Día",
+    "hoy": "Hoy",
+    "anterior": "Anterior",
+    "siguiente": "Siguiente",
+    "locale": "es",
+    "calendarioSolicitudesDel": "Calendario de Solicitudes del ",
+    "seleccionaRecurso": "Selecciona un recurso",
+    "noRecursos": "No se encontraron recursos"
   },
   "archivos": {
     "subirArchivo": "Subir archivo",
@@ -111,7 +123,13 @@
     "solicitudCreada": "Se ha creado la solicitud",
     "solicitudModificada": "Se ha modificado la solicitud",
     "solicitudEliminada": "Se ha eliminado la solicitud",
-    "notificacionCambioEstado": "Se ha notificado el cambio de estado para la solicitud {{id}}"
+    "notificacionCambioEstado": "Se ha notificado el cambio de estado para la solicitud {{id}}",
+    "listadoSolicitudes": "Listado de Solicitudes",
+    "noSolicitudes": "No hay solicitudes que mostrar",
+    "inicio": "Inicio",
+    "fin": "Fin",
+    "estado": "Estado",
+    "unidad:": "Unidad"
   },
   "unidades": {
     "unidadCreada": "Se ha creado la unidad {{nombre}}",
