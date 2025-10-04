@@ -4,11 +4,13 @@ import { RoutesPaths } from '@app/app.routes';
 import { OrquestadorService } from '@services/orquestadorService';
 import { UtilsStore } from '@stores/utils.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
+import { IdiomaService } from '@services/idiomaService';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './register-page.component.html',
   styleUrls: ['./register-page.component.css']
 })
@@ -17,6 +19,7 @@ export class RegisterComponent {
   private orquestadorService = inject(OrquestadorService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private idiomaService = inject(IdiomaService);
 
   readonly routesPaths = RoutesPaths;
   registerForm: FormGroup = this.fb.group({
@@ -51,7 +54,7 @@ export class RegisterComponent {
 
   async solicitudRegistro() {
     if (this.registerForm.invalid) {
-      alert('Por favor, completa todos los campos correctamente.');
+      alert(this.idiomaService.t('administracion.feedbackCompleta'));
       return;
     }
     const { username, password, tfno, email, emailAdmitido, descripcion } = this.registerForm.value;
@@ -69,13 +72,13 @@ export class RegisterComponent {
         next: (res) => {
           this.passwordForRegisterFromUser.set('');
           this.router.navigate([RoutesPaths.login])
-          console.log('Registro correcto:', res);
+          console.log(res);
         },
         error: (err) => {
-          console.error('Error en registro:', err);
+          console.error(err);
         }
       })
       )
-      : alert('El password introducido no es correcto');
+      : alert(this.idiomaService.t('administracion.passwordIncorrecto'));
   }
 }

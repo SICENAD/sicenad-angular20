@@ -1,65 +1,65 @@
 <div class="container">
-  <h1 class="text-center">Crear nuevo <b>Usuario Superadministrador</b></h1>
+  <h1 class="text-center">{{ 'usuarios.crearSuperadmin' | translate }}</h1>
   <form [formGroup]="registerForm">
     <!-- Teléfono -->
     <div class="mb-3 col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
       <label for="tfno" class="form-label"
-        ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
+        ><b>{{ 'comun.telefono' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
       >
       <input type="text" class="form-control" id="tfno" formControlName="tfno" />
       @if (tfno?.touched && tfno?.invalid) {
-      <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+      <span class="text-danger">{{ 'comun.telefonoObligatorio' | translate }}</span>
       }
     </div>
     <!-- Email -->
     <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
       <label for="email" class="form-label"
-        ><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label
+        ><b>{{ 'comun.email' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
       >
       <input type="email" class="form-control" id="email" formControlName="email" />
-      <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+      <div id="emailHelp" class="form-text">{{ 'comun.correoValido' | translate }}</div>
       @if (email?.touched && email?.invalid) {
-      <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+      <span class="text-danger">{{ 'comun.emailObligatorio' | translate }}</span>
       }
     </div>
     <!-- Notificaciones -->
     <div class="mb-3">
-      <label class="form-label me-2"><b>¿QUIERE RECIBIR NOTIFICACIONES?</b></label>
+      <label class="form-label me-2"><b>{{ 'usuarios.quiereNotificaciones' | translate | uppercase }}</b></label>
       <input type="checkbox" class="letra" id="emailAdmitido" formControlName="emailAdmitido" />
     </div>
     <!-- Descripción -->
     <div class="mb-3">
       <label class="form-label"
-        ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+        ><b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
       >
       <textarea class="form-control letra" id="descripcion" formControlName="descripcion">
       </textarea>
       @if (descripcion?.touched && descripcion?.invalid) {
-      <div class="text-danger">La descripción es obligatoria.</div>
+      <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
       }
     </div>
     <!-- Username -->
     <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
       <label for="username" class="form-label"
-        ><b>USUARIO<sup class="text-danger">*</sup></b></label
+        ><b>{{ 'usuarios.usuario' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
       >
       <input type="text" class="form-control" id="username" formControlName="username" />
       @if (username?.touched && username?.invalid) {
-      <div class="text-danger">El usuario es obligatorio.</div>
+      <div class="text-danger">{{ 'usuarios.usuarioObligatorio' | translate }}</div>
       }
     </div>
     <!-- Password -->
     <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
       <label for="password" class="form-label"
-        ><b>CONTRASEÑA<sup class="text-danger">*</sup></b></label
+        ><b>{{ 'usuarios.contrasena' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
       >
       <input type="password" class="form-control" id="password" formControlName="password" />
       @if (password?.touched && password?.invalid) {
-      <div class="text-danger">La contraseña es obligatoria.</div>
+      <div class="text-danger">{{ 'usuarios.contrasenaObligatoria' | translate }}</div>
       }
     </div>
     <!-- Botones -->
-    <a [routerLink]="routesPaths.login" class="btn btn-primary text-white col-2 me-5">Cancelar</a>
+    <a [routerLink]="routesPaths.login" class="btn btn-primary text-white col-2 me-5">{{ 'comun.cerrar' | translate }}</a>
     <button
       type="button"
       class="btn btn-primary text-white col-2"
@@ -67,7 +67,7 @@
       data-bs-target="#modal-crear-usuario"
       [disabled]="registerForm.invalid"
     >
-      Crear Usuario
+      {{ 'usuarios.crearUsuario' | translate }}
     </button>
   </form>
 </div>
@@ -77,7 +77,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Crear Usuario</h1>
+        <h1 class="modal-title fs-5">{{ 'usuarios.crearSuperadmin' | translate }}</h1>
         <button
           type="button"
           class="btn-close"
@@ -86,7 +86,7 @@
         ></button>
       </div>
       <div class="modal-body">
-        <label class="form-label"><b>Confirmar contraseña</b></label>
+        <label class="form-label"><b>{{ 'usuarios.confirmarPassword' | translate }}</b></label>
         <input
           type="password"
           class="form-control"
@@ -97,14 +97,14 @@
         />
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn btn-primary"
           (click)="solicitudRegistro()"
           data-bs-dismiss="modal"
         >
-          Crear Usuario
+          {{ 'usuarios.crearUsuario' | translate }}
         </button>
       </div>
     </div>

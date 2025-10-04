@@ -101,12 +101,17 @@
     "noAutenticado": "Usuario NO autenticado en la API",
     "cerrarSesion": "Cerrar sesión",
     "iniciarSesion": "Iniciar sesión",
+    "crearCuenta": "Crear cuenta",
+    "preguntarCuenta": "¿No tienes cuenta? ",
     "necesitasIniciarSesion": "Necesitas iniciar sesión para poder acceder a los distintos CENAD,s/CMT,s",
     "identificacionCenad": "{{rol}} del {{cenad}}",
     "identificacionUnidad": "{{rol}} de la unidad {{unidad}}",
     "debesAdminCenad": "Debes ser Administrador de un CENAD para acceder a esta página",
     "debesSerSuperadmin": "Debes ser Superadministrador para acceder a esta página",
-    "sesionExpirada": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."
+    "sesionExpirada": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "feedbackCompleta": "Por favor, completa todos los campos correctamente",
+    "feedbackLogin": "Error en el login. Revisa tus credenciales.",
+    "passwordIncorrecto": "El password introducido no es correcto"
   },
   "armas": {
     "armaCreada": "Se ha creado el arma {{nombre}}",
@@ -296,7 +301,15 @@
     "usuarioModificado": "Se ha modificado el usuario {{username}}",
     "usuarioEliminado": "Se ha eliminado el usuario {{id}}",
     "usuarioEliminadoSinUsername": "Se ha eliminado el usuario",
-    "rolDesconocido": "Rol desconocido: {{rol}}"
+    "rolDesconocido": "Rol desconocido: {{rol}}",
+    "usuario": "Usuario",
+    "contraseña": "Contraseña",
+    "usuarioObligatorio": "El usuario es obligatorio",
+    "contraseñaObligatoria": "La contraseña es obligatoria",
+    "crearUsuario": "Crear Usuario",
+    "crearSuperadmin": "Crear nuevo Usuario Superadministrador",
+    "quiereNotificaciones": "¿Quiere recibir notificaciones?",
+    "confirmarPassword": "Confirmar Contraseña"
   },
   "orquestador": {
     "errorCargaCenads": "Error al cargar los CENAD,s/CMT,s",

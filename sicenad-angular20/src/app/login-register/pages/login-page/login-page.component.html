@@ -8,16 +8,16 @@
     }
     <div class="mb-3 col-3">
       <label for="username" class="form-label">
-        <b>USUARIO</b>
+        <b>{{ 'usuarios.usuario' | translate | uppercase }}</b>
       </label>
       <input type="text" class="form-control" id="username" formControlName="username" />
       @if (username?.touched && username?.invalid) {
-      <div class="text-danger">El usuario es obligatorio.</div>
+      <div class="text-danger">{{ 'usuarios.usuarioObligatorio' | translate }}</div>
       }
     </div>
     <div class="mb-3 col-3">
       <label for="password" class="form-label">
-        <b>CONTRASEÑA</b>
+        <b>{{ 'usuarios.contraseña' | translate | uppercase }}</b>
       </label>
       <input
         type="password"
@@ -26,7 +26,7 @@
                formControlName="password"
       />
       @if (password?.touched && password?.invalid) {
-      <div class="text-danger">La contraseña es obligatoria.</div>
+      <div class="text-danger">{{ 'usuarios.contraseñaObligatoria' | translate }}</div>
       }
     </div>
     <button
@@ -35,11 +35,11 @@
       class="btn btn-primary"
       [disabled]="loginForm.invalid"
     >
-      Iniciar Sesión
+      {{ 'administracion.iniciarSesion' | translate }}
     </button>
   </form>
   <span class="mt-3 d-block">
-    ¿No tienes cuenta?
-    <a [routerLink]="routesPaths.register" class="link-personalizado">Crear cuenta</a>
+    {{ 'administracion.preguntarCuenta' | translate }}
+    <a [routerLink]="routesPaths.register" class="link-personalizado">{{ 'administracion.crearCuenta' | translate }}</a>
   </span>
 </div>
