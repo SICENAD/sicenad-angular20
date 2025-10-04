@@ -7,26 +7,26 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Cenad {{ cenad()?.nombre }}</h5>
+        <h5 class="modal-title">{{ 'cenads.editar' | translate }} {{ cenad()?.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="cenadForm">
           <div class="mb-3">
             <label
-              ><b>CENAD/CMT<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'cenads.cenad' | translate }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <div class="mb-3">
             <label
-              ><b>PROVINCIA<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'cenads.provincia' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <select class="form-select" formControlName="provincia">
-              <option value="0" disabled>Selecciona una provincia</option>
+              <option value="0" disabled>{{ 'cenads.selecProvincia' | translate }}</option>
               @for (p of provincias(); track p.idProvincia) {
               <option [value]="p.idProvincia">{{ p.nombre }}</option>
               }
@@ -34,47 +34,48 @@
           </div>
           <div class="mb-3">
             <label
-              ><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.direccion' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" class="form-control" formControlName="direccion" />
             @if (direccion?.touched && direccion?.invalid) {
-            <span class="text-danger">La dirección es obligatoria</span>
+            <span class="text-danger">{{ 'comun.direccionObligatoria' | translate }}</span>
             }
           </div>
           <div class="mb-3">
             <label
-              ><b>TELÉFONO<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.telefono' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
+            >
             >
             <input type="text" class="form-control" formControlName="tfno" />
             @if (tfno?.touched && tfno?.invalid) {
-            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            <span class="text-danger">{{ 'comun.telefonoObligatorio' | translate }}</span>
             }
           </div>
           <div class="mb-3">
             <label
-              ><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.email' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <input type="email" class="form-control" formControlName="email" />
             @if (email?.touched && email?.invalid) {
-            <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+            <span class="text-danger">{{ 'comun.emailObligatorio' | translate }}</span>
             }
           </div>
           <div class="mb-3">
             <label
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.descripcion' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <textarea class="form-control" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
           <div class="mb-3">
             <label
-              ><b>ESCUDO<sup class="text-danger">*</sup></b> (Máx {{ sizeMaxEscudo() }} MB)</label
+              ><b>{{ 'cenads.escudo' | translate | uppercase}}<sup class="text-danger">*</sup></b> (Máx {{ sizeMaxEscudo() }} MB)</label
             >
             @if (escudoActual()) {
             <div class="d-flex flex-column align-items-start mb-2">
-              <small class="text-muted mb-2">Archivo actual: {{ escudoActual() }}</small>
+              <small class="text-muted mb-2">{{ 'archivos.archivoActual' | translate }}: {{ escudoActual() }}</small>
               <img
                 [src]="urlEscudoActual()"
                 alt="Escudo actual"
@@ -83,7 +84,7 @@
               />
             </div>
             } @else {
-            <p class="text-muted">No hay ningún escudo cargado</p>
+            <p class="text-muted">{{ 'cenads.noEscudo' | translate }}</p>
             }
             <div class="d-flex">
               <input
@@ -94,17 +95,17 @@
                 hidden
               />
               <button type="button" class="btn" (click)="fileInput.click()">
-                Seleccionar archivo
+                {{ 'archivos.seleccionarArchivo' | translate }}
               </button>
               @if (escudoFile()) {
               <div class="mt-2 ms-2">
-                <small class="text-muted">Archivo seleccionado: {{ escudoFile()?.name }}</small>
+                <small class="text-muted">{{ 'archivos.archivoSeleccionado' | translate }}: {{ escudoFile()?.name }}</small>
               </div>
               }
             </div>
             @if (previewEscudo()) {
             <div style="margin-top: 10px">
-              <label><b>Vista previa del escudo:</b></label
+              <label><b>{{ 'cenads.escudoPrevio' | translate }}:</b></label
               ><br />
               <img
                 [src]="previewEscudo()"
@@ -118,14 +119,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          Borrar Cenad
+          {{ 'cenads.borrar' | translate }}
         </button>
         <button
           type="button"
@@ -134,7 +135,7 @@
           data-bs-dismiss="modal"
           [disabled]="cenadForm.invalid"
         >
-          Guardar Cenad
+          {{ 'cenads.guardar' | translate }}
         </button>
       </div>
     </div>
@@ -145,19 +146,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Cenad {{ cenad()?.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{ 'cenads.eliminar' | translate }} {{ cenad()?.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ cenad()?.nombre }}?</div>
+      <div class="modal-body">{{ 'cenads.confirmarBorrado' | translate:  {nombre: cenad()?.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           (click)="borrarCenad()"
           data-bs-dismiss="modal"
         >
-          Borrar
+          {{ 'cenads.borrar' | translate }}
         </button>
       </div>
     </div>

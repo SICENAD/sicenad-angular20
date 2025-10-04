@@ -11,7 +11,14 @@
     "volver": "Volver",
     "nombreObligatorio": "El nombre es obligatorio",
     "descripcionObligatoria": "La descripción es obligatoria",
-    "descripcion": "Descripción"
+    "descripcion": "Descripción",
+    "direccion": "Dirección",
+    "telefono": "Teléfono",
+    "email": "Correo electrónico",
+    "direccionObligatoria": "La dirección es obligatoria",
+    "telefonoObligatorio": "El teléfono es obligatorio y debe tener 9 dígitos",
+    "emailObligatorio": "El correo electrónico es obligatorio y debe ser válido",
+    "correoValido": "Debe ser un correo válido"
   },
   "calendario": {
     "mes": "Mes",
@@ -210,7 +217,25 @@
     "cenadCreado": "Se ha creado el CENAD/CMT {{nombre}}",
     "cenadEditado": "Se ha editado el CENAD/CMT {{nombre}}",
     "cenadEliminado": "Se ha eliminado el CENAD/CMT {{id}}",
-    "infoCenadEditado": "Se ha editado la información del CENAD/CMT"
+    "infoCenadEditado": "Se ha editado la información del CENAD/CMT",
+    "editar": "Editar",
+    "nuevoCenad": "Nuevo CENAD/CMT",
+    "crearCenad": "Crear CENAD/CMT",
+    "noAdmin": "NO TIENE",
+    "cenad": "CENAD/CMT",
+    "provincia": "Provincia",
+    "borrar": "Borrar CENAD/CMT",
+    "guardar": "Guardar CENAD/CMT",
+    "confirmarBorrado": "¿Quieres borrar el {{nombre}}?",
+    "eliminar": "Eliminar ",
+    "selecProvincia": "Selecciona una provincia",
+    "escudo": "Escudo",
+    "infoCenad": "Información del CENAD/CMT",
+    "noEscudo": "No hay ningún escudo cargado",
+    "escudoPrevio": "Vista previa del escudo",
+    "gestionCenads": "Gestión de CENAD,s/CMT,s",
+    "administrador": "Administrador",
+    "seleccionaAdmin": "Selecciona un administrador"
   },
   "normativas": {
     "normativaCreada": "Se ha creado la normativa {{nombre}}",

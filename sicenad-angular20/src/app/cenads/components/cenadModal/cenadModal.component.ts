@@ -1,14 +1,16 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Cenad } from '@interfaces/models/cenad';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-cenad-modal',
-  imports: [FontAwesomeModule, ReactiveFormsModule],
+  imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './cenadModal.component.html',
   styleUrls: ['./cenadModal.component.css'],
 })
@@ -63,7 +65,7 @@ export class CenadModalComponent {
     this.orquestadorService.getEscudoCenad(escudo, this.idCenad()).subscribe(
       {
         next: blob => this.urlEscudoActual.set(URL.createObjectURL(blob)),
-        error: err => console.error('Error cargando escudo', err)
+        error: err => console.error(err)
       });
   });
 
@@ -100,8 +102,6 @@ export class CenadModalComponent {
     }
     const { nombre, provincia, direccion, tfno, email, descripcion } = this.cenadForm.value;
     const archivoEscudo = this.escudoFile();
-    console.log('Archivo nuevo:', archivoEscudo);
-    console.log('Escudo actual:', this.escudoActual());
     this.orquestadorService.actualizarCenad(
       nombre,
       provincia,
@@ -115,7 +115,6 @@ export class CenadModalComponent {
     ).subscribe({
       next: res => {
         if (res) {
-          console.log(`Cenad ${nombre} actualizado correctamente.`);
           this.escudoActual.set(res);
           this.cenad()!.escudo = this.escudoActual(); // actualizamos el escudo en el objeto cenad
           this.cenadForm.patchValue({ escudo: null });
@@ -126,7 +125,7 @@ export class CenadModalComponent {
         this.output.emit(); // notificamos al padre
       },
       error: (err) => {
-        console.error('Error actualizando Cenad:', err);
+        console.error(err);
       }
     });
   }

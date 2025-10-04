@@ -4,9 +4,11 @@ import { CenadComponent } from '@app/cenads/components/cenad/cenad.component';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { OrquestadorService } from '@services/orquestadorService';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 @Component({
   selector: 'app-cenads',
-  imports: [CenadComponent,ReactiveFormsModule],
+  imports: [CenadComponent,ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './cenads-page.component.html',
   styleUrls: ['./cenads-page.component.css'],
 })

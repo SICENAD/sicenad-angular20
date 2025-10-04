@@ -5,10 +5,11 @@ import { CenadModalComponent } from '../cenadModal/cenadModal.component';
 import { Cenad } from '@interfaces/models/cenad';
 import { OrquestadorService } from '@services/orquestadorService';
 import { tap } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-cenad',
-  imports: [CenadModalComponent],
+  imports: [CenadModalComponent, TranslateModule],
   templateUrl: './cenad.component.html',
   styleUrls: ['./cenad.component.css']
 })
