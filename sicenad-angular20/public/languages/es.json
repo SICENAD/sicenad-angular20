@@ -146,7 +146,25 @@
   "categorias": {
     "categoriaCreada": "Se ha creado la categoría {{nombre}}",
     "categoriaModificada": "Se ha modificado la categoría {{nombre}}",
-    "categoriaEliminada": "Se ha eliminado la categoría {{id}}"
+    "categoriaEliminada": "Se ha eliminado la categoría {{id}}",
+    "categoriaPadre": "Categoría padre",
+    "editar": "Editar categoría",
+    "nueva": "Nueva categoría",
+    "crear": "Crear categoría",
+    "categoria": "Categoría",
+    "noPadre": "Ninguna (Categoría principal)",
+    "borrar": "Borrar categoría",
+    "guardar": "Guardar categoría",
+    "eliminar": "Eliminar categoría",
+    "confirmarBorrado": "¿Quieres borrar la categoría {{nombre}}?",
+    "categoriasCenad": "Categorías del {{cenad}}",
+    "categoriaSeleccionada": "Categoría seleccionada",
+    "volverCategoriaAnterior": "Volver a la categoría anterior",
+    "volverCategoriasPrincipales": "Volver a las categorías principales",
+    "subcategorias": "Subcategorías",
+    "sinSubcategorias": "No hay subcategorías para esta categoría.",
+    "categoriasPrincipales": "Categorías principales",
+    "noCategoriasPrincipales": "No hay categorías principales."
   },
   "cenads": {
     "cenadCreado": "Se ha creado el CENAD/CMT {{nombre}}",

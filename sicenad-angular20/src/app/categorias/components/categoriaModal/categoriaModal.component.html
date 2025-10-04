@@ -7,29 +7,29 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Categoría {{ categoria()!.nombre }}</h5>
+        <h5 class="modal-title">{{ 'categorias.editar' | translate }} {{ categoria()!.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="categoriaForm">
           <div class="mb-3">
             <label
-              ><b>CATEGORÍA<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'categorias.categoria' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" class="form-control" formControlName="nombre" />
           </div>
           <div class="mb-3">
             <label
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.descripcion' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" class="form-control" formControlName="descripcion" />
           </div>
           <!-- Categoría Padre -->
           <div class="mb-3">
-            <label class="form-label titulo1"><b>CATEGORÍA PADRE</b></label>
+            <label class="form-label titulo1"><b>{{ 'categorias.categoriaPadre' | translate | uppercase}}</b></label>
             <select class="form-select" formControlName="categoriaPadre">
               <option [ngValue]="null">
-                Ninguna (categoría principal)
+                {{ 'categorias.noPadre' | translate }}
               </option>
               @for (c of categorias(); track c.idString) {
               <option [ngValue]="c">
@@ -41,14 +41,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          Borrar Categoría
+          {{ 'categorias.borrar' | translate }}
         </button>
         <button
           type="button"
@@ -57,7 +57,7 @@
           data-bs-dismiss="modal"
           [disabled]="categoriaForm.invalid"
         >
-          Guardar Categoría
+          {{ 'categorias.guardar' | translate }}
         </button>
       </div>
     </div>
@@ -68,19 +68,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Categoría {{ categoria()!.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{ 'categorias.eliminar' | translate }} {{ categoria()!.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ categoria()!.nombre }}?</div>
+      <div class="modal-body">{{ 'categorias.confirmarBorrado' | translate: { nombre: categoria()!.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           (click)="borrarCategoria()"
           data-bs-dismiss="modal"
         >
-          Borrar
+          {{ 'comun.borrar' | translate }}
         </button>
       </div>
     </div>

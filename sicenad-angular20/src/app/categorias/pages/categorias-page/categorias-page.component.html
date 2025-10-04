@@ -5,11 +5,11 @@
     [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
   >
     <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-    <strong>Volver</strong>
+    <strong>{{'comun.volver' | translate}}</strong>
   </a>
   <!-- Título centrado -->
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
-    <u>CATEGORÍAS DEL {{ cenadVisitado()?.nombre }}</u>
+    <u>{{'categorias.categoriasCenad' | translate:{ cenad: cenadVisitado()?.nombre } }}</u>
   </h3>
   <!-- Botón crear categoría -->
   <button
@@ -17,8 +17,8 @@
     data-bs-toggle="modal"
     data-bs-target="#modal-nueva-categoria"
   >
-    Nueva <b>Categoría</b>
-  </button>
+{{ 'categorias.nueva' | translate }}
+</button>
 </div>
 <hr class="w-100" />
 <!-- Filtro de búsqueda -->
@@ -27,7 +27,6 @@
     <input
       type="text"
       class="form-control"
-      placeholder="Filtrar categorías por nombre..."
       [value]="filtro()"
       (input)="filtro.set($any($event.target).value)"
     />
@@ -37,30 +36,30 @@
   <div class="col col-md-12">
     @if (categoriaSeleccionada()) {
     <div class="mb-3 pt-3">
-      <h4><b>CATEGORÍA SELECCIONADA:</b> {{ categoriaSeleccionada()?.nombre }}</h4>
-      <p><b>Descripción:</b> {{ categoriaSeleccionada()?.descripcion }}</p>
+      <h4><b>{{ 'categorias.categoriaSeleccionada' | translate | uppercase}}:</b> {{ categoriaSeleccionada()?.nombre }}</h4>
+      <p><b>{{ 'comun.descripcion' | translate }}:</b> {{ categoriaSeleccionada()?.descripcion }}</p>
       <!-- Botón volver a categoría anterior (solo si no es categoría principal o padre) -->
       @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
       <div class="mb-2 d-flex align-items-center">
         <a (click)="volverCategoriaAnterior()" class="nav-link volver me-1">
           <fa-icon [icon]="faSubir" class="me-1"> </fa-icon
         ></a>
-        <strong>Volver a categoría anterior</strong>
+        <strong>{{ 'categorias.volverCategoriaAnterior' | translate }}</strong>
       </div>
       }
       <div class="mb-2 d-flex align-items-center">
         <a (click)="volverCategoriasPadre()" class="nav-link volver me-1">
           <fa-icon [icon]="faVolver"></fa-icon>
         </a>
-        <strong>Volver a categorías principales</strong>
+        <strong>{{ 'categorias.volverCategoriasPrincipales' | translate }}</strong>
       </div>
       <hr />
       <div class="row mt-2">
         <div class="col-md-1 titulo"><b></b></div>
-        <div class="col-md-3 titulo"><b>SUBCATEGORÍAS</b></div>
-        <div class="col-md-8 titulo"><b>DESCRIPCIÓN</b></div>
+        <div class="col-md-3 titulo"><b>{{ 'categorias.subcategorias' | translate | uppercase}}</b></div>
+        <div class="col-md-8 titulo"><b>{{ 'comun.descripcion' | translate | uppercase}}</b></div>
         @if (subcategorias().length === 0) {
-        <div class="text-muted">No hay subcategorías para esta categoría.</div>
+        <div class="text-muted">{{'categorias.sinSubcategorias' | translate }}</div>
         } @else { @for (sub of subcategorias(); track sub.idString) {
         <div class="row">
           <div class="col-1">
@@ -83,8 +82,8 @@
     @if (!categoriaSeleccionada()) {
     <div class="row mt-2 titulos">
       <div class="col-md-1 titulo"><b></b></div>
-      <div class="col-md-3 titulo"><b>CATEGORÍAS PRINCIPALES</b></div>
-      <div class="col-md-8 titulo"><b>DESCRIPCIÓN</b></div>
+      <div class="col-md-3 titulo"><b>{{ 'categorias.categoriasPrincipales' | translate | uppercase}}</b></div>
+      <div class="col-md-8 titulo"><b>{{ 'comun.descripcion' | translate | uppercase}}</b></div>
     </div>
     @for (c of categoriasPadreFiltradas(); track c.idString) {
     <div class="row">
@@ -99,7 +98,7 @@
       </div>
     </div>
     } @if (categoriasPadreFiltradas().length === 0) {
-    <div class="text-muted mt-3">No se encontraron categorías principales.</div>
+    <div class="text-muted mt-3">{{'categorias.noCategoriasPrincipales' | translate }}</div>
     } }
   </div>
 </div>
@@ -109,35 +108,35 @@
     <div class="modal-content">
       <form [formGroup]="categoriaForm">
         <div class="modal-header">
-          <h1 class="modal-title fs-5">Nueva Categoría</h1>
+          <h1 class="modal-title fs-5">{{ 'categorias.nueva' | translate }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
             <label for="nombre" class="form-label titulo1">
-              <b>CATEGORÍA<sup class="text-danger">*</sup></b>
+              <b>{{ 'categorias.categoria' | translate | uppercase}}<sup class="text-danger">*</sup></b>
             </label>
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label titulo1">
-              <b>DESCRIPCIÓN<sup class="text-danger">*</sup></b>
+              <b>{{ 'comun.descripcion' | translate | uppercase}}<sup class="text-danger">*</sup></b>
             </label>
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
           <!-- Categoría Padre -->
           <div class="mb-3">
-            <label class="form-label titulo1"><b>CATEGORÍA PADRE</b></label>
+            <label class="form-label titulo1"><b>{{ 'categorias.categoriaPadre' | translate | uppercase}}</b></label>
             <select class="form-select" formControlName="categoriaPadre">
-              <option [ngValue]="null">Ninguna (categoría principal)</option>
+              <option [ngValue]="null">{{ 'categorias.noPadre' | translate }}</option>
               @for (c of categorias(); track c.idString) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
@@ -145,7 +144,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
           <button
             type="button"
             class="btn"
@@ -153,7 +152,7 @@
             [disabled]="categoriaForm.invalid"
             (click)="crearCategoria()"
           >
-            Crear Categoría
+            {{ 'categorias.crear' | translate }}
           </button>
         </div>
       </form>

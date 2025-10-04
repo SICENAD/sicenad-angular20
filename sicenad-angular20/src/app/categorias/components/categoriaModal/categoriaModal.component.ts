@@ -1,14 +1,16 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Categoria } from '@interfaces/models/categoria';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-categoriaModal',
-  imports: [ReactiveFormsModule, FontAwesomeModule],
+  imports: [ReactiveFormsModule, FontAwesomeModule, TranslateModule, UpperCasePipe],
   templateUrl: './categoriaModal.component.html',
   styleUrls: ['./categoriaModal.component.css']
 })
@@ -82,12 +84,11 @@ export class CategoriaModalComponent {
     this.orquestadorService.actualizarCategoria(nombre, descripcion, this.cenadVisitado()!.idString, this.idCategoria(), idCategoriaPadre).subscribe({
       next: res => {
         if (res) {
-          console.log(`Categoría ${nombre} actualizada correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Categoría:', error);
+        console.error(error);
       }
     });
   }

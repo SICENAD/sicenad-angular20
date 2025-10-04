@@ -9,10 +9,12 @@ import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { Categoria } from '@interfaces/models/categoria';
 import { CategoriaModalComponent } from '@app/categorias/components/categoriaModal/categoriaModal.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-categorias',
-  imports: [RouterLink, FontAwesomeModule, ReactiveFormsModule, CategoriaComponent, CategoriaModalComponent],
+  imports: [RouterLink, FontAwesomeModule, ReactiveFormsModule, CategoriaComponent, CategoriaModalComponent, TranslateModule, UpperCasePipe],
   templateUrl: './categorias-page.component.html',
   styleUrls: ['./categorias-page.component.css']
 })
@@ -64,7 +66,7 @@ export class CategoriasPageComponent {
         this.subcategorias.set(subcats ?? []);
         this.scrollToTop(); // 🔹 Mueve la vista al inicio
       },
-      error: (err) => console.error('Error cargando subcategorías', err)
+      error: (err) => console.error(err)
     });
   }
   /** Volver a la categoría padre (subir un nivel) */
@@ -81,7 +83,7 @@ export class CategoriasPageComponent {
         }
       },
       error: (err) => {
-        console.error('Error cargando la categoría padre', err);
+        console.error(err);
         // Si da error 502 u otro, volvemos a la vista raíz
       }
     });
@@ -116,11 +118,9 @@ export class CategoriasPageComponent {
             this.categoriaForm.reset();
             // 🔹 Volver siempre a la vista inicial de categorías principales
             this.volverCategoriasPadre();
-          } else {
-            console.error('Error al crear la categoría');
           }
         },
-        error: (err) => console.error('Error en la creación de categoría', err)
+        error: (err) => console.error(err)
       });
   }
 
