@@ -6,7 +6,7 @@
       </a>
     </div>
     <div class="col col-md-7 align-self-center pt-5">
-      <h6 class="bienvenido text-center">Bienvenido al Sistema de CENAD,s y CMT,s del ET</h6>
+      <h6 class="bienvenido text-center">{{'homeCenadVisitado.bienvenida' | translate}}</h6>
     </div>
     <div class="col col-md-1 mt-4 ml-5">
       <h2 class="text-center">SICENAD</h2>
@@ -44,7 +44,7 @@
     </div>
     <!-- PANEL DE FILTRO -->
     <div class="col col-md-4 p-5 filtro">
-      <p class="seleccione">Seleccione provincia:</p>
+      <p class="seleccione">{{'homeCenadVisitado.selecProvincia' | translate}}:</p>
       <div class="form-group">
         <select
           name="provincia"
@@ -53,7 +53,7 @@
           (change)="respuesta(+provinciaSelect.value)" #provinciaSelect
         >
           @if (!idProvinciaSeleccionada()) {
-          <option value="" disabled selected>Seleccione una provincia</option>
+          <option value="" disabled selected>{{'homeCenadVisitado.selecProvincia' | translate}}</option>
           } @for (provincia of provincias(); track provincia.idProvincia) {
           <option [value]="provincia.idProvincia">
             {{ provincia.nombre }}
@@ -63,13 +63,13 @@
       </div>
       <div class="busqueda mt-4">
         <br />
-        <span>Resultado de la búsqueda:</span>
+        <span>{{'homeCenadVisitado.resultado' | translate}}:</span>
         <br /><br />
         <h3>
           <strong>{{ provinciaSeleccionada().toUpperCase() }}</strong>
         </h3>
         <br />
-        <h4 class="titulo-busqueda"><u>CENAD/CMT:</u></h4>
+        <h4 class="titulo-busqueda"><u>{{'homeCenadVisitado.cenadCmt' | translate}}:</u></h4>
         <!-- Resultados -->
         @for (cenad of cenadsFiltro(); track cenad.idString) {
         <div class="resultado">

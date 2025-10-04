@@ -9,40 +9,40 @@
     <div class="col col-md-4 enlaces p-4 mt-5">
       <h3>
         <fa-icon [icon]="faEnlace" class="me-2"></fa-icon>
-        <u><strong>Enlaces más importantes</strong></u>
+        <u><strong>{{'homeCenadVisitado.enlaces' | translate}}</strong></u>
       </h3>
       <ul>
         @if (esSuperAdmin) {
         <li class="pt-4">
           <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.calendario]">
             <fa-icon [icon]="faCalendario" class="me-2"></fa-icon>
-            Planificar Recursos
+            {{'homeCenadVisitado.planificar' | translate}}
           </a>
         </li>
         } @else {
         <li class="pt-4">
           <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.calendario]">
             <fa-icon [icon]="faCalendario" class="me-2"></fa-icon>
-            Calendario
+            {{'homeCenadVisitado.calendario' | translate}}
           </a>
         </li>
         }
         <li class="pt-4">
           <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.recursos]">
             <fa-icon [icon]="faRecurso" class="me-2"></fa-icon>
-            Recursos
+            {{'homeCenadVisitado.recursos' | translate}}
           </a>
         </li>
         <li class="pt-4">
           <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.cartografias]">
             <fa-icon [icon]="faCartografia" class="me-2"></fa-icon>
-            Cartografía
+            {{'homeCenadVisitado.cartografia' | translate}}
           </a>
         </li>
         <li class="pt-4">
           <a [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.solicitudes]">
             <fa-icon [icon]="faSolicitar" class="me-2"></fa-icon>
-            Solicitudes
+            {{'homeCenadVisitado.solicitudes' | translate}}
           </a>
         </li>
       </ul>

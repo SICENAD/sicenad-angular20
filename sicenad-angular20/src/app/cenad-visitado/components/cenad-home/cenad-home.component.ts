@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -10,7 +11,7 @@ import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-cenad-home',
-  imports: [RouterLink, FontAwesomeModule],
+  imports: [RouterLink, FontAwesomeModule, TranslateModule],
   templateUrl: './cenad-home.component.html',
   styleUrls: ['./cenad-home.component.css']
 })
@@ -39,7 +40,7 @@ export class CenadHomeComponent {
     if (!escudo) return;
     this.orquestadorService.getEscudoCenad(escudo, this.idCenad()).subscribe({
       next: blob => this.pathImg.set(URL.createObjectURL(blob)),
-      error: err => console.error('Error cargando escudo', err)
+      error: err => console.error(err)
     });
   });
 

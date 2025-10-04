@@ -35,42 +35,42 @@
           <!-- Home principal -->
           <li class="nav-item homePrincipal">
             <a class="nav-link homePrincipal" [routerLink]="[routesPaths.cenadHome, idCenad()]">
-              CENAD/CMT
+              {{'homeCenadVisitado.cenadCmt' | translate | uppercase}}
             </a>
           </li>
 
           <!-- Consultar -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" role="button">
-              <fa-icon [icon]="faConsultar" ></fa-icon> Consultar
+              <fa-icon [icon]="faConsultar" ></fa-icon> {{'homeCenadVisitado.consultar' | translate}}
             </a>
             <div class="dropdown-menu consultar">
               @if (!isAdminEsteCenad() && !isGestorEsteCenad()) {
                 <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.recursos]">
-                  <fa-icon [icon]="faRecurso"></fa-icon> Recursos
+                  <fa-icon [icon]="faRecurso"></fa-icon> {{'homeCenadVisitado.recursos' | translate}}
                 </a>
               }
               @if (!isSuperAdmin()) {
                 <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.calendario]">
-                  <fa-icon [icon]="faCalendario"></fa-icon> Calendario
+                  <fa-icon [icon]="faCalendario"></fa-icon> {{'homeCenadVisitado.calendario' | translate}}
                 </a>
               }
               @if (!isAdminEsteCenad()) {
                 <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.cartografias]">
-                  <fa-icon [icon]="faCartografia"></fa-icon> Cartografía
+                  <fa-icon [icon]="faCartografia"></fa-icon> {{'homeCenadVisitado.cartografia' | translate}}
                 </a>
               }
               @if (!isCenadZaragoza()) {
                 <a class="nav-link" href="https://www.tiempo.com" target="_blank">
-                  <fa-icon [icon]="faMeteo"></fa-icon> Meteorología
+                  <fa-icon [icon]="faMeteo"></fa-icon> {{'homeCenadVisitado.meteorologia' | translate}}
                 </a>
               }
               <a class="nav-link" href="http://srvgregwww02/GESNOEX" target="_blank">
-                <fa-icon [icon]="faArtefacto"></fa-icon> Artefactos No Explosionados
+                <fa-icon [icon]="faArtefacto"></fa-icon> {{'homeCenadVisitado.artefactos' | translate}}
               </a>
               @if (isCenadZaragoza()) {
                 <a class="nav-link" href="https://10.63.172.26/so/#/login" target="_blank">
-                  <fa-icon [icon]="faVista"></fa-icon> Vistas ACMT
+                  <fa-icon [icon]="faVista"></fa-icon> {{'homeCenadVisitado.vistas' | translate}}
                 </a>
               }
             </div>
@@ -80,17 +80,17 @@
           @if (isCenadZaragoza()) {
             <li class="nav-item dropdown-submenu">
               <a class="nav-link dropdown-toggle">
-                <fa-icon [icon]="faMeteo"></fa-icon> Meteorología
+                <fa-icon [icon]="faMeteo"></fa-icon> {{'homeCenadVisitado.meteorologia' | translate}}
               </a>
               <div class="dropdown-menu submenu">
                 <a class="nav-link" href="https://www.tiempo.com/san-gregorio.htm" target="_blank">
-                  <fa-icon [icon]="faPrevision"></fa-icon> Previsión
+                  <fa-icon [icon]="faPrevision"></fa-icon> {{'homeCenadVisitado.prevision' | translate}}
                 </a>
                 <a class="nav-link" href="assets/CENAD-SG_Calculador-de-IPI.xlsx" target="_blank">
-                  <fa-icon [icon]="faIPI"></fa-icon> IPI
+                  <fa-icon [icon]="faIPI"></fa-icon> {{'homeCenadVisitado.ipi' | translate}}
                 </a>
                 <a class="nav-link" href="http://10.63.172.49/map" target="_blank">
-                  <fa-icon [icon]="faMetozonas"></fa-icon> Datos por Zonas
+                  <fa-icon [icon]="faMetozonas"></fa-icon> {{'homeCenadVisitado.meteozonas' | translate}}
                 </a>
               </div>
             </li>
@@ -100,14 +100,14 @@
           @if (!isAdminEsteCenad()) {
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle">
-                <fa-icon [icon]="faMas"></fa-icon> Otros
+                <fa-icon [icon]="faMas"></fa-icon> {{'homeCenadVisitado.otros' | translate}}
               </a>
               <div class="dropdown-menu otros">
                 <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.infoCenad]">
-                  <fa-icon [icon]="faInfo"></fa-icon> Información
+                  <fa-icon [icon]="faInfo"></fa-icon> {{'homeCenadVisitado.informacion' | translate}}
                 </a>
                 <a class="nav-link" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.normativas]">
-                  <fa-icon [icon]="faNormativa"></fa-icon> Normativa
+                  <fa-icon [icon]="faNormativa"></fa-icon> {{'homeCenadVisitado.normativa' | translate}}
                 </a>
               </div>
             </li>
@@ -117,32 +117,32 @@
           @if (isAdminEsteCenad() || isGestorEsteCenad()) {
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle">
-                <fa-icon [icon]="faUser"></fa-icon> Gestionar
+                <fa-icon [icon]="faUser"></fa-icon> {{'homeCenadVisitado.gestionar' | translate}}
               </a>
               <div class="dropdown-menu gestionar">
                 @if (isAdminEsteCenad()) {
                   <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.cartografias]">
-                    <fa-icon [icon]="faCartografia"></fa-icon> Cartografía
+                    <fa-icon [icon]="faCartografia"></fa-icon> {{'homeCenadVisitado.cartografia' | translate}}
                   </a>
                 }
                 <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.recursos]">
-                  <fa-icon [icon]="faRecurso"></fa-icon> Recursos
+                  <fa-icon [icon]="faRecurso"></fa-icon> {{'homeCenadVisitado.recursos' | translate}}
                 </a>
                 @if (isAdminEsteCenad()) {
                   <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.categorias]">
-                    <fa-icon [icon]="faCategorias"></fa-icon> Categorías
+                    <fa-icon [icon]="faCategorias"></fa-icon> {{'homeCenadVisitado.categorias' | translate}}
                   </a>
                   <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.usuariosCenad]">
-                    <fa-icon [icon]="faUsuarios"></fa-icon> Usuarios
+                    <fa-icon [icon]="faUsuarios"></fa-icon> {{'homeCenadVisitado.usuarios' | translate}}
                   </a>
                   <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.unidadesCenad]">
-                    <fa-icon [icon]="faUnidades"></fa-icon> Unidades
+                    <fa-icon [icon]="faUnidades"></fa-icon> {{'homeCenadVisitado.unidades' | translate}}
                   </a>
                   <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.normativas]">
-                    <fa-icon [icon]="faNormativa"></fa-icon> Normativa
+                    <fa-icon [icon]="faNormativa"></fa-icon> {{'homeCenadVisitado.normativa' | translate}}
                   </a>
                   <a class="dropdown-item" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.infoCenad]">
-                    <fa-icon [icon]="faInfo"></fa-icon> Información
+                    <fa-icon [icon]="faInfo"></fa-icon> {{'homeCenadVisitado.informacion' | translate}}
                   </a>
                 }
               </div>
@@ -152,7 +152,7 @@
           <!-- Solicitudes -->
           <li class="nav-item gestionar">
             <a class="nav-link gestionar" [routerLink]="[routesPaths.cenadHome, idCenad(), routesPaths.solicitudes]">
-              <fa-icon [icon]="faSolicitar"></fa-icon> Solicitudes
+              <fa-icon [icon]="faSolicitar"></fa-icon> {{'homeCenadVisitado.solicitudes' | translate}}
             </a>
           </li>
         </ul>
