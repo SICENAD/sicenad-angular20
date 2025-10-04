@@ -23,6 +23,36 @@
     "seleccionaRecurso": "Selecciona un recurso",
     "noRecursos": "No se encontraron recursos"
   },
+  "fechasHoras": {
+    "fechaDiaMesAño": "{{weekDay}}, {{dia}} de {{mes}} de {{year}}",
+    "hora": "{{hora}}:{{minuto}}:{{segundo}}",
+    "intervaloSemanal": "{{startDay}} de {{startMonth}} - {{endDay}} de {{endMonth}}, {{year}}",
+    "fechaDia": "{{weekday}} {{day}} de {{month}} de {{year}}",
+    "fechaMesAño": "{{month}} de {{year}}",
+    "dias": {
+      "lunes": "Lunes",
+      "martes": "Martes",
+      "miercoles": "Miércoles",
+      "jueves": "Jueves",
+      "viernes": "Viernes",
+      "sabado": "Sábado",
+      "domingo": "Domingo"
+    },
+    "meses": {
+      "enero": "Enero",
+      "febrero": "Febrero",
+      "marzo": "Marzo",
+      "abril": "Abril",
+      "mayo": "Mayo",
+      "junio": "Junio",
+      "julio": "Julio",
+      "agosto": "Agosto",
+      "septiembre": "Septiembre",
+      "octubre": "Octubre",
+      "noviembre": "Noviembre",
+      "diciembre": "Diciembre"
+    }
+  },
   "archivos": {
     "subirArchivo": "Subir archivo",
     "seleccionarArchivo": "Seleccionar archivo",
@@ -78,7 +108,7 @@
     "selectionarTipoTiro": "Selecciona un tipo de tiro",
     "crearArma": "Crear Arma"
   },
-    "recursos": {
+  "recursos": {
     "recursoCreado": "Se ha creado el recurso {{nombre}}",
     "recursoModificado": "Se ha modificado el recurso {{nombre}}",
     "recursoEliminado": "Se ha eliminado el recurso {{id}}"
@@ -93,7 +123,7 @@
     "categoriaFicheroModificada": "Se ha modificado la categoría de fichero {{nombre}}",
     "categoriaFicheroEliminada": "Se ha eliminado la categoría de fichero {{id}}"
   },
-    "categorias": {
+  "categorias": {
     "categoriaCreada": "Se ha creado la categoría {{nombre}}",
     "categoriaModificada": "Se ha modificado la categoría {{nombre}}",
     "categoriaEliminada": "Se ha eliminado la categoría {{id}}"
@@ -194,7 +224,7 @@
     "errorCreandoNormativa": "Error creando la normativa {{nombre}}",
     "errorActualizandoNormativa": "Error actualizando la normativa {{nombre}}",
     "errorBorrandoNormativa": "Error borrando la normativa {{nombreArchivo}}",
-    "errorCreandoTipoFormulario": "Error creando el tipo de formulario {{nombre}}", 
+    "errorCreandoTipoFormulario": "Error creando el tipo de formulario {{nombre}}",
     "errorActualizandoTipoFormulario": "Error actualizando el tipo de formulario {{nombre}}",
     "errorBorrandoTipoFormulario": "Error borrando el tipo de formulario con id {{id}}",
     "errorCreandoSolicitud": "Error creando la solicitud",
@@ -218,6 +248,5 @@
     "errorCreandoFichero": "Error creando el fichero {{nombre}}",
     "errorActualizandoFichero": "Error actualizando el fichero {{nombre}}",
     "errorBorrandoFichero": "Error borrando el fichero {{nombreArchivo}}"
-
   }
 }

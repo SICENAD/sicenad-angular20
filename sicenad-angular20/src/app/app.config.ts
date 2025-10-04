@@ -24,11 +24,17 @@ import {
 } from 'angular-calendar'; import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import localeFr from '@angular/common/locales/fr';
+import localeIt from '@angular/common/locales/it';
+import localeRu from '@angular/common/locales/ru';
 import { CustomDateFormatter } from '@shared/customFormat/customDateFormatter';
 import { provideServiceWorker } from '@angular/service-worker';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 registerLocaleData(localeEs, 'es');
+registerLocaleData(localeFr, 'fr');
+registerLocaleData(localeIt, 'it');
+registerLocaleData(localeRu, 'ru');
 
 export const appConfig: ApplicationConfig = {
   providers: [

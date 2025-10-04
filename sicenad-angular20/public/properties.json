@@ -70,6 +70,16 @@
       "codigo": "fr",
       "etiqueta": "Français",
       "bandera": "img/banderas/fr.svg"
+    },
+    {
+      "codigo": "it",
+      "etiqueta": "Italiano",
+      "bandera": "img/banderas/it.svg"
+    },
+    {
+      "codigo": "ru",
+      "etiqueta": "Русский",
+      "bandera": "img/banderas/ru.svg"
     }
   ],
   "coloresDisponibles": {

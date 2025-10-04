@@ -10,6 +10,7 @@ import { CalendarHeaderComponent } from '@app/calendarios/components/calendarHea
 import { Solicitud } from '@interfaces/models/solicitud';
 import { UtilsStore } from '@stores/utils.store';
 import { TranslateModule } from '@ngx-translate/core';
+import { IdiomasStore } from '@stores/idiomas.store';
 
 @Component({
   selector: 'app-calendarioComponente',
@@ -30,6 +31,7 @@ export class CalendarioComponent {
   private router = inject(Router);
   private cenadStore = inject(CenadStore);
   private utilsStore = inject(UtilsStore);
+  private idiomaStore = inject(IdiomasStore);
 
   readonly routesPaths = RoutesPaths;
 
@@ -44,6 +46,7 @@ export class CalendarioComponent {
 
   /** Subject para refrescar la vista */
   refresh = new Subject<void>();
+  locale = computed(() => this.idiomaStore.idiomaActual());
 
   constructor() {
     effect(() => {
