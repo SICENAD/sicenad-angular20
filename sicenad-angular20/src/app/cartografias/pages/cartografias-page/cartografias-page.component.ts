@@ -11,10 +11,12 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-cartografias',
-  imports: [CartografiaComponent, FontAwesomeModule, ReactiveFormsModule, RouterLink],
+  imports: [CartografiaComponent, FontAwesomeModule, ReactiveFormsModule, RouterLink, TranslateModule, UpperCasePipe],
   templateUrl: './cartografias-page.component.html',
   styleUrls: ['./cartografias-page.component.css']
 })
@@ -77,8 +79,6 @@ export class CartografiasPageComponent {
       if (success) {
         this.cartografiaForm.reset();
         if (this.fileInput) this.fileInput.nativeElement.value = '';
-      } else {
-        console.error('Error al crear la cartografía');
       }
     });
   }

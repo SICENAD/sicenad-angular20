@@ -1,7 +1,9 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Cartografia } from '@interfaces/models/cartografia';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
@@ -9,7 +11,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-cartografia-modal',
-  imports: [FontAwesomeModule, ReactiveFormsModule],
+  imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './cartografiaModal.component.html',
   styleUrls: ['./cartografiaModal.component.css']
 })
@@ -87,17 +89,13 @@ export class CartografiaModalComponent {
     }
     const { nombre, descripcion, escala } = this.cartografiaForm.value;
     const archivo = this.archivoFile();
-    console.log('Archivo nuevo:', archivo);
-    console.log('Archivo actual:', this.archivoActual());
     this.orquestadorService.actualizarCartografia(nombre, descripcion, escala, archivo, this.archivoActual(), this.idCenad(), this.idCartografia()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Cartografía ${nombre} actualizada correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Cartografía:', error);
       }
     });
   }

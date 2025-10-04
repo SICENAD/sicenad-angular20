@@ -9,7 +9,9 @@
     "cerrar": "Cerrar",
     "borrar": "Borrar",
     "volver": "Volver",
-    "nombreObligatorio": "El nombre es obligatorio"
+    "nombreObligatorio": "El nombre es obligatorio",
+    "descripcionObligatoria": "La descripción es obligatoria",
+    "descripcion": "Descripción"
   },
   "calendario": {
     "mes": "Mes",
@@ -54,6 +56,7 @@
     }
   },
   "archivos": {
+    "descarga": "Descarga",
     "subirArchivo": "Subir archivo",
     "seleccionarArchivo": "Seleccionar archivo",
     "archivoSeleccionado": "Archivo seleccionado:",
@@ -65,13 +68,18 @@
     "errorMultiplesArchivos": "Solo se permite subir un archivo a la vez.",
     "errorNingunArchivo": "No se ha seleccionado ningún archivo.",
     "exitoSubida": "Archivo subido con éxito.",
+    "exitoDescarga": "Archivo descargado con éxito.",
+    "exitoBorrado": "Archivo borrado con éxito.",
     "modificado": "Archivo modificado con éxito.",
     "errorSubida": "Error al subir el archivo.",
     "descargarArchivo": "Descargar archivo",
     "errorDescarga": "Error al descargar el archivo.",
+    "noArchivo": "No hay archivo para descargar.",
     "errorBorrarArchivo": "Error al borrar el archivo.",
     "errorBorrarCarpeta": "Error al borrar la carpeta.",
-    "ficheroEliminado": "Se ha eliminado el archivo {{nombre}}"
+    "ficheroEliminado": "Se ha eliminado el archivo {{nombre}}",
+    "archivo": "Archivo",
+    "archivoActual": "Archivo actual"
   },
   "administracion": {
     "rol": {
@@ -116,7 +124,19 @@
   "cartografias": {
     "cartografiaCreada": "Se ha creado la cartografía {{nombre}}",
     "cartografiaModificada": "Se ha modificado la cartografía {{nombre}}",
-    "cartografiaEliminada": "Se ha eliminado la cartografía {{nombreArchivo}}"
+    "cartografiaEliminada": "Se ha eliminado la cartografía {{nombreArchivo}}",
+    "editarCartografia": "Editar Cartografía",
+    "nuevaCartografia": "Nueva Cartografía",
+    "crearCartografia": "Crear Cartografía",
+    "gestionCartografias": "Gestión de Cartografías",
+    "cartografia": "Cartografía",
+    "escala": "Escala",
+    "selecEscala": "Selecciona una escala",
+    "borrar": "Borrar cartografía",
+    "guardar": "Guardar Cartografía",
+    "confirmarBorrado": "¿Quieres borrar la cartografía {{nombre}}?",
+    "eliminar": "Eliminar cartografía",
+    "cartografiaCenad": "Cartografía del {{cenad}}"
   },
   "categoriasFichero": {
     "categoriaFicheroCreada": "Se ha creado la categoría de fichero {{nombre}}",

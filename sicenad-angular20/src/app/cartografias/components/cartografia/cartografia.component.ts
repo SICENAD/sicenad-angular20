@@ -8,6 +8,7 @@ import { OrquestadorService } from '@services/orquestadorService';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { AuthStore } from '@stores/auth.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
+import { IdiomaService } from '@services/idiomaService';
 
 @Component({
   selector: 'app-cartografia',
@@ -21,6 +22,7 @@ export class CartografiaComponent {
   private cenadStore = inject(CenadStore);
   private usuarioLogueado = inject(UsuarioLogueadoStore); private iconoStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
+  private idiomaService = inject(IdiomaService);
 
   idCenad = computed(() => this.cenadStore.cenadVisitado()?.idString || '');
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
@@ -35,15 +37,21 @@ export class CartografiaComponent {
   descargar(): void {
     const archivo = this.cartografia().nombreArchivo;
     if (!archivo) {
-      console.warn('No hay archivo para descargar');
+      this.idiomaService.tVars('archivos.noArchivo').then(mensaje => {
+        console.warn(mensaje);
+      });
       return;
     }
     this.orquestadorService.getArchivoCartografia(archivo, this.idCenad()).subscribe({
       next: () => {
-        console.log(`Archivo ${archivo} descargado correctamente`);
+        this.idiomaService.tVars('archivos.exitoDescarga').then(mensaje => {
+          console.log(mensaje);
+        });
       },
       error: (err) => {
-        console.error('Error descargando el archivo', err);
+        this.idiomaService.tVars('archivos.errorDescarga').then(mensaje => {
+          console.error(mensaje);
+        });
       }
     });
   }
