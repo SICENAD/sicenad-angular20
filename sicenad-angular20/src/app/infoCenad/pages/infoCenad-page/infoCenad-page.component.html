@@ -40,7 +40,6 @@
           <label class="titulo"
             ><b>{{'comun.telefono' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
           >
-          >
           <input
             type="text"
             class="form-control letra"
@@ -54,7 +53,7 @@
         </div>
         <div class="col-lg-4 col-md-12 pt-3">
           <label class="titulo"
-            ><b>{{'comun.correoElectronico' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
+            ><b>{{'comun.email' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
           >
           <input
             type="email"
@@ -86,13 +85,13 @@
         </div>
         <div class="col-lg-6 col-md-12 pt-3">
           <label class="titulo"
-            ><b>{{'cenads.comoLlegar' | translate | uppercase }}<sup class="text-danger mr-2">*</sup></b> ({{'cenads.sizeMax' | translate }}:
+            ><b>{{'homeCenadVisitado.comoLlegar' | translate | uppercase }}<sup class="text-danger mr-2">*</sup></b> ({{'homeCenadVisitado.sizeMax' | translate }}:
             {{ sizeMaxEscudo() }} MB)</label
           >
           <!-- Mostrar archivo actual si existe -->
           @if (infoCenadActual()) {
           <div class="d-flex flex-column align-items-start mb-2">
-            <small class="text-muted mb-2">{{'archivos.archivoActual' | translate}} {{ infoCenadActual() }}</small>
+            <small class="text-muted mb-2">{{'archivos.archivoActual' | translate}}: {{ infoCenadActual() }}</small>
             <img
               [src]="urlInfoCenadActual()"
               alt="InfoCenad actual"

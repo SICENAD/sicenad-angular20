@@ -34,7 +34,7 @@ export class InfoCenadPageComponent {
   routesPaths = RoutesPaths;
   cambiaBoton = signal(false);
   btnVista = signal("Administrador");
-  etiquetaBoton = signal("Cambiar a Vista Administrador");
+  etiquetaBoton = signal<string>(this.idiomaService.t('homeCenadVisitado.btnAdmin'));
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   isAdminEsteCenad = computed(() => {
@@ -80,7 +80,7 @@ export class InfoCenadPageComponent {
       this.cambiaBoton.set(true);
     }
     this.btnVista.set(this.cambiaBoton() ? 'Previa' : 'Administrador');
-    this.etiquetaBoton.set(this.cambiaBoton() ? this.idiomaService.t('btnPrevia') : this.idiomaService.t('btnAdmin'));
+    this.etiquetaBoton.set(this.cambiaBoton() ? this.idiomaService.t('homeCenadVisitado.btnPrevia') : this.idiomaService.t('homeCenadVisitado.btnAdmin'));
   }
 
   ngOnDestroy() {
