@@ -12,10 +12,12 @@ import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UtilsStore } from '@stores/utils.store';
 import { FicheroSolicitudComponent } from '../ficheroSolicitud/ficheroSolicitud.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-ficherosSolicitud',
-  imports: [ReactiveFormsModule, FicheroSolicitudComponent],
+  imports: [ReactiveFormsModule, FicheroSolicitudComponent, TranslateModule, UpperCasePipe],
   templateUrl: './ficherosSolicitud.component.html',
   styleUrls: ['./ficherosSolicitud.component.css'],
 })
@@ -92,15 +94,11 @@ export class FicherosSolicitudComponent {
     const idCenad = this.cenadVisitado()!.idString;
     const idSolicitud = this.idSolicitud() || '';
     if (!archivo) {
-      console.warn('No hay archivo para descargar');
       return;
     }
     this.orquestadorService.getArchivoSolicitud(archivo, idCenad, idSolicitud).subscribe({
-      next: () => {
-        console.log(`Archivo ${archivo} descargado correctamente`);
-      },
       error: (err) => {
-        console.error('Error descargando el archivo', err);
+        console.error(err);
       }
     });
   }
@@ -119,8 +117,6 @@ export class FicherosSolicitudComponent {
           this.ficheroForm.reset();
           this.output.emit(); // notificamos al padre
           if (this.fileInput) this.fileInput.nativeElement.value = '';
-        } else {
-          console.error('Error al crear el fichero');
         }
       });
     } else {
@@ -129,8 +125,6 @@ export class FicherosSolicitudComponent {
           this.ficheroForm.reset();
           this.output.emit(); // notificamos al padre
           if (this.fileInput) this.fileInput.nativeElement.value = '';
-        } else {
-          console.error('Error al crear el fichero');
         }
       });
     }

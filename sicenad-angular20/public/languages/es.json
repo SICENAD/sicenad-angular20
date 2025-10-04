@@ -9,6 +9,7 @@
     "cerrar": "Cerrar",
     "borrar": "Borrar",
     "volver": "Volver",
+    "guardar": "Guardar",
     "nombreObligatorio": "El nombre es obligatorio",
     "descripcionObligatoria": "La descripción es obligatoria",
     "descripcion": "Descripción",
@@ -188,7 +189,11 @@
     "bienvenida": "Bienvenido al Sistema de CENAD,s y CMT,s del ET",
     "selecProvincia": "Selecciona una provincia",
     "resultado": "Resultado de la búsqueda",
-    "noResultados": "No existe ningún CENAD/CMT"
+    "noResultados": "No existe ningún CENAD/CMT",
+    "btnPrevia": "Cambiar a Vista Previa",
+    "btnAdmin": "Cambiar a Vista Administrador",
+    "comoLlegar": "Cómo llegar",
+    "sizeMax": "Tamaño máximo permitido"
   },
   "categorias": {
     "categoriaCreada": "Se ha creado la categoría {{nombre}}",
@@ -235,7 +240,8 @@
     "escudoPrevio": "Vista previa del escudo",
     "gestionCenads": "Gestión de CENAD,s/CMT,s",
     "administrador": "Administrador",
-    "seleccionaAdmin": "Selecciona un administrador"
+    "seleccionaAdmin": "Selecciona un administrador",
+    "infoPrevia": "Vista previa de la información del CENAD/CMT"
   },
   "normativas": {
     "normativaCreada": "Se ha creado la normativa {{nombre}}",
@@ -245,7 +251,24 @@
   "ficheros": {
     "ficheroCreado": "Se ha creado el fichero {{nombre}}",
     "ficheroModificado": "Se ha modificado el fichero {{nombre}}",
-    "ficheroEliminado": "Se ha eliminado el fichero {{nombreArchivo}}"
+    "ficheroEliminado": "Se ha eliminado el fichero {{nombreArchivo}}",
+    "editarFichero": "Editar Fichero",
+    "nuevoFichero": "Nuevo Fichero",
+    "nuevoFicheroCenad": "Nuevo Fichero de CENAD/CMT",
+    "nuevoFicheroUnidad": "Nuevo Fichero de unidad",
+    "crearFichero": "Crear Fichero",
+    "fichero": "Fichero",
+    "ficheros": "Ficheros",
+    "borrar": "Borrar Fichero",
+    "guardar": "Guardar Fichero",
+    "confirmarBorrado": "¿Quieres borrar el fichero {{nombre}}?",
+    "eliminar": "Eliminar Fichero",
+    "nombre": "Nombre del fichero",
+    "categoriaFichero": "Categoría de fichero",
+    "seleccionaCategoriaFichero": "Selecciona una categoría de fichero",
+    "ficherosCenad": "Ficheros del CENAD/CMT",
+    "ficherosUnidad": "Ficheros de la unidad",
+    "solicitudSinFicheros": "No hay ficheros asociados a esta solicitud."
   },
   "tiposFormulario": {
     "tipoFormularioCreado": "Se ha creado el tipo de formulario {{nombre}}",

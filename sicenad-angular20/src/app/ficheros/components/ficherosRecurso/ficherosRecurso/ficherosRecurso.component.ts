@@ -11,10 +11,12 @@ import { UtilsStore } from '@stores/utils.store';
 import { CategoriaFichero } from '@interfaces/models/categoriaFichero';
 import { forkJoin, map } from 'rxjs';
 import { UtilService } from '@services/utilService';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-ficherosRecurso',
-  imports: [FicheroRecursoComponent, ReactiveFormsModule],
+  imports: [FicheroRecursoComponent, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './ficherosRecurso.component.html',
   styleUrls: ['./ficherosRecurso.component.css'],
 })
@@ -89,7 +91,7 @@ export class FicherosRecursoComponent {
           if (!nombreArchivo) return;
           this.orquestadorService.getImagenRecurso(nombreArchivo, idCenad, idRecurso).subscribe({
             next: blob => fichero.urlImagen = URL.createObjectURL(blob),
-            error: err => console.error('Error cargando imagen del fichero', err)
+            error: err => console.error(err)
           });
         });
       });
@@ -101,15 +103,13 @@ export class FicherosRecursoComponent {
     const idCenad = this.cenadVisitado()!.idString;
     const idRecurso = this.idRecurso() || '';
     if (!archivo) {
-      console.warn('No hay archivo para descargar');
       return;
     }
     this.orquestadorService.getArchivoRecurso(archivo, idCenad, idRecurso).subscribe({
       next: () => {
-        console.log(`Archivo ${archivo} descargado correctamente`);
       },
       error: (err) => {
-        console.error('Error descargando el archivo', err);
+        console.error(err);
       }
     });
   }
@@ -136,8 +136,6 @@ export class FicherosRecursoComponent {
         this.ficheroForm.reset();
         this.output.emit(); // notificamos al padre
         if (this.fileInput) this.fileInput.nativeElement.value = '';
-      } else {
-        console.error('Error al crear el fichero');
       }
     });
   }
@@ -180,7 +178,7 @@ export class FicherosRecursoComponent {
         );
       },
       error: (error) => {
-        console.error('Error obteniendo categorías de ficheros', error);
+        console.error(error);
         this.categoriasFicheroImagenesMisFicheros.set([]);
         this.categoriasFicheroNoImagenesMisFicheros.set([]);
       }

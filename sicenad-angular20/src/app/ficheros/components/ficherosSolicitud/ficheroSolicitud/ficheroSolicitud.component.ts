@@ -49,15 +49,13 @@ export class FicheroSolicitudComponent {
   descargar(): void {
     const archivo = this.ficheroSignal()?.nombreArchivo;
     if (!archivo) {
-      console.warn('No hay archivo para descargar');
       return;
     }
     this.orquestadorService.getArchivoSolicitud(archivo, this.idCenad(), this.idSolicitud()).subscribe({
       next: () => {
-        console.log(`Archivo ${archivo} descargado correctamente`);
       },
       error: (err) => {
-        console.error('Error descargando el archivo', err);
+        console.error(err);
       }
     });
   }

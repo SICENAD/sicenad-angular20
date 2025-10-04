@@ -1,9 +1,12 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -13,7 +16,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-infoCenad',
-  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink],
+  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, TranslateModule, UpperCasePipe],
   templateUrl: './infoCenad-page.component.html',
   styleUrls: ['./infoCenad-page.component.css']
 })
@@ -25,11 +28,13 @@ export class InfoCenadPageComponent {
   private iconosStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
   private fb = inject(FormBuilder);
+  private idiomaService = inject(IdiomaService);
 
   faVolver = this.iconosStore.faVolver;
   routesPaths = RoutesPaths;
   cambiaBoton = signal(false);
   btnVista = signal("Administrador");
+  etiquetaBoton = signal("Cambiar a Vista Administrador");
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   isAdminEsteCenad = computed(() => {
@@ -64,7 +69,7 @@ export class InfoCenadPageComponent {
     this.orquestadorService.getInfoCenad(infoCenad, this.cenadVisitado()!.idString).subscribe(
       {
         next: blob => this.urlInfoCenadActual.set(URL.createObjectURL(blob)),
-        error: err => console.error('Error cargando infoCenad', err)
+        error: err => console.error(err)
       });
   });
 
@@ -75,6 +80,7 @@ export class InfoCenadPageComponent {
       this.cambiaBoton.set(true);
     }
     this.btnVista.set(this.cambiaBoton() ? 'Previa' : 'Administrador');
+    this.etiquetaBoton.set(this.cambiaBoton() ? this.idiomaService.t('btnPrevia') : this.idiomaService.t('btnAdmin'));
   }
 
   ngOnDestroy() {
@@ -116,8 +122,6 @@ export class InfoCenadPageComponent {
     }
     const { direccion, tfno, email, descripcion } = this.cenadForm.value;
     const archivoInfoCenad = this.infoCenadFile();
-    console.log('Archivo nuevo:', archivoInfoCenad);
-    console.log('InfoCenad actual:', this.infoCenadActual());
     this.orquestadorService.actualizarInfoCenad(
       this.cenadVisitado()!.nombre,
       direccion,
@@ -130,7 +134,6 @@ export class InfoCenadPageComponent {
     ).subscribe({
       next: res => {
         if (res) {
-          console.log(`Cenad ${this.cenadVisitado()!.nombre} actualizado correctamente.`);
           this.infoCenadActual.set(res);
           this.cenadVisitado()!.infoCenad = this.infoCenadActual(); // actualizamos el infoCenad en el objeto cenad
           // 🔹 Pedimos el archivo actualizado para refrescar la URL
@@ -142,16 +145,13 @@ export class InfoCenadPageComponent {
               // Asignamos la nueva URL
               this.urlInfoCenadActual.set(URL.createObjectURL(blob));
             },
-            error: err => console.error('Error recargando imagen actualizada', err)
+            error: err => console.error(err)
           });
           this.cenadForm.patchValue({ infoCenad: null });
           this.previewInfoCenad.set('');
           this.infoCenadFile.set(null);
           if (this.fileInput) this.fileInput.nativeElement.value = '';
         }
-      },
-      error: (err) => {
-        console.error('Error actualizando Cenad:', err);
       }
     });
   }
