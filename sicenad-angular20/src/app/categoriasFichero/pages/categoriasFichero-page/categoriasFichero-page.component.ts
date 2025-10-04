@@ -7,10 +7,12 @@ import { OrquestadorService } from '@services/orquestadorService';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
 import { CategoriaFicheroComponent } from "@app/categoriasFichero/components/categoriaFichero/categoriaFichero.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-categoriasFichero-page',
-  imports: [FontAwesomeModule, ReactiveFormsModule, RouterLink, CategoriaFicheroComponent],
+  imports: [FontAwesomeModule, ReactiveFormsModule, RouterLink, CategoriaFicheroComponent, TranslateModule, UpperCasePipe],
   templateUrl: './categoriasFichero-page.component.html',
   styleUrls: ['./categoriasFichero-page.component.css']
 })
@@ -44,9 +46,7 @@ export class CategoriasFicheroPageComponent {
     this.orquestadorService.crearCategoriaFichero(nombre, tipo, descripcion).subscribe(success => {
       if (success) {
         this.categoriaFicheroForm.reset();
-      } else {
-        console.error('Error al crear la categoría de fichero');
-      }
+      } 
     });
   }
 }

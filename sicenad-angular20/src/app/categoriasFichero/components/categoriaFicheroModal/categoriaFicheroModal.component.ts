@@ -1,13 +1,15 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CategoriaFichero } from '@interfaces/models/categoriaFichero';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-categoriaFichero-modal',
-  imports: [FontAwesomeModule, ReactiveFormsModule],
+  imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './categoriaFicheroModal.component.html',
   styleUrls: ['./categoriaFicheroModal.component.css']
 })
@@ -56,12 +58,11 @@ export class CategoriaFicheroModalComponent {
     this.orquestadorService.actualizarCategoriaFichero(nombre, tipo, descripcion, this.idCategoriaFichero()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Categoría de fichero ${nombre} actualizada correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Categoría de fichero:', error);
+        console.error(error);
       }
     });
   }

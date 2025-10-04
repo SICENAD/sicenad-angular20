@@ -7,7 +7,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Categoría de fichero {{ categoriaFichero()?.nombre }}</h5>
+        <h5 class="modal-title">{{ 'categoriasFichero.editarCategoriaFichero' | translate }} {{ categoriaFichero()?.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -15,31 +15,31 @@
           <!-- Nombre -->
           <div class="mb-3">
             <label for="nombre" class="form-label"
-              ><b>CATEGORÍA DE FICHERO<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'categoriasFichero.categoriaFichero' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <!-- Tipo -->
           <div class="mb-3">
             <label class="titulo me-2"
-              ><b>TIPO<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'categoriasFichero.tipo' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <select class="form-control letra" formControlName="tipo">
-              <option value=0>Imágenes</option>
-              <option value=1>Otros archivos</option>
+              <option value=0>{{ 'categoriasFichero.imagenes' | translate }}</option>
+              <option value=1>{{ 'categoriasFichero.otrosArchivos' | translate }}</option>
             </select>
           </div>
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label"
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.descripcion' | translate | uppercase}}<sup class="text-danger">*</sup></b></label
             >
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
         </form>
@@ -52,7 +52,7 @@
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          Borrar Categoría de fichero
+          {{ 'categoriasFichero.borrar' | translate }}
         </button>
         <button
           type="button"
@@ -61,7 +61,7 @@
           data-bs-dismiss="modal"
           [disabled]="categoriaFicheroForm.invalid"
         >
-          Guardar Categoría de fichero
+          {{ 'categoriasFichero.guardar' | translate }}
         </button>
       </div>
     </div>
@@ -72,19 +72,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Categoría de fichero {{ categoriaFichero()?.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{ 'categoriasFichero.eliminar' | translate }} {{ categoriaFichero()?.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ categoriaFichero()?.nombre }}?</div>
+      <div class="modal-body">{{ 'categoriasFichero.confirmarBorrado' | translate: { nombre: categoriaFichero()?.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           (click)="borrarCategoriaFichero()"
           data-bs-dismiss="modal"
         >
-          Borrar
+          {{ 'comun.borrar' | translate }}
         </button>
       </div>
     </div>

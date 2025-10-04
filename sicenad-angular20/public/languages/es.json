@@ -141,7 +141,21 @@
   "categoriasFichero": {
     "categoriaFicheroCreada": "Se ha creado la categoría de fichero {{nombre}}",
     "categoriaFicheroModificada": "Se ha modificado la categoría de fichero {{nombre}}",
-    "categoriaFicheroEliminada": "Se ha eliminado la categoría de fichero {{id}}"
+    "categoriaFicheroEliminada": "Se ha eliminado la categoría de fichero {{id}}",
+    "editarCategoriaFichero": "Editar categoría de fichero",
+    "nuevaCategoriaFichero": "Nueva categoría de fichero",
+    "crearCategoriaFichero": "Crear categoría de fichero",
+    "categoriaFichero": "Categoría de fichero",
+    "borrar": "Borrar categoría de fichero",
+    "guardar": "Guardar categoría de fichero",
+    "eliminar": "Eliminar categoría de fichero",
+    "confirmarBorrado": "¿Quieres borrar la categoría de fichero {{nombre}}?",
+    "tipo": "Tipo",
+    "seleccionaTipo": "Selecciona un tipo",
+    "imagenes": "Imágenes",
+    "otrosArchivos": "Otros archivos",
+    "gestion": "Gestión de categorías de fichero"
+
   },
   "categorias": {
     "categoriaCreada": "Se ha creado la categoría {{nombre}}",
