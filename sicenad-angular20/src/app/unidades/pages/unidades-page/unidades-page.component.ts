@@ -1,3 +1,4 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -5,6 +6,7 @@ import { RoutesPaths } from '@app/app.routes';
 import { UnidadComponent } from '@app/unidades/components/unidad/unidad.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
@@ -14,7 +16,7 @@ import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 
 @Component({
   selector: 'app-unidades-page',
-  imports: [FontAwesomeModule, ReactiveFormsModule, RouterLink, UnidadComponent],
+  imports: [FontAwesomeModule, ReactiveFormsModule, RouterLink, UnidadComponent, TranslateModule, UpperCasePipe],
   templateUrl: './unidades-page.component.html',
   styleUrls: ['./unidades-page.component.css']
 })
@@ -70,8 +72,6 @@ export class UnidadesPageComponent {
     this.orquestadorService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).subscribe(success => {
       if (success) {
         this.unidadForm.reset();
-      } else {
-        console.error('Error al crear la unidad');
       }
     });
   }

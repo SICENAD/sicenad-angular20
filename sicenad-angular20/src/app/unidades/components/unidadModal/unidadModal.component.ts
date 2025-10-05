@@ -1,13 +1,15 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Unidad } from '@interfaces/models/unidad';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-unidad-modal',
-  imports: [FontAwesomeModule, ReactiveFormsModule],
+  imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './unidadModal.component.html',
   styleUrls: ['./unidadModal.component.css']
 })
@@ -65,12 +67,11 @@ ngOnInit(): void {
     this.orquestadorService.actualizarUnidad(nombre, descripcion, email, tfno, direccion, poc, this.idUnidad()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Unidad ${nombre} actualizada correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Unidad:', error);
+        console.error(error);
       }
     });
   }

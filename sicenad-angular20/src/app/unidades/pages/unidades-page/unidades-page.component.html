@@ -3,14 +3,14 @@
     ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
-    <u>GESTIÓN DE UNIDADES</u>
+    <u>{{ 'unidades.gestionUnidades' | translate | uppercase }}</u>
   </h3>
   <button
     class="btn text-white ms-auto"
     data-bs-toggle="modal"
     data-bs-target="#modal-nueva-unidad"
   >
-    Nueva <b>Unidad</b>
+    <b>{{ 'unidades.nuevaUnidad' | translate }}</b>
   </button>
 </div>
 <hr class="w-100" />
@@ -18,16 +18,16 @@
   <div class="col col-md-12">
     <div class="row mt-2 titulos">
       <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
-        <b>NOMBRE</b>
+        <b>{{ 'unidades.unidad' | translate | uppercase }}</b>
       </div>
       <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
-        <b>CORREO ELECTRÓNICO</b>
+        <b>{{ 'comun.email' | translate | uppercase }}</b>
       </div>
       <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
-        <b>TELEFONO</b>
+        <b>{{ 'comun.telefono' | translate | uppercase }}</b>
       </div>
       <div class="col-10 col-sm-10 col-md-3 col-lg-3 col-xl-3 titulo">
-        <b>POC</b>
+        <b>{{ 'unidades.poc' | translate | uppercase }}</b>
       </div>
     </div>
     @for (u of unidades(); track u.idString) {
@@ -41,74 +41,74 @@
     <div class="modal-content">
       <form [formGroup]="unidadForm">
         <div class="modal-header">
-          <h1 class="modal-title fs-5">Nueva Unidad</h1>
+          <h1 class="modal-title fs-5">{{ 'unidades.nuevaUnidad' | translate }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
             <label for="nombre" class="form-label titulo1"
-              ><b>UNIDAD<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'unidades.unidad' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <!-- Dirección -->
           <div class="mb-3">
             <label for="direccion" class="form-label titulo1"
-              ><b>DIRECCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.direccion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="direccion" class="form-control" formControlName="direccion" />
             @if (direccion?.touched && direccion?.invalid) {
-            <span class="text-danger">La dirección es obligatoria</span>
+            <span class="text-danger">{{ 'comun.direccionObligatoria' | translate }}</span>
             }
           </div>
           <!-- Teléfono -->
           <div class="mb-3">
             <label for="tfno" class="form-label titulo1"
-              ><b>TELEFONO<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.telefono' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="tfno" class="form-control" formControlName="tfno" />
             @if (tfno?.touched && tfno?.invalid) {
-            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            <span class="text-danger">{{ 'comun.telefonoObligatorio' | translate }}</span>
             }
           </div>
           <!-- Email -->
           <div class="mb-3">
             <label for="email" class="form-label titulo1"
-              ><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.email' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="email" id="email" class="form-control" formControlName="email" />
-            <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+            <div id="emailHelp" class="form-text">{{ 'comun.correoValido' | translate }}</div>
             @if (email?.touched && email?.invalid) {
-            <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+            <span class="text-danger">{{ 'comun.emailObligatorio' | translate }}</span>
             }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label titulo1"
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
           <!-- POC -->
           <div class="mb-3">
             <label for="poc" class="form-label titulo1"
-              ><b>POC<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'unidades.poc' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="poc" class="form-control" formControlName="poc" />
             @if (poc?.touched && poc?.invalid) {
-            <span class="text-danger">El POC es obligatorio</span>
+            <span class="text-danger">{{ 'unidades.pocObligatorio' | translate }}</span>
             }
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
           <button
             type="button"
             class="btn"
@@ -116,7 +116,7 @@
             [disabled]="unidadForm.invalid"
             (click)="crearUnidad()"
           >
-            Crear Unidad
+            {{ 'unidades.crearUnidad' | translate }}
           </button>
         </div>
       </form>

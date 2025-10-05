@@ -383,7 +383,20 @@
   "unidades": {
     "unidadCreada": "Se ha creado la unidad {{nombre}}",
     "unidadModificada": "Se ha modificado la unidad {{nombre}}",
-    "unidadEliminada": "Se ha eliminado la unidad {{id}}"
+    "unidadEliminada": "Se ha eliminado la unidad {{id}}",
+    "unidad": "Unidad",
+    "unidades": "Unidades",
+    "nuevaUnidad": "Nueva unidad",
+    "editarUnidad": "Editar unidad",
+    "crearUnidad": "Crear unidad",
+    "borrar": "Borrar unidad",
+    "confirmarBorrado": "¿Quieres borrar la unidad {{nombre}}?",
+    "guardar": "Guardar unidad",
+    "eliminar": "Eliminar unidad",
+    "gestionUnidades": "Gestión de Unidades",
+    "poc": "POC",
+    "pocObligatorio": "El POC es obligatorio"
+
   },
   "usuarios": {
     "usuarioModificado": "Se ha modificado el usuario {{username}}",
