@@ -1,3 +1,4 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -9,12 +10,13 @@ import { UsuarioAdministrador } from '@interfaces/models/usuarioAdministrador';
 import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
 import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
 import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-usuario-modal',
-  imports: [ReactiveFormsModule, FontAwesomeModule],
+  imports: [ReactiveFormsModule, FontAwesomeModule, TranslateModule, UpperCasePipe],
   templateUrl: './usuarioModal.component.html',
   styleUrls: ['./usuarioModal.component.css']
 })
@@ -128,12 +130,11 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              console.log(`Usuario Superadministrador ${username} actualizado correctamente.`);
               password && this.changePassword(idUsuario, password);
               this.output.emit(); // notificamos al padre
             }
           },
-          error: error => console.error('Error actualizando Usuario Superadministrador:', error)
+          error: error => console.error(error)
         });
         break;
       case this.misRoles.Administrador:
@@ -148,12 +149,11 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              console.log(`Usuario Administrador ${username} actualizado correctamente.`);
               password && this.changePassword(idUsuario, password);
               this.output.emit(); // notificamos al padre
             }
           },
-          error: error => console.error('Error actualizando Usuario Administrador:', error)
+          error: error => console.error(error)
         });
         break;
       case this.misRoles.Gestor:
@@ -168,12 +168,11 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              console.log(`Usuario Gestor ${username} actualizado correctamente.`);
               password && this.changePassword(idUsuario, password);
               this.output.emit(); // notificamos al padre
             }
           },
-          error: error => console.error('Error actualizando Usuario Gestor:', error)
+          error: error => console.error(error)
         });
         break;
       case this.misRoles.Normal:
@@ -188,16 +187,14 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              console.log(`Usuario Normal ${username} actualizado correctamente.`);
               password && this.changePassword(idUsuario, password);
               this.output.emit(); // notificamos al padre
             }
           },
-          error: error => console.error('Error actualizando Usuario Normal:', error)
+          error: error => console.error(error)
         });
         break;
       default:
-        console.error('Rol no reconocido al actualizar usuario:', this.usuario()?.rol);
     }
   }
 
@@ -205,30 +202,25 @@ export class UsuarioModalComponent {
     switch (this.usuario()?.rol) {
       case this.misRoles.Superadministrador:
         this.orquestadorService.borrarUsuarioSuperadministrador(this.idUsuario()).subscribe(() => {
-          console.log('Usuario Superadministrador borrado correctamente.');
           this.output.emit();
         });
         break;
       case this.misRoles.Administrador:
         this.orquestadorService.borrarUsuarioAdministrador(this.idUsuario()).subscribe(() => {
-          console.log('Usuario Administrador borrado correctamente.');
           this.output.emit();
         });
         break;
       case this.misRoles.Gestor:
         this.orquestadorService.borrarUsuarioGestor(this.cenad()?.idString || '', this.idUsuario()).subscribe(() => {
-          console.log('Usuario Gestor borrado correctamente.');
           this.output.emit();
         });
         break;
       case this.misRoles.Normal:
         this.orquestadorService.borrarUsuarioNormal(this.idUsuario()).subscribe(() => {
-          console.log('Usuario Normal borrado correctamente.');
           this.output.emit();
         });
         break;
       default:
-        console.error('Rol no reconocido al borrar usuario:', this.usuario()?.rol);
     }
   }
 }

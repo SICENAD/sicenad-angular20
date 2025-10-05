@@ -405,12 +405,22 @@
     "rolDesconocido": "Rol desconocido: {{rol}}",
     "usuario": "Usuario",
     "contraseña": "Contraseña",
+    "cambiarContraseña": "¿Quiere cambiar la contraseña?",
     "usuarioObligatorio": "El usuario es obligatorio",
     "contraseñaObligatoria": "La contraseña es obligatoria",
     "crearUsuario": "Crear Usuario",
     "crearSuperadmin": "Crear nuevo Usuario Superadministrador",
     "quiereNotificaciones": "¿Quiere recibir notificaciones?",
-    "confirmarPassword": "Confirmar Contraseña"
+    "confirmarPassword": "Confirmar Contraseña",
+    "editarUsuario": "Editar Usuario {{rol}} {{username}}",
+    "unidad": "Unidad",
+    "seleccionaUnidad": "Selecciona una unidad",
+    "seleccionaCenad": "Selecciona un CENAD/CMT",
+    "cenad": "CENAD/CMT",
+    "borrar": "Borrar Usuario",
+    "guardar": "Guardar Usuario",
+    "confirmarBorrado": "¿Quieres borrar el usuario {{username}}?",
+    "eliminar": "Eliminar Usuario {{rol}} {{username}}"
   },
   "orquestador": {
     "errorCargaCenads": "Error al cargar los CENAD,s/CMT,s",

@@ -44,21 +44,17 @@ export class UsuarioComponent {
     switch (this.usuario()?.rol) {
       case this.rolUsuario.Superadministrador:
         // Aquí podrás hacer otra llamada o acción específica
-        console.log('Usuario Superadministrador detectado');
         break;
       case this.rolUsuario.Administrador:
         this.orquestadorService.loadCenadDeAdministrador(this.usuario().idString).subscribe({
           next: (cenad) => {
             if (cenad) {
-              console.log('CENAD cargado para el usuario Administrador:', cenad);
               // Aquí podrías guardar en un signal o propiedad local
               this.cenad.set(cenad);
-            } else {
-              console.warn(`No se encontró un CENAD para el usuario ${this.usuario().username}`);
             }
           },
           error: (error) => {
-            console.error('Error al cargar CENAD para usuario Administrador:', error);
+            console.error(error);
           }
         });
         break;
@@ -66,15 +62,13 @@ export class UsuarioComponent {
         this.orquestadorService.loadCenadDeGestor(this.usuario().idString).subscribe({
           next: (cenad) => {
             if (cenad) {
-              console.log('CENAD cargado para el usuario Gestor:', cenad);
+              console.log(cenad);
               // Aquí podrías guardar en un signal o propiedad local
               this.cenad.set(cenad);
-            } else {
-              console.warn(`No se encontró un CENAD para el usuario ${this.usuario().username}`);
             }
           },
           error: (error) => {
-            console.error('Error al cargar CENAD para usuario Gestor:', error);
+            console.error(error);
           }
         });
         break;
@@ -82,15 +76,12 @@ export class UsuarioComponent {
         this.orquestadorService.loadUnidadDeUsuarioNormal(this.usuario().idString).subscribe({
           next: (unidad) => {
             if (unidad) {
-              console.log('Unidad cargada para el usuario Normal:', unidad);
               // Aquí podrías guardar en un signal o propiedad local
               this.unidad.set(unidad);
-            } else {
-              console.warn(`No se encontró una Unidad para el usuario ${this.usuario().username}`);
             }
           },
           error: (error) => {
-            console.error('Error al cargar Unidad para usuario Normal:', error);
+            console.error(error);
           }
         });
         break;

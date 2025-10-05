@@ -2,13 +2,13 @@
 <a [attr.data-bs-toggle]="'modal'" [attr.data-bs-target]="'#' + idModal()">
   <fa-icon class="fa" [icon]="faEditUser"></fa-icon>
 </a>
-<!-- Modal Editar Usuario Superadministrador -->
+<!-- Modal Editar Usuario -->
 <div class="modal fade" [id]="idModal()" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-          Editar Usuario {{ usuarioTipado.rol }} {{ usuarioTipado.username }}
+          {{'usuarios.editarUsuario' | translate: { rol: usuarioTipado.rol, username: usuarioTipado.username } }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
@@ -16,67 +16,67 @@
         <form [formGroup]="usuarioForm">
           <!-- Username -->
           <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <label for="username" class="form-label"><b>USUARIO<sup class="text-danger">*</sup></b></label>
+            <label for="username" class="form-label"><b>{{'usuarios.usuario' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <input type="text" class="form-control" id="username" formControlName="username" />
             @if (username?.touched && username?.invalid) {
-            <div class="text-danger">El usuario es obligatorio.</div>
+            <div class="text-danger">{{'usuarios.usuarioObligatorio' | translate}}</div>
             }
           </div>
           <!-- Teléfono -->
           <div class="mb-3 col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4">
-            <label for="tfno" class="form-label"><b>TELÉFONO<sup class="text-danger">*</sup></b></label>
+            <label for="tfno" class="form-label"><b>{{'comun.telefono' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <input type="text" class="form-control" id="tfno" formControlName="tfno" />
             @if (tfno?.touched && tfno?.invalid) {
-            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            <span class="text-danger">{{'comun.telefonoObligatorio' | translate}}</span>
             }
           </div>
           <!-- Email -->
           <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <label for="email" class="form-label"><b>CORREO ELECTRÓNICO<sup class="text-danger">*</sup></b></label>
+            <label for="email" class="form-label"><b>{{'comun.email' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <input type="email" class="form-control" id="email" formControlName="email" />
-            <div id="emailHelp" class="form-text">Debe ser un correo válido</div>
+            <div id="emailHelp" class="form-text">{{'comun.correoValido' | translate}}</div>
             @if (email?.touched && email?.invalid) {
-            <span class="text-danger">El correo electrónico es obligatorio y debe ser válido</span>
+            <span class="text-danger">{{'comun.emailObligatorio' | translate}}</span>
             }
           </div>
           <!-- Notificaciones -->
           <div class="mb-3">
-            <label class="form-label me-2"><b>¿QUIERE RECIBIR NOTIFICACIONES?</b></label>
+            <label class="form-label me-2"><b>{{'usuarios.quiereNotificaciones' | translate | uppercase }}</b></label>
             <input type="checkbox" class="letra" id="emailAdmitido" formControlName="emailAdmitido" />
           </div>
           <!-- Descripción -->
           <div class="mb-3">
-            <label class="form-label"><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
+            <label class="form-label"><b>{{'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <textarea class="form-control letra" id="descripcion" formControlName="descripcion">
             </textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{'comun.descripcionObligatoria' | translate}}</div>
             }
           </div>
           <!-- Unidad -->
           @if (usuarioTipado.rol === misRoles.Normal) {
           <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <label for="unidad" class="form-label"><b>UNIDAD</b></label>
+            <label for="unidad" class="form-label"><b>{{'usuarios.unidad' | translate | uppercase }}</b></label>
             <p>{{ unidad()?.nombre }}</p>
           </div>
           }
           <!-- Cenad -->
           @if (usuarioTipado.rol === misRoles.Gestor || usuarioTipado.rol === misRoles.Administrador) {
           <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <label for="cenad" class="form-label"><b>CENAD</b></label>
+            <label for="cenad" class="form-label"><b>{{'usuarios.cenad' | translate | uppercase }}</b></label>
             <p>{{ cenad()?.nombre }}</p>
           </div>
           }
           <!-- Cambiar Password -->
           <div class="mb-3">
-            <label class="form-label me-2"><b>¿QUIERE CAMBIAR LA CONTRASEÑA?</b></label>
+            <label class="form-label me-2"><b>{{'usuarios.cambiarContraseña' | translate | uppercase }}</b></label>
             <input type="checkbox" [checked]="cambiarPassword()"
               (change)="cambiarPassword.set($event.target.checked)" />
           </div>
           @if (cambiarPassword()) {
           <!-- Password -->
           <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <label for="password" class="form-label"><b>CONTRASEÑA</b></label>
+            <label for="password" class="form-label"><b>{{'usuarios.contraseña' | translate | uppercase }}</b></label>
             <input type="password" class="form-control" id="password" formControlName="password" />
           </div>
           }
@@ -86,11 +86,11 @@
         <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
         <button type="button" class="btn" [attr.data-bs-target]="'#' + idModalEliminar()" data-bs-toggle="modal"
           [hidden]="isMiUsuario()">
-          Borrar Usuario
+          {{'usuarios.borrar' | translate}}
         </button>
         <button type="button" class="btn" (click)="editarUsuario()" data-bs-dismiss="modal"
           [disabled]="usuarioForm.invalid">
-          Guardar Usuario
+          {{'usuarios.guardar' | translate}}
         </button>
       </div>
     </div>
@@ -102,15 +102,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5">
-          Eliminar Usuario Superadministrador {{ usuarioTipado.username }}
+          {{'usuarios.eliminar' | translate: { rol: usuarioTipado.rol, username: usuarioTipado.username } }}
         </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ usuarioTipado.username }}?</div>
+      <div class="modal-body">{{'usuarios.confirmarBorrado' | translate: { username: usuarioTipado.username } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{'comun.cerrar' | translate}}</button>
         <button type="button" class="btn" (click)="borrarUsuario()" data-bs-dismiss="modal">
-          Borrar
+          {{'comun.borrar' | translate}}
         </button>
       </div>
     </div>
