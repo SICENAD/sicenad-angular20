@@ -2,26 +2,27 @@
   <h5 [class]="`text-center titulo-${claseEstado()}`">
     {{ estadoTitulo() }}
     <label class="ms-5 ps-5 ver-todas" (click)="abrirModal()" style="cursor: pointer">
-      <fa-icon class="fa-2x me-2" [icon]="faConsultar"></fa-icon>Ver Todas
+      <fa-icon class="fa-2x me-2" [icon]="faConsultar"></fa-icon>
+      {{ 'solicitudes.verTodas' | translate }}
     </label>
   </h5>
   <hr [class]="`w-100 titulo-${claseEstado()}`" />
   @if (solicitudesTop5().length) {
   <div class="row">
     <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-      <b><u>UCO</u></b>
+      <b><u>{{ 'solicitudes.unidad' | translate | uppercase }}</u></b>
     </div>
     <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-      <b><u>SOLICITUD</u></b>
+      <b><u>{{ 'solicitudes.solicitud' | translate | uppercase }}</u></b>
     </div>
     <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
-      <b><u>RECURSO</u></b>
+      <b><u>{{ 'solicitudes.recurso' | translate | uppercase }}</u></b>
     </div>
     <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-      <b><u>INICIO</u></b>
+      <b><u>{{ 'solicitudes.inicio' | translate | uppercase }}</u></b>
     </div>
     <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-      <b><u>FIN</u></b>
+      <b><u>{{ 'solicitudes.fin' | translate | uppercase }}</u></b>
     </div>
   </div>
   }
@@ -34,7 +35,7 @@
 </div>
 } @else {
 <div class="row justify-content-center">
-  <h6 class="no-existen">NO EXISTEN</h6>
+  <h6 class="no-existen">{{ 'solicitudes.noSolicitudes' | translate | uppercase }}</h6>
 </div>
 }
 @if (mostrarModal()) {
@@ -50,19 +51,19 @@
         @if (solicitudesOrdenadas().length) {
         <div class="row">
           <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-            <b><u>UCO</u></b>
+            <b><u>{{ 'solicitudes.unidad' | translate | uppercase }}</u></b>
           </div>
           <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-            <b><u>SOLICITUD</u></b>
+            <b><u>{{ 'solicitudes.solicitud' | translate | uppercase }}</u></b>
           </div>
           <div class="col-10 col-sm-10 col-md-4 col-lg-4 col-xl-4 titulo">
-            <b><u>RECURSO</u></b>
+            <b><u>{{ 'solicitudes.recurso' | translate | uppercase }}</u></b>
           </div>
           <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-            <b><u>INICIO</u></b>
+            <b><u>{{ 'solicitudes.inicio' | translate | uppercase }}</u></b>
           </div>
           <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo">
-            <b><u>FIN</u></b>
+            <b><u>{{ 'solicitudes.fin' | translate | uppercase }}</u></b>
           </div>
         </div>
         <div>
@@ -72,12 +73,12 @@
         </div>
         } @else {
         <div>
-          <p>No existen solicitudes</p>
+          <p>{{ 'solicitudes.noSolicitudes' | translate | uppercase }}</p>
         </div>
         }
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn" (click)="cerrarModal()">{{ 'comun.cerrar' | translate }}</button>
       </div>
     </div>
   </div>

@@ -1,10 +1,10 @@
-<h5 class="text-center">FILTRAR POR CATEGORÍAS</h5>
+<h5 class="text-center">{{ 'recursos.filtrarCategorias' | translate | uppercase}}</h5>
 <!-- Botones de categorías -->
 <div class="row mb-3">
   <div class="col text-center">
     <!-- Botón "Todos" -->
     <button class="btn me-2" (click)="limpiarCategoria()" [class.active]="!categoriaSeleccionada()">
-      Todos
+      {{ 'recursos.todos' | translate }}
     </button>
     @if (categoriaSeleccionada() && !esCategoriaPadre(categoriaSeleccionada())) {
     <!-- Botón "Volver a categoría anterior" -->
@@ -26,7 +26,7 @@
       }
     </ng-container>
     } @else {
-    <b>SUBCATEGORÍAS: </b>
+    <b>{{ 'categorias.subcategorias' | translate | uppercase}}: </b>
     <!-- Subcategorías directas -->
     <ng-container>
       @for (sub of subcategorias(); track sub.idString ) {

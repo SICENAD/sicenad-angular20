@@ -5,10 +5,12 @@ import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { Categoria } from '@interfaces/models/categoria';
 import { Recurso } from '@interfaces/models/recurso';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-filtroRecursos',
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, TranslateModule, UpperCasePipe],
   templateUrl: './filtroRecursos.component.html',
   styleUrls: ['./filtroRecursos.component.css']
 })
@@ -65,7 +67,7 @@ export class FiltroRecursosComponent {
           this.categoriaSeleccionadaChange.emit(categoria);
         },
         error: (err) => {
-          console.error('Error cargando recursos de la categoría', err);
+          console.error(err);
           this.recursosCategoriaSeleccionada.set([]);
           this.recursosFiltradosChange.emit([]);
           this.categoriaSeleccionadaChange.emit(null);
@@ -75,7 +77,7 @@ export class FiltroRecursosComponent {
       this.orquestadorService.loadSubcategorias(categoria.idString).subscribe({
         next: (subcats) => this.subcategorias.set(subcats ?? []),
         error: (err) => {
-          console.error('Error cargando subcategorías', err);
+          console.error(err);
           this.subcategorias.set([]);
           this.recursosCategoriaSeleccionada.set([]);
         }
@@ -103,7 +105,7 @@ export class FiltroRecursosComponent {
         }
       },
       error: (err) => {
-        console.error('Error cargando la categoría padre', err);
+        console.error(err);
         // Si da error 502 u otro, volvemos a la vista raíz
         this.limpiarCategoria();
       }

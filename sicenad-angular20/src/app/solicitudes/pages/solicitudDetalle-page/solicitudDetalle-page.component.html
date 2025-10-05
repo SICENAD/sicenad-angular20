@@ -8,7 +8,7 @@
       [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-      <strong>Volver Solicitudes</strong>
+      <strong>{{ 'solicitudes.volverSolicitudes' | translate }}</strong>
     </a>
     <!-- Botón volver al calendario -->
     <a
@@ -16,39 +16,39 @@
       [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.calendario]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-      <strong>Volver Calendario</strong>
+      <strong>{{ 'solicitudes.volverCalendario' | translate }}</strong>
     </a>
   </div>
   <!-- Título centrado -->
   <h1 class="w-100 text-center mb-0">
-    SOLICITUD del recurso {{ recurso()?.nombre }}
+    {{ 'solicitudes.solicitudRecurso' | translate | uppercase}}: {{ recurso()?.nombre | uppercase}}
   </h1>
 </div>
 
   <div class="formulario pb-3" #topScroll>
-    <form [formGroup]="solicitudForm">
+    <form [formGroup]="solicitudForm" class="formulario">
       <!--cuando se abra como no editable todo el form sera de lectura-->
       <fieldset [disabled]="!isEditable()">
         <div class="row py-2 justify-content-between">
           <div class="col-lg-2 col-md-12">
-            <label class="me-2">Unidad Solicitante: <sup class="text-danger">*</sup></label>
+            <label class="me-2">{{ 'solicitudes.unidad' | translate | uppercase }} <sup class="text-danger">*</sup></label>
             <label class="form-control">{{ solicitud()?.unidadUsuaria }}</label>
           </div>
           <div class="col-lg-2 col-md-12">
-            <label>Jefe Unidad Usuaria: <sup class="text-danger">*</sup></label>
+            <label>{{ 'solicitudes.jefeUnidad' | translate | uppercase }} <sup class="text-danger">*</sup></label>
             <input
               type="text"
               class="form-control"
               formControlName="jefeUnidadUsuaria"
-              placeholder="Jefe UCO Usuaria"
+              placeholder="{{ 'solicitudes.jefeUnidad' | translate }}"
               name="jefeUcoUsuaria"
             />
             @if (jefeUnidadUsuaria?.touched && jefeUnidadUsuaria?.invalid) {
-            <span class="text-danger">El Jefe de UCO es obligatorio</span>
+            <span class="text-danger">{{ 'solicitudes.jefeObligatorio' | translate }}</span>
             }
           </div>
           <div class="col-lg-2 col-md-12">
-            <label for="fechaSolicitud">Fecha Solicitud: <sup class="text-danger"></sup></label>
+            <label for="fechaSolicitud">{{ 'solicitudes.fechaSolicitud' | translate | uppercase }}</label>
             <input
               type="date"
               class="form-control"
@@ -58,72 +58,72 @@
             />
           </div>
           <div class="col-lg-2 col-md-12">
-            <label>POC para el EJERCICIO: <sup class="text-danger">*</sup></label>
+            <label>{{ 'solicitudes.poc' | translate | uppercase }}: <sup class="text-danger">*</sup></label>
             <input
               type="text"
               class="form-control"
               formControlName="pocEjercicio"
-              placeholder="POC para el Ejercicio"
+              placeholder="{{ 'solicitudes.poc' | translate }}"
               name="pocEjercicio"
             />
             @if (pocEjercicio?.touched && pocEjercicio?.invalid) {
-            <span class="text-danger">El POC para el Ejercicio es obligatorio</span>
+            <span class="text-danger">{{ 'solicitudes.pocObligatorio' | translate }}</span>
             }
           </div>
           <div class="col-lg-2 col-md-12">
-            <label>Redactor (Teléfono): <sup class="text-danger">*</sup></label>
+            <label>{{ 'solicitudes.redactorTelefono' | translate | uppercase }} <sup class="text-danger">*</sup></label>
             <input
               type="text"
               class="form-control"
               formControlName="tlfnRedactor"
-              placeholder="RCT UCO/ RCT durante EX"
+              placeholder="{{ 'solicitudes.redactorTelefono' | translate }}"
               name="tlfnRedactor"
             />
             @if (tlfnRedactor?.touched && tlfnRedactor?.invalid) {
-            <span class="text-danger">El teléfono es obligatorio y debe tener 9 dígitos</span>
+            <span class="text-danger">{{ 'comun.telefonoObligatorio' | translate }}</span>
             }
           </div>
         </div>
         <div class="row py-2 mt-2 justify-content-between">
           <div class="col-lg-4 col-md-12">
-            <label>Recurso: <sup class="text-danger me-2">*</sup></label>
+            <label>{{ 'solicitudes.recurso' | translate | uppercase }} <sup class="text-danger me-2">*</sup></label>
             <label class="form-control">{{ recurso()?.nombre }}</label>
           </div>
           <div class="col-lg-2 col-md-12">
-            <label for="fechaInicio">Fecha-Hora Inicio: <sup class="text-danger"></sup></label>
+            <label for="fechaInicio">{{ 'solicitudes.fechaInicio' | translate | uppercase }} <sup class="text-danger"></sup></label>
             <input type="datetime-local" class="form-control" formControlName="fechaInicio" />
             @if (fechaInicio?.touched && fechaInicio?.invalid) {
-            <span class="text-danger">La fecha de inicio es obligatoria</span>
+            <span class="text-danger">{{ 'solicitudes.fechaObligatoria' | translate }}</span>
             }
           </div>
           <div class="col-lg-2 col-md-12">
-            <label for="fechaFin">Fecha-Hora Fin: <sup class="text-danger"></sup></label>
+            <label for="fechaFin">{{ 'solicitudes.fechaFin' | translate | uppercase }} <sup class="text-danger"></sup></label>
             <input type="datetime-local" class="form-control" formControlName="fechaFin" />
             @if (fechaFin?.touched && fechaFin?.invalid) {
-            <span class="text-danger">La fecha de fin es obligatoria</span>
+            <span class="text-danger">{{ 'solicitudes.fechaObligatoria' | translate }}</span>
             }
           </div>
         </div>
         <div class="row py-2 mt-2 justify-content-center me-3">
           <div class="col-lg-12 col-md-12">
-            <label>Observaciones:</label>
+            <label>{{ 'solicitudes.observaciones' | translate | uppercase }}</label>
             <textarea
               class="form-control"
               name="observaciones"
               formControlName="observaciones"
-              placeholder="Observaciones de la UCO"
+              placeholder="{{ 'solicitudes.observaciones' | translate }}"
             >
             </textarea>
           </div>
         </div>
         <div class="row py-2 mt-2 justify-content-center me-3">
           <div class="col-lg-12 col-md-12">
-            <label>Observaciones del CENAD/CMT:</label>
+            <label>{{ 'solicitudes.observacionesCenad' | translate | uppercase }}</label>
             <textarea
               class="form-control"
               name="observacionesCenad"
               formControlName="observacionesCenad"
-              placeholder="Observaciones del CENAD/CMT"
+              placeholder="{{ 'solicitudes.observacionesCenad' | translate }}"
               [readOnly]="!isAdminEsteCenad() && !isGestorEsteCenad()"
             >
             </textarea>
@@ -132,7 +132,7 @@
         <div class="row py-2 mt-2 justify-content-start">
           <div class="col-auto d-flex align-items-center">
             <label class="me-2 mb-0">
-              <b>Estado de la solicitud:</b>
+              <b>{{ 'solicitudes.estado' | translate | uppercase }}</b>
             </label>
             <select
               class="form-select form-select-sm w-auto"
@@ -150,7 +150,7 @@
         <div class="row py-2 mt-2 justify-content-start">
           <div class="col-auto d-flex align-items-center">
             <label class="me-2 mb-0">
-              <b>Fecha Fin Documentación: <sup class="text-danger">*</sup></b>
+              <b>{{ 'solicitudes.fechaFinDocumentacion' | translate | uppercase }}</b>
             </label>
             <input
               type="date"
@@ -189,7 +189,7 @@
       [attr.data-bs-target]="'#' + idModalEliminar()"
       data-bs-toggle="modal"
     >
-      Borrar Solicitud
+      {{ 'solicitudes.borrar' | translate }}
     </button>
     <button
       type="button"
@@ -197,7 +197,7 @@
       class="btn"
       [disabled]="solicitudForm.invalid"
     >
-      Guardar Solicitud
+      {{ 'solicitudes.guardar' | translate }}
     </button>
     }
   </div>
@@ -208,20 +208,20 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="confirmaEliminar-Label">
-          Eliminar la solicitud de {{ recurso()?.nombre }}
+          {{ 'solicitudes.eliminar' | translate: { recurso: recurso()?.nombre } }}
         </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar la solicitud de {{ recurso()?.nombre }}?</div>
+      <div class="modal-body">{{ 'solicitudes.confirmarBorrado' | translate: { recurso: recurso()?.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           (click)="borrarSolicitud()"
           data-bs-dismiss="modal"
           class="btn"
         >
-          Borrar
+          {{ 'comun.borrar' | translate }}
         </button>
       </div>
     </div>

@@ -5,7 +5,7 @@
       <img class="madoc" width="80" height="110" alt="MADOC" src="img/madoc.png" />
     </div>
     <div class="col col-md-7 align-self-center mt-4">
-      <h1 class="text-center titulo1"><u><b>SUPERADMINISTRADOR</b></u></h1>
+      <h1 class="text-center titulo1"><u><b>{{ 'administracion.rol.superadministrador' | translate | uppercase }}</b></u></h1>
     </div>
     <div class="col col-md-1 mt-4 ml-5">
       <h2 class="text-center">SICENAD</h2>
@@ -14,27 +14,27 @@
 <div class="row justify-content-center align-items-center">
     <div class="col-4 ps-0">
       <a class="nav-link ml-4 home" [routerLink]="routesPaths.home"
-        ><fa-icon class="fa-2x home" [icon]="faHome"></fa-icon><strong>Home</strong></a
+        ><fa-icon class="fa-2x home" [icon]="faHome"></fa-icon><strong>{{ 'administracion.inicio' | translate | uppercase }}</strong></a
       >
     </div>
     <div class="col-8 d-flex justify-content-end">
       <button class="btn cenad me-2" [routerLink]="routesPaths.cenads" routerLinkActive="active">
-        <b>CENAD,s/CMT,s</b>
+        <b>{{ 'administracion.cenads' | translate | uppercase }}</b>
       </button>
       <button class="btn usuario me-2" [routerLink]="routesPaths.usuariosSuper" routerLinkActive="active">
-        <b>Usuarios</b>
+        <b>{{ 'administracion.usuarios' | translate | uppercase }}</b>
       </button>
       <button class="btn unidad me-2" [routerLink]="routesPaths.unidadesSuper" routerLinkActive="active">
-        <b>Unidades</b>
+        <b>{{ 'administracion.unidades' | translate | uppercase }}</b>
       </button>
       <button class="btn tipoFormulario me-2" [routerLink]="routesPaths.tiposFormulario" routerLinkActive="active">
-        <b>Tipos de formulario</b>
+        <b>{{ 'administracion.tiposFormulario' | translate | uppercase }}</b>
       </button>
       <button class="btn categoriaFichero me-2" [routerLink]="routesPaths.categoriasFichero" routerLinkActive="active">
-        <b>Categorías de Ficheros</b>
+        <b>{{ 'administracion.categoriasFichero' | translate | uppercase }}</b>
       </button>
       <button class="btn arma me-2" [routerLink]="routesPaths.armas" routerLinkActive="active">
-        <b>Armas</b>
+        <b>{{ 'administracion.armas' | translate | uppercase }}</b>
       </button>
     </div>
     <hr class="w-100 mt-3" />

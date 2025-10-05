@@ -1,3 +1,4 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -8,6 +9,7 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
 import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { UtilService } from '@services/utilService';
 import { AuthStore } from '@stores/auth.store';
@@ -18,7 +20,7 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-solicitudDetalle',
-  imports: [RouterLink, ReactiveFormsModule, FontAwesomeModule, FicherosSolicitudComponent],
+  imports: [RouterLink, ReactiveFormsModule, FontAwesomeModule, FicherosSolicitudComponent, TranslateModule, UpperCasePipe],
   templateUrl: './solicitudDetalle-page.component.html',
   styleUrls: ['./solicitudDetalle-page.component.css'],
 })
@@ -172,12 +174,11 @@ export class SolicitudDetallePageComponent {
       next: res => {
         if (res) {
           this.estadoInicial !== estado && this.orquestadorService.notificarCambioEstado(this.solicitud()!.idString).subscribe();
-          console.log(`Solicitud del recurso ${this.recurso()?.nombre} actualizada correctamente.`);
           this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
         }
       },
       error: (error) => {
-        console.error('Error actualizando Solicitud:', error);
+        console.error(error);
       }
     });
   }
@@ -188,7 +189,7 @@ export class SolicitudDetallePageComponent {
         res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
       },
       error: (error) => {
-        console.error('Error borrando Solicitud:', error);
+        console.error(error);
       }
     });
   }

@@ -7,42 +7,42 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Recurso {{ recurso()!.nombre }}</h5>
+        <h5 class="modal-title">{{ 'recursos.editarRecurso' | translate }} {{ recurso()!.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="recursoForm">
 <div class="mb-3">
             <label for="nombre" class="form-label titulo1">
-              <b>RECURSO<sup class="text-danger">*</sup></b>
+              <b>{{ 'recursos.recurso' | translate | uppercase }}<sup class="text-danger">*</sup></b>
             </label>
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label titulo1">
-              <b>DESCRIPCIÓN<sup class="text-danger">*</sup></b>
+              <b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b>
             </label>
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
           <!-- Otros -->
           <div class="mb-3">
             <label for="otros" class="form-label titulo1">
-              <b>OTROS</b>
+              <b>{{ 'comun.otros' | translate | uppercase }}</b>
             </label>
             <input type="text" id="otros" class="form-control" formControlName="otros" />
           </div>
           <!-- Tipo de formulario -->
           <div class="mb-3">
-            <label class="form-label titulo1"><b>TIPO DE FORMULARIO<sup class="text-danger">*</sup></b></label>
+            <label class="form-label titulo1"><b>{{ 'recursos.tipoFormulario' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="tipoFormulario">
-              <option [ngValue]="null">Seleccione un tipo de formulario</option>
+              <option [ngValue]="null">{{ 'recursos.seleccionaTipoFormulario' | translate }}</option>
               @for (t of tiposFormulario(); track t.idString) {
               <option [ngValue]="t">{{ t.nombre }}</option>
               }
@@ -50,9 +50,9 @@
           </div>
           <!-- Categoría -->
           <div class="mb-3">
-            <label class="form-label titulo1"><b>CATEGORÍA<sup class="text-danger">*</sup></b></label>
+            <label class="form-label titulo1"><b>{{ 'recursos.categoria' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="categoria">
-              <option [ngValue]="null">Seleccione una categoría</option>
+              <option [ngValue]="null">{{ 'recursos.seleccionaCategoria' | translate }}</option>
               @for (c of categorias(); track c.idString) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
@@ -60,9 +60,9 @@
           </div>
           <!-- Usuario Gestor -->
           <div class="mb-3">
-            <label class="form-label titulo1"><b>USUARIO GESTOR<sup class="text-danger">*</sup></b></label>
+            <label class="form-label titulo1"><b>{{ 'recursos.usuarioGestor' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="usuarioGestor">
-              <option [ngValue]="null">Seleccione un usuario gestor</option>
+              <option [ngValue]="null">{{ 'recursos.seleccionaUsuarioGestor' | translate }}</option>
               @for (u of usuariosGestor(); track u.idString) {
               <option [ngValue]="u">{{ u.username }}</option>
               }
@@ -71,14 +71,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          Borrar Recurso
+          {{ 'recursos.borrar' | translate }}
         </button>
         <button
           type="button"
@@ -87,7 +87,7 @@
           data-bs-dismiss="modal"
           [disabled]="recursoForm.invalid"
         >
-          Guardar Recurso
+          {{ 'recursos.guardar' | translate }}
         </button>
       </div>
     </div>
@@ -98,19 +98,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Recurso {{ recurso()!.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{ 'recursos.eliminar' | translate }} {{ recurso()!.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ recurso()!.nombre }}?</div>
+      <div class="modal-body">{{ 'recursos.confirmarBorrado' | translate: { nombre: recurso()!.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           (click)="borrarRecurso()"
           data-bs-dismiss="modal"
         >
-          Borrar
+          {{ 'comun.borrar' | translate }}
         </button>
       </div>
     </div>

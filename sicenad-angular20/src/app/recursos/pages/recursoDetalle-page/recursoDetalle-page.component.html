@@ -4,7 +4,7 @@
     <!-- Flecha alineada a la izquierda -->
     <a class="nav-link volver me-auto"
       [routerLink]="[routesPaths.cenadHome, cenadVisitado()!.idString, routesPaths.recursos]"><fa-icon
-        class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+        class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>{{ 'comun.volver' | translate }}</strong>
     </a>
     <!-- Título centrado -->
     <h3 class="titulo1 position-absolute start-50 translate-middle-x text-center">
@@ -16,7 +16,7 @@
   <div class="row align-items-start mt-0 pt-0">
     @if (isGestorEsteRecurso()) {
     <div class="col-3">
-      <button class="btn text-white" (click)="cambiaRol()">Cambiar a Vista {{ btnVista() }}</button>
+      <button class="btn text-white" (click)="cambiaRol()">{{ etiquetaBoton() }}</button>
     </div>
     }
   </div>
@@ -26,40 +26,40 @@
     <form [formGroup]="recursoForm">
       <div class="row py-2">
         <div class="col-lg-3 col-md-12">
-          <label class="titulo"><b>RECURSO<sup class="text-danger">*</sup></b></label>
+          <label class="titulo"><b>{{ 'recursos.recurso' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
           <input type="text" class="form-control letra" formControlName="nombre" placeholder="Nombre del recurso" />
           @if (nombre?.touched && nombre?.invalid) {
-          <span class="text-danger">La dirección es obligatoria</span>
+          <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
           }
         </div>
         <div class="col-lg-3 col-md-12 d-flex">
-          <label class="titulo me-2"><b>CATEGORÍA</b></label>
+          <label class="titulo me-2"><b>{{ 'recursos.categoria' | translate | uppercase }}</b></label>
           <label class="titulo1"> {{ categoria()?.nombre }} </label>
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label>
+          <label class="titulo"><b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
           <textarea class="form-control letra" formControlName="descripcion" placeholder="Descripción del recurso"
             name="descripcion" rows="5" cols="50">
           </textarea>
           @if (descripcion?.touched && descripcion?.invalid) {
-          <div class="text-danger">La descripción es obligatoria.</div>
+          <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
           }
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"><b>OTROS<sup class="text-danger">*</sup></b></label>
+          <label class="titulo"><b>{{ 'comun.otros' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
           <textarea class="form-control letra" formControlName="otros" placeholder="Otros datos del recurso"
             name="otros" rows="5" cols="50">
           </textarea>
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo me-2"><b>¿TIENE DATOS ESPECÍFICOS PARA SU SOLICITUD?<sup
+          <label class="titulo me-2"><b>{{ 'recursos.conDatosEspecificosSolicitud' | translate }}<sup
                 class="text-danger">*</sup></b></label>
           <input type="checkbox" class="letra" id="conDatosEspecificosSolicitud"
             formControlName="conDatosEspecificosSolicitud" />
         </div>
         @if (conDatosEspecificosSolicitud) {
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"><b>DATOS ESPECÍFICOS DE LA SOLICITUD</b></label>
+          <label class="titulo"><b>{{ 'recursos.datosEspecificosSolicitud' | translate }}</b></label>
           <textarea class="form-control letra" formControlName="datosEspecificosSolicitud"
             placeholder="datosEspecificosSolicitud" name="datosEspecificosSolicitud" rows="5" cols="50">
           </textarea>
@@ -72,7 +72,7 @@
       <div class="form-row justify-content-between pt-3">
         <div class="col-lg-5 col-md-12 mb-4">
           <button type="button" (click)="actualizarRecurso()" class="btn">
-            Guardar
+            {{ 'comun.guardar' | translate }}
           </button>
         </div>
       </div>
@@ -82,27 +82,27 @@
   <!--esta sera la vista del usuario normal-->
   <div class="container-fluid">
     <div class="titulo">
-      <h4 class="text-center"><b>DESCRIPCIÓN</b></h4>
+      <h4 class="text-center"><b>{{ 'comun.descripcion' | translate | uppercase }}</b></h4>
       <hr />
       <p class="texto ms-3">{{ recurso()?.descripcion }}</p>
     </div>
     <!--ahora tendria que recorrer los ficheros clasificados por categoria de fichero...con enlaces de descarga o modales si son imagenes-->
     <app-ficherosRecurso [btnVista]="btnVista()" [ficheros]="ficheros()" [idRecurso]="idRecurso()" />
     <div class="titulo">
-      <h4 class="text-center"><b>CALENDARIO</b></h4>
+      <h4 class="text-center"><b>{{ 'calendario.calendario' | translate | uppercase }}</b></h4>
       <hr />
       <a class="texto href ms-3" data-bs-toggle="modal" data-bs-target="#modal-calendario">Calendario del recurso {{
         recurso()?.nombre }}
       </a>
     </div>
     <div class="titulo">
-      <h4 class="text-center"><b>OTROS</b></h4>
+      <h4 class="text-center"><b>{{ 'comun.otros' | translate | uppercase }}</b></h4>
       <hr />
       <p class="texto ms-3">{{ recurso()?.otros }}</p>
     </div>
     @if (recurso()?.conDatosEspecificosSolicitud) {
     <div class="titulo">
-      <h4 class="text-center"><b>DATOS ESPECÍFICOS DE LA SOLICITUD</b></h4>
+      <h4 class="text-center"><b>{{ 'recursos.datosEspecificosSolicitud' | translate | uppercase }}</b></h4>
       <hr />
       <textarea class="texto" rows="6" cols="60" readonly [value]="recurso()?.datosEspecificosSolicitud"></textarea>
     </div>
@@ -115,14 +115,14 @@
   <div class="modal-dialog modal-xxl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Calendario del recurso {{ recurso()?.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{ 'recursos.calendarioRecurso' | translate }} : {{ recurso()?.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <app-calendarioComponente [solicitudes]="solicitudesValidadas()" />
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
       </div>
 
     </div>

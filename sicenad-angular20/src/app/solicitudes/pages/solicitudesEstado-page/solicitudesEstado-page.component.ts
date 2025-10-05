@@ -1,14 +1,16 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { SolicitudComponent } from '@app/solicitudes/components/solicitud/solicitud.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Solicitud } from '@interfaces/models/solicitud';
+import { TranslateModule } from '@ngx-translate/core';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 
 @Component({
   selector: 'app-solicitudesEstado',
-  imports: [FontAwesomeModule, SolicitudComponent],
+  imports: [FontAwesomeModule, SolicitudComponent, TranslateModule, UpperCasePipe],
   templateUrl: './solicitudesEstado-page.component.html',
   styleUrls: ['./solicitudesEstado-page.component.css'],
 })

@@ -11,10 +11,12 @@ import { Recurso } from '@interfaces/models/recurso';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { RecursoComponent } from '@app/recursos/components/recurso/recurso.component';
 import { FiltroRecursosComponent } from '@app/recursos/components/filtroRecursos/filtroRecursos.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-recursos',
-  imports: [RouterLink, FontAwesomeModule, ReactiveFormsModule, RecursoComponent, FiltroRecursosComponent],
+  imports: [RouterLink, FontAwesomeModule, ReactiveFormsModule, RecursoComponent, FiltroRecursosComponent, TranslateModule, UpperCasePipe],
   templateUrl: './recursos-page.component.html',
   styleUrls: ['./recursos-page.component.css']
 })
@@ -59,12 +61,10 @@ export class RecursosPageComponent {
 
   actualizarRecursosFiltrados(lista: Recurso[]) {
     this.recursosCategoriaSeleccionada.set(lista);
-    console.log('Recursos filtrados desde el hijo:', lista);
   }
 
   actualizarCategoriaSeleccionada(categoria: Categoria | null) {
     this.categoriaSeleccionada.set(categoria);
-    console.log('Categoría seleccionada desde el hijo:', categoria);
   }
 
   // Filtro
@@ -101,11 +101,9 @@ export class RecursosPageComponent {
           if (success) {
             this.recursoForm.reset();
             // 🔹 Volver siempre a la vista inicial de categorías principales
-          } else {
-            console.error('Error al crear la categoría');
-          }
+          } 
         },
-        error: (err) => console.error('Error en la creación de categoría', err)
+        error: (err) => console.error(err)
       });
   }
 }

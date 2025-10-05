@@ -9,10 +9,12 @@ import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { SolicitudesEstadoPageComponent } from '../solicitudesEstado-page/solicitudesEstado-page.component';
 import { SolicitudNuevaModalComponent } from "@app/solicitudes/components/solicitudNuevaModal/solicitudNuevaModal.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-solicitudes',
-  imports: [FontAwesomeModule, RouterLink, SolicitudesEstadoPageComponent, SolicitudNuevaModalComponent],
+  imports: [FontAwesomeModule, RouterLink, SolicitudesEstadoPageComponent, SolicitudNuevaModalComponent, TranslateModule, UpperCasePipe],
   templateUrl: './solicitudes-page.component.html',
   styleUrls: ['./solicitudes-page.component.css']
 })

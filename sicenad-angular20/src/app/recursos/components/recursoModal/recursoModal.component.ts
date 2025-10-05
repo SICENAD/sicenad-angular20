@@ -1,7 +1,9 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Recurso } from '@interfaces/models/recurso';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
@@ -9,7 +11,7 @@ import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-recursoModal',
-  imports: [ReactiveFormsModule, FontAwesomeModule],
+  imports: [ReactiveFormsModule, FontAwesomeModule, TranslateModule, UpperCasePipe],
   templateUrl: './recursoModal.component.html',
   styleUrls: ['./recursoModal.component.css']
 })
@@ -130,12 +132,11 @@ export class RecursoModalComponent {
     this.orquestadorService.actualizarRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.idString, tipoFormulario.idString, categoria.idString, usuarioGestor.idString, this.idRecurso()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Recurso ${nombre} actualizado correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Categoría:', error);
+        console.error(error);
       }
     });
   }

@@ -16,10 +16,13 @@ import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { UtilsStore } from '@stores/utils.store';
 import { CalendarioComponent } from "@app/calendarios/components/calendario/calendario.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
+import { IdiomaService } from '@services/idiomaService';
 
 @Component({
   selector: 'app-recursoDetalle',
-  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosRecursoComponent, CalendarioComponent],
+  imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, FicherosRecursoComponent, CalendarioComponent, TranslateModule, UpperCasePipe],
   templateUrl: './recursoDetalle-page.component.html',
   styleUrls: ['./recursoDetalle-page.component.css']
 })
@@ -32,11 +35,13 @@ export class RecursoDetallePageComponent {
   private orquestadorService = inject(OrquestadorService);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
+  private idiomaService = inject(IdiomaService);
 
   faVolver = this.iconosStore.faVolver;
   routesPaths = RoutesPaths;
   cambiaBoton = signal(false);
   btnVista = signal("Gestor");
+  etiquetaBoton = signal<string>(this.idiomaService.t('recursos.btnGestor'));
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   idRecurso = computed(() => this.route.snapshot.params['idRecurso']);
@@ -139,6 +144,7 @@ export class RecursoDetallePageComponent {
       this.cambiaBoton.set(true);
     }
     this.btnVista.set(this.cambiaBoton() ? 'Previa' : 'Gestor');
+    this.etiquetaBoton.set(this.cambiaBoton() ? this.idiomaService.t('recursos.btnPrevia') : this.idiomaService.t('recursos.btnGestor'));
   }
 
   actualizarRecurso() {

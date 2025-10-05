@@ -6,10 +6,10 @@
     [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
   >
     <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-    <strong>Volver</strong>
+    <strong>{{ 'comun.volver' | translate }}</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 mb-3 titulo">
-    <u>SOLICITUDES</u>
+    <u>{{ 'solicitudes.solicitudes' | translate | uppercase}}</u>
   </h3>
   @if (usuarioLogueado()?.rol === misRoles.Normal || isAdminEsteCenad() || isGestorEsteCenad()) {
     <!-- Botón crear solicitud -->
@@ -18,7 +18,7 @@
 </div>
 @if (usuarioLogueado()?.rol !== misRoles.Normal && !isAdminEsteCenad() && !isGestorEsteCenad()) {
 <div class="row justify-content-center">
-  <h6 class="no-permiso text-center mt-4">NO TIENE PERMISO PARA GESTIONAR LAS SOLICITUDES</h6>
+  <h6 class="no-permiso text-center mt-4">{{ 'solicitudes.noPermiso' | translate | uppercase }}</h6>
 </div>
 } @if (usuarioLogueado()?.rol === misRoles.Normal || isAdminEsteCenad() || isGestorEsteCenad()) {
 <div class="row solicitadas-validadas mb-3">

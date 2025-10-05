@@ -9,10 +9,12 @@ import { OrquestadorService } from '@services/orquestadorService';
 import { Categoria } from '@interfaces/models/categoria';
 import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-solicitudNuevaModal',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './solicitudNuevaModal.component.html',
   styleUrls: ['./solicitudNuevaModal.component.css']
 })
@@ -42,13 +44,6 @@ export class SolicitudNuevaModalComponent {
   });
   isAdminEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
-  });
-  estadoSolicitud = signal<any>({
-    Solicitada: 'Solicitada',
-    Validada: 'Validada',
-    Rechazada: 'Rechazada',
-    Cancelada: 'Cancelada',
-    Borrador: 'Borrador'
   });
   loading = signal(false);
   categoriasFiltradas = signal<Categoria[]>([]);
@@ -270,10 +265,10 @@ export class SolicitudNuevaModalComponent {
           // Emitir al padre el valor actualizado
           this.solicitudesChange.emit(lista);
         },
-      error: (err) => console.error('Error al obtener las solicitudes', err)
+      error: (err) => console.error(err)
     });
     this.orquestadorService.loadAllSolicitudesEstado(this.cenadVisitado()!.idString, estado).subscribe({
-      error: (err) => console.error('Error al obtener las solicitudes', err)
+      error: (err) => console.error(err)
     });
   }
 
@@ -283,7 +278,7 @@ export class SolicitudNuevaModalComponent {
       this.solicitudForm.markAllAsTouched();
       return;
     }
-    if (this.usuarioLogueado()?.rol === 'Normal') {
+    if (this.usuarioLogueado()?.rol === RolUsuario.Normal) {
       this.solicitudForm.patchValue({ unidad: this.miUnidad() });
     }
     const { observaciones, unidad, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaSolicitud, fechaInicio, fechaFin, estado, recurso } = this.solicitudForm.value;
@@ -307,11 +302,9 @@ export class SolicitudNuevaModalComponent {
             // 🔹 Volver siempre a la vista inicial de categorías principales
             this.cargarCategoriasPadre();
             this.getSolicitudes(estado);
-          } else {
-            console.error('Error al crear la categoría');
           }
         },
-        error: (err) => console.error('Error en la creación de categoría', err)
+        error: (err) => console.error(err)
       });
   }
 
@@ -330,12 +323,10 @@ export class SolicitudNuevaModalComponent {
   onCategoriaChange(event: Event) {
     const categoria = this.solicitudForm.get('categoria')?.value;
     this.categoriaSeleccionada.set(categoria);
-    console.log('Categoría seleccionada:', categoria);
     this.filtrar();
   }
 
   resetForm() {
-    console.log('Resetting form and state');
     this.solicitudForm.reset();
     this.cargarCategoriasPadre();
   }
