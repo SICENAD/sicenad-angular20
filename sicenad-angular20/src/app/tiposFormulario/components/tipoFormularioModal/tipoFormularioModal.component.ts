@@ -1,13 +1,15 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TipoFormulario } from '@interfaces/models/tipoFormulario';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { IconosStore } from '@stores/iconos.store';
 
 @Component({
   selector: 'app-tipoFormulario-modal',
-  imports: [FontAwesomeModule, ReactiveFormsModule],
+  imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './tipoFormularioModal.component.html',
   styleUrls: ['./tipoFormularioModal.component.css']
 })
@@ -53,12 +55,11 @@ export class TipoformularioModalComponent {
     this.orquestadorService.actualizarTipoFormulario(nombre, descripcion, this.idTipoFormulario()).subscribe({
       next: res => {
         if (res) {
-          console.log(`Tipo de formulario ${nombre} actualizado correctamente.`);
           this.output.emit(); // notificamos al padre
         }
       },
       error: (error) => {
-        console.error('Error actualizando Tipo de formulario:', error);
+        console.error(error);
       }
     });
   }

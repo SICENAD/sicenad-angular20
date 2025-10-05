@@ -329,7 +329,8 @@
     "borrar": "Borrar tipo de formulario",
     "guardar": "Guardar tipo de formulario",
     "confirmarBorrado": "¿Quieres borrar el tipo de formulario {{nombre}}?",
-    "eliminar": "Eliminar tipo de formulario"
+    "eliminar": "Eliminar tipo de formulario",
+    "gestion": "Gestión de tipos de formulario"
   },
   "solicitudes": {
     "solicitudes": "Solicitudes",
