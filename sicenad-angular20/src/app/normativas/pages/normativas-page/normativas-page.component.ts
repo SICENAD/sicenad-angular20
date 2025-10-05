@@ -11,10 +11,12 @@ import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { NormativaComponent } from '@app/normativas/components/normativa/normativa.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-normativas',
-  imports: [NormativaComponent, FontAwesomeModule, ReactiveFormsModule, RouterLink],
+  imports: [NormativaComponent, FontAwesomeModule, ReactiveFormsModule, RouterLink, TranslateModule, UpperCasePipe],
   templateUrl: './normativas-page.component.html',
   styleUrls: ['./normativas-page.component.css']
 })
@@ -74,8 +76,6 @@ export class NormativasPageComponent {
       if (success) {
         this.normativaForm.reset();
         if (this.fileInput) this.fileInput.nativeElement.value = '';
-      } else {
-        console.error('Error al crear la normativa');
       }
     });
   }

@@ -6,11 +6,11 @@
     ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
-    <u>NORMATIVA DEL {{ cenadVisitado()?.nombre }}</u>
+    <u>{{ 'normativas.normativaCenad' | translate: { cenad: cenadVisitado()?.nombre }  | uppercase}}</u>
   </h3>
   @if (isAdminEsteCenad()) {
   <button class="btn ms-auto" data-bs-toggle="modal" data-bs-target="#modal-nueva-normativa">
-    Nueva <b>Normativa</b>
+    {{ 'normativas.nuevaNormativa' | translate }}
   </button>
   }
 </div>
@@ -19,13 +19,13 @@
   <div class="col col-md-12">
     <div class="row mt-2 titulos">
       <div class="col-10 col-sm-10 col-md-5 col-lg-5 col-xl-5 titulo">
-        <b>NOMBRE</b>
+        <b>{{ 'normativas.normativa' | translate | uppercase }}</b>
       </div>
       <div class="col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6 titulo">
-        <b>DESCRIPCIÓN</b>
+        <b>{{ 'comun.descripcion' | translate | uppercase }}</b>
       </div>
       <div class="col-10 col-sm-10 col-md-1 col-lg-1 col-xl-1 titulo text-center">
-        <b>DESCARGA</b>
+        <b>{{ 'archivos.descarga' | translate | uppercase }}</b>
       </div>
     </div>
     @for (n of normativas(); track n.idString) {
@@ -39,51 +39,51 @@
     <div class="modal-content">
       <form [formGroup]="normativaForm">
         <div class="modal-header">
-          <h1 class="modal-title fs-5">Nueva Normativa</h1>
+          <h1 class="modal-title fs-5">{{ 'normativas.nuevaNormativa' | translate }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <!-- Nombre -->
           <div class="mb-3">
             <label for="nombre" class="form-label titulo1"
-              ><b>NOMBRE DE LA NORMATIVA<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'normativas.normativa' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label titulo1"
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
           <!-- Archivo -->
           <div class="mb-3">
             <label class="titulo1"
-              ><b>ARCHIVO<sup class="text-danger">*</sup></b> (Máx:
+              ><b>{{ 'archivos.archivo' | translate | uppercase }}<sup class="text-danger">*</sup></b> (Máx:
               {{ sizeMaxDocRecurso() }} MB)</label
             >
             <div class="d-flex">
               <input type="file" accept="*" (change)="onFileChange($event)" #fileInput hidden />
               <button type="button" class="btn" (click)="fileInput.click()">
-                Seleccionar archivo
+                {{ 'archivos.seleccionarArchivo' | translate }}
               </button>
               @if (archivoFile()) {
               <div class="mt-2 ms-2">
-                <small class="text-muted">Archivo seleccionado: {{ archivoFile()?.name }}</small>
+                <small class="text-muted">{{ 'archivos.archivoSeleccionado' | translate }} {{ archivoFile()?.name }}</small>
               </div>
               }
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
           <button
             type="button"
             class="btn"
@@ -91,7 +91,7 @@
             [disabled]="normativaForm.invalid"
             (click)="crearNormativa()"
           >
-            Crear Normativa
+            {{ 'normativas.crearNormativa' | translate }}
           </button>
         </div>
       </form>

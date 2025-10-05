@@ -7,7 +7,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar Normativa {{ normativa()?.nombre }}</h5>
+        <h5 class="modal-title">{{ 'normativas.editarNormativa' | translate }} {{ normativa()?.nombre }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -15,35 +15,35 @@
           <!-- Nombre -->
           <div class="mb-3">
             <label for="nombre" class="form-label titulo1"
-              ><b>NOMBRE DE LA NORMATIVA<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'normativas.normativa' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <input type="text" id="nombre" class="form-control" formControlName="nombre" />
             @if (nombre?.touched && nombre?.invalid) {
-            <span class="text-danger">El nombre es obligatorio</span>
+            <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
             }
           </div>
           <!-- Descripción -->
           <div class="mb-3">
             <label class="form-label titulo1"
-              ><b>DESCRIPCIÓN<sup class="text-danger">*</sup></b></label
+              ><b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <textarea class="form-control letra" formControlName="descripcion"></textarea>
             @if (descripcion?.touched && descripcion?.invalid) {
-            <div class="text-danger">La descripción es obligatoria.</div>
+            <div class="text-danger">{{ 'comun.descripcionObligatoria' | translate }}</div>
             }
           </div>
           <!-- Archivo -->
           <div class="mb-3">
             <label class="titulo1"
-              ><b>ARCHIVO<sup class="text-danger">*</sup></b> (Máx:
+              ><b>{{ 'archivos.archivo' | translate | uppercase }}<sup class="text-danger">*</sup></b> (Máx:
               {{ sizeMaxDocRecurso() }} MB)</label
             >
             @if (archivoActual()) {
             <div class="d-flex flex-column align-items-start mb-2">
-              <small class="text-muted mb-2">Archivo actual: {{ archivoActual() }}</small>
+              <small class="text-muted mb-2">{{ 'archivos.archivoActual' | translate }}: {{ archivoActual() }}</small>
             </div>
             } @else {
-            <p class="text-muted">No hay ningún archivo cargado</p>
+            <p class="text-muted">{{ 'archivos.noArchivo' | translate }}</p>
             }
             <div class="d-flex">
               <input
@@ -54,11 +54,11 @@
                 hidden
               />
               <button type="button" class="btn" (click)="fileInput.click()">
-                Seleccionar archivo
+                {{ 'archivos.seleccionarArchivo' | translate }}
               </button>
               @if (archivoFile()) {
               <div class="mt-2 ms-2">
-                <small class="text-muted">Archivo seleccionado: {{ archivoFile()?.name }}</small>
+                <small class="text-muted">{{ 'archivos.archivoSeleccionado' | translate }} {{ archivoFile()?.name }}</small>
               </div>
               }
             </div>
@@ -66,14 +66,14 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          Borrar Normativa
+          {{ 'normativas.borrar' | translate }}
         </button>
         <button
           type="button"
@@ -82,7 +82,7 @@
           data-bs-dismiss="modal"
           [disabled]="normativaForm.invalid"
         >
-          Guardar Normativa
+          {{ 'normativas.guardar' | translate }}
         </button>
       </div>
     </div>
@@ -93,19 +93,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Eliminar Normativa {{ normativa()?.nombre }}</h1>
+        <h1 class="modal-title fs-5">{{ 'normativas.eliminar' | translate }} {{ normativa()?.nombre }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">¿Desea eliminar {{ normativa()?.nombre }}?</div>
+      <div class="modal-body">{{ 'normativas.confirmarBorrado' | translate: { nombre: normativa()?.nombre } }}</div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn" data-bs-dismiss="modal">{{ 'comun.cerrar' | translate }}</button>
         <button
           type="button"
           class="btn"
           (click)="borrarNormativa()"
           data-bs-dismiss="modal"
         >
-          Borrar
+          {{ 'comun.borrar' | translate }}
         </button>
       </div>
     </div>

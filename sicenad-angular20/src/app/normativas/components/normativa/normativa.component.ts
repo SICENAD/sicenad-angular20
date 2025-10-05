@@ -35,15 +35,11 @@ export class NormativaComponent {
   descargar(): void {
     const archivo = this.normativa().nombreArchivo;
     if (!archivo) {
-      console.warn('No hay archivo para descargar');
       return;
     }
     this.orquestadorService.getArchivoNormativa(archivo, this.idCenad()).subscribe({
-      next: () => {
-        console.log(`Archivo ${archivo} descargado correctamente`);
-      },
       error: (err) => {
-        console.error('Error descargando el archivo', err);
+        console.error(err);
       }
     });
   }

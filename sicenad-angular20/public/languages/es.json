@@ -251,7 +251,16 @@
   "normativas": {
     "normativaCreada": "Se ha creado la normativa {{nombre}}",
     "normativaModificada": "Se ha modificado la normativa {{nombre}}",
-    "normativaEliminada": "Se ha eliminado la normativa {{nombreArchivo}}"
+    "normativaEliminada": "Se ha eliminado la normativa {{nombreArchivo}}",
+    "editarNormativa": "Editar Normativa",
+    "nuevaNormativa": "Nueva Normativa",
+    "crearNormativa": "Crear Normativa",
+    "normativa": "Normativa",
+    "borrar": "Borrar normativa",
+    "guardar": "Guardar normativa",
+    "confirmarBorrado": "¿Quieres borrar la normativa {{nombre}}?",
+    "eliminar": "Eliminar normativa",
+    "normativaCenad": "Normativa del {{cenad}}"
   },
   "ficheros": {
     "ficheroCreado": "Se ha creado el fichero {{nombre}}",
