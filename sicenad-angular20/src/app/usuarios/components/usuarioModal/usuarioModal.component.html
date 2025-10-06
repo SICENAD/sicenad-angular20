@@ -69,14 +69,14 @@
           }
           <!-- Cambiar Password -->
           <div class="mb-3">
-            <label class="form-label me-2"><b>{{'usuarios.cambiarContraseña' | translate | uppercase }}</b></label>
+            <label class="form-label me-2"><b>{{'usuarios.cambiarPassword' | translate | uppercase }}</b></label>
             <input type="checkbox" [checked]="cambiarPassword()"
               (change)="cambiarPassword.set($event.target.checked)" />
           </div>
           @if (cambiarPassword()) {
           <!-- Password -->
           <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
-            <label for="password" class="form-label"><b>{{'usuarios.contraseña' | translate | uppercase }}</b></label>
+            <label for="password" class="form-label"><b>{{'usuarios.password' | translate | uppercase }}</b></label>
             <input type="password" class="form-control" id="password" formControlName="password" />
           </div>
           }

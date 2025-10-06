@@ -1,13 +1,16 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UsuarioComponent } from '@app/usuarios/components/usuario/usuario.component';
 import { Cenad } from '@interfaces/models/cenad';
+import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 
 @Component({
   selector: 'app-usuariosAdministrador-page',
-  imports: [UsuarioComponent, ReactiveFormsModule],
+  imports: [UsuarioComponent, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './usuariosAdministrador-page.component.html',
   styleUrls: ['./usuariosAdministrador-page.component.css']
 })
@@ -16,6 +19,7 @@ export class UsuariosAdministradorPageComponent {
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private orquestadorService = inject(OrquestadorService);
   private fb = inject(FormBuilder);
+  private idiomaService = inject(IdiomaService);
 
   usuariosAdministrador = computed(() => this.datosPrincipalesStore.usuariosAdministrador());
   cenadsSinAdmin = signal<Cenad[] | null>(null);
@@ -53,12 +57,12 @@ export class UsuariosAdministradorPageComponent {
 
   async crearUsuario() {
     if (this.usuarioForm.invalid) {
-      alert('Por favor, completa todos los campos correctamente.');
+      alert(this.idiomaService.t('administracion.feedbackCompleta'));
       return;
     }
     const { username, password, tfno, email, emailAdmitido, descripcion, cenad } = this.usuarioForm.value;
         if (!cenad) {
-      alert('Selecciona un CENAD.');
+      alert(this.idiomaService.t('usuarios.seleccionaCenad'));
       return;
     }
     this.orquestadorService.registerUsuarioAdministrador(
@@ -71,11 +75,10 @@ export class UsuariosAdministradorPageComponent {
       cenad.idString
     ).subscribe({
       next: (res) => {
-        console.log('Registro correcto:', res);
         this.usuarioForm.reset();
       },
       error: (err) => {
-        console.error('Error en registro:', err);
+        console.error(err);
       }
     });
   }
@@ -84,10 +87,9 @@ export class UsuariosAdministradorPageComponent {
     this.orquestadorService.loadCenadsSinAdmin().subscribe({
       next: (cenads) => {
         this.cenadsSinAdmin.set(cenads);
-        console.log('CENADs sin admin cargados:', cenads);
       },
       error: (error) => {
-        console.error('Error al cargar CENADs sin admin:', error);
+        console.error(error);
       }
     });
   }

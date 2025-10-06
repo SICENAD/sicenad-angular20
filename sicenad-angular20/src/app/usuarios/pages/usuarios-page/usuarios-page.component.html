@@ -5,11 +5,11 @@ administradores y normales y si se entra como administrador de un cenad mostrara
     ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 mb-3 titulo">
-    <u>GESTIÓN DE USUARIOS</u>
+    <u>{{ 'usuarios.gestion' | translate | uppercase}}</u>
   </h3>
   @if (rol() === misRoles.Normal || (rol() === misRoles.Administrador && !isMiCenad())) {
   <div class="row ms-5 p-0 mt-5">
-    <p class="titulo mt-5">NO ESTÁS AUTORIZADO A LA GESTIÓN DE USUARIOS EN OTRO CENAD/CMT</p>
+    <p class="titulo mt-5">{{ 'usuarios.noAutorizado' | translate | uppercase}}</p>
   </div>
   }
 </div>

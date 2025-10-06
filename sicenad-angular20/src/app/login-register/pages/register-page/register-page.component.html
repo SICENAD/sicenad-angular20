@@ -51,11 +51,11 @@
     <!-- Password -->
     <div class="mb-3 col-10 col-sm-10 col-md-8 col-lg-8 col-xl-8">
       <label for="password" class="form-label"
-        ><b>{{ 'usuarios.contrasena' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
+        ><b>{{ 'usuarios.password' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
       >
       <input type="password" class="form-control" id="password" formControlName="password" />
       @if (password?.touched && password?.invalid) {
-      <div class="text-danger">{{ 'usuarios.contrasenaObligatoria' | translate }}</div>
+      <div class="text-danger">{{ 'usuarios.passwordObligatorio' | translate }}</div>
       }
     </div>
     <!-- Botones -->

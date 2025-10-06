@@ -1,15 +1,15 @@
 <div>
-  <h5 class="text-center titulo"><b>SUPERADMINISTRADORES</b></h5>
+  <h5 class="text-center titulo"><b>{{ 'usuarios.superadministradores' | translate | uppercase }}</b></h5>
   <hr class="w-100" />
   <div class="d-flex justify-content-end mb-2">
     <button class="btn text-white mt-2" [routerLink]="routesPaths.register">
-      Nuevo <b>Usuario Superadministrador</b>
+      {{ 'usuarios.nuevoSuperadministrador' | translate }}
     </button>
   </div>
   <hr class="w-100" />
   <div class="row titulos">
     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 titulo">
-      <b>SUPERADMINISTRADOR</b>
+      <b>{{ 'usuarios.superadministrador' | translate | uppercase }}</b>
     </div>
   </div>
   @for (u of usuariosSuperadministrador(); track u.idString) {

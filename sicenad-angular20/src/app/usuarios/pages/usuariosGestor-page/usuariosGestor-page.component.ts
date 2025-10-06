@@ -1,13 +1,16 @@
+import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuarioComponent } from '@app/usuarios/components/usuario/usuario.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 
 @Component({
   selector: 'app-usuariosGestor-page',
-  imports: [UsuarioComponent, ReactiveFormsModule],
+  imports: [UsuarioComponent, ReactiveFormsModule, TranslateModule, UpperCasePipe],
   templateUrl: './usuariosGestor-page.component.html',
   styleUrls: ['./usuariosGestor-page.component.css']
 })
@@ -16,6 +19,7 @@ export class UsuariosGestorPageComponent {
   private usuarioLogueado = inject(UsuarioLogueadoStore);
   private orquestadorService = inject(OrquestadorService);
   private fb = inject(FormBuilder);
+  private idiomaService = inject(IdiomaService);
 
   usuariosGestorDeCenad = computed(() => this.cenadStore.usuariosGestor());
   cenad = computed(() => this.usuarioLogueado.cenadPropio());
@@ -49,7 +53,7 @@ export class UsuariosGestorPageComponent {
 
   async crearUsuario() {
     if (this.usuarioForm.invalid) {
-      alert('Por favor, completa todos los campos correctamente.');
+      alert(this.idiomaService.t('administracion.feedbackCompleta'));
       return;
     }
     const { username, password, tfno, email, emailAdmitido, descripcion } = this.usuarioForm.value;
@@ -63,11 +67,10 @@ export class UsuariosGestorPageComponent {
       this.cenad()?.idString || ''
     ).subscribe({
       next: (res) => {
-        console.log('Registro correcto:', res);
         this.usuarioForm.reset();
       },
       error: (err) => {
-        console.error('Error en registro:', err);
+        console.error(err);
       }
     });
   }

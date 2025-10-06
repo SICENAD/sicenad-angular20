@@ -11,10 +11,12 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { UsuariosAdministradorPageComponent } from '../usuariosAdministrador-page/usuariosAdministrador-page.component';
 import { UsuariosGestorPageComponent } from '../usuariosGestor-page/usuariosGestor-page.component';
 import { UsuariosNormalPageComponent } from '../usuariosNormal-page/usuariosNormal-page.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-usuarios-page',
-  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent, UsuariosAdministradorPageComponent, UsuariosGestorPageComponent, UsuariosNormalPageComponent],
+  imports: [RouterLink, FontAwesomeModule, UsuariosSuperadministradorPageComponent, UsuariosAdministradorPageComponent, UsuariosGestorPageComponent, UsuariosNormalPageComponent, TranslateModule, UpperCasePipe],
   templateUrl: './usuarios-page.component.html',
   styleUrls: ['./usuarios-page.component.css'],
 })

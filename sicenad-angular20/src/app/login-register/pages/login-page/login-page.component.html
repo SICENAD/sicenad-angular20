@@ -17,7 +17,7 @@
     </div>
     <div class="mb-3 col-3">
       <label for="password" class="form-label">
-        <b>{{ 'usuarios.contraseña' | translate | uppercase }}</b>
+        <b>{{ 'usuarios.password' | translate | uppercase }}</b>
       </label>
       <input
         type="password"
@@ -26,7 +26,7 @@
                formControlName="password"
       />
       @if (password?.touched && password?.invalid) {
-      <div class="text-danger">{{ 'usuarios.contraseñaObligatoria' | translate }}</div>
+      <div class="text-danger">{{ 'usuarios.passwordObligatorio' | translate }}</div>
       }
     </div>
     <button
