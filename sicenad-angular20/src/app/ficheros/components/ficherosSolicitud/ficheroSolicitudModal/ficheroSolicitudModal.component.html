@@ -38,13 +38,13 @@
               ><b>{{'ficheros.categoriaFichero' | translate | uppercase }}<sup class="text-danger">*</sup></b></label
             >
             <select class="form-select" formControlName="categoriaFichero">
-              <option [ngValue]="null">{{'ficheros.seleccionarCategoriaFichero' | translate}}</option>
+              <option [ngValue]="null">{{'ficheros.seleccionaCategoriaFichero' | translate}}</option>
               @for (c of categoriasFichero(); track c.idString) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>
             @if (categoriaFichero?.touched && categoriaFichero?.invalid) {
-            <div class="text-danger">{{'ficheros.seleccionarCategoriaFichero' | translate}}</div>
+            <div class="text-danger">{{'ficheros.seleccionaCategoriaFichero' | translate}}</div>
             }
           </div>
           <!-- Archivo -->

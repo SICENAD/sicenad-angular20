@@ -2,7 +2,7 @@
 administradores y normales y si se entra como administrador de un cenad mostrara gestores de su cenad y normales -->
 <div class="d-flex align-items-center position-relative p-2 bg-light">
   <a class="nav-link volver me-auto" [routerLink]="[name(), params()]"
-    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>Volver</strong>
+    ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>{{ 'comun.volver' | translate }}</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 mb-3 titulo">
     <u>{{ 'usuarios.gestion' | translate | uppercase}}</u>

@@ -105,7 +105,7 @@
           <div class="mb-3 col-10 col-sm-10 col-md-6 col-lg-6 col-xl-6">
             <label class="form-label titulo1"><b>{{ 'usuarios.unidad' | translate | uppercase }}</b></label>
             <select class="form-select" formControlName="unidad">
-              <option [ngValue]="null" disabled selected>Selecciona una unidad</option>
+              <option [ngValue]="null" disabled selected>{{ 'usuarios.seleccionaUnidad' | translate }}</option>
               @for (u of unidades(); track u.idString) {
               <option [ngValue]="u">
                 {{ u.nombre }}

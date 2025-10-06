@@ -7,7 +7,7 @@
       [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
-      <strong>Volver</strong>
+      <strong>{{ 'comun.volver' | translate }}</strong>
     </a>
     <!-- Título centrado -->
     <h1 class="text-center m-0">{{ 'calendario.calendarioSolicitudesDel' | translate |uppercase }} {{ cenadVisitado()?.nombre }}</h1>

@@ -345,7 +345,7 @@
     "inicio": "Start",
     "fin": "End",
     "estado": "Status",
-    "unidad:": "Unit",
+    "unidad": "Unit",
     "seleccioneUnidad": "Select a unit",
     "jefeUnidad": "Unit Chief",
     "jefeObligatorio": "Unit Chief is required",

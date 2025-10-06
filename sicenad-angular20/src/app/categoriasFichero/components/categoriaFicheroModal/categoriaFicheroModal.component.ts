@@ -43,7 +43,7 @@ export class CategoriaFicheroModalComponent {
     if (this.categoriaFichero()) {
       this.categoriaFicheroForm.patchValue({
         nombre: this.categoriaFichero()?.nombre || '',
-        tipo: this.categoriaFichero()?.tipo || 9,
+        tipo: this.categoriaFichero()?.tipo,
         descripcion: this.categoriaFichero()?.descripcion || '',
       });
     }

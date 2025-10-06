@@ -50,7 +50,7 @@
           <!-- Archivo -->
           <div class="mb-3">
             <label class="titulo1"
-              ><b>ARCHIVO<sup class="text-danger">*</sup></b> (Máx:
+              ><b>{{ 'archivos.archivo' | translate | uppercase }}<sup class="text-danger">*</sup></b> (Máx:
               {{ sizeMaxDocRecurso() }} MB)</label
             >
             @if (archivoActual()) {
@@ -88,7 +88,7 @@
           [attr.data-bs-target]="'#' + idModalEliminar()"
           data-bs-toggle="modal"
         >
-          {{ 'archivos.borrar' | translate }}
+          {{ 'ficheros.borrar' | translate }}
         </button>
         <button
           type="button"
@@ -97,7 +97,7 @@
           data-bs-dismiss="modal"
           [disabled]="ficheroForm.invalid"
         >
-          {{ 'archivos.guardar' | translate }}
+          {{ 'ficheros.guardar' | translate }}
         </button>
       </div>
     </div>

@@ -71,12 +71,12 @@
             }
           </div>
           <div class="col-lg-2 col-md-12">
-            <label>{{ 'solicitudes.redactorTelefono' | translate | uppercase }} <sup class="text-danger">*</sup></label>
+            <label>{{ 'solicitudes.tlfnRedactor' | translate | uppercase }} <sup class="text-danger">*</sup></label>
             <input
               type="text"
               class="form-control"
               formControlName="tlfnRedactor"
-              placeholder="{{ 'solicitudes.redactorTelefono' | translate }}"
+              placeholder="{{ 'solicitudes.tlfnRedactor' | translate }}"
               name="tlfnRedactor"
             />
             @if (tlfnRedactor?.touched && tlfnRedactor?.invalid) {
