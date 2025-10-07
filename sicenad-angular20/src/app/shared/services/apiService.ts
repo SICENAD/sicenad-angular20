@@ -54,9 +54,9 @@ export class ApiService {
     return observable.pipe(
       catchError(async (err) => {
         if (err.status === 401 || err.status === 403) {
-          this.utilService.toast(this.idiomaService.t('sesionExpirada'), 'warning');
-          await this.auth.logout();
-
+          this.utilService.toast(err.message, 'warning');
+          //this.utilService.toast(this.idiomaService.t('sesionExpirada'), 'warning');
+          //await this.auth.logout();
         }
         throw err;
       })

@@ -1,5 +1,6 @@
 {
   "urlApi": "https://puentes-sicenad-cda28931791a.herokuapp.com/api",
+  "urlApiRender": "https://sicenad-angular20.onrender.com/api",
   "urlApiLocal": "http://localhost:8080/api",
   "passwordForRegister": "2112",
   "minutosExpiracionLocalStorage": 15,

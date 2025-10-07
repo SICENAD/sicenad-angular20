@@ -128,7 +128,7 @@ export class UtilsStore {
       tap((res) => {
         this.setProperties(res);
         console.log('🔹 Properties cargadas:', res);
-        console.log('urlapi1 ' + this.urlApi());
+        console.log('urlapi: ' + this.urlApi());
       }),
       catchError(err => {
         console.error('Error cargando properties.json:', err);
