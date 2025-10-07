@@ -37,10 +37,10 @@
     "calendario": "Calendar"
   },
   "fechasHoras": {
-    "fechaDiaMesAño": "{{weekDay}}, {{dia}} {{mes}} {{year}}",
+    "fechaDiaMesAño": "{{weekDay}}, {{day}}{{sufijoEn}} {{mes}} {{year}}",
     "hora": "{{hora}}:{{minuto}}:{{segundo}}",
-    "intervaloSemanal": "{{startDay}} {{startMonth}} - {{endDay}} {{endMonth}}, {{year}}",
-    "fechaDia": "{{weekday}} {{day}} {{month}} {{year}}",
+    "intervaloSemanal": "{{startMonth}} {{startDay}}{{sufijoEnStartDay}} - {{endMonth}} {{endDay}}{{sufijoEnEndDay}}, {{year}}",
+    "fechaDia": "{{weekday}}, {{month}} {{day}}{{sufijoEn}} {{year}}",
     "fechaMesAño": "{{month}} {{year}}",
     "dias": {
       "lunes": "Monday",

@@ -77,9 +77,24 @@
       "bandera": "img/banderas/it.svg"
     },
     {
+      "codigo": "de",
+      "etiqueta": "Deutsch",
+      "bandera": "img/banderas/de.svg"
+    },
+    {
+      "codigo": "pt",
+      "etiqueta": "Português",
+      "bandera": "img/banderas/pt.svg"
+    },
+    {
       "codigo": "ru",
       "etiqueta": "Русский",
       "bandera": "img/banderas/ru.svg"
+    },
+    {
+      "codigo": "cn",
+      "etiqueta": "你按下了中文按钮",
+      "bandera": "img/banderas/cn.svg"
     }
   ],
   "coloresDisponibles": {
