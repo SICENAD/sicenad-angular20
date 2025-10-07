@@ -101,9 +101,8 @@ export function provideAngularCalendar(): Provider[] {
  * Configuración global de traducciones
  */
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
+  const base = document.getElementsByTagName('base')[0].href;
   return {
-    getTranslation: (lang: string): Observable<any> => {
-      return http.get(`/languages/${lang}.json`);
-    }
+    getTranslation: (lang: string): Observable<any> => http.get(`${base}languages/${lang}.json`)
   };
 }
