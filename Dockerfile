@@ -1,15 +1,11 @@
-#
-# Build stage
-#
-FROM gradle:jdk17 AS build
-COPY . /app
+# Etapa de construcción
+FROM gradle:8.7-jdk17 AS build
 WORKDIR /app
-RUN gradle --no-daemon bootJar
+COPY . .
+RUN gradle clean bootJar --no-daemon
 
-#
-# Running state
-#
-FROM openjdk:17-alpine
+# Etapa final (imagen ligera)
+FROM eclipse-temurin:17-jre
+WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
-EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
