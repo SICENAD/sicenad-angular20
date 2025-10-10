@@ -73,6 +73,14 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "netlify": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.netlify.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
