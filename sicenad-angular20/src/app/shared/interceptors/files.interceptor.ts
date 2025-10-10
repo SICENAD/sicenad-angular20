@@ -6,11 +6,14 @@ export const filesInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.includes('/files')) {
     // Subida de archivos: método POST o PUT
     if (req.method === 'POST' || req.method === 'PUT') {
+      /*
       updatedReq = updatedReq.clone({
         setHeaders: {
           'Content-Type': 'multipart/form-data'
         }
       });
+      */
+      // No ponemos la cabecera 'Content-Type' para que el navegador la gestione automáticamente
     }
     // Descarga de archivos: método GET
     if (req.method === 'GET') {
