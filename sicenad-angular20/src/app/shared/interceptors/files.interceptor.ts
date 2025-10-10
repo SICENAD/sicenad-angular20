@@ -14,8 +14,7 @@ export const filesInterceptor: HttpInterceptorFn = (req, next) => {
         // Esto **puede romper** la subida si hay FormData grande y el boundary no se genera
         updatedReq = req.clone({
           setHeaders: {
-            'Content-Type': 'multipart/form-data',
-            Accept: 'application/json'
+            'Content-Type': 'multipart/form-data'
           }
         });
       } else {
