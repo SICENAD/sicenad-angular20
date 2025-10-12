@@ -26,7 +26,8 @@
     <form [formGroup]="recursoForm">
       <div class="row py-2">
         <div class="col-lg-3 col-md-12">
-          <label class="titulo"><b>{{ 'recursos.recurso' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
+          <label class="titulo"><b>{{ 'recursos.recurso' | translate | uppercase }}<sup
+                class="text-danger">*</sup></b></label>
           <input type="text" class="form-control letra" formControlName="nombre" placeholder="Nombre del recurso" />
           @if (nombre?.touched && nombre?.invalid) {
           <span class="text-danger">{{ 'comun.nombreObligatorio' | translate }}</span>
@@ -37,7 +38,8 @@
           <label class="titulo1"> {{ categoria()?.nombre }} </label>
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"><b>{{ 'comun.descripcion' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
+          <label class="titulo"><b>{{ 'comun.descripcion' | translate | uppercase }}<sup
+                class="text-danger">*</sup></b></label>
           <textarea class="form-control letra" formControlName="descripcion" placeholder="Descripción del recurso"
             name="descripcion" rows="5" cols="50">
           </textarea>
@@ -46,7 +48,8 @@
           }
         </div>
         <div class="col-lg-12 col-md-12 pt-3">
-          <label class="titulo"><b>{{ 'comun.otros' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
+          <label class="titulo"><b>{{ 'comun.otros' | translate | uppercase }}<sup
+                class="text-danger">*</sup></b></label>
           <textarea class="form-control letra" formControlName="otros" placeholder="Otros datos del recurso"
             name="otros" rows="5" cols="50">
           </textarea>
@@ -57,7 +60,7 @@
           <input type="checkbox" class="letra" id="conDatosEspecificosSolicitud"
             formControlName="conDatosEspecificosSolicitud" />
         </div>
-        @if (conDatosEspecificosSolicitud) {
+        @if (recursoForm.get('conDatosEspecificosSolicitud')?.value) {
         <div class="col-lg-12 col-md-12 pt-3">
           <label class="titulo"><b>{{ 'recursos.datosEspecificosSolicitud' | translate }}</b></label>
           <textarea class="form-control letra" formControlName="datosEspecificosSolicitud"
@@ -100,7 +103,7 @@
       <hr />
       <p class="texto ms-3">{{ recurso()?.otros }}</p>
     </div>
-    @if (recurso()?.conDatosEspecificosSolicitud) {
+    @if (recursoForm.get('conDatosEspecificosSolicitud')?.value) {
     <div class="titulo">
       <h4 class="text-center"><b>{{ 'recursos.datosEspecificosSolicitud' | translate | uppercase }}</b></h4>
       <hr />
