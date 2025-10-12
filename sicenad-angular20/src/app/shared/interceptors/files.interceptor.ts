@@ -7,15 +7,14 @@ export const filesInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.includes('/files')) {
     // Subida de archivos: método POST o PUT
     if (req.method === 'POST' || req.method === 'PUT') {
-      
-      if (environment.forceJsonHeader) {
+      if (environment.entorno === 'netlify') {
       updatedReq = updatedReq.clone({
         setHeaders: {
           'Content-Type': 'multipart/form-data'
         }
       });
       }
-      // No ponemos la cabecera 'Content-Type' para que el navegador la gestione automáticamente
+      // No ponemos la cabecera 'Content-Type' para que el navegador la gestione automáticamente porque sino al desplegar en IIS se corrompe la petición
     }
     // Descarga de archivos: método GET
     if (req.method === 'GET') {
