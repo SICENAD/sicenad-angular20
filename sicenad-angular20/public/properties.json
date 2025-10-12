@@ -1,7 +1,8 @@
 {
-  "urlApi": "https://puentes-sicenad-cda28931791a.herokuapp.com/api",
+ "urlApiHeroku": "https://puentes-sicenad-cda28931791a.herokuapp.com/api",
   "urlApiRender": "https://sicenad-angular20.onrender.com/api",
   "urlApiLocal": "http://localhost:8080/api",
+  "urlApi": "http://jose-server.turkey-banana.ts.net:8084/api",
   "passwordForRegister": "2112",
   "minutosExpiracionLocalStorage": 15,
   "sizeMaxEscudo": 2,
