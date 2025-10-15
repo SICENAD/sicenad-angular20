@@ -1,30 +1,25 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { environment } from '@environments/environment';
 
 export const filesInterceptor: HttpInterceptorFn = (req, next) => {
   let updatedReq = req;
-  // Detectamos si la URL contiene '/files'
+
   if (req.url.includes('/files')) {
     // Subida de archivos: método POST o PUT
     if (req.method === 'POST' || req.method === 'PUT') {
-      if (environment.entorno === 'netlify') {
-      updatedReq = updatedReq.clone({
-        setHeaders: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      }
-      // No ponemos la cabecera 'Content-Type' para que el navegador la gestione automáticamente porque sino al desplegar en IIS se corrompe la petición
+      // ❌ NO poner Content-Type, el navegador lo maneja
+      return next(updatedReq);
     }
+
     // Descarga de archivos: método GET
     if (req.method === 'GET') {
       updatedReq = updatedReq.clone({
         responseType: 'blob' as 'json'
       });
     }
+
     return next(updatedReq);
   } else {
-    // Si no es una URL de archivos, le ponemos las cabeceras correspondientes a JSON
+    // Peticiones normales
     updatedReq = req.clone({
       setHeaders: {
         'Content-Type': 'application/json',
@@ -32,5 +27,6 @@ export const filesInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
   }
+
   return next(updatedReq);
-}
+};
