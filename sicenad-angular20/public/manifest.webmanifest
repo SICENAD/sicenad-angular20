@@ -1,6 +1,6 @@
 {
-  "name": "sicenad-angular20",
-  "short_name": "sicenad-angular20",
+  "name": "Sicenad",
+  "short_name": "Sicenad",
   "scope": "./",
   "start_url": "./",
   "description": "Aplicación para la gestión de campos de maniobras",
