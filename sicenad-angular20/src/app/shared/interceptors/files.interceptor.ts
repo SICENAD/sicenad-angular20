@@ -2,31 +2,35 @@ import { HttpInterceptorFn } from '@angular/common/http';
 
 export const filesInterceptor: HttpInterceptorFn = (req, next) => {
   let updatedReq = req;
+
   // Detectamos si la URL contiene '/files'
   if (req.url.includes('/files')) {
-    // Subida de archivos: método POST o PUT
-    if (req.method === 'POST' || req.method === 'PUT') {
-      updatedReq = updatedReq.clone({
-        setHeaders: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+    // ✅ Subida de archivos (POST o PUT)
+    if ((req.method === 'POST' || req.method === 'PUT') && req.body instanceof FormData) {
+      // ⚠️ No forzamos Content-Type ni Accept
+      // El navegador gestionará automáticamente el boundary
+      return next(req);
     }
-    // Descarga de archivos: método GET
+
+    // ✅ Descarga de archivos (GET)
     if (req.method === 'GET') {
-      updatedReq = updatedReq.clone({
-        responseType: 'blob' as 'json'
+      updatedReq = req.clone({
+        responseType: 'blob' as 'json',
       });
+      return next(updatedReq);
     }
-    return next(updatedReq);
-  } else {
-    // Si no es una URL de archivos, le ponemos las cabeceras correspondientes a JSON
-    updatedReq = req.clone({
-      setHeaders: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    });
+
+    // Cualquier otro método (DELETE, etc.)
+    return next(req);
   }
+
+  // ✅ Peticiones normales (JSON)
+  updatedReq = req.clone({
+    setHeaders: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  });
+
   return next(updatedReq);
-}
+};
