@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '@environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -82,6 +82,7 @@ export class UtilsStore {
 
   // --- GETTERS ---
   urlApi = computed(() => this.properties()?.urlApi || '');
+  urlSitio = computed(() => this.properties()?.urlSitio || '');
   passwordForRegister = computed(() => this.properties()?.passwordForRegister || '');
   minutosExpiracionLocalStorage = computed<number>(() => {
     const val = this.properties()?.minutosExpiracionLocalStorage;
@@ -122,16 +123,28 @@ export class UtilsStore {
   }
 
   // --- ACTIONS ---
+  /**
+  * Carga las propiedades iniciales desde properties.txt
+  * (usamos .txt en lugar de .json por limitaciones de SharePoint)
+  */
   cargarPropiedadesIniciales(): Observable<any> {
     if (this.properties()) return of(this.properties());
-    return this.http.get(`${environment.publicPath}properties.json`).pipe(
+    const filePath = `${environment.publicPath}properties.txt`;
+    return this.http.get(filePath, { responseType: 'text' }).pipe(
+      map((text) => {
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          throw new Error('❌ Error parseando properties.txt: ' + e);
+        }
+      }),
       tap((res) => {
         this.setProperties(res);
         console.log('🔹 Properties cargadas:', res);
-        console.log('urlapi: ' + this.urlApi());
+        console.log('urlapi:', this.urlApi());
       }),
-      catchError(err => {
-        console.error('Error cargando properties.json:', err);
+      catchError((err) => {
+        console.error('Error cargando properties.txt:', err);
         return throwError(() => err);
       })
     );

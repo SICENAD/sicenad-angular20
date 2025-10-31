@@ -1,0 +1,76 @@
+Cómo usarlo
+
+En cualquier componente:
+
+constructor(private spFiles: SharePointFilesService) {}
+
+subir(event: any) {
+  const archivo = event.target.files[0];
+  this.spFiles.subirArchivo('BibliotecaDocumentos', archivo).subscribe({
+    next: res => console.log('✅ Subido:', res),
+    error: err => console.error('❌', err)
+  });
+}
+
+descargar() {
+  this.spFiles.descargarArchivo('BibliotecaDocumentos/ejemplo.pdf', 'descarga.pdf').subscribe();
+}
+
+eliminar() {
+  this.spFiles.eliminarArchivo('BibliotecaDocumentos', 'ejemplo.pdf').subscribe();
+}
+
+🔐 Notas importantes
+
+nombreBiblioteca debe ser la ruta relativa al sitio, por ejemplo:
+'/sites/tuSitio/Shared Documents' o simplemente 'Shared Documents'.
+
+getRequestDigest() lo toma de __REQUESTDIGEST o lo obtiene con POST /_api/contextinfo, como en tu versión de Vue.
+
+Todos los métodos devuelven Observable, manteniendo el mismo estilo Angular reactivo.
+
+Cómo usarlo desde un componente
+async onFileSelected(event: any) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const resultado = await this.utilsStore.subirArchivo('SiteAssets', 'Proyectos/2025', file);
+    console.log('Archivo subido:', resultado);
+  } catch (err) {
+    console.error('Error al subir archivo:', err);
+  }
+}
+
+🧠 Notas
+
+Funciona en SharePoint Foundation 2019, sin depender de endpoints más modernos (ensureFolderPath no existe ahí).
+
+Si las carpetas ya existen, el método ignora el error 409 Conflict.
+
+Puedes cambiar la biblioteca en el primer parámetro ('Documentos', 'SiteAssets', etc.).
+
+Usa el mismo getRequestDigest() y urlSitio que ya tienes implementados en tu servicio.
+
+
+📘 Cómo usarlos
+// Subir
+await this.utilsStore.subirArchivo('Documentos', 'Proyectos/2025', file);
+
+// Descargar
+await this.utilsStore.descargarArchivo('Documentos', 'Proyectos/2025/informe.pdf');
+
+// Eliminar archivo
+await this.utilsStore.eliminarArchivo('Documentos', 'Proyectos/2025/informe.pdf');
+
+/📦 Uso desde tu componente o servicio:
+this.sharepointService
+  .borrarCarpetaRecursiva('DocumentosCompartidos', 'carpetaAEliminar')
+  .subscribe(ok => {
+    if (ok) console.log('✅ Carpeta eliminada con todo su contenido');
+    else console.log('❌ No se pudo eliminar la carpeta');
+  });
+
+Los endpoints REST son totalmente compatibles con /_api/web/GetFileByServerRelativeUrl(...) y /_api/web/GetFolderByServerRelativeUrl(...).
+
+Si tienes proxy NTLM en desarrollo, el código funcionará igual al apuntar al backend proxy (/sharepoint/...).

@@ -21,6 +21,7 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/sicenad",
+            "baseHref": "./",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -87,6 +88,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.js"
+          },
           "configurations": {
             "production": {
               "buildTarget": "sicenad-angular20:build:production"
