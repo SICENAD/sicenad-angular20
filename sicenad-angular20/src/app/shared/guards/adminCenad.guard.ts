@@ -9,7 +9,7 @@ export const adminCenadGuard: CanActivateFn = (route) => {
   const router = inject(Router);
   const usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   const idiomaService = inject(IdiomaService);
-  
+
 
   const idCenad = route.parent?.paramMap.get('idCenad');
 
@@ -17,13 +17,16 @@ export const adminCenadGuard: CanActivateFn = (route) => {
 
   const usuario = usuarioLogueadoStore.usuarioLogueado();
   const cenadPropio = usuarioLogueadoStore.cenadPropio();
+  return true; //dejamos los guard de momento abiertos
 
+  /*
   if (usuario?.rol === RolUsuario.Administrador && cenadPropio?.idString === idCenad) {
     return true;
   } else {
     alert(idiomaService.t('administracion.debesAdminCenad'));
     return router.createUrlTree([RoutesPaths.home]);
   }
+    */
 };
 
 

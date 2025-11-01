@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { inject, Injectable, Injector } from "@angular/core";
 import { AuthStore } from "@stores/auth.store";
-import { catchError, map, Observable, throwError, firstValueFrom, switchMap, from, of, concatMap, toArray, forkJoin, tap } from "rxjs";
+import { catchError, map, Observable, throwError, switchMap, from, of, concatMap, toArray, forkJoin, tap } from "rxjs";
 import { UtilsStore } from "@stores/utils.store";
 import { UtilService } from "./utilService";
 import { LocalStorageService } from "./localStorageService";
@@ -27,15 +27,96 @@ export class ApiService {
     return '';
   }
 
-  // =========================================================
-  // UTILIDADES
-  // =========================================================
-
-  private handleError = (err: any) => {
-    if (err.status === 401 || err.status === 403) {
-      this.utilService.toast(err.message, 'warning');
+  // --- REQUEST GENERAL  PARA NO CAMBIAR LOS SERVICIOS INDIVIDUALES---
+  request<T>(
+    endpoint: string,
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    body?: any,
+  ): Observable<T> {
+    let observable: Observable<T>;
+    switch (method) {
+      case 'POST':
+        observable = from(this.crearElemento(endpoint, body)) as Observable<T>;
+        break;
+      case 'PUT':
+        if (!body?.id) {
+          return throwError(() => new Error('No se indicó ID para PUT'));
+        }
+        observable = from(this.editarElemento(body.id, endpoint, body)).pipe(
+          map(result => result as unknown as T)
+        );
+        break;
+      case 'PATCH':
+        if (!body?.id) {
+          return throwError(() => new Error('No se indicó ID para PATCH'));
+        }
+        observable = from(this.editarElemento(body.id, endpoint, body)).pipe(
+          map(result => result as unknown as T)
+        );
+        break;
+      case 'DELETE':
+        if (!body?.id) {
+          return throwError(() => new Error('No se indicó ID para DELETE'));
+        }
+        observable = from(this.eliminarElemento(body.id, endpoint)).pipe(
+          map(result => result as unknown as T)
+        );
+        break;
+      case 'GET':
+      default:
+        observable = from(this.getListaElementos(endpoint)) as Observable<T>;
     }
-    return throwError(() => err);
+    return observable.pipe(
+      catchError(async (err) => {
+        if (err.status === 401 || err.status === 403) {
+          this.utilService.toast(err.message, 'warning');
+        }
+        throw err;
+      })
+    );
+  }
+
+  // ----------------- ARCHIVOS -----------------
+  mostrarArchivo(url: string): Observable<Blob> {
+    // url = '/Biblioteca/Carpeta/archivo.ext'
+    const parts = url.replace(/^\/+/, '').split('/');
+    const libraryName = parts.shift()!; // primera parte = biblioteca
+    const relativePath = parts.join('/'); // resto = ruta relativa + archivo
+    return this.mostrarArchivoSharePoint(libraryName, relativePath).pipe(
+      catchError(err => {
+        console.error('Error al mostrar archivo:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  descargarArchivo(urlDownload: string, nombreArchivo: string): Observable<void> {
+    // urlDownload: '/Biblioteca/Carpeta1/Carpeta2/archivo.ext'
+    const parts = urlDownload.replace(/^\/+/, '').split('/');
+    const libraryName = parts.shift()!; // primera parte = biblioteca
+    const relativePath = parts.join('/'); // resto incluye subcarpetas y el archivo
+    return from(this.descargarArchivoSharePoint(libraryName, relativePath));
+  }
+
+  subirArchivo(urlUpload: string, archivo: File): Observable<string> {
+    return this.subirArchivoSharePoint(urlUpload, archivo);
+  }
+
+  borrarArchivo(urlUpload: string): Observable<any> {
+    // urlUpload: '/Biblioteca/Carpeta1/Carpeta2/archivo.ext'
+    const parts = urlUpload.replace(/^\/+/, '').split('/');
+    const libraryName = parts.shift()!; // primera parte = biblioteca
+    const relativePath = parts.join('/'); // resto incluye subcarpetas y archivo
+
+    return this.borrarArchivoSharePoint(libraryName, relativePath);
+  }
+
+  borrarCarpeta(url: string): Observable<any> {
+    // url: '/Biblioteca/Carpeta1/Carpeta2'
+    const parts = url.replace(/^\/+/, '').split('/');
+    const libraryName = parts.shift()!; // primera parte = biblioteca
+    const relativePath = parts.join('/'); // resto = ruta de la carpeta
+    return this.borrarCarpetaRecursiva(libraryName, relativePath);
   }
 
   /**
@@ -83,6 +164,31 @@ export class ApiService {
       })
     );
   }
+
+/**
+ * 🔍 Obtiene elementos de una lista de SharePoint con filtro y selección de campos opcional.
+ */
+getListaElementosFiltrados(
+  nombreLista: string,
+  filtro: string,
+  camposSelect: string[] = []
+): Observable<any> {
+  // 🔧 Construcción dinámica de parámetros
+  const selectParam = camposSelect.length ? `$select=${camposSelect.join(',')}` : '';
+  const filterParam = filtro ? `$filter=${filtro}` : '';
+  // 🔗 Unir parámetros (con & solo si ambos existen)
+  const query = [filterParam, selectParam].filter(p => p).join('&');
+  const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items${query ? '?' + query : ''}`;
+  const headers = new HttpHeaders({
+    'Accept': 'application/json;odata=verbose'
+  });
+  return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
+    catchError(err => {
+      console.error(`❌ Error en getListaElementosFiltrados('${nombreLista}')`, err);
+      return throwError(() => err);
+    })
+  );
+}
 
   /**
    * Crea un elemento en una lista de SharePoint
@@ -135,13 +241,20 @@ export class ApiService {
               'IF-MATCH': '*'
             });
             const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`;
-            return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
-              map(() => true),
-              catchError(err => {
-                console.error('Error al editar elemento:', err);
-                return of(false);
-              })
-            );
+           return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
+            switchMap(() =>
+              // Después del MERGE, pedimos el elemento actualizado
+              this.http.get<any>(
+                `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`,
+                { headers: new HttpHeaders({ 'Accept': 'application/json;odata=verbose' }), withCredentials: true }
+              )
+            ),
+            map(res => res.d),
+            catchError(err => {
+              console.error('❌ Error al editar elemento:', err);
+              return throwError(() => err);
+            })
+          );
           })
         )
       )
@@ -371,96 +484,64 @@ export class ApiService {
     );
   }
 
-  // --- REQUEST GENERAL  PARA NO CAMBIAR LOS SERVICIOS INDIVIDUALES---
-  request<T>(
-    endpoint: string,
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
-    body?: any,
-  ): Observable<T> {
-    let observable: Observable<T>;
-    switch (method) {
-      case 'POST':
-        observable = from(this.crearElemento(endpoint, body)) as Observable<T>;
-        break;
-      case 'PUT':
-        if (!body?.id) {
-          return throwError(() => new Error('No se indicó ID para PUT'));
-        }
-        observable = from(this.editarElemento(body.id, endpoint, body)).pipe(
-          map(result => result as unknown as T)
+  /**
+   * 📚 Crea una biblioteca de documentos con el nombre de la entidad (cenad.nombre)
+   */
+  crearBibliotecaCenad(nombre: string): Observable<any> {
+    const url = this.utils.urlApi();
+    return this.getRequestDigest().pipe(
+      switchMap(digest => {
+        const headers = new HttpHeaders({
+          'Accept': 'application/json;odata=verbose',
+          'Content-Type': 'application/json;odata=verbose',
+          'X-RequestDigest': digest
+        });
+        const body = {
+          __metadata: { type: 'SP.List' },
+          AllowContentTypes: true,
+          BaseTemplate: 101, // Document Library
+          ContentTypesEnabled: true,
+          Title: nombre
+        };
+        return this.http.post(url, body, { headers, withCredentials: true }).pipe(
+          tap(() => console.log(`✅ Biblioteca de documentos creada: ${nombre}`)),
+          catchError(err => {
+            if (err.status === 409) {
+              console.warn(`⚠️ Biblioteca "${nombre}" ya existe`);
+              return of(null);
+            }
+            console.error('❌ Error al crear biblioteca:', err);
+            return throwError(() => err);
+          })
         );
-        break;
-      case 'PATCH':
-        if (!body?.id) {
-          return throwError(() => new Error('No se indicó ID para PATCH'));
-        }
-        observable = from(this.editarElemento(body.id, endpoint, body)).pipe(
-          map(result => result as unknown as T)
-        );
-        break;
-      case 'DELETE':
-        if (!body?.id) {
-          return throwError(() => new Error('No se indicó ID para DELETE'));
-        }
-        observable = from(this.eliminarElemento(body.id, endpoint)).pipe(
-          map(result => result as unknown as T)
-        );
-        break;
-      case 'GET':
-      default:
-        observable = from(this.getListaElementos(endpoint)) as Observable<T>;
-    }
-    return observable.pipe(
-      catchError(async (err) => {
-        if (err.status === 401 || err.status === 403) {
-          this.utilService.toast(err.message, 'warning');
-        }
-        throw err;
       })
     );
   }
 
-  // ----------------- ARCHIVOS -----------------
-  mostrarArchivo(url: string): Observable<Blob> {
-    // url = '/Biblioteca/Carpeta/archivo.ext'
-    const parts = url.replace(/^\/+/, '').split('/');
-    const libraryName = parts.shift()!; // primera parte = biblioteca
-    const relativePath = parts.join('/'); // resto = ruta relativa + archivo
-    return this.mostrarArchivoSharePoint(libraryName, relativePath).pipe(
-      catchError(err => {
-        console.error('Error al mostrar archivo:', err);
-        return throwError(() => err);
+  /**
+   * 🗑️ Elimina una biblioteca de documentos completa (por nombre)
+   * @param nombreBiblioteca Nombre exacto de la biblioteca (Title)
+   */
+  borrarBiblioteca(nombreBiblioteca: string): Observable<boolean> {
+    return this.getRequestDigest().pipe(
+      switchMap(digest => {
+        const url = `${this.utils.urlApi()}/getbytitle('${nombreBiblioteca}')`;
+        const headers = new HttpHeaders({
+          'Accept': 'application/json;odata=verbose',
+          'X-HTTP-Method': 'DELETE',
+          'IF-MATCH': '*',
+          'X-RequestDigest': digest
+        });
+        return this.http.post(url, {}, { headers, withCredentials: true }).pipe(
+          tap(() => console.log(`🗑️ Biblioteca eliminada: ${nombreBiblioteca}`)),
+          map(() => true),
+          catchError(err => {
+            console.error('❌ Error al eliminar la biblioteca:', err);
+            return of(false);
+          })
+        );
       })
     );
-  }
-
-  descargarArchivo(urlDownload: string, nombreArchivo: string): Observable<void> {
-    // urlDownload: '/Biblioteca/Carpeta1/Carpeta2/archivo.ext'
-    const parts = urlDownload.replace(/^\/+/, '').split('/');
-    const libraryName = parts.shift()!; // primera parte = biblioteca
-    const relativePath = parts.join('/'); // resto incluye subcarpetas y el archivo
-    return from(this.descargarArchivoSharePoint(libraryName, relativePath));
-  }
-
-  subirArchivo(urlUpload: string, archivo: File): Observable<string> {
-    return this.subirArchivoSharePoint(urlUpload, archivo);
-  }
-
-  borrarArchivo(urlUpload: string): Observable<any> {
-    // urlUpload: '/Biblioteca/Carpeta1/Carpeta2/archivo.ext'
-    const parts = urlUpload.replace(/^\/+/, '').split('/');
-    const libraryName = parts.shift()!; // primera parte = biblioteca
-    const relativePath = parts.join('/'); // resto incluye subcarpetas y archivo
-
-    return this.borrarArchivoSharePoint(libraryName, relativePath);
-  }
-
-  borrarCarpeta(url: string): Observable<any> {
-    // url: '/Biblioteca/Carpeta1/Carpeta2'
-    const parts = url.replace(/^\/+/, '').split('/');
-    const libraryName = parts.shift()!; // primera parte = biblioteca
-    const relativePath = parts.join('/'); // resto = ruta de la carpeta
-    return this.borrarCarpetaRecursiva(libraryName, relativePath);
   }
 
 }

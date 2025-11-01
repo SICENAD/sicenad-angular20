@@ -57,6 +57,19 @@ export class CenadService {
       catchError(err => { console.error(err); return of(null); })
     );
   }
+/*
+//metodo para crear cenad en sharepoint creando la biblioteca de ese cenad
+crearCenad(entidad: any): Observable<any> {
+  return this.crearElemento('Cenads', entidad).pipe(
+    switchMap(res => {
+      // Crear biblioteca usando exactamente cenad.nombre
+      return this.crearBibliotecaCenad(entidad.nombre).pipe(
+        map(() => res) // devolver la respuesta original de crearElemento
+      );
+    })
+  );
+}
+*/
 
   crearCenad(
     nombre: string,
@@ -165,6 +178,17 @@ export class CenadService {
       map(() => true),
       catchError(err => { console.error(err); return of(false); })
     );
+
+
+
+    /*
+//cuando borre un cenad querre borrar la biblioteca de documentos asociada a ese cenad
+this.apiService.borrarBiblioteca(cenad.nombre)
+  .subscribe(ok => {
+    if (ok) console.log('Biblioteca borrada correctamente');
+  });
+
+    */
   }
 
   getEscudo(escudo: string, idCenad: string): Observable<Blob> {

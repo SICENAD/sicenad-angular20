@@ -130,7 +130,9 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              password && this.changePassword(idUsuario, password);
+              if (password) {
+                this.changePassword(idUsuario, password);
+              }
               this.output.emit(); // notificamos al padre
             }
           },
@@ -149,7 +151,9 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              password && this.changePassword(idUsuario, password);
+              if (password) {
+                this.changePassword(idUsuario, password);
+              }
               this.output.emit(); // notificamos al padre
             }
           },
@@ -168,7 +172,9 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              password && this.changePassword(idUsuario, password);
+              if (password) {
+                this.changePassword(idUsuario, password);
+              }
               this.output.emit(); // notificamos al padre
             }
           },
@@ -187,7 +193,9 @@ export class UsuarioModalComponent {
         ).subscribe({
           next: res => {
             if (res) {
-              password && this.changePassword(idUsuario, password);
+              if (password) {
+                this.changePassword(idUsuario, password);
+              }
               this.output.emit(); // notificamos al padre
             }
           },

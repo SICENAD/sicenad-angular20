@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
+import { catchError, firstValueFrom, map, Observable, of, switchMap, tap, throwError } from "rxjs";
 import { ApiService } from "./apiService";
 import { Usuario } from "@interfaces/models/usuario";
 import { UsuarioSuperAdministrador } from "@interfaces/models/usuarioSuperadministrador";
@@ -23,20 +23,90 @@ export class UsuarioService {
 
   // --- REQUEST LOGIN ---
   public login(username: string, password: string): Observable<LoginResponse> {
-    const endpoint = `/auth/login`;
-    return this.apiService.request<LoginResponse>(endpoint, 'POST', { username, password });
+    const lista = 'Usuarios';
+    const filtro = `username eq '${username}'`;
+    return this.apiService.getListaElementosFiltrados(lista, filtro, ['username', 'password', 'rol']).pipe(
+      map(res => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        if (usuario.password !== password) throw new Error('Contraseña incorrecta');
+        return {
+          token: 'fakeToken',
+          username: usuario.username,
+          rol: usuario.rol || 'Normal'
+        } as LoginResponse;
+      }),
+      catchError(err => {
+        console.error('❌ Error en login:', err);
+        return throwError(() => err);
+      })
+    );
   }
+
   // --- REQUEST REGISTER ---
-  public register(username: string, password: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, rol: string): Observable<RegisterResponse> {
-    const endpoint = `/auth/register`;
-    return this.apiService.request<RegisterResponse>(endpoint, 'POST', { username, password, tfno, email, emailAdmitido, descripcion, rol });
+  public register(
+    username: string,
+    password: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    rol: string
+  ): Observable<RegisterResponse> {
+    const nombreLista = 'Usuarios';
+    const nuevoUsuario = {
+      username: username,
+      password: password,
+      tfno: tfno,
+      email: email,
+      emailAdmitido: emailAdmitido,
+      descripcion: descripcion,
+      rol: rol
+    };
+    return this.apiService.getListaElementosFiltrados(nombreLista, `username eq '${username}'`).pipe(
+      switchMap((usuariosExistentes: any[]) => {
+        if (usuariosExistentes.length > 0) {
+          // ⚠️ Usuario ya existe → mostramos alerta y terminamos sin error
+          alert(`El usuario "${username}" ya existe.`);
+          return of({ usernameRegistrado: '', rolRegistrado: '' } as RegisterResponse);
+        }
+        // Crea el usuario y devuelve solo los campos que espera tu interfaz
+        return this.apiService.request<any>(nombreLista, 'POST', nuevoUsuario).pipe(
+          map(res => ({
+            usernameRegistrado: res?.username ?? username,
+            rolRegistrado: res?.rol ?? rol
+          })),
+          catchError(err => {
+            console.error('❌ Error en registerUsuario:', err);
+            return throwError(() => err);
+          })
+        );
+      }),
+      catchError(err => {
+        console.error('❌ Error en registerUsuario:', err);
+        return throwError(() => err);
+      })
+    );
   }
 
   // --- REQUEST CHANGE PASSWORD ---
-  public changePassword(idUsuario: string, password: string): Observable<ChangePasswordResponse> {
-    const endpoint = `/auth/change-password`;
-    return this.apiService.request<ChangePasswordResponse>(endpoint, 'POST', { idUsuario, password });
-  }
+public changePassword(idUsuario: string, password: string): Observable<ChangePasswordResponse> {
+  const nombreLista = 'Usuarios';
+  const body = { id: idUsuario, password: password };
+
+  return this.apiService.request<any>(nombreLista, 'PATCH', body).pipe(
+    map(res => ({
+      username: res?.username ?? '',
+      rol: res?.rol ?? ''
+    })),
+    catchError(err => {
+      console.error('❌ Error al cambiar la contraseña:', err);
+      return throwError(() => err);
+    })
+  );
+}
+
 
   getAll(): Observable<Usuario[]> {
     const endpoint = `/usuarios?size=1000`;
@@ -50,6 +120,7 @@ export class UsuarioService {
       })
     );
   }
+
   getAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
     const endpoint = `/usuarios_superadministrador?size=1000`;
     return this.apiService.request<{ _embedded: { usuarios_superadministrador: UsuarioSuperAdministrador[] } }>(endpoint, 'GET').pipe(

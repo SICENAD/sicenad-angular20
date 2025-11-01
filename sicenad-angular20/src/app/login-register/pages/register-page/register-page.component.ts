@@ -59,9 +59,8 @@ export class RegisterComponent {
     }
     const { username, password, tfno, email, emailAdmitido, descripcion } = this.registerForm.value;
     const passwordForRegister = this.utils.passwordForRegister();
-    passwordForRegister == this.passwordForRegisterFromUser()
-      ?
-      (this.orquestadorService.registerUsuarioSuperadministrador(
+    if (passwordForRegister == this.passwordForRegisterFromUser()) {
+      this.orquestadorService.registerUsuarioSuperadministrador(
         username,
         password,
         tfno,
@@ -77,8 +76,9 @@ export class RegisterComponent {
         error: (err) => {
           console.error(err);
         }
-      })
-      )
-      : alert(this.idiomaService.t('administracion.passwordIncorrecto'));
+      });
+    } else {
+      alert(this.idiomaService.t('administracion.passwordIncorrecto'));
+    }
   }
 }

@@ -9,5 +9,6 @@ export const superadministradorGuard: CanMatchFn = () => {
     const auth = inject(AuthStore);
     const router = inject(Router);
     const idiomaService = inject(IdiomaService);
-    return auth.rol() === RolUsuario.Superadministrador ? true : (alert(idiomaService.t('administracion.debesSerSuperadmin')), router.createUrlTree([RoutesPaths.home]));
+      return true; //dejamos los guard de momento abiertos
+    //return auth.rol() === RolUsuario.Superadministrador ? true : (alert(idiomaService.t('administracion.debesSerSuperadmin')), router.createUrlTree([RoutesPaths.home]));
   }

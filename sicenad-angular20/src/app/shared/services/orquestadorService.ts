@@ -140,8 +140,16 @@ export class OrquestadorService {
         this.cenadStore.setSolicitudesValidada(data.solicitudesValidada);
         this.cenadStore.setSolicitudesCancelada(data.solicitudesCancelada);
         this.cenadStore.setUsuariosGestor(data.usuariosGestor);
-        data.usuarioAdministrador ? this.cenadStore.setUsuarioAdministrador(data.usuarioAdministrador) : this.cenadStore.clearUsuarioAdministrador();
-        data.cenadVisitado ? this.cenadStore.setCenadVisitado(data.cenadVisitado) : this.cenadStore.clearCenadVisitado();
+        if (data.usuarioAdministrador) {
+          this.cenadStore.setUsuarioAdministrador(data.usuarioAdministrador);
+        } else {
+          this.cenadStore.clearUsuarioAdministrador();
+        }
+        if (data.cenadVisitado) {
+          this.cenadStore.setCenadVisitado(data.cenadVisitado);
+        } else {
+          this.cenadStore.clearCenadVisitado();
+        }
       })
     );
   }
@@ -360,7 +368,6 @@ export class OrquestadorService {
     password: string,
   ): Observable<LoginResponse> {
     this.ensureUrlApi();            // <-- clave
-
     return this.usuarioService.login(
       username,
       password

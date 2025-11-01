@@ -7,5 +7,6 @@ export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthStore);
   const router = inject(Router);
   const routesPaths = RoutesPaths;
-  return auth.isAuthenticated() ? true : router.createUrlTree([routesPaths.login]);
+  return true; //dejamos los guard de momento abiertos
+  //return auth.isAuthenticated() ? true : router.createUrlTree([routesPaths.login]);
 };
