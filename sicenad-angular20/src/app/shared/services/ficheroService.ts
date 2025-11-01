@@ -44,9 +44,15 @@ export class FicheroService {
       categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${idCategoriaFichero}`,
       cenad: `${this.apiService.getUrlApi()}/cenads/${idCenad}`
     };
-    idRecurso && (body.recurso = `${this.apiService.getUrlApi()}/recursos/${idRecurso}`);
+    if (idRecurso) {
+      body.recurso = `${this.apiService.getUrlApi()}/recursos/${idRecurso}`;
+    }
     if (idSolicitud) {
-      isCenad ? (body.solicitudRecursoCenad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`) : (body.solicitudRecursoUnidad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`);
+      if (isCenad) {
+        body.solicitudRecursoCenad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`;
+      } else {
+        body.solicitudRecursoUnidad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`;
+      }
     }
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
