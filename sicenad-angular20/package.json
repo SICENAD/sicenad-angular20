@@ -2,12 +2,12 @@
   "name": "sicenad-angular20",
   "version": "1.0.0",
   "scripts": {
-  "start": "ng serve -o",
-  "start:prod": "ng serve --configuration production --port 4201",
-  "build": "ng build",
-  "build:prod": "ng build --configuration production",
-  "watch": "ng build --watch --configuration development",
-  "test": "ng test"
+    "start": "ng serve -o",
+    "start:prod": "ng serve --configuration production --port 4201",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
   },
   "prettier": {
     "printWidth": 100,
@@ -39,6 +39,7 @@
     "angular-calendar": "^0.32.0",
     "bootstrap": "^5.3.8",
     "date-fns": "^4.1.0",
+    "httpntlm": "^1.8.13",
     "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
