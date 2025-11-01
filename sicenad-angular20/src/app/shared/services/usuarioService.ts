@@ -32,7 +32,7 @@ export class UsuarioService {
         if (!usuario) throw new Error('Usuario no encontrado');
         if (usuario.password !== password) throw new Error('Contraseña incorrecta');
         return {
-          token: 'fakeToken',
+          token: this.utilService.generarTokenAleatorio(),
           username: usuario.username,
           rol: usuario.rol || 'Normal'
         } as LoginResponse;

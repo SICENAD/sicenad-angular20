@@ -28,7 +28,6 @@ import localeFr from '@angular/common/locales/fr';
 import localeIt from '@angular/common/locales/it';
 import localeRu from '@angular/common/locales/ru';
 import { CustomDateFormatter } from '@shared/customFormat/customDateFormatter';
-import { provideServiceWorker } from '@angular/service-worker';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 registerLocaleData(localeEs, 'es');
@@ -72,13 +71,6 @@ export const appConfig: ApplicationConfig = {
         }
       })
     ),
-    provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    }), provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    }),
   ]
 };
 

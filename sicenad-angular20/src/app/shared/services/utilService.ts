@@ -1,6 +1,6 @@
-import { inject, Injectable } from "@angular/core";
-import { environment } from "@environments/environment";
-import { ToastrService } from "ngx-toastr";
+import { inject, Injectable } from '@angular/core';
+import { environment } from '@environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class UtilService {
@@ -52,7 +52,9 @@ export class UtilService {
     if (!iso) return '';
     const d = new Date(iso);
     if (isNaN(d.getTime())) return '';
-    return `${d.getFullYear()}-${this.pad(d.getMonth() + 1)}-${this.pad(d.getDate())}T${this.pad(d.getHours())}:${this.pad(d.getMinutes())}`; // YYYY-MM-DDTHH:mm
+    return `${d.getFullYear()}-${this.pad(d.getMonth() + 1)}-${this.pad(d.getDate())}T${this.pad(
+      d.getHours()
+    )}:${this.pad(d.getMinutes())}`; // YYYY-MM-DDTHH:mm
   }
 
   fechaDiaMesYear(iso?: string | Date): string {
@@ -93,5 +95,18 @@ export class UtilService {
   baseNormalizada(): string {
     const base = environment.publicPath || '/';
     return base.endsWith('/') ? base : base + '/';
+  }
+
+  // ----------------- GENERAR TOKEN ALEATORIO PARA SIMULACIÓN -----------------
+  generarTokenAleatorio(longitud: number = 64): string {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let token = '';
+    const array = new Uint8Array(longitud);
+    crypto.getRandomValues(array);
+    for (let i = 0; i < longitud; i++) {
+      const indice = array[i] % caracteres.length;
+      token += caracteres.charAt(indice);
+    }
+    return token;
   }
 }
