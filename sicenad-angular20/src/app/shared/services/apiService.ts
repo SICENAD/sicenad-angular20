@@ -39,10 +39,10 @@ export class ApiService {
         observable = from(this.crearElemento(endpoint, body)) as Observable<T>;
         break;
       case 'PUT':
-        if (!body?.id) {
+        if (!body?.Id) {
           return throwError(() => new Error('No se indicó ID para PUT'));
         }
-        observable = from(this.editarElemento(body.id, endpoint, body)).pipe(
+        observable = from(this.editarElemento(body.Id, endpoint, body)).pipe(
           map(result => result as unknown as T)
         );
         break;
@@ -56,10 +56,10 @@ export class ApiService {
         );
         break;
       case 'DELETE':
-        if (!body?.id) {
+        if (!body?.Id) {
           return throwError(() => new Error('No se indicó ID para DELETE'));
         }
-        observable = from(this.eliminarElemento(body.id, endpoint)).pipe(
+        observable = from(this.eliminarElemento(body.Id, endpoint)).pipe(
           map(result => result as unknown as T)
         );
         break;

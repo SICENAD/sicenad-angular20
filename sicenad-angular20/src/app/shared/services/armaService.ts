@@ -59,7 +59,7 @@ export class ArmaService {
 
   deleteArma(idArma: string): Observable<any> {
     const endpoint = 'Armas';
-    return this.apiService.request<any>(endpoint, 'DELETE', { id: idArma }).pipe(
+    return this.apiService.request<any>(endpoint, 'DELETE', { Id: idArma }).pipe(
       tap(async res => {
         const mensaje = await this.idiomaService.tVars('armas.armaEliminada', { id: idArma });
         this.utilService.toast(mensaje, 'success');

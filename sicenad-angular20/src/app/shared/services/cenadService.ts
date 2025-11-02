@@ -4,12 +4,15 @@ import { ApiService } from "./apiService";
 import { Cenad } from "@interfaces/models/cenad";
 import { UtilService } from "./utilService";
 import { IdiomaService } from "./idiomaService";
+import { UtilsStore } from "@stores/utils.store";
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {
+  private utils = inject(UtilsStore);
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Cenads')/items`;
 
   getAll(): Observable<Cenad[]> {
     const endpoint = `/cenads?size=1000`;
@@ -35,10 +38,18 @@ export class CenadService {
   }
 
   getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
-    const endpoint = `/usuarios_administrador/${idUsuarioAdministrador}/cenad`;
-    return this.apiService.request<Cenad>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+    const urlCenads = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq ${idUsuarioAdministrador}`;
+    return this.apiService.request<any>(urlCenads, 'GET').pipe(
+      map((res) => {
+        const cenads = res?.d?.results || [];
+        const cenad = cenads[0];
+        if (!cenad) throw new Error('Cenad no encontrado');
+        return cenad;
+      }),
+      catchError((err) => {
+        console.error(err);
+        return of(null);
+      })
     );
   }
 

@@ -15,6 +15,8 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { ChangePasswordResponse } from '@interfaces/responses/changePasswordResponse';
 import { IdiomaService } from './idiomaService';
 import { UtilsStore } from '@stores/utils.store';
+import { CenadService } from './cenadService';
+import { UnidadService } from './unidadService';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -22,6 +24,8 @@ export class UsuarioService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
+  private cenadService = inject(CenadService);
+  private unidadService = inject(UnidadService);
   private urlBasic = `${this.utils.urlApi()}/getbytitle('Usuarios')/items`;
 
   // --- REQUEST LOGIN ---
@@ -115,15 +119,9 @@ export class UsuarioService {
   }
 
   getAll(): Observable<Usuario[]> {
-    const endpoint = `/usuarios?size=1000`;
-    return this.apiService.request<{ _embedded: { usuarios: Usuario[] } }>(endpoint, 'GET').pipe(
-      map(
-        (res) =>
-          res._embedded?.usuarios.map((item) => ({
-            ...item,
-            url: (item as any)._links?.self?.href,
-          })) || []
-      ),
+    const endpoint = this.urlBasic;
+    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
+      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -132,12 +130,13 @@ export class UsuarioService {
   }
 
   getAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
-    const endpoint = this.urlBasic;
-    return this.apiService.request<UsuarioSuperAdministrador[]>(endpoint, 'GET').pipe(
-      map(res =>
-        res?.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
+    const lista = 'Usuarios';
+    const filtro = `rol eq 'Superadministrador'`;
+    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
+      map(
+        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -145,85 +144,85 @@ export class UsuarioService {
   }
 
   getAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
-    const endpoint = `/usuarios_administrador?size=1000`;
-    return this.apiService
-      .request<{ _embedded: { usuarios_administrador: UsuarioAdministrador[] } }>(endpoint, 'GET')
-      .pipe(
-        map(
-          (res) =>
-            res._embedded?.usuarios_administrador.map((item) => ({
-              ...item,
-              url: (item as any)._links?.self?.href,
-            })) || []
-        ),
-        catchError((err) => {
-          console.error(err);
-          return of([]);
-        })
-      );
+    const lista = 'Usuarios';
+    const filtro = `rol eq 'Administrador'`;
+    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
+      map(
+        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
+      ),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      })
+    );
   }
 
   getAllUsuariosGestor(): Observable<UsuarioGestor[]> {
-    const endpoint = `/usuarios_gestor?size=1000`;
-    return this.apiService
-      .request<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET')
-      .pipe(
-        map(
-          (res) =>
-            res._embedded?.usuarios_gestor.map((item) => ({
-              ...item,
-              url: (item as any)._links?.self?.href,
-            })) || []
-        ),
-        catchError((err) => {
-          console.error(err);
-          return of([]);
-        })
-      );
+    const lista = 'Usuarios';
+    const filtro = `rol eq 'Gestor'`;
+    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
+      map(
+        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
+      ),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      })
+    );
   }
 
   getAllUsuariosGestorCenad(idCenad: string): Observable<UsuarioGestor[]> {
-    const endpoint = `/cenads/${idCenad}/usuariosGestores?size=1000`;
-    return this.apiService
-      .request<{ _embedded: { usuarios_gestor: UsuarioGestor[] } }>(endpoint, 'GET')
-      .pipe(
-        map(
-          (res) =>
-            res._embedded?.usuarios_gestor.map((item) => ({
-              ...item,
-              url: (item as any)._links?.self?.href,
-            })) || []
-        ),
-        catchError((err) => {
-          console.error(err);
-          return of([]);
-        })
-      );
+    const urlGestores = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad} and rol eq 'Gestor'`;
+    return this.apiService.request<any>(urlGestores, 'GET').pipe(
+      map(
+        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
+      ),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      })
+    );
   }
 
   getAllUsuariosNormal(): Observable<UsuarioNormal[]> {
-    const endpoint = `/usuarios_normal?size=1000`;
-    return this.apiService
-      .request<{ _embedded: { usuarios_normal: UsuarioNormal[] } }>(endpoint, 'GET')
-      .pipe(
-        map(
-          (res) =>
-            res._embedded?.usuarios_normal.map((item) => ({
-              ...item,
-              url: (item as any)._links?.self?.href,
-            })) || []
-        ),
-        catchError((err) => {
-          console.error(err);
-          return of([]);
-        })
-      );
+    const lista = 'Usuarios';
+    const filtro = `rol eq 'Normal'`;
+    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
+      map(
+        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
+      ),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      })
+    );
   }
 
   getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
-    const endpoint = `/cenads/${idCenad}/usuarioAdministrador`;
-    return this.apiService.request<UsuarioAdministrador>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlAdministradores = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad} and rol eq 'Administrador'`;
+    return this.apiService.request<any>(urlAdministradores, 'GET').pipe(
+      map((res) => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        return usuario;
+      }),
+      catchError((err) => {
+        console.error(err);
+        return of(null);
+      })
+    );
+  }
+
+    getUsuarioSuperadministradorPorUsername(username: string): Observable<UsuarioSuperAdministrador | null> {
+    const urlSuperadministradores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Superadministrador'`;
+    return this.apiService.request<any>(urlSuperadministradores, 'GET').pipe(
+      map((res) => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        return usuario;
+      }),
       catchError((err) => {
         console.error(err);
         return of(null);
@@ -232,9 +231,14 @@ export class UsuarioService {
   }
 
   getUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
-    const endpoint = `/usuarios_administrador/search/findByUsername?username=${username}`;
-    return this.apiService.request<UsuarioAdministrador>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlAdministradores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Administrador'`;
+    return this.apiService.request<any>(urlAdministradores, 'GET').pipe(
+      map((res) => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        return usuario;
+      }),
       catchError((err) => {
         console.error(err);
         return of(null);
@@ -243,9 +247,14 @@ export class UsuarioService {
   }
 
   getUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
-    const endpoint = `/usuarios_gestor/search/findByUsername?username=${username}`;
-    return this.apiService.request<UsuarioGestor>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlGestores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Gestor'`;
+    return this.apiService.request<any>(urlGestores, 'GET').pipe(
+      map((res) => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        return usuario;
+      }),
       catchError((err) => {
         console.error(err);
         return of(null);
@@ -254,9 +263,14 @@ export class UsuarioService {
   }
 
   getUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
-    const endpoint = `/recursos/${idRecurso}/usuarioGestor`;
-    return this.apiService.request<UsuarioGestor>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlGestores = `${this.urlBasic}?$expand=cenad&$filter=recursoId eq ${idRecurso} and rol eq 'Gestor'`;
+    return this.apiService.request<any>(urlGestores, 'GET').pipe(
+      map((res) => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        return usuario;
+      }),
       catchError((err) => {
         console.error(err);
         return of(null);
@@ -265,9 +279,14 @@ export class UsuarioService {
   }
 
   getUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
-    const endpoint = `/usuarios_normal/search/findByUsername?username=${username}`;
-    return this.apiService.request<UsuarioNormal>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlNormales = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Normal'`;
+    return this.apiService.request<any>(urlNormales, 'GET').pipe(
+      map((res) => {
+        const usuarios = res?.d?.results || [];
+        const usuario = usuarios[0];
+        if (!usuario) throw new Error('Usuario no encontrado');
+        return usuario;
+      }),
       catchError((err) => {
         console.error(err);
         return of(null);
@@ -285,7 +304,7 @@ export class UsuarioService {
   ): Observable<any> {
     const nombreLista = 'Usuarios';
     const body = {
-      id: idUsuario,
+      Id: idUsuario,
       username: username,
       tfno: tfno,
       email: email,
@@ -316,23 +335,29 @@ export class UsuarioService {
     idCenad: string,
     idUsuarioAdministrador: string
   ): Observable<any> {
-    const endpoint = `/usuarios_administrador/${idUsuarioAdministrador}`;
-    const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
-    return this.apiService
-      .request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad })
-      .pipe(
-        map((res) => !!res),
-        tap(async (res) => {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', {
-            username,
-          });
-          this.utilService.toast(mensaje, 'success');
-        }),
-        catchError((err) => {
-          console.error(err);
-          return of(false);
-        })
-      );
+    const nombreLista = 'Usuarios';
+    const body = {
+      Id: idUsuarioAdministrador,
+      username: username,
+      tfno: tfno,
+      email: email,
+      emailAdmitido: emailAdmitido,
+      descripcion: descripcion,
+      cenadId: idCenad,
+    };
+    return this.apiService.request<any>(nombreLista, 'PATCH', body).pipe(
+      map((res) => !!res),
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', {
+          username,
+        });
+        this.utilService.toast(mensaje, 'success');
+      }),
+      catchError((err) => {
+        console.error(err);
+        return of(false);
+      })
+    );
   }
 
   editarUsuarioGestor(
@@ -344,23 +369,29 @@ export class UsuarioService {
     idCenad: string,
     idUsuarioGestor: string
   ): Observable<any> {
-    const endpoint = `/usuarios_gestor/${idUsuarioGestor}`;
-    const cenad = `${this.apiService.getUrlApi()}/cenads/${idCenad}`;
-    return this.apiService
-      .request<any>(endpoint, 'PATCH', { username, tfno, email, emailAdmitido, descripcion, cenad })
-      .pipe(
-        map((res) => !!res),
-        tap(async (res) => {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', {
-            username,
-          });
-          this.utilService.toast(mensaje, 'success');
-        }),
-        catchError((err) => {
-          console.error(err);
-          return of(false);
-        })
-      );
+    const nombreLista = 'Usuarios';
+    const body = {
+      Id: idUsuarioGestor,
+      username: username,
+      tfno: tfno,
+      email: email,
+      emailAdmitido: emailAdmitido,
+      descripcion: descripcion,
+      cenadId: idCenad,
+    };
+    return this.apiService.request<any>(nombreLista, 'PATCH', body).pipe(
+      map((res) => !!res),
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', {
+          username,
+        });
+        this.utilService.toast(mensaje, 'success');
+      }),
+      catchError((err) => {
+        console.error(err);
+        return of(false);
+      })
+    );
   }
 
   editarUsuarioNormal(
@@ -372,42 +403,39 @@ export class UsuarioService {
     idUnidad: string,
     idUsuarioNormal: string
   ): Observable<any> {
-    const endpoint = `/usuarios_normal/${idUsuarioNormal}`;
-    const unidad = `${this.apiService.getUrlApi()}/unidades/${idUnidad}`;
-    return this.apiService
-      .request<any>(endpoint, 'PATCH', {
-        username,
-        tfno,
-        email,
-        emailAdmitido,
-        descripcion,
-        unidad,
+    const nombreLista = 'Usuarios';
+    const body = {
+      Id: idUsuarioNormal,
+      username: username,
+      tfno: tfno,
+      email: email,
+      emailAdmitido: emailAdmitido,
+      descripcion: descripcion,
+      unidadId: idUnidad,
+    };
+    return this.apiService.request<any>(nombreLista, 'PATCH', body).pipe(
+      map((res) => !!res),
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', {
+          username,
+        });
+        this.utilService.toast(mensaje, 'success');
+      }),
+      catchError((err) => {
+        console.error(err);
+        return of(false);
       })
-      .pipe(
-        map((res) => !!res),
-        tap(async (res) => {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioModificado', {
-            username,
-          });
-          this.utilService.toast(mensaje, 'success');
-        }),
-        catchError((err) => {
-          console.error(err);
-          return of(false);
-        })
-      );
+    );
   }
 
   deleteUsuario(idUsuario: string): Observable<any> {
-    const endpoint = `/usuarios/${idUsuario}`;
-    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
+    const endpoint = 'Usuarios';
+    return this.apiService.request<any>(endpoint, 'DELETE', { Id: idUsuario }).pipe(
       tap(async (res) => {
-        if (res) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioEliminado', {
-            id: idUsuario,
-          });
-          this.utilService.toast(mensaje, 'success');
-        }
+        const mensaje = await this.idiomaService.tVars('usuarios.usuarioEliminado', {
+          id: idUsuario,
+        });
+        this.utilService.toast(mensaje, 'success');
       }),
       catchError((err) => {
         console.error(err);
@@ -427,52 +455,66 @@ export class UsuarioService {
   }> {
     switch (rol) {
       case RolUsuario.Administrador: {
-        const usuario: UsuarioAdministrador = await firstValueFrom(
-          this.apiService.request(
-            `/usuarios_administrador/search/findByUsername?username=${username}`,
-            'GET',
-            null
-          )
-        );
-        const cenad: Cenad = await firstValueFrom(
-          this.apiService.request(`/usuarios_administrador/${usuario.Id}/cenad`, 'GET', null)
-        );
+        const usuario = await firstValueFrom(this.getUsuarioAdministradorPorUsername(username));
+        if (!usuario) {
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
+          throw new Error(mensaje);
+        }
+        const cenad = await firstValueFrom(this.cenadService.getCenadDeAdministrador(usuario.Id));
+        if (!cenad) {
+          const mensaje = await this.idiomaService.tVars('cenads.cenadNoEncontrado', {
+            cenad: cenad!.nombre || '',
+          });
+          throw new Error(mensaje);
+        }
         return { usuario, cenad };
       }
       case RolUsuario.Gestor: {
-        const usuario: UsuarioGestor = await firstValueFrom(
-          this.apiService.request(
-            `/usuarios_gestor/search/findByUsername?username=${username}`,
-            'GET',
-            null
-          )
-        );
-        const cenad: Cenad = await firstValueFrom(
-          this.apiService.request(`/usuarios_gestor/${usuario.Id}/cenad`, 'GET', null)
-        );
+        const usuario = await firstValueFrom(this.getUsuarioGestorPorUsername(username));
+        if (!usuario) {
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
+          throw new Error(mensaje);
+        }
+        const cenad = await firstValueFrom(this.cenadService.getCenadDeGestor(usuario.Id));
+        if (!cenad) {
+          const mensaje = await this.idiomaService.tVars('cenads.cenadNoEncontrado', {
+            cenad: cenad!.nombre || '',
+          });
+          throw new Error(mensaje);
+        }
         return { usuario, cenad };
       }
       case RolUsuario.Normal: {
-        const usuario: UsuarioNormal = await firstValueFrom(
-          this.apiService.request(
-            `/usuarios_normal/search/findByUsername?username=${username}`,
-            'GET',
-            null
-          )
+        const usuario = await firstValueFrom(this.getUsuarioNormalPorUsername(username));
+        if (!usuario) {
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
+          throw new Error(mensaje);
+        }
+        const unidad = await firstValueFrom(
+          this.unidadService.getUnidadDeUsuarioNormal(usuario.Id)
         );
-        const unidad: Unidad = await firstValueFrom(
-          this.apiService.request(`/usuarios_normal/${usuario.Id}/unidad`, 'GET', null)
-        );
+        if (!unidad) {
+          const mensaje = await this.idiomaService.tVars('unidades.unidadNoEncontrada', {
+            unidad: unidad!.nombre || '',
+          });
+          throw new Error(mensaje);
+        }
         return { usuario, unidad };
       }
       case RolUsuario.Superadministrador: {
-        const usuario = await firstValueFrom(
-          //this.apiService.request(
-           // `/usuarios_superadministrador/search/findByUsername?username=${username}`,
-          //  'GET',
-          //  null
-          this.apiService.getListaElementosFiltrados('Usuarios', `username eq ${username}`)
-          );
+        const usuario = await firstValueFrom(this.getUsuarioSuperadministradorPorUsername(username));
+        if (!usuario) {
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
+          throw new Error(mensaje);
+        }
         return { usuario };
       }
       default: {

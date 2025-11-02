@@ -4,20 +4,23 @@ import { ApiService } from "./apiService";
 import { Categoria } from "@interfaces/models/categoria";
 import { UtilService } from "./utilService";
 import { IdiomaService } from "./idiomaService";
+import { UtilsStore } from "@stores/utils.store";
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaService {
+  private utils = inject(UtilsStore);
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('CategoriasFichero')/items`;
 
   getAll(idCenad: string): Observable<Categoria[]> {
-    const endpoint = `/cenads/${idCenad}/categorias?size=1000`;
-    return this.apiService.request<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.categorias.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
+    const urlCategorias = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad}`;
+    return this.apiService.request<any>(urlCategorias, 'GET').pipe(
+      map(
+        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
       ),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
