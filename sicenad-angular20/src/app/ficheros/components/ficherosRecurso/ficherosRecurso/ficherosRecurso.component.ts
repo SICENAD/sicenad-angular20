@@ -86,7 +86,7 @@ export class FicherosRecursoComponent {
       categorias.forEach((categoriaFichero: CategoriaFichero) => {
         categoriaFichero.ficheros!.forEach((fichero: FicheroRecurso) => {
           const nombreArchivo = fichero.nombreArchivo;
-          const idCenad = this.cenadVisitado()!.idString;
+          const idCenad = this.cenadVisitado()!.Id;
           const idRecurso = this.idRecurso() || '';
           if (!nombreArchivo) return;
           this.orquestadorService.getImagenRecurso(nombreArchivo, idCenad, idRecurso).subscribe({
@@ -100,7 +100,7 @@ export class FicherosRecursoComponent {
 
   descargar(fichero: FicheroRecurso): void {
     const archivo = fichero.nombreArchivo;
-    const idCenad = this.cenadVisitado()!.idString;
+    const idCenad = this.cenadVisitado()!.Id;
     const idRecurso = this.idRecurso() || '';
     if (!archivo) {
       return;
@@ -128,10 +128,10 @@ export class FicherosRecursoComponent {
       this.ficheroForm.markAllAsTouched();
       return;
     }
-    const idCenad = this.cenadVisitado()?.idString || '';
+    const idCenad = this.cenadVisitado()?.Id || '';
     const idRecurso = this.idRecurso() || '';
     const { nombre, descripcion, categoriaFichero, nombreArchivo } = this.ficheroForm.value;
-    this.orquestadorService.crearFicheroRecurso(nombre, descripcion, nombreArchivo, categoriaFichero.idString, idCenad, idRecurso).subscribe(success => {
+    this.orquestadorService.crearFicheroRecurso(nombre, descripcion, nombreArchivo, categoriaFichero.Id, idCenad, idRecurso).subscribe(success => {
       if (success) {
         this.ficheroForm.reset();
         this.output.emit(); // notificamos al padre
@@ -149,24 +149,24 @@ export class FicherosRecursoComponent {
     }
     // Creamos un array de observables, uno por fichero
     const peticiones = ficheros.map(fichero =>
-      this.orquestadorService.loadCategoriaFicheroDeFichero(fichero.idString).pipe(
+      this.orquestadorService.loadCategoriaFicheroDeFichero(fichero.Id).pipe(
         map(response => ({ ...response, fichero })) // agregamos el fichero original
       )
     );
     // Ejecutamos todas las llamadas en paralelo
     forkJoin(peticiones).subscribe({
       next: (categoriasFichero) => {
-        // Agrupar por idString
+        // Agrupar por Id
         const mapaCategorias = new Map<string, CategoriaFichero>();
-        for (const { idString, nombre, tipo, descripcion, fichero } of categoriasFichero) {
-          const idStringKey = idString!; // <-- afirmamos que nunca será undefined
+        for (const { Id, nombre, tipo, descripcion, fichero } of categoriasFichero) {
+          const IdKey = Id!; // <-- afirmamos que nunca será undefined
           const nombreKey = nombre!;
           const tipoKey = tipo!;
           const descripcionKey = descripcion!;
-          if (!mapaCategorias.has(idStringKey)) {
-            mapaCategorias.set(idStringKey, { idString: idStringKey, nombre: nombreKey, tipo: tipoKey, descripcion: descripcionKey, ficheros: [] });
+          if (!mapaCategorias.has(IdKey)) {
+            mapaCategorias.set(IdKey, { Id: IdKey, nombre: nombreKey, tipo: tipoKey, descripcion: descripcionKey, ficheros: [] });
           }
-          mapaCategorias.get(idStringKey)!.ficheros!.push(fichero);
+          mapaCategorias.get(IdKey)!.ficheros!.push(fichero);
         }
         const categoriasUnicas = Array.from(mapaCategorias.values());
         // Actualizamos los signals

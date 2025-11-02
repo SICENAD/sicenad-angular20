@@ -59,8 +59,8 @@ export class CenadHeaderComponent implements OnInit {
   cenad = computed(() => this.cenadStore.cenadVisitado());
   isSuperAdmin = computed(() => this.auth.rol() === RolUsuario.Superadministrador);
   isGestorNormal = computed(() => this.auth.rol() === RolUsuario.Gestor || this.auth.rol() === RolUsuario.Normal);
-  isGestorEsteCenad = computed(() => this.auth.rol() === RolUsuario.Gestor && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
-  isAdminEsteCenad = computed(() => this.auth.rol() === RolUsuario.Administrador && this.idCenad() === this.usuarioLogueado.cenadPropio()?.idString);
+  isGestorEsteCenad = computed(() => this.auth.rol() === RolUsuario.Gestor && this.idCenad() === this.usuarioLogueado.cenadPropio()?.Id);
+  isAdminEsteCenad = computed(() => this.auth.rol() === RolUsuario.Administrador && this.idCenad() === this.usuarioLogueado.cenadPropio()?.Id);
 
   idCenadZaragoza = signal<string | null>(null);
   isCenadZaragoza = signal(false);
@@ -84,7 +84,7 @@ export class CenadHeaderComponent implements OnInit {
   private buscarIdCenadZaragoza() {
     for (const c of this.cenads()) {
       if (c.provincia === 50) {
-        this.idCenadZaragoza.set(c.idString);
+        this.idCenadZaragoza.set(c.Id);
       }
     }
   }

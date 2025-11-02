@@ -44,7 +44,7 @@
           <b>{{'archivos.descarga' | translate | uppercase }}</b>
         </div>
       </div>
-      @for (f of documentacion(); track f.idString) {
+      @for (f of documentacion(); track f.Id) {
       <app-ficheroSolicitud [fichero]="f" [idSolicitud]="idSolicitud()!" [isCenad]="isCenad()" [solicitud]="solicitud()!" />
       } }
     </div>
@@ -83,7 +83,7 @@
             >
             <select class="form-select" formControlName="categoriaFichero">
               <option [ngValue]="null">{{'ficheros.seleccionaCategoriaFichero' | translate}}</option>
-              @for (c of categoriasFichero(); track c.idString) {
+              @for (c of categoriasFichero(); track c.Id) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>

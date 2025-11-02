@@ -1,7 +1,7 @@
 import { UsuarioNormal } from "./usuarioNormal";
 
 export interface Unidad {
-  idString: string;
+  Id: string;
   nombre: string;
   descripcion: string;
   direccion: string;

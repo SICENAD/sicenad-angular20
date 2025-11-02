@@ -1,5 +1,5 @@
 export interface Usuario {
-  idString: string;
+  Id: string;
   rol: string;
   username: string;
   descripcion: string;

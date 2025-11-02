@@ -30,12 +30,12 @@ export class NormativaModalComponent {
 
   // --- State ---
   sizeMaxDocRecurso = computed(() => this.utils.sizeMaxDocRecurso());
-  idNormativa = computed(() => this.normativa()?.idString || '');
-  _idModal = signal('modal-normativa-' + this.normativa()?.idString);
-  _idModalEliminar = signal('modal-normativa-eliminar-' + this.normativa()?.idString);
+  idNormativa = computed(() => this.normativa()?.Id || '');
+  _idModal = signal('modal-normativa-' + this.normativa()?.Id);
+  _idModalEliminar = signal('modal-normativa-eliminar-' + this.normativa()?.Id);
   idModal = computed(() => this._idModal() + this.idNormativa());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idNormativa());
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.idString || '');
+  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.normativa()?.nombreArchivo || ''));

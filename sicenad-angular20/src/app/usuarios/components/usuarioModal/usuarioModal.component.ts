@@ -51,7 +51,7 @@ export class UsuarioModalComponent {
   }
 
   // --- State ---
-  idUsuario = computed(() => this.usuario()?.idString || '');
+  idUsuario = computed(() => this.usuario()?.Id || '');
   _idModal = signal('modal-usuario-' + this.idUsuario());
   _idModalEliminar = signal('modal-usuario-eliminar-' + this.idUsuario());
   idModal = computed(() => this._idModal() + this.idUsuario());
@@ -117,7 +117,7 @@ export class UsuarioModalComponent {
       return;
     }
     const { username, tfno, email, emailAdmitido, descripcion, password } = this.usuarioForm.value;
-    const idUsuario = this.usuario()!.idString;
+    const idUsuario = this.usuario()!.Id;
     switch (this.usuario()?.rol) {
       case this.misRoles.Superadministrador:
         this.orquestadorService.actualizarUsuarioSuperadministrador(
@@ -146,7 +146,7 @@ export class UsuarioModalComponent {
           email,
           emailAdmitido,
           descripcion,
-          this.cenad()?.idString || '',
+          this.cenad()?.Id || '',
           this.idUsuario()
         ).subscribe({
           next: res => {
@@ -167,7 +167,7 @@ export class UsuarioModalComponent {
           email,
           emailAdmitido,
           descripcion,
-          this.cenad()?.idString || '',
+          this.cenad()?.Id || '',
           this.idUsuario()
         ).subscribe({
           next: res => {
@@ -188,7 +188,7 @@ export class UsuarioModalComponent {
           email,
           emailAdmitido,
           descripcion,
-          this.unidad()?.idString || '',
+          this.unidad()?.Id || '',
           this.idUsuario()
         ).subscribe({
           next: res => {
@@ -219,7 +219,7 @@ export class UsuarioModalComponent {
         });
         break;
       case this.misRoles.Gestor:
-        this.orquestadorService.borrarUsuarioGestor(this.cenad()?.idString || '', this.idUsuario()).subscribe(() => {
+        this.orquestadorService.borrarUsuarioGestor(this.cenad()?.Id || '', this.idUsuario()).subscribe(() => {
           this.output.emit();
         });
         break;

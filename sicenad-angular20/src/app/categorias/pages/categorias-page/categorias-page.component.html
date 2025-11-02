@@ -2,7 +2,7 @@
   <!-- Botón volver a la página anterior -->
   <a
     class="nav-link volver me-auto"
-    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id]"
   >
     <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
     <strong>{{'comun.volver' | translate}}</strong>
@@ -60,7 +60,7 @@
         <div class="col-md-8 titulo"><b>{{ 'comun.descripcion' | translate | uppercase}}</b></div>
         @if (subcategorias().length === 0) {
         <div class="text-muted">{{'categorias.sinSubcategorias' | translate }}</div>
-        } @else { @for (sub of subcategorias(); track sub.idString) {
+        } @else { @for (sub of subcategorias(); track sub.Id) {
         <div class="row">
           <div class="col-1">
             <app-categoriaModal [categoria]="sub" class="row categoria-item p-2" />
@@ -85,7 +85,7 @@
       <div class="col-md-3 titulo"><b>{{ 'categorias.categoriasPrincipales' | translate | uppercase}}</b></div>
       <div class="col-md-8 titulo"><b>{{ 'comun.descripcion' | translate | uppercase}}</b></div>
     </div>
-    @for (c of categoriasPadreFiltradas(); track c.idString) {
+    @for (c of categoriasPadreFiltradas(); track c.Id) {
     <div class="row">
       <div class="col-1"><app-categoriaModal [categoria]="c" class="row categoria-item p-2" /></div>
       <div class="col-11">
@@ -137,7 +137,7 @@
             <label class="form-label titulo1"><b>{{ 'categorias.categoriaPadre' | translate | uppercase}}</b></label>
             <select class="form-select" formControlName="categoriaPadre">
               <option [ngValue]="null">{{ 'categorias.noPadre' | translate }}</option>
-              @for (c of categorias(); track c.idString) {
+              @for (c of categorias(); track c.Id) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>

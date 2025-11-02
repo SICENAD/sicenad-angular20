@@ -30,9 +30,9 @@ export class ArmaModalComponent {
 
   // --- State ---
   tiposTiro = computed(() => this.utils.tiposTiro());
-  idArma = computed(() => this.arma()?.idString || '');
-  _idModal = signal('modal-arma-' + this.arma()?.idString);
-  _idModalEliminar = signal('modal-arma-eliminar-' + this.arma()?.idString);
+  idArma = computed(() => this.arma()?.Id || '');
+  _idModal = signal('modal-arma-' + this.arma()?.Id);
+  _idModalEliminar = signal('modal-arma-eliminar-' + this.arma()?.Id);
   idModal = computed(() => this._idModal() + this.idArma());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idArma());
 

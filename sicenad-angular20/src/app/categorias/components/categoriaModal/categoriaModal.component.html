@@ -31,7 +31,7 @@
               <option [ngValue]="null">
                 {{ 'categorias.noPadre' | translate }}
               </option>
-              @for (c of categorias(); track c.idString) {
+              @for (c of categorias(); track c.Id) {
               <option [ngValue]="c">
                 {{ c.nombre }}
               </option>

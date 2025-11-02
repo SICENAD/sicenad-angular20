@@ -24,9 +24,9 @@ export class CategoriaFicheroModalComponent {
   categoriaFichero = input<CategoriaFichero>();
   output = output<void>();
 
-  idCategoriaFichero = computed(() => this.categoriaFichero()?.idString || '');
-  _idModal = signal('modal-categoriaFichero-' + this.categoriaFichero()?.idString);
-  _idModalEliminar = signal('modal-categoriaFichero-eliminar-' + this.categoriaFichero()?.idString);
+  idCategoriaFichero = computed(() => this.categoriaFichero()?.Id || '');
+  _idModal = signal('modal-categoriaFichero-' + this.categoriaFichero()?.Id);
+  _idModalEliminar = signal('modal-categoriaFichero-eliminar-' + this.categoriaFichero()?.Id);
   idModal = computed(() => this._idModal() + this.idCategoriaFichero());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idCategoriaFichero());
   categoriaFicheroForm: FormGroup = this.fb.group({

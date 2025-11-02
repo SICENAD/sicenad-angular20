@@ -6,7 +6,7 @@ import { TipoFormulario } from "./tipoFormulario";
 import { UsuarioGestor } from "./usuarioGestor";
 
 export interface Recurso {
-  idString: string;
+  Id: string;
   nombre: string;
   descripcion: string;
   otros: string;

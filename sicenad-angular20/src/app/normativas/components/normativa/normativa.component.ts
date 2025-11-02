@@ -22,11 +22,11 @@ export class NormativaComponent {
   private usuarioLogueado = inject(UsuarioLogueadoStore); private iconoStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
 
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.idString || '');
+  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   isAdminEsteCenad = computed(() => {
-    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.idString : '';
-    return (this.cenadVisitado()?.idString === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
+    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.Id : '';
+    return (this.cenadVisitado()?.Id === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
   });
   faDownload = this.iconoStore.faDownload;
 

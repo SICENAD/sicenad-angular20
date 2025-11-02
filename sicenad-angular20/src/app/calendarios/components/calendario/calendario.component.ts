@@ -63,7 +63,7 @@ export class CalendarioComponent {
   /** Convertir solicitud en evento de angular-calendar */
   private mapSolicitudToEvent(solicitud: Solicitud): CalendarEvent {
     return {
-      id: solicitud.idString,
+      id: solicitud.Id,
       title: solicitud.unidadUsuaria,
       start: new Date(solicitud.fechaHoraInicioRecurso || ''),
       end: solicitud.fechaHoraFinRecurso
@@ -146,7 +146,7 @@ export class CalendarioComponent {
 
   onEventClick(event: CalendarEvent) {
     if (event.id) {
-      this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes, event.id]);
+      this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.Id, this.routesPaths.solicitudes, event.id]);
     }
   }
 }

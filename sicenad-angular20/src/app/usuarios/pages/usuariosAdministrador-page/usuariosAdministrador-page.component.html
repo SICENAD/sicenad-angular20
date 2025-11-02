@@ -19,7 +19,7 @@
       <b>{{ 'usuarios.cenad' | translate | uppercase }}</b>
     </div>
   </div>
-  @for (u of usuariosAdministrador(); track u.idString) {
+  @for (u of usuariosAdministrador(); track u.Id) {
   <app-usuario [usuario]="u" />
   }
 </div>
@@ -108,7 +108,7 @@
             <label class="form-label titulo1"><b>{{ 'usuarios.cenad' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="cenad">
               <option [ngValue]="null" disabled selected>{{ 'usuarios.seleccionaCenad' | translate }}</option>
-              @for (c of cenadsSinAdmin(); track c.idString) {
+              @for (c of cenadsSinAdmin(); track c.Id) {
               <option [ngValue]="c">
                 {{ c.nombre }}
               </option>

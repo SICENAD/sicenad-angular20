@@ -24,7 +24,7 @@
         <b>{{ 'comun.descripcion' | translate | uppercase }}</b>
       </div>
     </div>
-    @for (t of tiposFormulario(); track t.idString) {
+    @for (t of tiposFormulario(); track t.Id) {
     <app-tipoFormulario [tipoFormulario]="t"></app-tipoFormulario>
     }
   </div>

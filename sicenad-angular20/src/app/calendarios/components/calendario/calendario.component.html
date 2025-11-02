@@ -51,7 +51,7 @@
     <span class="cal-day-number">{{ day.date | date : 'd' }}</span>
   </div>
   <div class="cal-events-day">
-    @for (event of day.events; track event.idString) {
+    @for (event of day.events; track event.Id) {
     <div class="cal-event-bar" [ngStyle]="getEventStyle(event, day.date)" (click)="onEventClick(event)">
       {{ event.title }}
     </div>

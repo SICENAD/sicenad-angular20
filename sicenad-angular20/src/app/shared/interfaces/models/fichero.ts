@@ -2,7 +2,7 @@ import { CategoriaFichero } from "./categoriaFichero";
 import { Cenad } from "./cenad";
 
 export interface Fichero {
-  idString: string;
+  Id: string;
   nombre: string;
   nombreArchivo: string;
   descripcion: string;

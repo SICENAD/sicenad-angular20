@@ -20,7 +20,7 @@
         <b>{{'armas.tipoTiro' | translate | uppercase}}</b>
       </div>
     </div>
-    @for (a of armas(); track a.idString) {
+    @for (a of armas(); track a.Id) {
     <app-arma [arma]="a"></app-arma>
     }
   </div>

@@ -35,9 +35,9 @@ export class RecursoModalComponent {
   tiposFormulario = computed(() => this.datosPrincipalesStore.tiposFormulario());
   usuariosGestor = computed(() => this.cenadStore.usuariosGestor());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
-  idRecurso = computed(() => this.recurso()?.idString || '');
-  _idModal = signal('modal-recurso-' + this.recurso()?.idString);
-  _idModalEliminar = signal('modal-recurso-eliminar-' + this.recurso()?.idString);
+  idRecurso = computed(() => this.recurso()?.Id || '');
+  _idModal = signal('modal-recurso-' + this.recurso()?.Id);
+  _idModalEliminar = signal('modal-recurso-eliminar-' + this.recurso()?.Id);
   idModal = computed(() => this._idModal() + this.idRecurso());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idRecurso());
 
@@ -67,10 +67,10 @@ export class RecursoModalComponent {
       if (!categorias || !tiposFormulario || !usuariosGestor || !recursoActual) return;
 
       // Cargar la categoría del recurso
-      this.orquestadorService.loadCategoriaDeRecurso(recursoActual.idString).subscribe({
+      this.orquestadorService.loadCategoriaDeRecurso(recursoActual.Id).subscribe({
         next: (categoria) => {
           const categoriaRef = categoria
-            ? categorias.find(c => c.idString === categoria.idString) || null
+            ? categorias.find(c => c.Id === categoria.Id) || null
             : null;
 
           this.recursoForm.patchValue({ categoria: categoriaRef });
@@ -80,10 +80,10 @@ export class RecursoModalComponent {
         }
       });
       // Cargar el tipo de formulario del recurso
-      this.orquestadorService.loadTipoFormularioDeRecurso(recursoActual.idString).subscribe({
+      this.orquestadorService.loadTipoFormularioDeRecurso(recursoActual.Id).subscribe({
         next: (tipoFormulario) => {
           const tipoFormularioRef = tipoFormulario
-            ? tiposFormulario.find(t => t.idString === tipoFormulario.idString) || null
+            ? tiposFormulario.find(t => t.Id === tipoFormulario.Id) || null
             : null;
 
           this.recursoForm.patchValue({ tipoFormulario: tipoFormularioRef });
@@ -93,10 +93,10 @@ export class RecursoModalComponent {
         }
       });
       // Cargar el usuario gestor del recurso
-      this.orquestadorService.loadUsuarioGestorDeRecurso(recursoActual.idString).subscribe({
+      this.orquestadorService.loadUsuarioGestorDeRecurso(recursoActual.Id).subscribe({
         next: (usuarioGestor) => {
           const usuarioGestorRef = usuarioGestor
-            ? usuariosGestor.find(u => u.idString === usuarioGestor.idString) || null
+            ? usuariosGestor.find(u => u.Id === usuarioGestor.Id) || null
             : null;
 
           this.recursoForm.patchValue({ usuarioGestor: usuarioGestorRef });
@@ -129,7 +129,7 @@ export class RecursoModalComponent {
     if (otros) {
       otrosVacio = otros;
     }
-    this.orquestadorService.actualizarRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.idString, tipoFormulario.idString, categoria.idString, usuarioGestor.idString, this.idRecurso()).subscribe({
+    this.orquestadorService.actualizarRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.Id, tipoFormulario.Id, categoria.Id, usuarioGestor.Id, this.idRecurso()).subscribe({
       next: res => {
         if (res) {
           this.output.emit(); // notificamos al padre
@@ -140,9 +140,9 @@ export class RecursoModalComponent {
       }
     });
   }
-  
+
   borrarRecurso() {
-    this.orquestadorService.borrarRecurso(this.idRecurso(), this.cenadVisitado()!.idString).subscribe(() => {
+    this.orquestadorService.borrarRecurso(this.idRecurso(), this.cenadVisitado()!.Id).subscribe(() => {
       this.output.emit(); // notificamos al padre
     });
   }

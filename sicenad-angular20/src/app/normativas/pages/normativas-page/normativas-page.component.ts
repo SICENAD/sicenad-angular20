@@ -37,8 +37,8 @@ export class NormativasPageComponent {
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
 
   isAdminEsteCenad = computed(() => {
-    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.idString : '';
-    return (this.cenadVisitado()?.idString === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
+    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.Id : '';
+    return (this.cenadVisitado()?.Id === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
   });
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -70,7 +70,7 @@ export class NormativasPageComponent {
       this.normativaForm.markAllAsTouched();
       return;
     }
-    const idCenad = this.cenadVisitado()?.idString || '';
+    const idCenad = this.cenadVisitado()?.Id || '';
     const { nombre, descripcion, nombreArchivo } = this.normativaForm.value;
     this.orquestadorService.crearNormativa(nombre, descripcion, nombreArchivo, idCenad).subscribe(success => {
       if (success) {

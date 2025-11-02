@@ -31,12 +31,12 @@ export class CartografiaModalComponent {
   // --- State ---
   escalas = computed(() => this.utils.escalasCartografia());
   sizeMaxCartografia = computed(() => this.utils.sizeMaxCartografia());
-  idCartografia = computed(() => this.cartografia()?.idString || '');
-  _idModal = signal('modal-cartografia-' + this.cartografia()?.idString);
-  _idModalEliminar = signal('modal-cartografia-eliminar-' + this.cartografia()?.idString);
+  idCartografia = computed(() => this.cartografia()?.Id || '');
+  _idModal = signal('modal-cartografia-' + this.cartografia()?.Id);
+  _idModalEliminar = signal('modal-cartografia-eliminar-' + this.cartografia()?.Id);
   idModal = computed(() => this._idModal() + this.idCartografia());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idCartografia());
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.idString || '');
+  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.cartografia()?.nombreArchivo || ''));

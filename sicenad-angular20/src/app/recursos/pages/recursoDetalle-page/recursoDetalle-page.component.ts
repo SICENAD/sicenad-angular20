@@ -55,7 +55,7 @@ export class RecursoDetallePageComponent {
   solicitudesValidadas = signal<Solicitud[]>([]);
 
   isGestorEsteRecurso = computed(() => {
-    return (this.usuarioLogueado.usuarioLogueado()?.idString === this.idGestorDelRecurso()) && (this.auth.rol() === RolUsuario.Gestor);
+    return (this.usuarioLogueado.usuarioLogueado()?.Id === this.idGestorDelRecurso()) && (this.auth.rol() === RolUsuario.Gestor);
   });
 
   recursoForm: FormGroup = this.fb.group({
@@ -79,7 +79,7 @@ export class RecursoDetallePageComponent {
       this.orquestadorService.loadRecursoSeleccionado(this.idRecurso()).subscribe({
         next: (recurso) => {
           const recursoRef = recurso
-            ? recursos.find(r => r.idString === recurso.idString) || null
+            ? recursos.find(r => r.Id === recurso.Id) || null
             : null;
           this.recurso.set(recursoRef);
           // ✅ Aquí actualizamos el formulario cuando se cargue el recurso
@@ -105,7 +105,7 @@ export class RecursoDetallePageComponent {
       this.orquestadorService.loadCategoriaDeRecurso(this.idRecurso()).subscribe({
         next: (categoria) => {
           const categoriaRef = categoria
-            ? categorias.find(c => c.idString === categoria.idString) || null
+            ? categorias.find(c => c.Id === categoria.Id) || null
             : null;
 
           this.categoria.set(categoriaRef ? categoriaRef : null);
@@ -117,9 +117,9 @@ export class RecursoDetallePageComponent {
       this.orquestadorService.loadUsuarioGestorDeRecurso(this.idRecurso()).subscribe({
         next: (usuarioGestor) => {
           const usuarioGestorRef = usuarioGestor
-            ? usuariosGestor.find(u => u.idString === usuarioGestor.idString) || null
+            ? usuariosGestor.find(u => u.Id === usuarioGestor.Id) || null
             : null;
-          this.idGestorDelRecurso.set(usuarioGestorRef ? usuarioGestorRef.idString : '');
+          this.idGestorDelRecurso.set(usuarioGestorRef ? usuarioGestorRef.Id : '');
         },
         error: () => {
         }
@@ -159,7 +159,7 @@ export class RecursoDetallePageComponent {
       otros,
       conDatosEspecificosSolicitud,
       datosEspecificosSolicitud,
-      this.cenadVisitado()!.idString,
+      this.cenadVisitado()!.Id,
       this.idRecurso()
     ).subscribe({
       next: res => {

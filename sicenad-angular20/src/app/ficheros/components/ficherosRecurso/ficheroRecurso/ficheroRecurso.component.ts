@@ -19,7 +19,7 @@ export class FicheroRecursoComponent {
   private iconoStore = inject(IconosStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private orquestadorService = inject(OrquestadorService);
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.idString || '');
+  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   faDownload = this.iconoStore.faDownload;
 
@@ -56,10 +56,10 @@ export class FicheroRecursoComponent {
       const categoriasFichero = this.categoriasFichero();
       if (!categoriasFichero || !ficheroActual) return;
       // Cargar la categoría de fichero del fichero
-      this.orquestadorService.loadCategoriaFicheroDeFichero(ficheroActual.idString).subscribe({
+      this.orquestadorService.loadCategoriaFicheroDeFichero(ficheroActual.Id).subscribe({
         next: (categoriaFichero) => {
           const categoriaFicheroRef = categoriaFichero
-            ? categoriasFichero.find(c => c.idString === categoriaFichero.idString) || null
+            ? categoriasFichero.find(c => c.Id === categoriaFichero.Id) || null
             : null;
           this.categoriaFichero.set(categoriaFicheroRef);
         }
@@ -68,7 +68,7 @@ export class FicheroRecursoComponent {
   }
 
   recargarFichero() {
-    this.orquestadorService.loadFicheroRecursoSeleccionado(this.ficheroSignal()!.idString).subscribe({
+    this.orquestadorService.loadFicheroRecursoSeleccionado(this.ficheroSignal()!.Id).subscribe({
       next: (ficheroActualizado) => {
         this.ficheroSignal.set(ficheroActualizado ?? undefined);
       },

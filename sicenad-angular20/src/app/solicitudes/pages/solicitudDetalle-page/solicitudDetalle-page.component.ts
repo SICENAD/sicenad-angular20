@@ -51,10 +51,10 @@ export class SolicitudDetallePageComponent {
     return this.cenadStore.cenadVisitado();
   });
   isGestorEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
+    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Gestor);
   });
   isAdminEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
+    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Administrador);
   });
   idSolicitud = computed(() => this.route.snapshot.params['idSolicitud']);
   solicitud = signal<Solicitud | null>(null);
@@ -96,10 +96,10 @@ export class SolicitudDetallePageComponent {
       const recursos = this.recursos();
       if (!recursos || !solicitudActual) return;
       // Cargar el recurso de la solicitud
-      this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.idString).subscribe({
+      this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.Id).subscribe({
         next: (recurso) => {
           const recursoRef = recurso
-            ? recursos.find(r => r.idString === recurso.idString) || null
+            ? recursos.find(r => r.Id === recurso.Id) || null
             : null;
           this.recurso.set(recursoRef);
         },
@@ -170,11 +170,11 @@ export class SolicitudDetallePageComponent {
       return;
     }
     const { observaciones, observacionesCenad, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, fechaFinDocumentacion, estado } = this.solicitudForm.value;
-    this.orquestadorService.actualizarSolicitud(observaciones, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, estado, this.cenadVisitado()!.idString, this.idSolicitud(), observacionesCenad, fechaFinDocumentacion).subscribe({
+    this.orquestadorService.actualizarSolicitud(observaciones, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, estado, this.cenadVisitado()!.Id, this.idSolicitud(), observacionesCenad, fechaFinDocumentacion).subscribe({
       next: res => {
         if (res) {
-          this.estadoInicial !== estado && this.orquestadorService.notificarCambioEstado(this.solicitud()!.idString).subscribe();
-          this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
+          this.estadoInicial !== estado && this.orquestadorService.notificarCambioEstado(this.solicitud()!.Id).subscribe();
+          this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.Id, this.routesPaths.solicitudes]);
         }
       },
       error: (error) => {
@@ -184,9 +184,9 @@ export class SolicitudDetallePageComponent {
   }
 
   borrarSolicitud() {
-    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.idString, this.solicitud()!.estado).subscribe({
+    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.Id, this.solicitud()!.estado).subscribe({
       next: res => {
-        res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.idString, this.routesPaths.solicitudes]);
+        res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.Id, this.routesPaths.solicitudes]);
       },
       error: (error) => {
         console.error(error);

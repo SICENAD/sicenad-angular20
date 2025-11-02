@@ -72,7 +72,7 @@ export class UsuariosAdministradorPageComponent {
       email,
       emailAdmitido,
       descripcion,
-      cenad.idString
+      cenad.Id
     ).subscribe({
       next: (res) => {
         this.usuarioForm.reset();

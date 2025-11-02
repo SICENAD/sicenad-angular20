@@ -91,7 +91,7 @@ crearCenad(entidad: any): Observable<any> {
     };
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
-        const idCenad = resCrear.idString;
+        const idCenad = resCrear.Id;
         if (!archivoEscudo) return of(true);
         const endpointUpload = `/files/${idCenad}/subirEscudo`;
         return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(

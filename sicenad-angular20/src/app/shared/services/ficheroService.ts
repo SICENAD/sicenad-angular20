@@ -56,7 +56,7 @@ export class FicheroService {
     }
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
-        const idFichero = resCrear.idString;
+        const idFichero = resCrear.Id;
         if (!archivo) return of(true);
         const endpointUpload = body.recurso ? `/files/${idCenad}/subirDocRecurso/${idRecurso}` : `/files/${idCenad}/subirDocSolicitud/${idSolicitud}`;
         return this.apiService.subirArchivo(endpointUpload, archivo).pipe(

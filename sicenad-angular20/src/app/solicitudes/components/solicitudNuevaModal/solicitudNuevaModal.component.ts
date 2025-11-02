@@ -40,10 +40,10 @@ export class SolicitudNuevaModalComponent {
     return this.cenadStore.cenadVisitado();
   });
   isGestorEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
+    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Gestor);
   });
   isAdminEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
+    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Administrador);
   });
   loading = signal(false);
   categoriasFiltradas = signal<Categoria[]>([]);
@@ -97,7 +97,7 @@ export class SolicitudNuevaModalComponent {
     const categoria = this.categoriaSeleccionada();
     if (!categoria) return;
     this.loading.set(true);
-    const idCat = categoria.idString;
+    const idCat = categoria.Id;
     // Añadimos la categoría al historial
     this.historialCategorias.update(historial => [...historial, categoria]);
     // Verificar si las subcategorías ya están cacheadas
@@ -193,7 +193,7 @@ export class SolicitudNuevaModalComponent {
     }
     // Categoría actual (última después de retroceder)
     const ultimaCategoria = nuevoHistorial[nuevoHistorial.length - 1];
-    const idCat = ultimaCategoria.idString;
+    const idCat = ultimaCategoria.Id;
     /** === SUBCATEGORÍAS === */
     const cacheSub = this.cacheSubcategorias().get(idCat);
     if (cacheSub) {
@@ -259,7 +259,7 @@ export class SolicitudNuevaModalComponent {
 
   /** Obtener solicitudes por estado */
   getSolicitudes(estado: string) {
-    this.orquestadorService.loadAllSolicitudes(this.cenadVisitado()!.idString).subscribe({
+    this.orquestadorService.loadAllSolicitudes(this.cenadVisitado()!.Id).subscribe({
       next: (solicitudes) => {
           const lista = solicitudes ?? [];
           // Emitir al padre el valor actualizado
@@ -267,7 +267,7 @@ export class SolicitudNuevaModalComponent {
         },
       error: (err) => console.error(err)
     });
-    this.orquestadorService.loadAllSolicitudesEstado(this.cenadVisitado()!.idString, estado).subscribe({
+    this.orquestadorService.loadAllSolicitudesEstado(this.cenadVisitado()!.Id, estado).subscribe({
       error: (err) => console.error(err)
     });
   }
@@ -292,9 +292,9 @@ export class SolicitudNuevaModalComponent {
         fechaInicio,
         fechaFin,
         estado,
-        this.cenadVisitado()!.idString,
-        recurso.idString,
-        this.usuarioLogueado()!.idString)
+        this.cenadVisitado()!.Id,
+        recurso.Id,
+        this.usuarioLogueado()!.Id)
       .subscribe({
         next: (success) => {
           if (success) {

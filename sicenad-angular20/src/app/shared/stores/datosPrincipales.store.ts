@@ -58,42 +58,42 @@ export class DatosPrincipalesStore {
   // --- MÉTODOS DE UTILIDAD: SET / ADD / REMOVE / CLEAR ---
   setCenads(c: Cenad[]) { this._cenads.set([...c]); }
   addCenad(c: Cenad) { this._cenads.update(arr => [...arr, c]); }
-  removeCenad(id: string) { this._cenads.update(arr => arr.filter(x => x.idString !== id)); }
+  removeCenad(id: string) { this._cenads.update(arr => arr.filter(x => x.Id !== id)); }
   clearCenads() { this._cenads.set([]); }
 
   setCategoriasFichero(c: CategoriaFichero[]) { this._categoriasFichero.set([...c]); }
   addCategoriaFichero(c: CategoriaFichero) { this._categoriasFichero.update(arr => [...arr, c]); }
-  removeCategoriaFichero(id: string) { this._categoriasFichero.update(arr => arr.filter(x => x.idString !== id)); }
+  removeCategoriaFichero(id: string) { this._categoriasFichero.update(arr => arr.filter(x => x.Id !== id)); }
   clearCategoriasFichero() { this._categoriasFichero.set([]); }
 
   setTiposFormulario(c: TipoFormulario[]) { this._tiposFormulario.set([...c]); }
   addTipoFormulario(c: TipoFormulario) { this._tiposFormulario.update(arr => [...arr, c]); }
-  removeTipoFormulario(id: string) { this._tiposFormulario.update(arr => arr.filter(x => x.idString !== id)); }
+  removeTipoFormulario(id: string) { this._tiposFormulario.update(arr => arr.filter(x => x.Id !== id)); }
   clearTiposFormulario() { this._tiposFormulario.set([]); }
 
   setUnidades(c: Unidad[]) { this._unidades.set([...c]); }
   addUnidad(c: Unidad) { this._unidades.update(arr => [...arr, c]); }
-  removeUnidad(id: string) { this._unidades.update(arr => arr.filter(x => x.idString !== id)); }
+  removeUnidad(id: string) { this._unidades.update(arr => arr.filter(x => x.Id !== id)); }
   clearUnidades() { this._unidades.set([]); }
 
   setArmas(c: Arma[]) { this._armas.set([...c]); }
   addArma(c: Arma) { this._armas.update(arr => [...arr, c]); }
-  removeArma(id: string) { this._armas.update(arr => arr.filter(x => x.idString !== id)); }
+  removeArma(id: string) { this._armas.update(arr => arr.filter(x => x.Id !== id)); }
   clearArmas() { this._armas.set([]); }
 
   setUsuariosSuperadministrador(c: UsuarioSuperAdministrador[]) { this._usuariosSuperadministrador.set([...c]); }
   addUsuarioSuperadministrador(c: UsuarioSuperAdministrador) { this._usuariosSuperadministrador.update(arr => [...arr, c]); }
-  removeUsuarioSuperadministrador(id: string) { this._usuariosSuperadministrador.update(arr => arr.filter(x => x.idString !== id)); }
+  removeUsuarioSuperadministrador(id: string) { this._usuariosSuperadministrador.update(arr => arr.filter(x => x.Id !== id)); }
   clearUsuariosSuperadministrador() { this._usuariosSuperadministrador.set([]); }
 
   setUsuariosAdministrador(c: UsuarioAdministrador[]) { this._usuariosAdministrador.set([...c]); }
   addUsuarioAdministrador(c: UsuarioAdministrador) { this._usuariosAdministrador.update(arr => [...arr, c]); }
-  removeUsuarioAdministrador(id: string) { this._usuariosAdministrador.update(arr => arr.filter(x => x.idString !== id)); }
+  removeUsuarioAdministrador(id: string) { this._usuariosAdministrador.update(arr => arr.filter(x => x.Id !== id)); }
   clearUsuariosAdministrador() { this._usuariosAdministrador.set([]); }
 
   setUsuariosNormal(c: UsuarioNormal[]) { this._usuariosNormal.set([...c]); }
   addUsuarioNormal(c: UsuarioNormal) { this._usuariosNormal.update(arr => [...arr, c]); }
-  removeUsuarioNormal(id: string) { this._usuariosNormal.update(arr => arr.filter(x => x.idString !== id)); }
+  removeUsuarioNormal(id: string) { this._usuariosNormal.update(arr => arr.filter(x => x.Id !== id)); }
   clearUsuariosNormal() { this._usuariosNormal.set([]); }
 
   setUrlApi(url: string) { this._urlApi.set(url); }

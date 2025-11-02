@@ -3,7 +3,7 @@ import { FicheroSolicitud } from './ficheroSolicitud';
 import { Recurso } from './recurso';
 import { UsuarioNormal } from './usuarioNormal';
 export interface SolicitudCalendario {
-    idString: string;
+    Id: string;
     observaciones: string;
     observacionesCenad: string;
     jefeUnidadUsuaria: string;

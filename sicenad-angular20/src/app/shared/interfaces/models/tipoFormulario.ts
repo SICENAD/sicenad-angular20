@@ -1,7 +1,7 @@
 import { Recurso } from "./recurso";
 
 export interface TipoFormulario {
-  idString: string;
+  Id: string;
   nombre: string;
   descripcion: string;
   recursos?: Recurso[];

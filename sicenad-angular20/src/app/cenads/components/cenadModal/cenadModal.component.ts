@@ -28,9 +28,9 @@ export class CenadModalComponent {
   // --- State ---
   provincias = signal<{ idProvincia: number, nombre: string }[]>(this.utils.provincias());
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
-  idCenad = computed(() => this.cenad()?.idString || '');
-  _idModal = signal('modal-cenad-' + this.cenad()?.idString);
-  _idModalEliminar = signal('modal-cenad-eliminar-' + this.cenad()?.idString);
+  idCenad = computed(() => this.cenad()?.Id || '');
+  _idModal = signal('modal-cenad-' + this.cenad()?.Id);
+  _idModalEliminar = signal('modal-cenad-eliminar-' + this.cenad()?.Id);
   idModal = computed(() => this._idModal() + this.idCenad());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idCenad());
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;

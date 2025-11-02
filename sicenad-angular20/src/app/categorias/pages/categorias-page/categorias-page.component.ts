@@ -61,7 +61,7 @@ export class CategoriasPageComponent {
   seleccionarCategoria(categoria: Categoria) {
     this.categoriaSeleccionada.set(categoria);
     // Llamada al backend para cargar subcategorías
-    this.orquestadorService.loadSubcategorias(categoria.idString).subscribe({
+    this.orquestadorService.loadSubcategorias(categoria.Id).subscribe({
       next: (subcats) => {
         this.subcategorias.set(subcats ?? []);
         this.scrollToTop(); // 🔹 Mueve la vista al inicio
@@ -73,7 +73,7 @@ export class CategoriasPageComponent {
   volverCategoriaAnterior() {
     const categoriaActual = this.categoriaSeleccionada();
     if (!categoriaActual) return;
-    this.orquestadorService.loadCategoriaPadre(categoriaActual.idString).subscribe({
+    this.orquestadorService.loadCategoriaPadre(categoriaActual.Id).subscribe({
       next: (categoriaPadre) => {
         if (categoriaPadre) {
           // Si hay categoría padre, la seleccionamos
@@ -92,7 +92,7 @@ export class CategoriasPageComponent {
   /** Devuelve true si la categoría es categoriaPadre */
   esCategoriaPadre(categoria: Categoria | null): boolean {
     if (!categoria) return false; // Si no hay categoría seleccionada, no es padre
-    return this.categoriasPadre().some(c => c.idString === categoria.idString);
+    return this.categoriasPadre().some(c => c.Id === categoria.Id);
   }
 
   /** Scroll automático hacia arriba */
@@ -109,9 +109,9 @@ export class CategoriasPageComponent {
       return;
     }
     const { nombre, descripcion, categoriaPadre } = this.categoriaForm.value;
-    const idCategoriaPadre = categoriaPadre ? categoriaPadre.idString : '';
+    const idCategoriaPadre = categoriaPadre ? categoriaPadre.Id : '';
     this.orquestadorService
-      .crearCategoria(nombre, descripcion, this.cenadVisitado()!.idString, idCategoriaPadre)
+      .crearCategoria(nombre, descripcion, this.cenadVisitado()!.Id, idCategoriaPadre)
       .subscribe({
         next: (success) => {
           if (success) {

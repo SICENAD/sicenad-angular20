@@ -6,7 +6,7 @@ import { UsuarioAdministrador } from "./usuarioAdministrador";
 import { UsuarioGestor } from "./usuarioGestor";
 
 export interface Cenad {
-  idString: string;
+  Id: string;
   nombre: string;
   descripcion: string;
   direccion: string;

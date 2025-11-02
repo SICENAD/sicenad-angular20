@@ -5,7 +5,7 @@
     <!-- Botón volver a solicitudes -->
     <a
       class="nav-link volver"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes]"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id, routesPaths.solicitudes]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
       <strong>{{ 'solicitudes.volverSolicitudes' | translate }}</strong>
@@ -13,7 +13,7 @@
     <!-- Botón volver al calendario -->
     <a
       class="nav-link volver"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.calendario]"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id, routesPaths.calendario]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
       <strong>{{ 'solicitudes.volverCalendario' | translate }}</strong>
@@ -167,7 +167,7 @@
       <app-ficherosSolicitud
         [isCenad]="true"
         [documentacion]="documentacionCenad()"
-        [idSolicitud]="solicitud()?.idString"
+        [idSolicitud]="solicitud()?.Id"
         [solicitud]="solicitud()"
         (output)="recargarDocumentacionCenad()"
       />
@@ -176,7 +176,7 @@
       <app-ficherosSolicitud
         [isCenad]="false"
         [documentacion]="documentacionUnidad()"
-        [idSolicitud]="solicitud()?.idString"
+        [idSolicitud]="solicitud()?.Id"
         [solicitud]="solicitud()"
         (output)="recargarDocumentacionUnidad()"
       />

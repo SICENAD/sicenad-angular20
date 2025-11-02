@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-10 col-sm-10 col-md-2 col-lg-2 col-xl-2 titulo1 d-flex">
         <b class="me-2">{{ solicitud()?.unidadUsuaria }}</b>
-        <a class="nav-link me-auto" [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString, routesPaths.solicitudes, solicitud()?.idString]">
+        <a class="nav-link me-auto" [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id, routesPaths.solicitudes, solicitud()?.Id]">
             @if (isEditable()) {
             <fa-icon [icon]="faEdit"></fa-icon>
             } @else {

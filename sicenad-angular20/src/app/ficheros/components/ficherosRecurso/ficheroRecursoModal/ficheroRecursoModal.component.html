@@ -39,7 +39,7 @@
             >
             <select class="form-select" formControlName="categoriaFichero">
               <option [ngValue]="null">{{ 'ficheros.seleccionaCategoriaFichero' | translate }}</option>
-              @for (c of categoriasFichero(); track c.idString) {
+              @for (c of categoriasFichero(); track c.Id) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>

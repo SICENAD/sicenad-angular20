@@ -32,12 +32,12 @@ export class FicheroRecursoModalComponent {
 
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
   sizeMaxDocRecurso = computed(() => this.utils.sizeMaxDocRecurso());
-  idFichero = computed(() => this.fichero()?.idString || '');
-  _idModal = signal('modal-fichero-' + this.fichero()?.idString);
-  _idModalEliminar = signal('modal-fichero-eliminar-' + this.fichero()?.idString);
+  idFichero = computed(() => this.fichero()?.Id || '');
+  _idModal = signal('modal-fichero-' + this.fichero()?.Id);
+  _idModalEliminar = signal('modal-fichero-eliminar-' + this.fichero()?.Id);
   idModal = computed(() => this._idModal() + this.idFichero());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idFichero());
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.idString || '');
+  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.fichero()?.nombreArchivo || ''));
@@ -79,10 +79,10 @@ export class FicheroRecursoModalComponent {
       const categoriasFichero = this.categoriasFichero();
       if (!categoriasFichero || !ficheroActual) return;
       // Cargar la categoría de fichero del fichero
-      this.orquestadorService.loadCategoriaFicheroDeFichero(ficheroActual.idString).subscribe({
+      this.orquestadorService.loadCategoriaFicheroDeFichero(ficheroActual.Id).subscribe({
         next: (categoriaFichero) => {
           const categoriaFicheroRef = categoriaFichero
-            ? categoriasFichero.find(c => c.idString === categoriaFichero.idString) || null
+            ? categoriasFichero.find(c => c.Id === categoriaFichero.Id) || null
             : null;
           this.ficheroForm.patchValue({ categoriaFichero: categoriaFicheroRef });
         },
@@ -109,7 +109,7 @@ export class FicheroRecursoModalComponent {
     }
     const { nombre, descripcion, categoriaFichero } = this.ficheroForm.value;
     const archivo = this.archivoFile();
-    this.orquestadorService.actualizarFicheroRecurso(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.idRecurso(), categoriaFichero.idString, this.idFichero()).subscribe({
+    this.orquestadorService.actualizarFicheroRecurso(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.idRecurso(), categoriaFichero.Id, this.idFichero()).subscribe({
       next: res => {
         if (res) {
           this.output.emit(); // notificamos al padre

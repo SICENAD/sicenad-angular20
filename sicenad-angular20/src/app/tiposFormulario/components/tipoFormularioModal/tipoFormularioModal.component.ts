@@ -24,7 +24,7 @@ export class TipoformularioModalComponent {
   tipoFormulario = input<TipoFormulario>();
   output = output<void>();
 
-  idTipoFormulario = computed(() => this.tipoFormulario()?.idString || '');
+  idTipoFormulario = computed(() => this.tipoFormulario()?.Id || '');
   _idModal = signal('modal-tipo-formulario-' + this.idTipoFormulario());
   _idModalEliminar = signal('modal-tipo-formulario-eliminar-' + this.idTipoFormulario());
   idModal = computed(() => this._idModal() + this.idTipoFormulario());

@@ -4,7 +4,7 @@
     <!-- Botón volver a la página anterior -->
     <a
       class="nav-link volver position-absolute start-0"
-      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+      [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id]"
     >
       <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
       <strong>{{ 'comun.volver' | translate }}</strong>
@@ -33,8 +33,8 @@
           #selectRecurso
         >
           <option [value]="''" class="titulo1">{{ 'calendario.seleccionaRecurso' | translate }}</option>
-          @for (r of recursosFiltrados; track r.idString) {
-          <option [value]="r.idString" class="titulo1">{{ r.nombre }}</option>
+          @for (r of recursosFiltrados; track r.Id) {
+          <option [value]="r.Id" class="titulo1">{{ r.nombre }}</option>
           }
         </select>
       </div>

@@ -47,10 +47,11 @@ export class ApiService {
         );
         break;
       case 'PATCH':
-        if (!body?.id) {
+        console.log(body?.Id);
+        if (!body?.Id) {
           return throwError(() => new Error('No se indicó ID para PATCH'));
         }
-        observable = from(this.editarElemento(body.id, endpoint, body)).pipe(
+        observable = from(this.editarElemento(body.Id, endpoint, body)).pipe(
           map(result => result as unknown as T)
         );
         break;

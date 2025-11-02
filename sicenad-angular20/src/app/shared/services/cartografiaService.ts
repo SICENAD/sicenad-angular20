@@ -51,7 +51,7 @@ export class CartografiaService {
     };
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
-        const idCartografia = resCrear.idString;
+        const idCartografia = resCrear.Id;
         if (!archivo) return of(true);
         const endpointUpload = `/files/${idCenad}/subirCartografia`;
         return this.apiService.subirArchivo(endpointUpload, archivo).pipe(

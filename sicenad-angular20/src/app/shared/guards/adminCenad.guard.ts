@@ -20,7 +20,7 @@ export const adminCenadGuard: CanActivateFn = (route) => {
   return true; //dejamos los guard de momento abiertos
 
   /*
-  if (usuario?.rol === RolUsuario.Administrador && cenadPropio?.idString === idCenad) {
+  if (usuario?.rol === RolUsuario.Administrador && cenadPropio?.Id === idCenad) {
     return true;
   } else {
     alert(idiomaService.t('administracion.debesAdminCenad'));

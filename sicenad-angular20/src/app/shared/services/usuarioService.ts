@@ -22,7 +22,7 @@ export class UsuarioService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
-  private urlBasic = `${this.utils.urlApi}/getbytitle('Usuarios')/items`;
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Usuarios')/items`;
 
   // --- REQUEST LOGIN ---
   login(username: string, password: string): Observable<LoginResponse> {
@@ -435,7 +435,7 @@ export class UsuarioService {
           )
         );
         const cenad: Cenad = await firstValueFrom(
-          this.apiService.request(`/usuarios_administrador/${usuario.idString}/cenad`, 'GET', null)
+          this.apiService.request(`/usuarios_administrador/${usuario.Id}/cenad`, 'GET', null)
         );
         return { usuario, cenad };
       }
@@ -448,7 +448,7 @@ export class UsuarioService {
           )
         );
         const cenad: Cenad = await firstValueFrom(
-          this.apiService.request(`/usuarios_gestor/${usuario.idString}/cenad`, 'GET', null)
+          this.apiService.request(`/usuarios_gestor/${usuario.Id}/cenad`, 'GET', null)
         );
         return { usuario, cenad };
       }
@@ -461,7 +461,7 @@ export class UsuarioService {
           )
         );
         const unidad: Unidad = await firstValueFrom(
-          this.apiService.request(`/usuarios_normal/${usuario.idString}/unidad`, 'GET', null)
+          this.apiService.request(`/usuarios_normal/${usuario.Id}/unidad`, 'GET', null)
         );
         return { usuario, unidad };
       }

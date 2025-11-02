@@ -67,31 +67,31 @@ export class CenadStore {
   // --- CATEGORIAS ---
   setCategorias(c: Categoria[]) { this._categorias.set([...c]); }
   addCategoria(c: Categoria) { this._categorias.update(arr => [...arr, c]); }
-  removeCategoria(id: string) { this._categorias.update(arr => arr.filter(x => x.idString !== id)); }
+  removeCategoria(id: string) { this._categorias.update(arr => arr.filter(x => x.Id !== id)); }
   clearCategorias() { this._categorias.set([]); }
 
   // --- CATEGORIAS PADRE ---
   setCategoriasPadre(c: Categoria[]) { this._categoriasPadre.set([...c]); }
   addCategoriaPadre(c: Categoria) { this._categoriasPadre.update(arr => [...arr, c]); }
-  removeCategoriaPadre(id: string) { this._categoriasPadre.update(arr => arr.filter(x => x.idString !== id)); }
+  removeCategoriaPadre(id: string) { this._categoriasPadre.update(arr => arr.filter(x => x.Id !== id)); }
   clearCategoriasPadre() { this._categoriasPadre.set([]); }
 
   // --- RECURSOS ---
   setRecursos(r: Recurso[]) { this._recursos.set([...r]); }
   addRecurso(r: Recurso) { this._recursos.update(arr => [...arr, r]); }
-  removeRecurso(id: string) { this._recursos.update(arr => arr.filter(x => x.idString !== id)); }
+  removeRecurso(id: string) { this._recursos.update(arr => arr.filter(x => x.Id !== id)); }
   clearRecursos() { this._recursos.set([]); }
 
   // --- CARTOGRAFIAS ---
   setCartografias(c: Cartografia[]) { this._cartografias.set([...c]); }
   addCartografia(c: Cartografia) { this._cartografias.update(arr => [...arr, c]); }
-  removeCartografia(id: string) { this._cartografias.update(arr => arr.filter(x => x.idString !== id)); }
+  removeCartografia(id: string) { this._cartografias.update(arr => arr.filter(x => x.Id !== id)); }
   clearCartografias() { this._cartografias.set([]); }
 
   // --- NORMATIVAS ---
   setNormativas(n: Normativa[]) { this._normativas.set([...n]); }
   addNormativa(n: Normativa) { this._normativas.update(arr => [...arr, n]); }
-  removeNormativa(id: string) { this._normativas.update(arr => arr.filter(x => x.idString !== id)); }
+  removeNormativa(id: string) { this._normativas.update(arr => arr.filter(x => x.Id !== id)); }
   clearNormativas() { this._normativas.set([]); }
 
   // --- SOLICITUDES ---
@@ -107,12 +107,12 @@ export class CenadStore {
   addSolicitudRechazada(s: Solicitud) { this._solicitudesRechazada.update(arr => [...arr, s]); }
   addSolicitudValidada(s: Solicitud) { this._solicitudesValidada.update(arr => [...arr, s]); }
   addSolicitudCancelada(s: Solicitud) { this._solicitudesCancelada.update(arr => [...arr, s]); }
-  removeSolicitud(id: string) { this._solicitudes.update(arr => arr.filter(x => x.idString !== id)); }
-  removeSolicitudBorrador(id: string) { this._solicitudesBorrador.update(arr => arr.filter(x => x.idString !== id)); }
-  removeSolicitudSolicitada(id: string) { this._solicitudesSolicitada.update(arr => arr.filter(x => x.idString !== id)); }
-  removeSolicitudRechazada(id: string) { this._solicitudesRechazada.update(arr => arr.filter(x => x.idString !== id)); }
-  removeSolicitudValidada(id: string) { this._solicitudesValidada.update(arr => arr.filter(x => x.idString !== id)); }
-  removeSolicitudCancelada(id: string) { this._solicitudesCancelada.update(arr => arr.filter(x => x.idString !== id)); }
+  removeSolicitud(id: string) { this._solicitudes.update(arr => arr.filter(x => x.Id !== id)); }
+  removeSolicitudBorrador(id: string) { this._solicitudesBorrador.update(arr => arr.filter(x => x.Id !== id)); }
+  removeSolicitudSolicitada(id: string) { this._solicitudesSolicitada.update(arr => arr.filter(x => x.Id !== id)); }
+  removeSolicitudRechazada(id: string) { this._solicitudesRechazada.update(arr => arr.filter(x => x.Id !== id)); }
+  removeSolicitudValidada(id: string) { this._solicitudesValidada.update(arr => arr.filter(x => x.Id !== id)); }
+  removeSolicitudCancelada(id: string) { this._solicitudesCancelada.update(arr => arr.filter(x => x.Id !== id)); }
   clearSolicitudes() { this._solicitudes.set([]); }
   clearSolicitudesBorrador() { this._solicitudesBorrador.set([]); }
   clearSolicitudesSolicitada() { this._solicitudesSolicitada.set([]); }
@@ -123,7 +123,7 @@ export class CenadStore {
   // --- USUARIOS GESTOR ---
   setUsuariosGestor(u: UsuarioGestor[]) { this._usuariosGestor.set([...u]); }
   addUsuarioGestor(u: UsuarioGestor) { this._usuariosGestor.update(arr => [...arr, u]); }
-  removeUsuarioGestor(id: string) { this._usuariosGestor.update(arr => arr.filter(x => x.idString !== id)); }
+  removeUsuarioGestor(id: string) { this._usuariosGestor.update(arr => arr.filter(x => x.Id !== id)); }
   clearUsuariosGestor() { this._usuariosGestor.set([]); }
 
   // --- USUARIO ADMINISTRADOR ---

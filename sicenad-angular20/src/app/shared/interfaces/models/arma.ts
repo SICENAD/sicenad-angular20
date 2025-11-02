@@ -1,5 +1,5 @@
 export interface Arma {
-  idString: string;
+  Id: string;
   nombre: string;
   tipoTiro: string;
   url?: string;

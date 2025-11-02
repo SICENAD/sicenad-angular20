@@ -1,27 +1,27 @@
 @if (btnVista() === 'Gestor') {
 <!-- muestra la vista de ficheros  que verá quien no sea gestor del recurso-->
 <div>
-  @for (c of categoriasFicheroImagenesMisFicheros(); track c.idString) {
+  @for (c of categoriasFicheroImagenesMisFicheros(); track c.Id) {
   <div class="titulo">
     <h4 class="text-center">
       <b>{{ c.nombre }}</b>
     </h4>
     <hr />
   </div>
-  @for (f of c.ficheros; track f.idString) {
+  @for (f of c.ficheros; track f.Id) {
   <a href="#" (click)="show($event, f)">
     <figure class="pe-4 pt-2 pb-3">
       <img [src]="f.urlImagen" width="350" [alt]="f.nombre" />
       <figcaption class="text-center pt-2">{{ f.nombre }}</figcaption>
     </figure>
   </a>
-  } } @for (c of categoriasFicheroNoImagenesMisFicheros(); track c.idString) {
+  } } @for (c of categoriasFicheroNoImagenesMisFicheros(); track c.Id) {
   <div class="titulo">
     <h4 class="text-center">
       <b>{{ c.nombre }}</b>
     </h4>
     <hr />
-    @for (f of c.ficheros; track f.idString) {
+    @for (f of c.ficheros; track f.Id) {
     <div>
       <a (click)="descargar(f)" class="texto href ms-3 download-link">{{ f.nombre }}</a>
     </div>
@@ -59,7 +59,7 @@
           <b>{{ 'archivos.descarga' | translate | uppercase }}</b>
         </div>
       </div>
-      @for (f of ficheros(); track f.idString) {
+      @for (f of ficheros(); track f.Id) {
       <app-ficheroRecurso [fichero]="f" [idRecurso]="idRecurso()!" />
       }
     </div>
@@ -99,7 +99,7 @@
             >
             <select class="form-select" formControlName="categoriaFichero">
               <option [ngValue]="null">{{ 'ficheros.seleccionaCategoriaFichero' | translate }}</option>
-              @for (c of categoriasFichero(); track c.idString) {
+              @for (c of categoriasFichero(); track c.Id) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>

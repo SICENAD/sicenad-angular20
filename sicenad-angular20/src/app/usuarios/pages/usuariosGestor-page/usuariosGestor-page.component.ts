@@ -64,7 +64,7 @@ export class UsuariosGestorPageComponent {
       email,
       emailAdmitido,
       descripcion,
-      this.cenad()?.idString || ''
+      this.cenad()?.Id || ''
     ).subscribe({
       next: (res) => {
         this.usuarioForm.reset();

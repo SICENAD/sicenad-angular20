@@ -2,7 +2,7 @@ import { Cenad } from "./cenad";
 import { Recurso } from "./recurso";
 
 export interface Categoria {
-  idString: string;
+  Id: string;
   nombre: string;
   descripcion: string;
   escudo: string;

@@ -14,7 +14,7 @@
       <div class="col-4 titulo"><b>{{ 'cenads.provincia' | translate | uppercase}}</b></div>
       <div class="col-4 titulo"><b>{{ 'cenads.administrador' | translate | uppercase}}</b></div>
     </div>
-    @for (c of cenads(); track c.idString) {
+    @for (c of cenads(); track c.Id) {
     <app-cenad [cenad]="c"></app-cenad>
     }
   </div>

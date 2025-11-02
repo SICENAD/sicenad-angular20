@@ -49,7 +49,7 @@ export class NormativaService {
     };
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       switchMap(resCrear => {
-        const idNormativa = resCrear.idString;
+        const idNormativa = resCrear.Id;
         if (!archivo) return of(true);
         const endpointUpload = `/files/${idCenad}/subirNormativa`;
         return this.apiService.subirArchivo(endpointUpload, archivo).pipe(

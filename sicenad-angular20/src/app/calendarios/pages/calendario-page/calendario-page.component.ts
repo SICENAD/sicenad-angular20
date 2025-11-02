@@ -28,7 +28,7 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
     CalendarioComponent,
     FiltroRecursosComponent,
     SolicitudNuevaModalComponent,
-    TranslateModule, 
+    TranslateModule,
     UpperCasePipe
 ],
   templateUrl: './calendario-page.component.html',
@@ -107,9 +107,9 @@ export class CalendarioPageComponent {
   }
 
   seleccionarRecurso(id: string) {
-    const recurso = this.recursosFiltrados.find(r => r.idString === id) || null;
+    const recurso = this.recursosFiltrados.find(r => r.Id === id) || null;
     this.recursoSeleccionado.set(recurso);
-    recurso ? this.cargarEventosDeRecurso(recurso!.idString) : this.solicitudes.set([]);
+    recurso ? this.cargarEventosDeRecurso(recurso!.Id) : this.solicitudes.set([]);
   }
 
   cargarEventosDeRecurso(idRecurso: string) {
@@ -130,7 +130,7 @@ export class CalendarioPageComponent {
     }
     // Crear un array de observables, uno por cada recurso
     const solicitudesObservables = recursos.map(recurso =>
-      this.orquestadorService.loadSolicitudesDeRecurso(recurso.idString)
+      this.orquestadorService.loadSolicitudesDeRecurso(recurso.Id)
     );
     // Ejecutar todas las llamadas en paralelo
     forkJoin(solicitudesObservables).subscribe({

@@ -2,7 +2,7 @@
 <div class="d-flex align-items-center position-relative p-2 bg-light">
   <a
     class="nav-link volver me-auto"
-    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id]"
     ><fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon><strong>{{ 'comun.volver' | translate }}</strong>
   </a>
   <h3 class="position-absolute start-50 translate-middle-x m-0 titulo">
@@ -31,7 +31,7 @@
         <b>{{ 'archivos.descarga' | translate | uppercase }}</b>
       </div>
     </div>
-    @for (c of cartografias(); track c.idString) {
+    @for (c of cartografias(); track c.Id) {
     <app-cartografia [cartografia]="c" />
     }
   </div>

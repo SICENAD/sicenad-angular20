@@ -33,10 +33,10 @@ export class UsuariosPageComponent {
     return this.rol() === this.misRoles.Superadministrador ? this.routesPaths.superadministrador : this.routesPaths.cenadHome;
   });
   idCenadVisitado = computed(() => {
-    return this.cenadStore.cenadVisitado()?.idString;
+    return this.cenadStore.cenadVisitado()?.Id;
   });
   isMiCenad = computed(() => {
-    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.idString : '';
+    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.Id : '';
     return (this.idCenadVisitado() == idCenadPropio);
   });
   rol = signal<string | null>(this.auth.rol());

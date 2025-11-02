@@ -58,7 +58,7 @@ export class FiltroRecursosComponent {
     if (categoria) {
       this.categoriaSeleccionada.set(categoria);
       // Cargar recursos de la categoría
-      this.orquestadorService.loadRecursosDeSubcategorias(categoria.idString).subscribe({
+      this.orquestadorService.loadRecursosDeSubcategorias(categoria.Id).subscribe({
         next: (recursos) => {
           const lista = recursos ?? [];
           this.recursosCategoriaSeleccionada.set(lista);
@@ -74,7 +74,7 @@ export class FiltroRecursosComponent {
         }
       });
       // Cargar subcategorías directas
-      this.orquestadorService.loadSubcategorias(categoria.idString).subscribe({
+      this.orquestadorService.loadSubcategorias(categoria.Id).subscribe({
         next: (subcats) => this.subcategorias.set(subcats ?? []),
         error: (err) => {
           console.error(err);
@@ -94,7 +94,7 @@ export class FiltroRecursosComponent {
   volverCategoriaAnterior() {
     const categoriaActual = this.categoriaSeleccionada();
     if (!categoriaActual) return;
-    this.orquestadorService.loadCategoriaPadre(categoriaActual.idString).subscribe({
+    this.orquestadorService.loadCategoriaPadre(categoriaActual.Id).subscribe({
       next: (categoriaPadre) => {
         if (categoriaPadre) {
           // Si hay categoría padre, la seleccionamos
@@ -124,6 +124,6 @@ export class FiltroRecursosComponent {
   /** Devuelve true si la categoría es categoriaPadre */
   esCategoriaPadre(categoria: Categoria | null): boolean {
     if (!categoria) return false; // Si no hay categoría seleccionada, no es padre
-    return this.categoriasPadre().some(c => c.idString === categoria.idString);
+    return this.categoriasPadre().some(c => c.Id === categoria.Id);
   }
 }

@@ -438,7 +438,7 @@ export class OrquestadorService {
               emailAdmitido,
               descripcion,
               idCenad,
-              usuario.idString
+              usuario.Id
             ).pipe(
               map(() => registerRes) // seguimos devolviendo la respuesta del registro original
             );
@@ -490,7 +490,7 @@ export class OrquestadorService {
               emailAdmitido,
               descripcion,
               idCenad,
-              usuario.idString
+              usuario.Id
             ).pipe(
               map(() => registerRes) // seguimos devolviendo la respuesta del registro original
             );
@@ -542,7 +542,7 @@ export class OrquestadorService {
               emailAdmitido,
               descripcion,
               idUnidad,
-              usuario.idString
+              usuario.Id
             ).pipe(
               map(() => registerRes) // seguimos devolviendo la respuesta del registro original
             );

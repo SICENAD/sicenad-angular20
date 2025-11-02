@@ -1,7 +1,7 @@
 <div class="d-flex align-items-center position-relative p-2 bg-light">
   <a
     class="nav-link volver me-auto"
-    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id]"
   >
     <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
     <strong>{{ 'comun.volver' | translate }}</strong>
@@ -41,7 +41,7 @@
       <div class="col-md-3 titulo"><b>{{ 'recursos.recurso' | translate | uppercase }}</b></div>
       <div class="col-md-9 titulo"><b>{{ 'comun.descripcion' | translate | uppercase }}</b></div>
     </div>
-    @if (recursosFiltrados().length > 0) { @for (r of recursosFiltrados(); track r.idString) {
+    @if (recursosFiltrados().length > 0) { @for (r of recursosFiltrados(); track r.Id) {
     <app-recurso [recurso]="r" />
     } } @else {
     <div class="text-muted mt-3">{{ 'recursos.sinRecursos' | translate }}</div>
@@ -92,7 +92,7 @@
             >
             <select class="form-select" formControlName="tipoFormulario">
               <option [ngValue]="null">{{ 'recursos.seleccionaTipoFormulario' | translate }}</option>
-              @for (t of tiposFormulario(); track t.idString) {
+              @for (t of tiposFormulario(); track t.Id) {
               <option [ngValue]="t">{{ t.nombre }}</option>
               }
             </select>
@@ -104,7 +104,7 @@
             >
             <select class="form-select" formControlName="categoria">
               <option [ngValue]="null">{{ 'recursos.seleccionaCategoria' | translate }}</option>
-              @for (c of categorias(); track c.idString) {
+              @for (c of categorias(); track c.Id) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>
@@ -116,7 +116,7 @@
             >
             <select class="form-select" formControlName="usuarioGestor">
               <option [ngValue]="null">{{ 'recursos.seleccionaUsuarioGestor' | translate }}</option>
-              @for (u of usuariosGestor(); track u.idString) {
+              @for (u of usuariosGestor(); track u.Id) {
               <option [ngValue]="u">{{ u.username }}</option>
               }
             </select>

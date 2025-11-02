@@ -46,7 +46,7 @@ export class UsuarioComponent {
         // Aquí podrás hacer otra llamada o acción específica
         break;
       case this.rolUsuario.Administrador:
-        this.orquestadorService.loadCenadDeAdministrador(this.usuario().idString).subscribe({
+        this.orquestadorService.loadCenadDeAdministrador(this.usuario().Id).subscribe({
           next: (cenad) => {
             if (cenad) {
               // Aquí podrías guardar en un signal o propiedad local
@@ -59,7 +59,7 @@ export class UsuarioComponent {
         });
         break;
       case this.rolUsuario.Gestor:
-        this.orquestadorService.loadCenadDeGestor(this.usuario().idString).subscribe({
+        this.orquestadorService.loadCenadDeGestor(this.usuario().Id).subscribe({
           next: (cenad) => {
             if (cenad) {
               console.log(cenad);
@@ -73,7 +73,7 @@ export class UsuarioComponent {
         });
         break;
       case this.rolUsuario.Normal:
-        this.orquestadorService.loadUnidadDeUsuarioNormal(this.usuario().idString).subscribe({
+        this.orquestadorService.loadUnidadDeUsuarioNormal(this.usuario().Id).subscribe({
           next: (unidad) => {
             if (unidad) {
               // Aquí podrías guardar en un signal o propiedad local

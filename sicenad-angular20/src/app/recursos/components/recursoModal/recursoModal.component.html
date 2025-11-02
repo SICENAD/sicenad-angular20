@@ -43,7 +43,7 @@
             <label class="form-label titulo1"><b>{{ 'recursos.tipoFormulario' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="tipoFormulario">
               <option [ngValue]="null">{{ 'recursos.seleccionaTipoFormulario' | translate }}</option>
-              @for (t of tiposFormulario(); track t.idString) {
+              @for (t of tiposFormulario(); track t.Id) {
               <option [ngValue]="t">{{ t.nombre }}</option>
               }
             </select>
@@ -53,7 +53,7 @@
             <label class="form-label titulo1"><b>{{ 'recursos.categoria' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="categoria">
               <option [ngValue]="null">{{ 'recursos.seleccionaCategoria' | translate }}</option>
-              @for (c of categorias(); track c.idString) {
+              @for (c of categorias(); track c.Id) {
               <option [ngValue]="c">{{ c.nombre }}</option>
               }
             </select>
@@ -63,7 +63,7 @@
             <label class="form-label titulo1"><b>{{ 'recursos.usuarioGestor' | translate | uppercase }}<sup class="text-danger">*</sup></b></label>
             <select class="form-select" formControlName="usuarioGestor">
               <option [ngValue]="null">{{ 'recursos.seleccionaUsuarioGestor' | translate }}</option>
-              @for (u of usuariosGestor(); track u.idString) {
+              @for (u of usuariosGestor(); track u.Id) {
               <option [ngValue]="u">{{ u.username }}</option>
               }
             </select>

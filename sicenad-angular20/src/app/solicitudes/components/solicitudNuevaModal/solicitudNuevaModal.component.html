@@ -41,7 +41,7 @@
               @if (usuarioLogueado()?.rol !== misRoles.Normal) {
               <select class="form-select" aria-label="unidad" formControlName="unidad">
                 <option [ngValue]="null">{{ 'solicitudes.seleccioneUnidad' | translate }}</option>
-                @for (u of unidades(); track u.idString) {
+                @for (u of unidades(); track u.Id) {
                 <option [ngValue]="u">{{ u.nombre }}</option>
                 }
               </select>
@@ -119,7 +119,7 @@
                 class="form-select mb-3"
               >
                 <option [ngValue]="null" disabled>{{ 'solicitudes.seleccionaCategoria' | translate }}</option>
-                @for (c of categoriasFiltradas(); track c.idString) {
+                @for (c of categoriasFiltradas(); track c.Id) {
                 <option [ngValue]="c">
                   {{ c.nombre.toUpperCase() }}
                 </option>
@@ -137,7 +137,7 @@
               <label>{{ 'solicitudes.recurso' | translate | uppercase}} <sup class="text-danger me-2">*</sup></label>
               <select name="recursos" id="recursos" formControlName="recurso">
                 <option [ngValue]="null" disabled selected>{{ 'solicitudes.seleccionaRecurso' | translate }}</option>
-                @for (recurso of recursos(); track recurso.idString) {
+                @for (recurso of recursos(); track recurso.Id) {
                 <option [ngValue]="recurso">
                   {{ recurso.nombre }}
                 </option>

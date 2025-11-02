@@ -4,7 +4,7 @@ import { Recurso } from "./recurso";
 import { UsuarioNormal } from "./usuarioNormal";
 
 export interface Solicitud {
-  idString: string;
+  Id: string;
   observaciones: string;
   observacionesCenad: string;
   jefeUnidadUsuaria: string;

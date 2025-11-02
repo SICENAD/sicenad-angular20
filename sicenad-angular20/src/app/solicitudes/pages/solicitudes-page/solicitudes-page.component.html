@@ -3,7 +3,7 @@
   <!-- Botón volver a la página anterior -->
   <a
     class="nav-link volver me-auto"
-    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.idString]"
+    [routerLink]="[routesPaths.cenadHome, cenadVisitado()?.Id]"
   >
     <fa-icon class="fa-2x volver" [icon]="faVolver"></fa-icon>
     <strong>{{ 'comun.volver' | translate }}</strong>

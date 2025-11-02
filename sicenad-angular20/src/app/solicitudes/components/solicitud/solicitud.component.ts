@@ -39,10 +39,10 @@ export class SolicitudComponent {
     return this.cenadStore.cenadVisitado();
   });
   isGestorEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Gestor);
+    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Gestor);
   });
   isAdminEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.idString === this.cenadVisitado()?.idString) && (this.auth.rol() === RolUsuario.Administrador);
+    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Administrador);
   });
 
   solicitud = input<Solicitud>();
@@ -58,10 +58,10 @@ export class SolicitudComponent {
       const recursos = this.recursos();
       if (!recursos || !solicitudActual) return;
       // Cargar la categoría del recurso
-      this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.idString).subscribe({
+      this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.Id).subscribe({
         next: (recurso) => {
           const recursoRef = recurso
-            ? recursos.find(r => r.idString === recurso.idString) || null
+            ? recursos.find(r => r.Id === recurso.Id) || null
             : null;
           this.recurso.set(recursoRef);
         },

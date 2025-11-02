@@ -19,7 +19,7 @@
     } @if (!categoriaSeleccionada()) {
     <!-- Si no hay categoría seleccionada, mostrar las categorías raíz -->
     <ng-container>
-      @for (cat of categoriasPadre() ; track cat.idString) {
+      @for (cat of categoriasPadre() ; track cat.Id) {
       <button class="btn me-2" (click)="seleccionarCategoria(cat)">
         {{ cat.nombre }}
       </button>
@@ -29,7 +29,7 @@
     <b>{{ 'categorias.subcategorias' | translate | uppercase}}: </b>
     <!-- Subcategorías directas -->
     <ng-container>
-      @for (sub of subcategorias(); track sub.idString ) {
+      @for (sub of subcategorias(); track sub.Id ) {
       <button class="btn me-2" (click)="seleccionarCategoria(sub)">
         {{ sub.nombre }}
       </button>

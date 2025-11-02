@@ -71,7 +71,7 @@
         <br />
         <h4 class="titulo-busqueda"><u>{{'homeCenadVisitado.cenadCmt' | translate}}:</u></h4>
         <!-- Resultados -->
-        @for (cenad of cenadsFiltro(); track cenad.idString) {
+        @for (cenad of cenadsFiltro(); track cenad.Id) {
         <div class="resultado">
           <app-resultado-cenads-provincia [cenad]="cenad" />
         </div>

@@ -2,7 +2,7 @@ import { Cartografia } from "./cartografia";
 import { Fichero } from "./fichero";
 
 export interface CategoriaFichero {
-  idString: string;
+  Id: string;
   nombre: string;
   descripcion: string;
   tipo: number;

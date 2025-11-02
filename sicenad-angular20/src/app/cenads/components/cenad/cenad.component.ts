@@ -33,7 +33,7 @@ export class CenadComponent  {
   private getUsuarioAdministrador = effect(() => {
     const c = this.cenad();
     if (!c) return;
-      this.orquestadorService.loadUsuarioAdministradorCenad(c.idString).pipe(
+      this.orquestadorService.loadUsuarioAdministradorCenad(c.Id).pipe(
             tap(res => {
               this.usuarioAdministrador.set(res);
             }),

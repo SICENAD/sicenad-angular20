@@ -24,9 +24,9 @@ export class UnidadModalComponent {
   unidad = input<Unidad>();
   output = output<void>();
 
-  idUnidad = computed(() => this.unidad()?.idString || '');
-  _idModal = signal('modal-unidad-' + this.unidad()?.idString);
-  _idModalEliminar = signal('modal-unidad-eliminar-' + this.unidad()?.idString);
+  idUnidad = computed(() => this.unidad()?.Id || '');
+  _idModal = signal('modal-unidad-' + this.unidad()?.Id);
+  _idModalEliminar = signal('modal-unidad-eliminar-' + this.unidad()?.Id);
   idModal = computed(() => this._idModal() + this.idUnidad());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idUnidad());
   unidadForm: FormGroup = this.fb.group({
@@ -44,7 +44,7 @@ export class UnidadModalComponent {
   get tfno() { return this.unidadForm.get('tfno'); }
   get direccion() { return this.unidadForm.get('direccion'); }
   get poc() { return this.unidadForm.get('poc'); }
-  
+
 ngOnInit(): void {
     if (this.unidad()) {
       this.unidadForm.patchValue({

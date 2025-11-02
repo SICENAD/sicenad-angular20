@@ -30,7 +30,7 @@
         <b>{{ 'unidades.poc' | translate | uppercase }}</b>
       </div>
     </div>
-    @for (u of unidades(); track u.idString) {
+    @for (u of unidades(); track u.Id) {
     <app-unidad [unidad]="u"></app-unidad>
     }
   </div>

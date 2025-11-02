@@ -70,7 +70,7 @@ export class UsuariosNormalPageComponent {
       email,
       emailAdmitido,
       descripcion,
-      unidad.idString
+      unidad.Id
     ).subscribe({
       next: (res) => {
         this.usuarioForm.reset();

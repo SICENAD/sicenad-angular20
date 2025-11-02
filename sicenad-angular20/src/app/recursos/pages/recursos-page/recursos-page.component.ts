@@ -95,13 +95,13 @@ export class RecursosPageComponent {
       otrosVacio = otros;
     }
     this.orquestadorService
-      .crearRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.idString, tipoFormulario.idString, categoria.idString, usuarioGestor.idString)
+      .crearRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.Id, tipoFormulario.Id, categoria.Id, usuarioGestor.Id)
       .subscribe({
         next: (success) => {
           if (success) {
             this.recursoForm.reset();
             // 🔹 Volver siempre a la vista inicial de categorías principales
-          } 
+          }
         },
         error: (err) => console.error(err)
       });

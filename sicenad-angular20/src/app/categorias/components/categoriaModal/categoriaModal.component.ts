@@ -28,9 +28,9 @@ export class CategoriaModalComponent {
   // --- State ---
   categorias = computed(() => this.cenadStore.categorias());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
-  idCategoria = computed(() => this.categoria()?.idString || '');
-  _idModal = signal('modal-categoria-' + this.categoria()?.idString);
-  _idModalEliminar = signal('modal-categoria-eliminar-' + this.categoria()?.idString);
+  idCategoria = computed(() => this.categoria()?.Id || '');
+  _idModal = signal('modal-categoria-' + this.categoria()?.Id);
+  _idModalEliminar = signal('modal-categoria-eliminar-' + this.categoria()?.Id);
   idModal = computed(() => this._idModal() + this.idCategoria());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idCategoria());
 
@@ -51,10 +51,10 @@ export class CategoriaModalComponent {
       const categoriaActual = this.categoria();
       if (!categorias || !categoriaActual) return;
       // Cargar la categoría padre
-      this.orquestadorService.loadCategoriaPadre(categoriaActual.idString).subscribe({
+      this.orquestadorService.loadCategoriaPadre(categoriaActual.Id).subscribe({
         next: (padre) => {
           const padreRef = padre
-            ? categorias.find(c => c.idString === padre.idString) || null
+            ? categorias.find(c => c.Id === padre.Id) || null
             : null;
           this.categoriaForm.patchValue({ categoriaPadre: padreRef });
         },
@@ -80,8 +80,8 @@ export class CategoriaModalComponent {
       return;
     }
     const { nombre, descripcion, categoriaPadre } = this.categoriaForm.value;
-    const idCategoriaPadre = categoriaPadre ? categoriaPadre.idString : '';
-    this.orquestadorService.actualizarCategoria(nombre, descripcion, this.cenadVisitado()!.idString, this.idCategoria(), idCategoriaPadre).subscribe({
+    const idCategoriaPadre = categoriaPadre ? categoriaPadre.Id : '';
+    this.orquestadorService.actualizarCategoria(nombre, descripcion, this.cenadVisitado()!.Id, this.idCategoria(), idCategoriaPadre).subscribe({
       next: res => {
         if (res) {
           this.output.emit(); // notificamos al padre
@@ -93,7 +93,7 @@ export class CategoriaModalComponent {
     });
   }
   borrarCategoria() {
-    this.orquestadorService.borrarCategoria(this.idCategoria(), this.cenadVisitado()!.idString).subscribe(() => {
+    this.orquestadorService.borrarCategoria(this.idCategoria(), this.cenadVisitado()!.Id).subscribe(() => {
       this.output.emit(); // notificamos al padre
     });
   }

@@ -12,7 +12,7 @@
       <b>{{ 'usuarios.superadministrador' | translate | uppercase }}</b>
     </div>
   </div>
-  @for (u of usuariosSuperadministrador(); track u.idString) {
+  @for (u of usuariosSuperadministrador(); track u.Id) {
   <app-usuario [usuario]='u'/>
   }
 </div>
