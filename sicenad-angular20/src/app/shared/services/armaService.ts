@@ -12,7 +12,7 @@ export class ArmaService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
-  private urlBasic = `${this.utils.urlApi}/getbytitle('armas')/items`;
+  private urlBasic = `${this.utils.urlApi}/getbytitle('Armas')/items`;
 
   getAll(): Observable<Arma[]> {
     const endpoint = this.urlBasic;
