@@ -464,9 +464,7 @@ export class UsuarioService {
         }
         const cenad = await firstValueFrom(this.cenadService.getCenadDeAdministrador(usuario.Id));
         if (!cenad) {
-          const mensaje = await this.idiomaService.tVars('cenads.cenadNoEncontrado', {
-            cenad: cenad!.nombre || '',
-          });
+          const mensaje = await this.idiomaService.tVars('cenads.cenadNoEncontrado');
           throw new Error(mensaje);
         }
         return { usuario, cenad };
@@ -481,9 +479,7 @@ export class UsuarioService {
         }
         const cenad = await firstValueFrom(this.cenadService.getCenadDeGestor(usuario.Id));
         if (!cenad) {
-          const mensaje = await this.idiomaService.tVars('cenads.cenadNoEncontrado', {
-            cenad: cenad!.nombre || '',
-          });
+          const mensaje = await this.idiomaService.tVars('cenads.cenadNoEncontrado');
           throw new Error(mensaje);
         }
         return { usuario, cenad };

@@ -1,10 +1,10 @@
-import { inject, Injectable } from "@angular/core";
-import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs";
-import { ApiService } from "./apiService";
-import { Cenad } from "@interfaces/models/cenad";
-import { UtilService } from "./utilService";
-import { IdiomaService } from "./idiomaService";
-import { UtilsStore } from "@stores/utils.store";
+import { inject, Injectable } from '@angular/core';
+import { catchError, concatMap, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { ApiService } from './apiService';
+import { Cenad } from '@interfaces/models/cenad';
+import { UtilService } from './utilService';
+import { IdiomaService } from './idiomaService';
+import { UtilsStore } from '@stores/utils.store';
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {
@@ -15,12 +15,10 @@ export class CenadService {
   private urlBasic = `${this.utils.urlApi()}/getbytitle('Cenads')/items`;
 
   getAll(): Observable<Cenad[]> {
-    const endpoint = `/cenads?size=1000`;
-    return this.apiService.request<{ _embedded: { cenads: Cenad[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.cenads.map(c => ({ ...c, url: (c as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const endpoint = this.urlBasic;
+    return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
+      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -28,16 +26,17 @@ export class CenadService {
   }
 
   getCenadsSinAdmin(): Observable<Cenad[] | null> {
-    const endpoint = `/cenads/sinAdmin?size=1000`;
-    return this.apiService.request<{ _embedded: { cenads: Cenad[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.cenads.map((c: any): Cenad => ({ ...c, url: c._links?.self?.href })) || []
-      ),
-      catchError(err => { console.error(err); return of([]); })
+    const endpoint = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq ''`;
+    return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
+      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
+      catchError((err) => {
+        console.error(err);
+        return of([]);
+      })
     );
   }
 
-  getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
+  getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad> {
     const urlCenads = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq ${idUsuarioAdministrador}`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
       map((res) => {
@@ -47,28 +46,45 @@ export class CenadService {
         return cenad;
       }),
       catchError((err) => {
-        console.error(err);
-        return of(null);
+        console.error('❌ Error en login:', err);
+        return throwError(() => err);
       })
     );
   }
 
-  getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
-    const endpoint = `/usuarios_gestor/${idUsuarioGestor}/cenad`;
-    return this.apiService.request<Cenad>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+  getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad> {
+    //lo hare en usuarioService
+    const urlCenads = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq '1'`;
+    return this.apiService.request<any>(urlCenads, 'GET').pipe(
+      map((res) => {
+        const cenads = res?.d?.results || [];
+        const cenad = cenads[0];
+        if (!cenad) throw new Error('Cenad no encontrado');
+        return cenad;
+      }),
+      catchError((err) => {
+        console.error('❌ Error en login:', err);
+        return throwError(() => err);
+      })
     );
   }
 
-  getCenadSeleccionado(idCenad: string): Observable<Cenad | null> {
-    const endpoint = `/cenads/${idCenad}`;
-    return this.apiService.request<Cenad>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+  getCenadSeleccionado(idCenad: string): Observable<Cenad> {
+    const urlCenads = `${this.urlBasic}(${idCenad})`;
+    return this.apiService.request<any>(urlCenads, 'GET').pipe(
+      map((res) => {
+        const cenads = res?.d?.results || [];
+        const cenad = cenads[0];
+        if (!cenad) throw new Error('Cenad no encontrado');
+        return cenad;
+      }),
+      catchError((err) => {
+        console.error('❌ Error en login:', err);
+        return throwError(() => err);
+      })
     );
   }
-/*
+  /*
 //metodo para crear cenad en sharepoint creando la biblioteca de ese cenad
 crearCenad(entidad: any): Observable<any> {
   return this.crearElemento('Cenads', entidad).pipe(
@@ -91,36 +107,45 @@ crearCenad(entidad: any): Observable<any> {
     descripcion: string,
     archivoEscudo: File
   ): Observable<any> {
-    const endpoint = `/cenads`;
-    const body = {
-      nombre: nombre.toUpperCase(),
-      provincia,
-      direccion: this.utilService.toTitleCase(direccion),
-      tfno,
-      email,
-      descripcion
-    };
-    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
-      switchMap(resCrear => {
-        const idCenad = resCrear.Id;
-        if (!archivoEscudo) return of(true);
-        const endpointUpload = `/files/${idCenad}/subirEscudo`;
-        return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
-          switchMap((escudo: string) => {
-            if (!escudo) return of(false);
-            const endpointCenad = `${endpoint}/${idCenad}`;
-            return this.apiService.request<any>(endpointCenad, 'PATCH', { escudo }).pipe(
-              tap(async () => {
-                const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', { nombre });
-                this.utilService.toast(mensaje, 'success');
-              }),
-              map(() => true)
-            );
-          })
-        );
-      }),
-      catchError(err => { console.error(err); return of(false); })
-    );
+    const endpoint = 'Cenads';
+    return this.apiService
+      .request<any>(endpoint, 'POST', {
+        nombre: nombre.toUpperCase(),
+        provincia,
+        direccion: this.utilService.toTitleCase(direccion),
+        tfno,
+        email,
+        descripcion,
+      })
+      .pipe(
+        switchMap((resCrear) => {
+          const idCenad = resCrear.Id;
+          console.log(idCenad);
+          if (!archivoEscudo) return of(true);
+          const endpointUpload = `/${nombre.toUpperCase()}/escudo`;
+          return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
+            switchMap((resEscudo) => {
+              const escudo: string = resEscudo.d.Name;
+              console.log(escudo);
+              if (!escudo) return of(false);
+              const endpointCenad = 'Cenads';
+              return this.apiService.request<any>(endpointCenad, 'PATCH', { Id: idCenad, escudo }).pipe(
+                tap(async () => {
+                  const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', {
+                    nombre,
+                  });
+                  this.utilService.toast(mensaje, 'success');
+                }),
+                map(() => true)
+              );
+            })
+          );
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
   }
 
   editarCenad(
@@ -152,13 +177,16 @@ crearCenad(entidad: any): Observable<any> {
           this.utilService.toast(mensaje, 'success');
         }),
         map(() => escudo),
-        catchError(err => { console.error(err); return of(null); })
+        catchError((err) => {
+          console.error(err);
+          return of(null);
+        })
       );
     };
     if (!archivoEscudo) return patchCenad();
     const endpointUpload = `/files/${idCenad}/subirEscudo`;
     return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
-      concatMap(nuevoEscudo => {
+      concatMap((nuevoEscudo) => {
         if (!nuevoEscudo) return of(null);
         if (escudo) {
           const endpointBorrar = `/files/${idCenad}/borrarEscudo/${escudo}`;
@@ -178,19 +206,20 @@ crearCenad(entidad: any): Observable<any> {
   }
 
   deleteCenad(idCenad: string): Observable<any> {
-    const endpointCenad = `/cenads/${idCenad}`;
-    const endpointCarpeta = `/files/${idCenad}/borrarCarpetaCenad`;
-    return this.apiService.borrarCarpeta(endpointCarpeta).pipe(
-      switchMap(() => this.apiService.request<any>(endpointCenad, 'DELETE')),
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('cenads.cenadEliminado', { id: idCenad });
+    //const endpointCarpeta = `/files/${idCenad}/borrarCarpetaCenad`;
+    const endpoint = 'Cenads';
+    return this.apiService.request<any>(endpoint, 'DELETE', { Id: idCenad }).pipe(
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('cenads.cenadEliminado', {
+          id: idCenad,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      map(() => true),
-      catchError(err => { console.error(err); return of(false); })
+      catchError((err) => {
+        console.error(err);
+        return of(false);
+      })
     );
-
-
 
     /*
 //cuando borre un cenad querre borrar la biblioteca de documentos asociada a ese cenad
@@ -203,7 +232,7 @@ this.apiService.borrarBiblioteca(cenad.nombre)
   }
 
   getEscudo(escudo: string, idCenad: string): Observable<Blob> {
-    const endpoint = `/files/${idCenad}/escudo/${escudo}`;
+    const endpoint = `/CENAD CHINCHILLA/escudo/${escudo}`;
     return this.apiService.mostrarArchivo(endpoint);
   }
 
@@ -232,7 +261,7 @@ this.apiService.borrarBiblioteca(cenad.nombre)
           this.utilService.toast(mensaje, 'success');
         }),
         map(() => infoCenad),
-        catchError(err => {
+        catchError((err) => {
           console.error(err);
           return of(null);
         })
@@ -241,7 +270,7 @@ this.apiService.borrarBiblioteca(cenad.nombre)
     if (!archivoInfoCenad) return patchInfoCenad();
     const endpointUpload = `/files/${idCenad}/subirInfoCenad`;
     return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
-      concatMap(nuevaInfo => {
+      concatMap((nuevaInfo) => {
         if (!nuevaInfo) return of(null);
         if (infoCenad) {
           const endpointBorrar = `/files/${idCenad}/borrarInfoCenad/${infoCenad}`;
