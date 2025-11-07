@@ -17,7 +17,6 @@ export class CenadService {
   getAll(): Observable<Cenad[]> {
     const endpoint = this.urlBasic;
     return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
-      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -28,7 +27,6 @@ export class CenadService {
   getCenadsSinAdmin(): Observable<Cenad[] | null> {
     const endpoint = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq ''`;
     return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
-      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
       catchError((err) => {
         console.error(err);
         return of([]);

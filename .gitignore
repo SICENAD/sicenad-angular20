@@ -53,3 +53,4 @@ logs/
 ### Información que no quiero compartir ###
 
 src/main/resources/config/passwordsBD.properties
+sicenad-angular20/package-lock.json

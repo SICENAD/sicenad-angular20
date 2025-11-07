@@ -17,9 +17,6 @@ export class CategoriaService {
   getAll(idCenad: string): Observable<Categoria[]> {
     const urlCategorias = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad}`;
     return this.apiService.request<any>(urlCategorias, 'GET').pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);

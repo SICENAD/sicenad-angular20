@@ -17,7 +17,6 @@ export class CategoriaFicheroService {
   getAll(): Observable<CategoriaFichero[]> {
     const endpoint = this.urlBasic;
     return this.apiService.request<CategoriaFichero[]>(endpoint, 'GET').pipe(
-      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
       catchError((err) => {
         console.error(err);
         return of([]);

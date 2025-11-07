@@ -17,7 +17,6 @@ export class UnidadService {
   getAll(): Observable<Unidad[]> {
     const endpoint = this.urlBasic;
     return this.apiService.request<Unidad[]>(endpoint, 'GET').pipe(
-      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
       catchError((err) => {
         console.error(err);
         return of([]);

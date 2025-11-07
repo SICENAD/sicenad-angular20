@@ -17,9 +17,6 @@ export class CartografiaService {
   getAll(idCenad: string): Observable<Cartografia[]> {
     const urlCartografias = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad}`;
     return this.apiService.request<any>(urlCartografias, 'GET').pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -30,7 +27,6 @@ export class CartografiaService {
   getCartografiaSeleccionada(idCartografia: string): Observable<Cartografia | null> {
     const endpoint = `/cartografias/${idCartografia}`;
     return this.apiService.request<Cartografia>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
       catchError((err) => {
         console.error(err);
         return of(null);

@@ -121,7 +121,6 @@ export class UsuarioService {
   getAll(): Observable<Usuario[]> {
     const endpoint = this.urlBasic;
     return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
-      map((res) => res?.map((item) => ({ ...item, url: (item as any)._links?.self?.href })) || []),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -133,9 +132,6 @@ export class UsuarioService {
     const lista = 'Usuarios';
     const filtro = `rol eq 'Superadministrador'`;
     return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -147,9 +143,6 @@ export class UsuarioService {
     const lista = 'Usuarios';
     const filtro = `rol eq 'Administrador'`;
     return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -161,9 +154,6 @@ export class UsuarioService {
     const lista = 'Usuarios';
     const filtro = `rol eq 'Gestor'`;
     return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -174,9 +164,6 @@ export class UsuarioService {
   getAllUsuariosGestorCenad(idCenad: string): Observable<UsuarioGestor[]> {
     const urlGestores = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad} and rol eq 'Gestor'`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -188,9 +175,6 @@ export class UsuarioService {
     const lista = 'Usuarios';
     const filtro = `rol eq 'Normal'`;
     return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      map(
-        (res) => res?.map((item: any) => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -214,7 +198,7 @@ export class UsuarioService {
     );
   }
 
-    getUsuarioSuperadministradorPorUsername(username: string): Observable<UsuarioSuperAdministrador | null> {
+  getUsuarioSuperadministradorPorUsername(username: string): Observable<UsuarioSuperAdministrador | null> {
     const urlSuperadministradores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Superadministrador'`;
     return this.apiService.request<any>(urlSuperadministradores, 'GET').pipe(
       map((res) => {
