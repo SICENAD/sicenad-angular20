@@ -5,9 +5,6 @@ export interface Categoria {
   Id: string;
   nombre: string;
   descripcion: string;
-  escudo: string;
-  infoCenad?: string;
-  provincia: number;
   cenad?: Cenad;
   categoriaPadre?: Categoria;
   subcategorias?: Categoria[];

@@ -1,5 +1,5 @@
 import { UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoutesPaths } from '@app/app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -58,14 +58,26 @@ export class CenadHeaderComponent implements OnInit {
   idCenad = computed(() => this.route.snapshot.params['idCenad']);
   cenad = computed(() => this.cenadStore.cenadVisitado());
   isSuperAdmin = computed(() => this.auth.rol() === RolUsuario.Superadministrador);
-  isGestorNormal = computed(() => this.auth.rol() === RolUsuario.Gestor || this.auth.rol() === RolUsuario.Normal);
-  isGestorEsteCenad = computed(() => this.auth.rol() === RolUsuario.Gestor && this.idCenad() === this.usuarioLogueado.cenadPropio()?.Id);
-  isAdminEsteCenad = computed(() => this.auth.rol() === RolUsuario.Administrador && this.idCenad() === this.usuarioLogueado.cenadPropio()?.Id);
+  isGestorNormal = computed(
+    () => this.auth.rol() === RolUsuario.Gestor || this.auth.rol() === RolUsuario.Normal
+  );
+  isGestorEsteCenad = signal(false);
+  isAdminEsteCenad = signal(false);
 
   idCenadZaragoza = signal<string | null>(null);
   isCenadZaragoza = signal(false);
   menuVisible = signal(false);
 
+    adminOGestorEsteCenad = effect(() => {
+    this.isAdminOGestorEsteCenad();
+  });
+
+  isAdminOGestorEsteCenad() {
+    this.isAdminEsteCenad.set(this.auth.rol() === RolUsuario.Administrador &&
+      this.cenad()?.Id === this.usuarioLogueado.cenadPropio()?.Id);
+      this.isGestorEsteCenad.set(this.auth.rol() === RolUsuario.Gestor &&
+      this.cenad()?.Id === this.usuarioLogueado.cenadPropio()?.Id);
+  }
   toggleMenu() {
     this.menuVisible.set(!this.menuVisible());
   }
