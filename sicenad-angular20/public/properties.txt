@@ -1,4 +1,7 @@
 {
+  "proxyUsername": "jpueala",
+  "proxyPassword": "Aclogoctubre.2025",
+  "proxyDomain": "mdef",
   "urlApi": "/sharepoint/_api/web/lists",
   "urlSitio": "/sharepoint",
   "urlApiDesarrolloSharepoint": "/sharepoint/_api/web/lists",
