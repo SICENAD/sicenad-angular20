@@ -165,20 +165,18 @@ export class CenadService {
     };
     const patchCenad = (): Observable<string | null> => {
       if (escudo) body.escudo = escudo;
-      return this.apiService
-        .request<any>(endpoint, 'PATCH', body)
-        .pipe(
-          map((res) => !!res),
-          tap(async () => {
-            const mensaje = await this.idiomaService.tVars('cenads.cenadEditado', { nombre });
-            this.utilService.toast(mensaje, 'success');
-          }),
-          map(() => escudo),
-          catchError((err) => {
-            console.error(err);
-            return of(null);
-          })
-        );
+      return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
+        map((res) => !!res),
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('cenads.cenadEditado', { nombre });
+          this.utilService.toast(mensaje, 'success');
+        }),
+        map(() => escudo),
+        catchError((err) => {
+          console.error(err);
+          return of(null);
+        })
+      );
     };
     if (!archivoEscudo) return patchCenad();
     const nombreBiblioteca = nombre.toUpperCase();
@@ -199,7 +197,10 @@ export class CenadService {
                 return of(null);
               }),
               catchError(() => {
-                this.utilService.toast('No se pudo borrar el escudo anterior. Operación abortada.', 'error');
+                this.utilService.toast(
+                  'No se pudo borrar el escudo anterior. Operación abortada.',
+                  'error'
+                );
                 return of(null);
               })
             );
@@ -229,7 +230,10 @@ export class CenadService {
               return of(null);
             }),
             catchError(() => {
-              this.utilService.toast('No se pudo borrar el escudo anterior. Operación abortada.', 'error');
+              this.utilService.toast(
+                'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
               return of(null);
             })
           );
@@ -285,12 +289,13 @@ export class CenadService {
     );
   }
 
-  getEscudo(escudo: string, idCenad: string): Observable<Blob> {
-    const endpoint = `/CENAD CHINCHILLA/escudo/${escudo}`;
+  getEscudo(escudo: string, nombreBiblioteca: string): Observable<Blob> {
+    const endpoint = `/${nombreBiblioteca}/escudo/${escudo}`;
     return this.apiService.mostrarArchivo(endpoint);
   }
 
   editarInfoCenad(
+    nombre: string,
     direccion: string,
     tfno: string,
     email: string,
@@ -324,28 +329,84 @@ export class CenadService {
       );
     };
     if (!archivoInfoCenad) return patchInfoCenad();
-    const endpointUpload = `/files/${idCenad}/subirInfoCenad`;
-    return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
-      concatMap((nuevaInfo) => {
-        if (!nuevaInfo) return of(null);
-        if (infoCenad) {
-          const endpointBorrar = `/files/${idCenad}/borrarInfoCenad/${infoCenad}`;
-          return this.apiService.borrarArchivo(endpointBorrar).pipe(
-            map(() => {
-              infoCenad = nuevaInfo;
-              return null;
+    const nombreBiblioteca = nombre.toUpperCase();
+    const endpointUpload = `/${nombreBiblioteca}/escudo`;
+    // Si existe un infoCenad previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
+    // mostramos un toast de error. Si no existe, subimos directamente.
+    if (infoCenad) {
+      return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, `infoCenad/${infoCenad}`).pipe(
+        switchMap((borradoOk: boolean) => {
+          if (!borradoOk) {
+            console.warn('Abortando subida: no se pudo borrar el infoCenad anterior.');
+            return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+              switchMap((mensaje) => {
+                this.utilService.toast(
+                  mensaje || 'No se pudo borrar el infoCenad anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              }),
+              catchError(() => {
+                this.utilService.toast(
+                  'No se pudo borrar el infoCenad anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              })
+            );
+          }
+          // Borrado OK -> subimos el nuevo infoCenad
+          return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
+            switchMap((resInfoCenad) => {
+              const nuevoInfoCenadName = resInfoCenad?.d?.Name || resInfoCenad?.Name || '';
+              if (!nuevoInfoCenadName) return of(null);
+              infoCenad = nuevoInfoCenadName;
+              return patchInfoCenad();
             }),
-            switchMap(() => patchInfoCenad())
+            catchError((err) => {
+              console.error('Error subiendo el nuevo infoCenad:', err);
+              return of(null);
+            })
           );
-        }
-        infoCenad = nuevaInfo;
+        }),
+        catchError((err) => {
+          console.warn('Error borrando el infoCenad anterior:', err);
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el infoCenad anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast(
+                'No se pudo borrar el infoCenad anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            })
+          );
+        })
+      );
+    }
+    // No había infoCenad previo: subimos y parchamos directamente
+    return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
+      switchMap((resInfoCenad) => {
+        const nuevoInfoCenadName = resInfoCenad?.d?.Name || resInfoCenad?.Name || '';
+        if (!nuevoInfoCenadName) return of(null);
+        infoCenad = nuevoInfoCenadName;
         return patchInfoCenad();
+      }),
+      catchError((err) => {
+        console.error('Error subiendo el nuevo infoCenad (sin previo):', err);
+        return of(null);
       })
     );
   }
 
-  getInfoCenad(infoCenad: string, idCenad: string): Observable<Blob> {
-    const endpoint = `/files/${idCenad}/infoCenad/${infoCenad}`;
+  getInfoCenad(infoCenad: string, nombreBiblioteca: string): Observable<Blob> {
+    const endpoint = `/${nombreBiblioteca}/infoCenad/${infoCenad}`;
     return this.apiService.mostrarArchivo(endpoint);
   }
 }

@@ -38,7 +38,7 @@ export class CenadHomeComponent {
   private esperarYCargarEscudo = void effect(() => {
     const escudo = this.escudoCenad();
     if (!escudo) return;
-    this.orquestadorService.getEscudoCenad(escudo, this.idCenad()).subscribe({
+    this.orquestadorService.getEscudoCenad(escudo, this.cenadStore.cenadVisitado()!.nombre).subscribe({
       next: blob => this.pathImg.set(URL.createObjectURL(blob)),
       error: err => console.error(err)
     });

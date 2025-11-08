@@ -62,7 +62,7 @@ export class CenadModalComponent {
     const escudo = this.cenad()?.escudo;
     if (!escudo) return;
     if (!this.idCenad()) return;
-    this.orquestadorService.getEscudoCenad(escudo, this.idCenad()).subscribe(
+    this.orquestadorService.getEscudoCenad(escudo, this.cenad()!.nombre).subscribe(
       {
         next: blob => this.urlEscudoActual.set(URL.createObjectURL(blob)),
         error: err => console.error(err)

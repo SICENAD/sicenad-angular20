@@ -898,8 +898,8 @@ export class OrquestadorService {
     );
   }
 
-  getEscudoCenad(escudo: string, idCenad: string): Observable<Blob> {
-    return this.cenadService.getEscudo(escudo, idCenad);
+  getEscudoCenad(escudo: string, nombreBiblioteca: string): Observable<Blob> {
+    return this.cenadService.getEscudo(escudo, nombreBiblioteca);
   }
 
   actualizarInfoCenad(
@@ -913,6 +913,7 @@ export class OrquestadorService {
     idCenad: string
   ): Observable<any> {
     return this.cenadService.editarInfoCenad(
+      nombre,
       direccion,
       tfno,
       email,
@@ -938,8 +939,8 @@ export class OrquestadorService {
     );
   }
 
-  getInfoCenad(infoCenad: string, idCenad: string): Observable<Blob> {
-    return this.cenadService.getInfoCenad(infoCenad, idCenad);
+  getInfoCenad(infoCenad: string, nombreBiblioteca: string): Observable<Blob> {
+    return this.cenadService.getInfoCenad(infoCenad, nombreBiblioteca);
   }
 
   loadCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {

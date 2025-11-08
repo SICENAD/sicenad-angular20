@@ -66,7 +66,7 @@ export class InfoCenadPageComponent {
     const infoCenad = this.cenadVisitado()?.infoCenad;
     if (!infoCenad) return;
     if (!this.cenadVisitado()) return;
-    this.orquestadorService.getInfoCenad(infoCenad, this.cenadVisitado()!.Id).subscribe(
+    this.orquestadorService.getInfoCenad(infoCenad, this.cenadVisitado()!.nombre).subscribe(
       {
         next: blob => this.urlInfoCenadActual.set(URL.createObjectURL(blob)),
         error: err => console.error(err)
@@ -137,7 +137,7 @@ export class InfoCenadPageComponent {
           this.infoCenadActual.set(res);
           this.cenadVisitado()!.infoCenad = this.infoCenadActual(); // actualizamos el infoCenad en el objeto cenad
           // 🔹 Pedimos el archivo actualizado para refrescar la URL
-          this.orquestadorService.getInfoCenad(res, this.cenadVisitado()!.Id).subscribe({
+          this.orquestadorService.getInfoCenad(res, this.cenadVisitado()!.nombre).subscribe({
             next: blob => {
               // Revocamos la URL anterior para evitar fugas de memoria
               const oldUrl = this.urlInfoCenadActual();
