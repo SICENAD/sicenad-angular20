@@ -129,9 +129,9 @@ export class UsuarioService {
   }
 
   getAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
-    const lista = 'Usuarios';
     const filtro = `rol eq 'Superadministrador'`;
-    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
+    const endpoint = `${this.urlBasic}?$filter=${filtro}`;
+    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -140,10 +140,9 @@ export class UsuarioService {
   }
 
   getAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
-    const lista = 'Usuarios';
     const filtro = `rol eq 'Administrador'`;
-    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      catchError((err) => {
+    const endpoint = `${this.urlBasic}?$filter=${filtro}`;
+    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -151,10 +150,9 @@ export class UsuarioService {
   }
 
   getAllUsuariosGestor(): Observable<UsuarioGestor[]> {
-    const lista = 'Usuarios';
     const filtro = `rol eq 'Gestor'`;
-    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      catchError((err) => {
+    const endpoint = `${this.urlBasic}?$filter=${filtro}`;
+    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -172,10 +170,9 @@ export class UsuarioService {
   }
 
   getAllUsuariosNormal(): Observable<UsuarioNormal[]> {
-    const lista = 'Usuarios';
     const filtro = `rol eq 'Normal'`;
-    return this.apiService.getListaElementosFiltrados(lista, filtro).pipe(
-      catchError((err) => {
+    const endpoint = `${this.urlBasic}?$filter=${filtro}`;
+    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -199,7 +196,7 @@ export class UsuarioService {
   }
 
   getUsuarioSuperadministradorPorUsername(username: string): Observable<UsuarioSuperAdministrador | null> {
-    const urlSuperadministradores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Superadministrador'`;
+    const urlSuperadministradores = `${this.urlBasic}?$filter=username eq ${username}`;
     return this.apiService.request<any>(urlSuperadministradores, 'GET').pipe(
       map((res) => {
         const usuarios = res?.d?.results || [];

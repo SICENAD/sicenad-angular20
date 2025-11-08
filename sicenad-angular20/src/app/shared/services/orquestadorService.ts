@@ -88,13 +88,13 @@ export class OrquestadorService {
     this.ensureUrlApi();            // <-- clave
     return forkJoin({
       cenads: this.loadAllCenads(),
-      categoriasFichero: this.categoriaFicheroService.getAll(),
-      tiposFormulario: this.tipoFormularioService.getAll(),
-      unidades: this.unidadService.getAll(),
-      armas: this.armaService.getAll(),
-      usuariosSuperadministrador: this.usuarioService.getAllUsuariosSuperadministrador(),
-      usuariosAdministrador: this.usuarioService.getAllUsuariosAdministrador(),
-      usuariosNormal: this.usuarioService.getAllUsuariosNormal(),
+      categoriasFichero: this.loadAllCategoriasFichero(),
+      tiposFormulario: this.loadAllTiposFormulario(),
+      unidades: this.loadAllUnidades(),
+      armas: this.loadAllArmas(),
+      usuariosSuperadministrador: this.loadAllUsuariosSuperadministrador(),
+      usuariosAdministrador: this.loadAllUsuariosAdministrador(),
+      usuariosNormal: this.loadAllUsuariosNormal(),
     }).pipe(
       tap(data => {
         this.datosStore.setCenads(data.cenads);
