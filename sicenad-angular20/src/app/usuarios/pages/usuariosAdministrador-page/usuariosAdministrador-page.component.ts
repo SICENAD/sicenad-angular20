@@ -6,6 +6,8 @@ import { Cenad } from '@interfaces/models/cenad';
 import { TranslateModule } from '@ngx-translate/core';
 import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
+import { CenadService } from '@services/cenadService';
+import { switchMap, catchError, of } from 'rxjs';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 
 @Component({
@@ -18,6 +20,7 @@ import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 export class UsuariosAdministradorPageComponent {
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private orquestadorService = inject(OrquestadorService);
+  private cenadService = inject(CenadService);
   private fb = inject(FormBuilder);
   private idiomaService = inject(IdiomaService);
 
@@ -65,22 +68,16 @@ export class UsuariosAdministradorPageComponent {
       alert(this.idiomaService.t('usuarios.seleccionaCenad'));
       return;
     }
-    this.orquestadorService.registerUsuarioAdministrador(
-      username,
-      password,
-      tfno,
-      email,
-      emailAdmitido,
-      descripcion,
-      cenad.Id
-    ).subscribe({
-      next: (res) => {
-        this.usuarioForm.reset();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+    this.orquestadorService
+      .registerUsuarioAdministrador(username, password, tfno, email, emailAdmitido, descripcion, cenad.Id)
+      .subscribe({
+        next: () => {
+          this.usuarioForm.reset();
+        },
+        error: (err) => {
+          console.error('Error creando usuario administrador:', err);
+        },
+      });
   }
 
   private cargarCenadsSinAdmin(): void {

@@ -25,10 +25,11 @@ export class UnidadService {
   }
 
   getUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
-    const urlUnidades = `${this.urlBasic}?$expand=usuarioNormal&$filter=usuarioNormalId eq ${idUsuarioNormal}`;
+    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, poc&$filter=usuarioNormalId eq ${idUsuarioNormal}`;
+    const urlUnidades = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlUnidades, 'GET').pipe(
       map((res) => {
-        const unidades = res?.d?.results || [];
+        const unidades = res || [];
         const unidad = unidades[0];
         if (!unidad) throw new Error('Unidad no encontrada');
         return unidad;
@@ -48,18 +49,27 @@ export class UnidadService {
     direccion: string,
     poc: string
   ): Observable<any> {
-        const endpoint = 'Unidades';
-    return this.apiService.request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), descripcion, email, tfno, direccion, poc }).pipe(
-      map(res => !!res),
-      tap(async () => {
-        const mensaje = await this.idiomaService.tVars('unidades.unidadCreada', { nombre });
-        this.utilService.toast(mensaje, 'success');
-      }),
-      catchError(err => {
-        console.error(err);
-        return of(false);
+    const endpoint = 'Unidades';
+    return this.apiService
+      .request<any>(endpoint, 'POST', {
+        nombre: nombre.toUpperCase(),
+        descripcion,
+        email,
+        tfno,
+        direccion,
+        poc,
       })
-    );
+      .pipe(
+        map((res) => !!res),
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('unidades.unidadCreada', { nombre });
+          this.utilService.toast(mensaje, 'success');
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
   }
 
   editarUnidad(
@@ -71,28 +81,40 @@ export class UnidadService {
     poc: string,
     idUnidad: string
   ): Observable<any> {
-        const endpoint = 'Unidades';
-    return this.apiService.request<any>(endpoint, 'PATCH', { nombre: nombre.toUpperCase(), descripcion, email, tfno, direccion, poc, Id: idUnidad }).pipe(
-      map(res => !!res),
-      tap(async () => {
-        const mensaje = await this.idiomaService.tVars('unidades.unidadModificada', { nombre });
-        this.utilService.toast(mensaje, 'success');
-      }),
-      catchError(err => {
-        console.error(err);
-        return of(false);
+    const endpoint = 'Unidades';
+    return this.apiService
+      .request<any>(endpoint, 'PATCH', {
+        nombre: nombre.toUpperCase(),
+        descripcion,
+        email,
+        tfno,
+        direccion,
+        poc,
+        Id: idUnidad,
       })
-    );
+      .pipe(
+        map((res) => !!res),
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('unidades.unidadModificada', { nombre });
+          this.utilService.toast(mensaje, 'success');
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
   }
 
   deleteUnidad(idUnidad: string): Observable<any> {
     const endpoint = 'Unidades';
     return this.apiService.request<any>(endpoint, 'DELETE', { Id: idUnidad }).pipe(
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('unidades.unidadEliminada', { id: idUnidad });
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('unidades.unidadEliminada', {
+          id: idUnidad,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })

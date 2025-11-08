@@ -142,7 +142,8 @@ export class UsuarioService {
   getAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
     const filtro = `rol eq 'Administrador'`;
     const endpoint = `${this.urlBasic}?$filter=${filtro}`;
-    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(      catchError((err) => {
+    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
+      catchError((err) => {
         console.error(err);
         return of([]);
       })

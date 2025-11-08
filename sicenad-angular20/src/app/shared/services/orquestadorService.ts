@@ -1,47 +1,46 @@
-import { Injectable, inject } from "@angular/core";
-import { forkJoin, Observable, of, tap, catchError, map, switchMap } from "rxjs";
-import { DatosPrincipalesStore } from "@stores/datosPrincipales.store";
-import { CenadService } from "./cenadService";
-import { Cenad } from "@interfaces/models/cenad";
-import { TipoFormulario } from "@interfaces/models/tipoFormulario";
-import { Unidad } from "@interfaces/models/unidad";
-import { Arma } from "@interfaces/models/arma";
-import { UsuarioSuperAdministrador } from "@interfaces/models/usuarioSuperadministrador";
-import { UsuarioAdministrador } from "@interfaces/models/usuarioAdministrador";
-import { UsuarioNormal } from "@interfaces/models/usuarioNormal";
-import { CategoriaFichero } from "@interfaces/models/categoriaFichero";
-import { ArmaService } from "./armaService";
-import { CategoriaFicheroService } from "./categoriaFicheroService.ts";
-import { TipoFormularioService } from "./tipoFormularioService.ts";
-import { UnidadService } from "./unidadService";
-import { UsuarioService } from "./usuarioService";
-import { UtilsStore } from "@stores/utils.store";
-import { AuthStore } from "@stores/auth.store";
-import { UsuarioLogueadoStore } from "@stores/usuarioLogueado.store";
-import { CenadStore } from "@stores/cenad.store";
-import { Categoria } from "@interfaces/models/categoria";
-import { CategoriaService } from "./categoriaService.ts";
-import { Recurso } from "@interfaces/models/recurso";
-import { RecursoService } from "./recursoService";
-import { CartografiaService } from "./cartografiaService";
-import { Cartografia } from "@interfaces/models/cartografia";
-import { NormativaService } from "./normativaService";
-import { Normativa } from "@interfaces/models/normativa";
-import { SolicitudService } from "./solicitudService";
-import { Solicitud } from "@interfaces/models/solicitud";
-import { UsuarioGestor } from "@interfaces/models/usuarioGestor";
-import { RegisterResponse } from "@interfaces/responses/registerResponse";
-import { LoginResponse } from "@interfaces/responses/loginResponse";
-import { RolUsuario } from "@interfaces/enums/rolUsuario.enum";
-import { FicheroService } from "./ficheroService";
-import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
-import { FicheroSolicitud } from "@interfaces/models/ficheroSolicitud";
-import { NotificacionResponse } from "@interfaces/responses/notificacionResponse";
-import { NotificacionService } from "./notificacionService";
-import { ChangePasswordResponse } from "@interfaces/responses/changePasswordResponse";
-import { UtilService } from "./utilService";
-import { IdiomaService } from "./idiomaService";
-
+import { Injectable, inject } from '@angular/core';
+import { forkJoin, Observable, of, tap, catchError, map, switchMap } from 'rxjs';
+import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
+import { CenadService } from './cenadService';
+import { Cenad } from '@interfaces/models/cenad';
+import { TipoFormulario } from '@interfaces/models/tipoFormulario';
+import { Unidad } from '@interfaces/models/unidad';
+import { Arma } from '@interfaces/models/arma';
+import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
+import { UsuarioAdministrador } from '@interfaces/models/usuarioAdministrador';
+import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
+import { CategoriaFichero } from '@interfaces/models/categoriaFichero';
+import { ArmaService } from './armaService';
+import { CategoriaFicheroService } from './categoriaFicheroService.ts';
+import { TipoFormularioService } from './tipoFormularioService.ts';
+import { UnidadService } from './unidadService';
+import { UsuarioService } from './usuarioService';
+import { UtilsStore } from '@stores/utils.store';
+import { AuthStore } from '@stores/auth.store';
+import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
+import { CenadStore } from '@stores/cenad.store';
+import { Categoria } from '@interfaces/models/categoria';
+import { CategoriaService } from './categoriaService.ts';
+import { Recurso } from '@interfaces/models/recurso';
+import { RecursoService } from './recursoService';
+import { CartografiaService } from './cartografiaService';
+import { Cartografia } from '@interfaces/models/cartografia';
+import { NormativaService } from './normativaService';
+import { Normativa } from '@interfaces/models/normativa';
+import { SolicitudService } from './solicitudService';
+import { Solicitud } from '@interfaces/models/solicitud';
+import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
+import { RegisterResponse } from '@interfaces/responses/registerResponse';
+import { LoginResponse } from '@interfaces/responses/loginResponse';
+import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
+import { FicheroService } from './ficheroService';
+import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
+import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
+import { NotificacionResponse } from '@interfaces/responses/notificacionResponse';
+import { NotificacionService } from './notificacionService';
+import { ChangePasswordResponse } from '@interfaces/responses/changePasswordResponse';
+import { UtilService } from './utilService';
+import { IdiomaService } from './idiomaService';
 
 @Injectable({ providedIn: 'root' })
 export class OrquestadorService {
@@ -71,13 +70,15 @@ export class OrquestadorService {
     const current = this.datosStore.urlApi();
     if (!current || !current.trim()) {
       this.datosStore.setUrlApi(this.utils.urlApi() ?? '');
-      this.datosStore.setMinutosExpiracionLocalStorage(this.utils.minutosExpiracionLocalStorage() ?? 0);
+      this.datosStore.setMinutosExpiracionLocalStorage(
+        this.utils.minutosExpiracionLocalStorage() ?? 0
+      );
     }
   }
   // --- Inicializar todo desde localStorage + API ---
   initializeDatosPrincipales(): void {
     this.datosStore.loadFromLocalStorage();
-    this.ensureUrlApi();            // <-- clave
+    this.ensureUrlApi(); // <-- clave
     this.getDatosPrincipales().subscribe();
     this.datosStore.setUrlApi(this.utils.urlApi());
     this.datosStore.setMinutosExpiracionLocalStorage(this.utils.minutosExpiracionLocalStorage());
@@ -85,7 +86,7 @@ export class OrquestadorService {
 
   // --- ForkJoin multi-entidad ---
   getDatosPrincipales(): Observable<any> {
-    this.ensureUrlApi();            // <-- clave
+    this.ensureUrlApi(); // <-- clave
     return forkJoin({
       cenads: this.loadAllCenads(),
       categoriasFichero: this.loadAllCategoriasFichero(),
@@ -96,7 +97,7 @@ export class OrquestadorService {
       usuariosAdministrador: this.loadAllUsuariosAdministrador(),
       usuariosNormal: this.loadAllUsuariosNormal(),
     }).pipe(
-      tap(data => {
+      tap((data) => {
         this.datosStore.setCenads(data.cenads);
         this.datosStore.setCategoriasFichero(data.categoriasFichero);
         this.datosStore.setTiposFormulario(data.tiposFormulario);
@@ -127,7 +128,7 @@ export class OrquestadorService {
       usuarioAdministrador: this.loadUsuarioAdministradorCenad(idCenad),
       cenadVisitado: this.loadCenadVisitado(idCenad),
     }).pipe(
-      tap(data => {
+      tap((data) => {
         this.cenadStore.setCategorias(data.categorias);
         this.cenadStore.setCategoriasPadre(data.categoriasPadre);
         this.cenadStore.setRecursos(data.recursos);
@@ -157,7 +158,7 @@ export class OrquestadorService {
   // --- LOAD ALL individuales---
   loadAllCenads(): Observable<Cenad[]> {
     return this.cenadService.getAll().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCenads'), err);
         this.datosStore.clearCenads();
         return of([]);
@@ -167,7 +168,7 @@ export class OrquestadorService {
 
   loadAllCategoriasFichero(): Observable<CategoriaFichero[]> {
     return this.categoriaFicheroService.getAll().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCategoriasFichero'), err);
         this.datosStore.clearCategoriasFichero();
         return of([]);
@@ -177,7 +178,7 @@ export class OrquestadorService {
 
   loadAllTiposFormulario(): Observable<TipoFormulario[]> {
     return this.tipoFormularioService.getAll().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaTiposFormulario'), err);
         this.datosStore.clearTiposFormulario();
         return of([]);
@@ -187,7 +188,7 @@ export class OrquestadorService {
 
   loadAllUnidades(): Observable<Unidad[]> {
     return this.unidadService.getAll().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaUnidades'), err);
         this.datosStore.clearUnidades();
         return of([]);
@@ -197,7 +198,7 @@ export class OrquestadorService {
 
   loadAllArmas(): Observable<Arma[]> {
     return this.armaService.getAll().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaArmas'), err);
         this.datosStore.clearArmas();
         return of([]);
@@ -207,8 +208,11 @@ export class OrquestadorService {
 
   loadAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
     return this.usuarioService.getAllUsuariosSuperadministrador().pipe(
-      catchError(err => {
-        console.error(this.idiomaService.t('orquestador.errorCargaUsuariosSuperadministrador'), err);
+      catchError((err) => {
+        console.error(
+          this.idiomaService.t('orquestador.errorCargaUsuariosSuperadministrador'),
+          err
+        );
         this.datosStore.clearUsuariosSuperadministrador();
         return of([]);
       })
@@ -217,7 +221,7 @@ export class OrquestadorService {
 
   loadAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
     return this.usuarioService.getAllUsuariosAdministrador().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaUsuariosAdministrador'), err);
         this.datosStore.clearUsuariosAdministrador();
         return of([]);
@@ -227,7 +231,7 @@ export class OrquestadorService {
 
   loadAllUsuariosNormal(): Observable<UsuarioNormal[]> {
     return this.usuarioService.getAllUsuariosNormal().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaUsuariosNormal'), err);
         this.datosStore.clearUsuariosNormal();
         return of([]);
@@ -238,7 +242,7 @@ export class OrquestadorService {
   // --- LOAD ALL de CENAD---
   loadAllCategorias(idCenad: string): Observable<Categoria[]> {
     return this.categoriaService.getAll(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCategorias'), err);
         this.cenadStore.clearCategorias();
         return of([]);
@@ -248,7 +252,7 @@ export class OrquestadorService {
 
   loadAllCategoriasPadre(idCenad: string): Observable<Categoria[]> {
     return this.categoriaService.getAllCategoriasPadre(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCategoriasPadre'), err);
         this.cenadStore.clearCategoriasPadre();
         return of([]);
@@ -258,7 +262,7 @@ export class OrquestadorService {
 
   loadAllRecursos(idCenad: string): Observable<Recurso[]> {
     return this.recursoService.getAll(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         this.cenadStore.clearRecursos();
         return of([]);
@@ -268,7 +272,7 @@ export class OrquestadorService {
 
   loadAllCartografias(idCenad: string): Observable<Cartografia[]> {
     return this.cartografiaService.getAll(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCartografias'), err);
         this.cenadStore.clearCartografias();
         return of([]);
@@ -278,7 +282,7 @@ export class OrquestadorService {
 
   loadAllNormativas(idCenad: string): Observable<Normativa[]> {
     return this.normativaService.getAll(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaNormativas'), err);
         this.cenadStore.clearNormativas();
         return of([]);
@@ -288,7 +292,7 @@ export class OrquestadorService {
 
   loadAllSolicitudes(idCenad: string): Observable<Solicitud[]> {
     return this.solicitudService.getAll(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         this.cenadStore.clearSolicitudes();
         return of([]);
@@ -298,7 +302,7 @@ export class OrquestadorService {
 
   loadAllSolicitudesEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
     return this.solicitudService.getSolicitudesPorEstado(idCenad, estado).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         switch (estado) {
           case 'Borrador':
@@ -324,7 +328,7 @@ export class OrquestadorService {
 
   loadAllUsuariosGestor(idCenad: string): Observable<UsuarioGestor[]> {
     return this.usuarioService.getAllUsuariosGestorCenad(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaUsuariosGestor'), err);
         this.cenadStore.clearUsuariosGestor();
         return of([]);
@@ -334,7 +338,7 @@ export class OrquestadorService {
 
   loadUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
     return this.usuarioService.getUsuarioAdministradorCenad(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaUsuarioAdministrador'), err);
         this.cenadStore.clearUsuarioAdministrador();
         return of(null);
@@ -344,7 +348,7 @@ export class OrquestadorService {
 
   loadCenadVisitado(idCenad: string): Observable<Cenad | null> {
     return this.cenadService.getCenadSeleccionado(idCenad).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCenadVisitado'), err);
         this.cenadStore.clearCenadVisitado();
         return of(null);
@@ -355,7 +359,7 @@ export class OrquestadorService {
   // --- NOTIFICACIONES ---
   notificarCambioEstado(idSolicitud: string): Observable<NotificacionResponse | null> {
     return this.notificacionService.notificarCambioEstado(idSolicitud).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorNotificandoCambioEstado'), err);
         return of(null);
       })
@@ -363,19 +367,13 @@ export class OrquestadorService {
   }
 
   // --- USUARIOS ---
-  loginUsuario(
-    username: string,
-    password: string,
-  ): Observable<LoginResponse> {
-    this.ensureUrlApi();            // <-- clave
-    return this.usuarioService.login(
-      username,
-      password
-    ).pipe(
-      tap(res => {
+  loginUsuario(username: string, password: string): Observable<LoginResponse> {
+    this.ensureUrlApi(); // <-- clave
+    return this.usuarioService.login(username, password).pipe(
+      tap((res) => {
         console.log(this.idiomaService.t('orquestador.loginCorrecto'), res);
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.loginError'), err);
         throw err;
       })
@@ -388,7 +386,7 @@ export class OrquestadorService {
     tfno: string,
     email: string,
     emailAdmitido: boolean,
-    descripcion: string,
+    descripcion: string
   ): Observable<RegisterResponse> {
     return this.registerUsuario(
       username,
@@ -398,9 +396,7 @@ export class OrquestadorService {
       emailAdmitido,
       descripcion,
       RolUsuario.Superadministrador
-    ).pipe(
-      tap(() => this.loadAllUsuariosSuperadministrador().subscribe())
-    );
+    ).pipe(tap(() => this.loadAllUsuariosSuperadministrador().subscribe()));
   }
 
   registerUsuarioAdministrador(
@@ -421,17 +417,18 @@ export class OrquestadorService {
       descripcion,
       RolUsuario.Administrador
     ).pipe(
-      switchMap(registerRes =>
+      switchMap((registerRes) =>
         this.loadUsuarioAdministradorPorUsername(username).pipe(
-          switchMap(usuario => {
+          switchMap((usuario) => {
             if (!usuario) {
-              this.idiomaService.tVars('orquestador.noUsernameAdmin', { username }).then(mensaje => {
-                console.warn(mensaje);
-              });
+              this.idiomaService
+                .tVars('orquestador.noUsernameAdmin', { username })
+                .then((mensaje) => {
+                  console.warn(mensaje);
+                });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
-            // Editamos el usuario para asignarle el CENAD
-            // mas bien en cenad añado el administrador
+            // Primero actualizamos el usuario con los datos enviados (asignar el IdCenad en el usuario)
             return this.actualizarUsuarioAdministrador(
               username,
               tfno,
@@ -441,7 +438,10 @@ export class OrquestadorService {
               idCenad,
               usuario.Id
             ).pipe(
-              map(() => registerRes) // seguimos devolviendo la respuesta del registro original
+              // Después de actualizar el usuario, delegamos en el servicio de CENAD para la asignación
+              switchMap(() =>
+                this.cenadService.asignarCenad(usuario.Id, idCenad).pipe(map(() => registerRes))
+              )
             );
           })
         )
@@ -474,13 +474,15 @@ export class OrquestadorService {
       descripcion,
       RolUsuario.Gestor
     ).pipe(
-      switchMap(registerRes =>
+      switchMap((registerRes) =>
         this.loadUsuarioGestorPorUsername(username).pipe(
-          switchMap(usuario => {
+          switchMap((usuario) => {
             if (!usuario) {
-              this.idiomaService.tVars('orquestador.noUsernameGestor', { username }).then(mensaje => {
-                console.warn(mensaje);
-              });
+              this.idiomaService
+                .tVars('orquestador.noUsernameGestor', { username })
+                .then((mensaje) => {
+                  console.warn(mensaje);
+                });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
             // Editamos el usuario para asignarle el CENAD
@@ -501,7 +503,7 @@ export class OrquestadorService {
       tap(() => {
         this.loadAllUsuariosGestor(idCenad).subscribe();
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorRegistroGestor'), err);
         return of(null as unknown as RegisterResponse);
       })
@@ -526,13 +528,15 @@ export class OrquestadorService {
       descripcion,
       RolUsuario.Normal
     ).pipe(
-      switchMap(registerRes =>
+      switchMap((registerRes) =>
         this.loadUsuarioNormalPorUsername(username).pipe(
-          switchMap(usuario => {
+          switchMap((usuario) => {
             if (!usuario) {
-              this.idiomaService.tVars('orquestador.noUsernameNormal', { username }).then(mensaje => {
-                console.warn(mensaje);
-              });
+              this.idiomaService
+                .tVars('orquestador.noUsernameNormal', { username })
+                .then((mensaje) => {
+                  console.warn(mensaje);
+                });
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
             // Editamos el usuario para asignarle el CENAD
@@ -553,7 +557,7 @@ export class OrquestadorService {
       tap(() => {
         this.loadAllUsuariosNormal().subscribe();
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorRegistroNormal'), err);
         return of(null as unknown as RegisterResponse);
       })
@@ -569,38 +573,26 @@ export class OrquestadorService {
     descripcion: string,
     rol: string
   ): Observable<RegisterResponse> {
-    return this.usuarioService.register(
-      username,
-      password,
-      tfno,
-      email,
-      emailAdmitido,
-      descripcion,
-      rol
-    ).pipe(
-      tap(res => {
-        console.log(this.idiomaService.t('registerCorrecto'), res);
-      }),
-      catchError(err => {
-        console.error(this.idiomaService.t('registerError'), err);
-        throw err;
-      })
-    );
+    return this.usuarioService
+      .register(username, password, tfno, email, emailAdmitido, descripcion, rol)
+      .pipe(
+        tap((res) => {
+          console.log(this.idiomaService.t('registerCorrecto'), res);
+        }),
+        catchError((err) => {
+          console.error(this.idiomaService.t('registerError'), err);
+          throw err;
+        })
+      );
   }
 
-  changePassword(
-    idUsuario: string,
-    password: string
-  ): Observable<ChangePasswordResponse> {
-    return this.usuarioService.changePassword(
-      idUsuario,
-      password
-    ).pipe(
-      tap(res => {
+  changePassword(idUsuario: string, password: string): Observable<ChangePasswordResponse> {
+    return this.usuarioService.changePassword(idUsuario, password).pipe(
+      tap((res) => {
         console.log(this.idiomaService.t('cambioContrasenaCorrecto'), res);
         this.utilService.toast(this.idiomaService.t('cambioContrasenaCorrecto'), 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('errorCambioContrasena'), err);
         this.utilService.toast(this.idiomaService.t('errorCambioContrasena'), 'error');
         throw err;
@@ -609,36 +601,54 @@ export class OrquestadorService {
   }
 
   // --- CRUD UsuariosSuperadministrador ---
-  actualizarUsuarioSuperadministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUsuarioSuperadministrador: string): Observable<any> {
-    return this.usuarioService.editarUsuarioSuperadministrador(username, tfno, email, emailAdmitido, descripcion, idUsuarioSuperadministrador).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUsuariosSuperadministrador().pipe(
-            tap(usuarios => this.datosStore.setUsuariosSuperadministrador(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarUsuarioSuperadministrador(
+    username: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idUsuarioSuperadministrador: string
+  ): Observable<any> {
+    return this.usuarioService
+      .editarUsuarioSuperadministrador(
+        username,
+        tfno,
+        email,
+        emailAdmitido,
+        descripcion,
+        idUsuarioSuperadministrador
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllUsuariosSuperadministrador()
+              .pipe(tap((usuarios) => this.datosStore.setUsuariosSuperadministrador(usuarios)))
+              .subscribe();
+            this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then((mensaje) => {
+              console.error(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoUsuario', { username })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarUsuarioSuperadministrador(id: string): Observable<any> {
     return this.usuarioService.deleteUsuario(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllUsuariosSuperadministrador().pipe(
-            tap(usuarios => this.datosStore.setUsuariosSuperadministrador(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then(mensaje => {
+          this.loadAllUsuariosSuperadministrador()
+            .pipe(tap((usuarios) => this.datosStore.setUsuariosSuperadministrador(usuarios)))
+            .subscribe();
+          this.idiomaService.tVars('usuarios.usuarioEliminadoSinUsername').then((mensaje) => {
             console.error(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         }
@@ -649,8 +659,8 @@ export class OrquestadorService {
   // --- CRUD UsuariosAdministrador ---
   loadUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
     return this.usuarioService.getUsuarioAdministradorPorUsername(username).pipe(
-      catchError(err => {
-        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then((mensaje) => {
           console.error(mensaje);
         });
         return of(null);
@@ -658,36 +668,60 @@ export class OrquestadorService {
     );
   }
 
-  actualizarUsuarioAdministrador(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioAdministrador: string): Observable<any> {
-    return this.usuarioService.editarUsuarioAdministrador(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioAdministrador).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUsuariosAdministrador().pipe(
-            tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarUsuarioAdministrador(
+    username: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idCenad: string,
+    idUsuarioAdministrador: string,
+    reload: boolean = true
+  ): Observable<any> {
+    return this.usuarioService
+      .editarUsuarioAdministrador(
+        username,
+        tfno,
+        email,
+        emailAdmitido,
+        descripcion,
+        idCenad,
+        idUsuarioAdministrador
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            // Solo recargamos la lista si el llamador lo solicita (por ejemplo desde el modal)
+            if (reload) {
+              this.loadAllUsuariosAdministrador()
+                .pipe(tap((usuarios) => this.datosStore.setUsuariosAdministrador(usuarios)))
+                .subscribe();
+            }
+            this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoUsuario', { username })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarUsuarioAdministrador(id: string): Observable<any> {
     return this.usuarioService.deleteUsuario(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllUsuariosAdministrador().pipe(
-            tap(usuarios => this.datosStore.setUsuariosAdministrador(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminado', { id }).then(mensaje => {
+          this.loadAllUsuariosAdministrador()
+            .pipe(tap((usuarios) => this.datosStore.setUsuariosAdministrador(usuarios)))
+            .subscribe();
+          this.idiomaService.tVars('usuarios.usuarioEliminado', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         }
@@ -698,8 +732,8 @@ export class OrquestadorService {
   // --- CRUD UsuariosGestor ---
   loadUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
     return this.usuarioService.getUsuarioGestorPorUsername(username).pipe(
-      catchError(err => {
-        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then((mensaje) => {
           console.error(mensaje);
         });
         return of(null);
@@ -709,8 +743,8 @@ export class OrquestadorService {
 
   loadUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
     return this.usuarioService.getUsuarioGestorDeRecurso(idRecurso).pipe(
-      catchError(err => {
-        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then((mensaje) => {
           console.error(mensaje);
         });
         return of(null);
@@ -718,38 +752,62 @@ export class OrquestadorService {
     );
   }
 
-  actualizarUsuarioGestor(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idCenad: string, idUsuarioGestor: string): Observable<any> {
-    return this.usuarioService.editarUsuarioGestor(username, tfno, email, emailAdmitido, descripcion, idCenad, idUsuarioGestor).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUsuariosGestor(idCenad).pipe(
-            tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarUsuarioGestor(
+    username: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idCenad: string,
+    idUsuarioGestor: string
+  ): Observable<any> {
+    return this.usuarioService
+      .editarUsuarioGestor(
+        username,
+        tfno,
+        email,
+        emailAdmitido,
+        descripcion,
+        idCenad,
+        idUsuarioGestor
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllUsuariosGestor(idCenad)
+              .pipe(tap((usuarios) => this.cenadStore.setUsuariosGestor(usuarios)))
+              .subscribe();
+            this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then((mensaje) => {
+              console.error(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoUsuario', { username })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarUsuarioGestor(idCenad: string, idUsuario: string): Observable<any> {
     return this.usuarioService.deleteUsuario(idUsuario).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllUsuariosGestor(idCenad).pipe(
-            tap(usuarios => this.cenadStore.setUsuariosGestor(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminado', { id: idUsuario }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.loadAllUsuariosGestor(idCenad)
+            .pipe(tap((usuarios) => this.cenadStore.setUsuariosGestor(usuarios)))
+            .subscribe();
+          this.idiomaService
+            .tVars('usuarios.usuarioEliminado', { id: idUsuario })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id: idUsuario }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoUsuario', { id: idUsuario })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
@@ -758,8 +816,8 @@ export class OrquestadorService {
   // --- CRUD UsuariosNormal ---
   loadUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
     return this.usuarioService.getUsuarioNormalPorUsername(username).pipe(
-      catchError(err => {
-        this.idiomaService.tVars('orquestador.errorCargaUsuario').then(mensaje => {
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then((mensaje) => {
           console.error(mensaje, err);
         });
         return of(null);
@@ -767,36 +825,56 @@ export class OrquestadorService {
     );
   }
 
-  actualizarUsuarioNormal(username: string, tfno: string, email: string, emailAdmitido: boolean, descripcion: string, idUnidad: string, idUsuarioNormal: string): Observable<any> {
-    return this.usuarioService.editarUsuarioNormal(username, tfno, email, emailAdmitido, descripcion, idUnidad, idUsuarioNormal).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUsuariosNormal().pipe(
-            tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoUsuario', { username }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarUsuarioNormal(
+    username: string,
+    tfno: string,
+    email: string,
+    emailAdmitido: boolean,
+    descripcion: string,
+    idUnidad: string,
+    idUsuarioNormal: string
+  ): Observable<any> {
+    return this.usuarioService
+      .editarUsuarioNormal(
+        username,
+        tfno,
+        email,
+        emailAdmitido,
+        descripcion,
+        idUnidad,
+        idUsuarioNormal
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllUsuariosNormal()
+              .pipe(tap((usuarios) => this.datosStore.setUsuariosNormal(usuarios)))
+              .subscribe();
+            this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then((mensaje) => {
+              console.error(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoUsuario', { username })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarUsuarioNormal(id: string): Observable<any> {
     return this.usuarioService.deleteUsuario(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllUsuariosNormal().pipe(
-            tap(usuarios => this.datosStore.setUsuariosNormal(usuarios))
-          ).subscribe();
-          this.idiomaService.tVars('usuarios.usuarioEliminado', { id }).then(mensaje => {
+          this.loadAllUsuariosNormal()
+            .pipe(tap((usuarios) => this.datosStore.setUsuariosNormal(usuarios)))
+            .subscribe();
+          this.idiomaService.tVars('usuarios.usuarioEliminado', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorBorrandoUsuario', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         }
@@ -814,30 +892,26 @@ export class OrquestadorService {
     descripcion: string,
     archivoEscudo: File
   ): Observable<any> {
-    return this.cenadService.crearCenad(
-      nombre,
-      provincia,
-      direccion,
-      tfno,
-      email,
-      descripcion,
-      archivoEscudo
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCenads().pipe(
-            tap(cenads => this.datosStore.setCenads(cenads))
-          ).subscribe();
-          this.idiomaService.tVars('cenads.cenadCreado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoCenad', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        }
-      })
-    );
+    return this.cenadService
+      .crearCenad(nombre, provincia, direccion, tfno, email, descripcion, archivoEscudo)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCenads()
+              .pipe(tap((cenads) => this.datosStore.setCenads(cenads)))
+              .subscribe();
+            this.idiomaService.tVars('cenads.cenadCreado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoCenad', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarCenad(
@@ -851,46 +925,50 @@ export class OrquestadorService {
     escudoActual: string,
     idCenad: string
   ): Observable<any> {
-    return this.cenadService.editarCenad(
-      nombre,
-      provincia,
-      direccion,
-      tfno,
-      email,
-      descripcion,
-      archivoEscudo,
-      escudoActual,
-      idCenad
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCenads().pipe(
-            tap(cenads => this.datosStore.setCenads(cenads))
-          ).subscribe();
-          this.idiomaService.tVars('cenads.cenadEditado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoCenad', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.cenadService
+      .editarCenad(
+        nombre,
+        provincia,
+        direccion,
+        tfno,
+        email,
+        descripcion,
+        archivoEscudo,
+        escudoActual,
+        idCenad
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCenads()
+              .pipe(tap((cenads) => this.datosStore.setCenads(cenads)))
+              .subscribe();
+            this.idiomaService.tVars('cenads.cenadEditado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoCenad', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   borrarCenad(id: string): Observable<any> {
     return this.cenadService.deleteCenad(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.idiomaService.tVars('cenads.cenadEliminado', { id }).then(mensaje => {
+          this.idiomaService.tVars('cenads.cenadEliminado', { id }).then((mensaje) => {
             console.log(mensaje);
           });
-          this.loadAllCenads().pipe(
-            tap(cenads => this.datosStore.setCenads(cenads))
-          ).subscribe();
+          this.loadAllCenads()
+            .pipe(tap((cenads) => this.datosStore.setCenads(cenads)))
+            .subscribe();
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoCenad', { id }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorBorrandoCenad', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         }
@@ -912,31 +990,35 @@ export class OrquestadorService {
     infoCenadActual: string,
     idCenad: string
   ): Observable<any> {
-    return this.cenadService.editarInfoCenad(
-      nombre,
-      direccion,
-      tfno,
-      email,
-      descripcion,
-      archivoInfoCenad,
-      infoCenadActual,
-      idCenad
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCenads().pipe(
-            tap(cenads => this.datosStore.setCenads(cenads))
-          ).subscribe();
-          this.idiomaService.tVars('cenads.cenadEditado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoCenad', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.cenadService
+      .editarInfoCenad(
+        nombre,
+        direccion,
+        tfno,
+        email,
+        descripcion,
+        archivoInfoCenad,
+        infoCenadActual,
+        idCenad
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCenads()
+              .pipe(tap((cenads) => this.datosStore.setCenads(cenads)))
+              .subscribe();
+            this.idiomaService.tVars('cenads.cenadEditado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoCenad', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   getInfoCenad(infoCenad: string, nombreBiblioteca: string): Observable<Blob> {
@@ -945,7 +1027,7 @@ export class OrquestadorService {
 
   loadCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
     return this.cenadService.getCenadDeAdministrador(idUsuarioAdministrador).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCenad'), err);
         return of(null);
       })
@@ -954,7 +1036,7 @@ export class OrquestadorService {
 
   loadCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
     return this.cenadService.getCenadDeGestor(idUsuarioGestor).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCenad'), err);
         return of(null);
       })
@@ -963,7 +1045,7 @@ export class OrquestadorService {
 
   loadCenadsSinAdmin(): Observable<Cenad[] | null> {
     return this.cenadService.getCenadsSinAdmin().pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCenads'), err);
         return of([]);
       })
@@ -975,32 +1057,31 @@ export class OrquestadorService {
     nombre: string,
     descripcion: string,
     idCenad: string,
-    idCategoriaPadre: string,
+    idCategoriaPadre: string
   ): Observable<any> {
-    return this.categoriaService.crearCategoria(
-      nombre,
-      descripcion,
-      idCenad,
-      idCategoriaPadre
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCategorias(idCenad).pipe(
-            tap(categorias => this.cenadStore.setCategorias(categorias))
-          ).subscribe();
-          this.loadAllCategoriasPadre(idCenad).pipe(
-            tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
-          ).subscribe();
-          this.idiomaService.tVars('categorias.categoriaCreada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoCategoria', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.categoriaService
+      .crearCategoria(nombre, descripcion, idCenad, idCategoriaPadre)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCategorias(idCenad)
+              .pipe(tap((categorias) => this.cenadStore.setCategorias(categorias)))
+              .subscribe();
+            this.loadAllCategoriasPadre(idCenad)
+              .pipe(tap((categorias) => this.cenadStore.setCategoriasPadre(categorias)))
+              .subscribe();
+            this.idiomaService.tVars('categorias.categoriaCreada', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoCategoria', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarCategoria(
@@ -1010,49 +1091,54 @@ export class OrquestadorService {
     idCategoria: string,
     idCategoriaPadre: string
   ): Observable<any> {
-    return this.categoriaService.editarCategoria(
-      nombre,
-      descripcion,
-      idCategoria,
-      idCategoriaPadre
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCategorias(idCenad).pipe(
-            tap(categorias => this.cenadStore.setCategorias(categorias))
-          ).subscribe();
-          this.loadAllCategoriasPadre(idCenad).pipe(
-            tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
-          ).subscribe();
-          this.idiomaService.tVars('categorias.categoriaModificada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoCategoria', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.categoriaService
+      .editarCategoria(nombre, descripcion, idCategoria, idCategoriaPadre)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCategorias(idCenad)
+              .pipe(tap((categorias) => this.cenadStore.setCategorias(categorias)))
+              .subscribe();
+            this.loadAllCategoriasPadre(idCenad)
+              .pipe(tap((categorias) => this.cenadStore.setCategoriasPadre(categorias)))
+              .subscribe();
+            this.idiomaService
+              .tVars('categorias.categoriaModificada', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoCategoria', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   borrarCategoria(idCategoria: string, idCenad: string): Observable<any> {
     return this.categoriaService.deleteCategoria(idCategoria).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.idiomaService.tVars('categorias.categoriaEliminada', { id: idCategoria }).then(mensaje => {
-            console.log(mensaje);
-          });
-          this.loadAllCategorias(idCenad).pipe(
-            tap(categorias => this.cenadStore.setCategorias(categorias))
-          ).subscribe();
-          this.loadAllCategoriasPadre(idCenad).pipe(
-            tap(categorias => this.cenadStore.setCategoriasPadre(categorias))
-          ).subscribe();
+          this.idiomaService
+            .tVars('categorias.categoriaEliminada', { id: idCategoria })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
+          this.loadAllCategorias(idCenad)
+            .pipe(tap((categorias) => this.cenadStore.setCategorias(categorias)))
+            .subscribe();
+          this.loadAllCategoriasPadre(idCenad)
+            .pipe(tap((categorias) => this.cenadStore.setCategoriasPadre(categorias)))
+            .subscribe();
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoCategoria', { id: idCategoria }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoCategoria', { id: idCategoria })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
@@ -1060,7 +1146,7 @@ export class OrquestadorService {
 
   loadSubcategorias(idCategoria: string): Observable<Categoria[] | null> {
     return this.categoriaService.getSubCategorias(idCategoria).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
         return of([]);
       })
@@ -1069,7 +1155,7 @@ export class OrquestadorService {
 
   loadSubcategoriasAnidadas(idCategoria: string): Observable<Categoria[] | null> {
     return this.categoriaService.getSubCategoriasAnidadas(idCategoria).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSubcategorias'), err);
         return of([]);
       })
@@ -1078,7 +1164,7 @@ export class OrquestadorService {
 
   loadCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaSeleccionada(idCategoria).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
         return of(null);
       })
@@ -1087,7 +1173,7 @@ export class OrquestadorService {
 
   loadCategoriaPadre(idCategoria: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaPadre(idCategoria).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCategoriaPadre'), err);
         return of(null);
       })
@@ -1096,7 +1182,7 @@ export class OrquestadorService {
 
   loadCategoriaDeRecurso(idRecurso: string): Observable<Categoria | null> {
     return this.categoriaService.getCategoriaDeRecurso(idRecurso).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCategoria'), err);
         return of(null);
       })
@@ -1104,99 +1190,125 @@ export class OrquestadorService {
   }
 
   // --- CRUD Recurso ---
-  crearRecurso(nombre: string, descripcion: string, otros: string, idCenad: string, idTipoFormulario: string, idCategoria: string, idGestor: string): Observable<any> {
-    return this.recursoService.crearRecurso(
-      nombre,
-      descripcion,
-      otros,
-      idTipoFormulario,
-      idCategoria,
-      idGestor
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllRecursos(idCenad).pipe(
-            tap(recursos => this.cenadStore.setRecursos(recursos))
-          ).subscribe();
-          this.idiomaService.tVars('recursos.recursoCreado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoRecurso', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        }
-      })
-    );
+  crearRecurso(
+    nombre: string,
+    descripcion: string,
+    otros: string,
+    idCenad: string,
+    idTipoFormulario: string,
+    idCategoria: string,
+    idGestor: string
+  ): Observable<any> {
+    return this.recursoService
+      .crearRecurso(nombre, descripcion, otros, idTipoFormulario, idCategoria, idGestor)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllRecursos(idCenad)
+              .pipe(tap((recursos) => this.cenadStore.setRecursos(recursos)))
+              .subscribe();
+            this.idiomaService.tVars('recursos.recursoCreado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoRecurso', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  actualizarRecurso(nombre: string, descripcion: string, otros: string, idCenad: string, idTipoFormulario: string, idCategoria: string, idGestor: string, idRecurso: string): Observable<any> {
-    return this.recursoService.editarRecurso(
-      nombre,
-      descripcion,
-      otros,
-      idTipoFormulario,
-      idCategoria,
-      idGestor,
-      idRecurso
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllRecursos(idCenad).pipe(
-            tap(recursos => this.cenadStore.setRecursos(recursos))
-          ).subscribe();
-          this.idiomaService.tVars('recursos.recursoModificado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoRecurso', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        }
-      })
-    );
+  actualizarRecurso(
+    nombre: string,
+    descripcion: string,
+    otros: string,
+    idCenad: string,
+    idTipoFormulario: string,
+    idCategoria: string,
+    idGestor: string,
+    idRecurso: string
+  ): Observable<any> {
+    return this.recursoService
+      .editarRecurso(nombre, descripcion, otros, idTipoFormulario, idCategoria, idGestor, idRecurso)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllRecursos(idCenad)
+              .pipe(tap((recursos) => this.cenadStore.setRecursos(recursos)))
+              .subscribe();
+            this.idiomaService.tVars('recursos.recursoModificado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoRecurso', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  actualizarRecursoDetalle(nombre: string, descripcion: string, otros: string, conDatosEspecificosSolicitud: boolean, datosEspecificosSolicitud: string, idCenad: string, idRecurso: string): Observable<any> {
-    return this.recursoService.editarRecursoDetalle(
-      nombre,
-      descripcion,
-      otros,
-      conDatosEspecificosSolicitud,
-      datosEspecificosSolicitud,
-      idRecurso,
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllRecursos(idCenad).pipe(
-            tap(recursos => this.cenadStore.setRecursos(recursos))
-          ).subscribe();
-          this.idiomaService.tVars('recursos.recursoModificado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoRecurso', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        }
-      })
-    );
+  actualizarRecursoDetalle(
+    nombre: string,
+    descripcion: string,
+    otros: string,
+    conDatosEspecificosSolicitud: boolean,
+    datosEspecificosSolicitud: string,
+    idCenad: string,
+    idRecurso: string
+  ): Observable<any> {
+    return this.recursoService
+      .editarRecursoDetalle(
+        nombre,
+        descripcion,
+        otros,
+        conDatosEspecificosSolicitud,
+        datosEspecificosSolicitud,
+        idRecurso
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllRecursos(idCenad)
+              .pipe(tap((recursos) => this.cenadStore.setRecursos(recursos)))
+              .subscribe();
+            this.idiomaService.tVars('recursos.recursoModificado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoRecurso', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          }
+        })
+      );
   }
 
   borrarRecurso(idRecurso: string, idCenad: string): Observable<any> {
     return this.recursoService.deleteRecurso(idRecurso).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.idiomaService.tVars('recursos.recursoEliminado', { id: idRecurso }).then(mensaje => {
-            console.log(mensaje);
-          });
-          this.loadAllRecursos(idCenad).pipe(
-            tap(recursos => this.cenadStore.setRecursos(recursos))
-          ).subscribe();
+          this.idiomaService
+            .tVars('recursos.recursoEliminado', { id: idRecurso })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
+          this.loadAllRecursos(idCenad)
+            .pipe(tap((recursos) => this.cenadStore.setRecursos(recursos)))
+            .subscribe();
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoRecurso', { id: idRecurso }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoRecurso', { id: idRecurso })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         }
       })
     );
@@ -1204,7 +1316,7 @@ export class OrquestadorService {
 
   loadRecursosDeCategoria(idCategoria: string): Observable<Recurso[] | null> {
     return this.recursoService.getRecursosDeCategoria(idCategoria).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         return of([]);
       })
@@ -1213,7 +1325,7 @@ export class OrquestadorService {
 
   loadRecursosDeSubcategorias(idCategoria: string): Observable<Recurso[] | null> {
     return this.recursoService.getRecursosDeSubcategorias(idCategoria).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         return of([]);
       })
@@ -1222,7 +1334,7 @@ export class OrquestadorService {
 
   loadRecursosDeGestor(idGestor: string): Observable<Recurso[] | null> {
     return this.recursoService.getRecursosDeGestor(idGestor).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaRecursos'), err);
         return of([]);
       })
@@ -1231,7 +1343,7 @@ export class OrquestadorService {
 
   loadRecursoSeleccionado(idRecurso: string): Observable<Recurso | null> {
     return this.recursoService.getRecursoSeleccionado(idRecurso).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaRecurso'), err);
         return of(null);
       })
@@ -1240,7 +1352,7 @@ export class OrquestadorService {
 
   loadRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
     return this.recursoService.getRecursoDeSolicitud(idSolicitud).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaRecurso'), err);
         return of(null);
       })
@@ -1262,42 +1374,46 @@ export class OrquestadorService {
     idRecurso: string,
     idUsuarioNormal: string
   ): Observable<any> {
-    return this.solicitudService.crearSolicitud(
-      observaciones,
-      unidadUsuaria,
-      jefeUnidadUsuaria,
-      pocEjercicio,
-      tlfnRedactor,
-      fechaSolicitud,
-      fechaHoraInicioRecurso,
-      fechaHoraFinRecurso,
-      estado,
-      idRecurso,
-      idUsuarioNormal,
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllSolicitudes(idCenad).pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
-          ).subscribe();
-          this.loadAllSolicitudesEstado(idCenad, estado).pipe(
-            tap(solicitudes => {
-              switch (estado) {
-                case 'Borrador':
-                  this.cenadStore.setSolicitudesBorrador(solicitudes);
-                  break;
-                case 'Solicitada':
-                  this.cenadStore.setSolicitudesSolicitada(solicitudes);
-                  break;
-              }
-            })
-          ).subscribe();
-          console.log(this.idiomaService.t('solicitudes.solicitudCreada'));
-        } else {
-          console.warn(this.idiomaService.t('orquestador.errorCreandoSolicitud'));
-        }
-      })
-    );
+    return this.solicitudService
+      .crearSolicitud(
+        observaciones,
+        unidadUsuaria,
+        jefeUnidadUsuaria,
+        pocEjercicio,
+        tlfnRedactor,
+        fechaSolicitud,
+        fechaHoraInicioRecurso,
+        fechaHoraFinRecurso,
+        estado,
+        idRecurso,
+        idUsuarioNormal
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllSolicitudes(idCenad)
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudes(solicitudes)))
+              .subscribe();
+            this.loadAllSolicitudesEstado(idCenad, estado)
+              .pipe(
+                tap((solicitudes) => {
+                  switch (estado) {
+                    case 'Borrador':
+                      this.cenadStore.setSolicitudesBorrador(solicitudes);
+                      break;
+                    case 'Solicitada':
+                      this.cenadStore.setSolicitudesSolicitada(solicitudes);
+                      break;
+                  }
+                })
+              )
+              .subscribe();
+            console.log(this.idiomaService.t('solicitudes.solicitudCreada'));
+          } else {
+            console.warn(this.idiomaService.t('orquestador.errorCreandoSolicitud'));
+          }
+        })
+      );
   }
 
   actualizarSolicitud(
@@ -1313,81 +1429,89 @@ export class OrquestadorService {
     observacionesCenad: string,
     fechaFinDocumentacion: Date
   ): Observable<any> {
-    return this.solicitudService.editarSolicitud(
-      observaciones,
-      jefeUnidadUsuaria,
-      pocEjercicio,
-      tlfnRedactor,
-      fechaHoraInicioRecurso,
-      fechaHoraFinRecurso,
-      estado,
-      idSolicitud,
-      observacionesCenad,
-      fechaFinDocumentacion
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllSolicitudes(idCenad).pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudes(solicitudes))
-          ).subscribe();
-          this.loadAllSolicitudesEstado(idCenad, "Borrador").pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudesBorrador(solicitudes))
-          ).subscribe();
-          this.loadAllSolicitudesEstado(idCenad, "Solicitada").pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudesSolicitada(solicitudes))
-          ).subscribe();
-          this.loadAllSolicitudesEstado(idCenad, "Rechazada").pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudesRechazada(solicitudes))
-          ).subscribe();
-          this.loadAllSolicitudesEstado(idCenad, "Validada").pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudesValidada(solicitudes))
-          ).subscribe();
-          this.loadAllSolicitudesEstado(idCenad, "Cancelada").pipe(
-            tap(solicitudes => this.cenadStore.setSolicitudesCancelada(solicitudes))
-          ).subscribe();
-          console.log(this.idiomaService.t('solicitudes.solicitudActualizada'));
-        } else {
-          console.warn(this.idiomaService.t('orquestador.errorActualizandoSolicitud'));
-        }
-      })
-    );
+    return this.solicitudService
+      .editarSolicitud(
+        observaciones,
+        jefeUnidadUsuaria,
+        pocEjercicio,
+        tlfnRedactor,
+        fechaHoraInicioRecurso,
+        fechaHoraFinRecurso,
+        estado,
+        idSolicitud,
+        observacionesCenad,
+        fechaFinDocumentacion
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllSolicitudes(idCenad)
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudes(solicitudes)))
+              .subscribe();
+            this.loadAllSolicitudesEstado(idCenad, 'Borrador')
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudesBorrador(solicitudes)))
+              .subscribe();
+            this.loadAllSolicitudesEstado(idCenad, 'Solicitada')
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudesSolicitada(solicitudes)))
+              .subscribe();
+            this.loadAllSolicitudesEstado(idCenad, 'Rechazada')
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudesRechazada(solicitudes)))
+              .subscribe();
+            this.loadAllSolicitudesEstado(idCenad, 'Validada')
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudesValidada(solicitudes)))
+              .subscribe();
+            this.loadAllSolicitudesEstado(idCenad, 'Cancelada')
+              .pipe(tap((solicitudes) => this.cenadStore.setSolicitudesCancelada(solicitudes)))
+              .subscribe();
+            console.log(this.idiomaService.t('solicitudes.solicitudActualizada'));
+          } else {
+            console.warn(this.idiomaService.t('orquestador.errorActualizandoSolicitud'));
+          }
+        })
+      );
   }
 
   borrarSolicitud(idSolicitud: string, idCenad: string, estado: string): Observable<any> {
     return this.solicitudService.deleteSolicitud(idSolicitud).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
           console.log(this.idiomaService.t('solicitudes.solicitudEliminada'));
-          this.loadAllSolicitudes(idCenad).pipe(
-            tap(solicitudes => {
-              this.cenadStore.setSolicitudes(solicitudes);
-              this.loadAllSolicitudesEstado(idCenad, estado).pipe(
-                tap(solicitudes => {
-                  switch (estado) {
-                    case 'Borrador':
-                      this.cenadStore.setSolicitudesBorrador(solicitudes);
-                      break;
-                    case 'Solicitada':
-                      this.cenadStore.setSolicitudesSolicitada(solicitudes);
-                      break;
-                    case 'Rechazada':
-                      this.cenadStore.setSolicitudesRechazada(solicitudes);
-                      break;
-                    case 'Validada':
-                      this.cenadStore.setSolicitudesValidada(solicitudes);
-                      break;
-                    case 'Cancelada':
-                      this.cenadStore.setSolicitudesCancelada(solicitudes);
-                      break;
-                  }
-                })
-              ).subscribe();
-            })
-          ).subscribe();
+          this.loadAllSolicitudes(idCenad)
+            .pipe(
+              tap((solicitudes) => {
+                this.cenadStore.setSolicitudes(solicitudes);
+                this.loadAllSolicitudesEstado(idCenad, estado)
+                  .pipe(
+                    tap((solicitudes) => {
+                      switch (estado) {
+                        case 'Borrador':
+                          this.cenadStore.setSolicitudesBorrador(solicitudes);
+                          break;
+                        case 'Solicitada':
+                          this.cenadStore.setSolicitudesSolicitada(solicitudes);
+                          break;
+                        case 'Rechazada':
+                          this.cenadStore.setSolicitudesRechazada(solicitudes);
+                          break;
+                        case 'Validada':
+                          this.cenadStore.setSolicitudesValidada(solicitudes);
+                          break;
+                        case 'Cancelada':
+                          this.cenadStore.setSolicitudesCancelada(solicitudes);
+                          break;
+                      }
+                    })
+                  )
+                  .subscribe();
+              })
+            )
+            .subscribe();
         } else {
-          this.idiomaService.tVars('orquestador.errorEliminandoSolicitud', { id: idSolicitud }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorEliminandoSolicitud', { id: idSolicitud })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         }
       })
     );
@@ -1395,7 +1519,7 @@ export class OrquestadorService {
 
   loadSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
     return this.solicitudService.getSolicitudSeleccionada(idSolicitud).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSolicitud'), err);
         return of(null);
       })
@@ -1404,16 +1528,19 @@ export class OrquestadorService {
 
   loadSolicitudesDeRecurso(idRecurso: string): Observable<Solicitud[] | null> {
     return this.solicitudService.getSolicitudesDeRecurso(idRecurso).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         return of([]);
       })
     );
   }
 
-  loadSolicitudesDeRecursoPorEstado(idRecurso: string, estado: string): Observable<Solicitud[] | null> {
+  loadSolicitudesDeRecursoPorEstado(
+    idRecurso: string,
+    estado: string
+  ): Observable<Solicitud[] | null> {
     return this.solicitudService.getSolicitudesDeRecursoPorEstado(idRecurso, estado).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaSolicitudes'), err);
         return of([]);
       })
@@ -1423,16 +1550,16 @@ export class OrquestadorService {
   // --- CRUD Armas ---
   crearArma(nombre: string, tipoTiro: string): Observable<any> {
     return this.armaService.crearArma(nombre, tipoTiro).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllArmas().pipe(
-            tap(armas => this.datosStore.setArmas(armas))
-          ).subscribe();
-          this.idiomaService.tVars('armas.armaCreada', { nombre }).then(mensaje => {
+          this.loadAllArmas()
+            .pipe(tap((armas) => this.datosStore.setArmas(armas)))
+            .subscribe();
+          this.idiomaService.tVars('armas.armaCreada', { nombre }).then((mensaje) => {
             console.log(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorCreandoArma', { nombre }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorCreandoArma', { nombre }).then((mensaje) => {
             console.log(mensaje);
           });
         }
@@ -1442,18 +1569,20 @@ export class OrquestadorService {
 
   actualizarArma(nombre: string, tipoTiro: string, idArma: string): Observable<any> {
     return this.armaService.editarArma(nombre, tipoTiro, idArma).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllArmas().pipe(
-            tap(armas => this.datosStore.setArmas(armas))
-          ).subscribe();
-          this.idiomaService.tVars('armas.armaModificada', { nombre }).then(mensaje => {
+          this.loadAllArmas()
+            .pipe(tap((armas) => this.datosStore.setArmas(armas)))
+            .subscribe();
+          this.idiomaService.tVars('armas.armaModificada', { nombre }).then((mensaje) => {
             console.log(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoArma', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorActualizandoArma', { nombre })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         }
       })
     );
@@ -1461,16 +1590,16 @@ export class OrquestadorService {
 
   borrarArma(id: string): Observable<any> {
     return this.armaService.deleteArma(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllArmas().pipe(
-            tap(armas => this.datosStore.setArmas(armas))
-          ).subscribe();
-          this.idiomaService.tVars('armas.armaEliminada', { id }).then(mensaje => {
+          this.loadAllArmas()
+            .pipe(tap((armas) => this.datosStore.setArmas(armas)))
+            .subscribe();
+          this.idiomaService.tVars('armas.armaEliminada', { id }).then((mensaje) => {
             console.log(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoArma', { id }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorBorrandoArma', { id }).then((mensaje) => {
             console.log(mensaje);
           });
         }
@@ -1479,54 +1608,73 @@ export class OrquestadorService {
   }
 
   // --- CRUD Unidades ---
-  crearUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string): Observable<any> {
+  crearUnidad(
+    nombre: string,
+    descripcion: string,
+    email: string,
+    tfno: string,
+    direccion: string,
+    poc: string
+  ): Observable<any> {
     return this.unidadService.crearUnidad(nombre, descripcion, email, tfno, direccion, poc).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllUnidades().pipe(
-            tap(unidades => this.datosStore.setUnidades(unidades))
-          ).subscribe();
-          this.idiomaService.tVars('unidades.unidadCreada', { nombre }).then(mensaje => {
+          this.loadAllUnidades()
+            .pipe(tap((unidades) => this.datosStore.setUnidades(unidades)))
+            .subscribe();
+          this.idiomaService.tVars('unidades.unidadCreada', { nombre }).then((mensaje) => {
             console.log(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorCreandoUnidad', { nombre }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorCreandoUnidad', { nombre }).then((mensaje) => {
             console.error(mensaje);
           });
         }
       })
     );
   }
-  actualizarUnidad(nombre: string, descripcion: string, email: string, tfno: string, direccion: string, poc: string, idUnidad: string): Observable<any> {
-    return this.unidadService.editarUnidad(nombre, descripcion, email, tfno, direccion, poc, idUnidad).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllUnidades().pipe(
-            tap(unidades => this.datosStore.setUnidades(unidades))
-          ).subscribe();
-          this.idiomaService.tVars('unidades.unidadModificada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoUnidad', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarUnidad(
+    nombre: string,
+    descripcion: string,
+    email: string,
+    tfno: string,
+    direccion: string,
+    poc: string,
+    idUnidad: string
+  ): Observable<any> {
+    return this.unidadService
+      .editarUnidad(nombre, descripcion, email, tfno, direccion, poc, idUnidad)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllUnidades()
+              .pipe(tap((unidades) => this.datosStore.setUnidades(unidades)))
+              .subscribe();
+            this.idiomaService.tVars('unidades.unidadModificada', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoUnidad', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarUnidad(id: string): Observable<any> {
     return this.unidadService.deleteUnidad(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllUnidades().pipe(
-            tap(unidades => this.datosStore.setUnidades(unidades))
-          ).subscribe();
-          this.idiomaService.tVars('unidades.unidadEliminada', { id }).then(mensaje => {
+          this.loadAllUnidades()
+            .pipe(tap((unidades) => this.datosStore.setUnidades(unidades)))
+            .subscribe();
+          this.idiomaService.tVars('unidades.unidadEliminada', { id }).then((mensaje) => {
             console.log(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoUnidad', { id }).then(mensaje => {
+          this.idiomaService.tVars('orquestador.errorBorrandoUnidad', { id }).then((mensaje) => {
             console.error(mensaje);
           });
         }
@@ -1536,8 +1684,8 @@ export class OrquestadorService {
 
   loadUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
     return this.unidadService.getUnidadDeUsuarioNormal(idUsuarioNormal).pipe(
-      catchError(err => {
-        this.idiomaService.tVars('orquestador.errorCargaUnidad').then(mensaje => {
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaUnidad').then((mensaje) => {
           console.log(mensaje);
         });
         return of(null);
@@ -1549,8 +1697,8 @@ export class OrquestadorService {
 
   loadTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
     return this.tipoFormularioService.getTipoFormularioDeRecurso(idRecurso).pipe(
-      catchError(err => {
-        this.idiomaService.tVars('orquestador.errorCargaTipoFormulario').then(mensaje => {
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaTipoFormulario').then((mensaje) => {
           console.log(mensaje);
         });
         return of(null);
@@ -1560,54 +1708,72 @@ export class OrquestadorService {
 
   crearTipoFormulario(nombre: string, descripcion: string): Observable<any> {
     return this.tipoFormularioService.crearTipoFormulario(nombre, descripcion).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllTiposFormulario().pipe(
-            tap(tipos => this.datosStore.setTiposFormulario(tipos))
-          ).subscribe();
-          this.idiomaService.tVars('tiposFormulario.tipoFormularioCreado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.loadAllTiposFormulario()
+            .pipe(tap((tipos) => this.datosStore.setTiposFormulario(tipos)))
+            .subscribe();
+          this.idiomaService
+            .tVars('tiposFormulario.tipoFormularioCreado', { nombre })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         } else {
-          this.idiomaService.tVars('orquestador.errorCreandoTipoFormulario', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorCreandoTipoFormulario', { nombre })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
   }
-  actualizarTipoFormulario(nombre: string, descripcion: string, idTipoFormulario: string): Observable<any> {
-    return this.tipoFormularioService.editarTipoFormulario(nombre, descripcion, idTipoFormulario).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllTiposFormulario().pipe(
-            tap(tipos => this.datosStore.setTiposFormulario(tipos))
-          ).subscribe();
-          this.idiomaService.tVars('tiposFormulario.tipoFormularioModificado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoTipoFormulario', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarTipoFormulario(
+    nombre: string,
+    descripcion: string,
+    idTipoFormulario: string
+  ): Observable<any> {
+    return this.tipoFormularioService
+      .editarTipoFormulario(nombre, descripcion, idTipoFormulario)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllTiposFormulario()
+              .pipe(tap((tipos) => this.datosStore.setTiposFormulario(tipos)))
+              .subscribe();
+            this.idiomaService
+              .tVars('tiposFormulario.tipoFormularioModificado', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoTipoFormulario', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarTipoFormulario(id: string): Observable<any> {
     return this.tipoFormularioService.deleteTipoFormulario(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllTiposFormulario().pipe(
-            tap(tipos => this.datosStore.setTiposFormulario(tipos))
-          ).subscribe();
-          this.idiomaService.tVars('tiposFormulario.tipoFormularioEliminado', { id }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.loadAllTiposFormulario()
+            .pipe(tap((tipos) => this.datosStore.setTiposFormulario(tipos)))
+            .subscribe();
+          this.idiomaService
+            .tVars('tiposFormulario.tipoFormularioEliminado', { id })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoTipoFormulario', { id }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoTipoFormulario', { id })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
@@ -1616,7 +1782,7 @@ export class OrquestadorService {
   // --- CRUD CategoriasFichero ---
   loadCategoriaFicheroDeFichero(idFichero: string): Observable<CategoriaFichero | null> {
     return this.categoriaFicheroService.getCategoriaFicheroDeFichero(idFichero).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error('Error cargando la categoria de fichero', err);
         return of(null);
       })
@@ -1625,54 +1791,73 @@ export class OrquestadorService {
 
   crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable<any> {
     return this.categoriaFicheroService.crearCategoriaFichero(nombre, tipo, descripcion).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllCategoriasFichero().pipe(
-            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
-          ).subscribe();
-          this.idiomaService.tVars('categoriasFichero.categoriaFicheroCreada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.loadAllCategoriasFichero()
+            .pipe(tap((categorias) => this.datosStore.setCategoriasFichero(categorias)))
+            .subscribe();
+          this.idiomaService
+            .tVars('categoriasFichero.categoriaFicheroCreada', { nombre })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         } else {
-          this.idiomaService.tVars('orquestador.errorCreandoCategoriaFichero', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorCreandoCategoriaFichero', { nombre })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
   }
-  actualizarCategoriaFichero(nombre: string, tipo: number, descripcion: string, idCategoriaFichero: string): Observable<any> {
-    return this.categoriaFicheroService.editarCategoriaFichero(nombre, tipo, descripcion, idCategoriaFichero).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCategoriasFichero().pipe(
-            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
-          ).subscribe();
-          this.idiomaService.tVars('categoriasFichero.categoriaFicheroModificada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoCategoriaFichero', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+  actualizarCategoriaFichero(
+    nombre: string,
+    tipo: number,
+    descripcion: string,
+    idCategoriaFichero: string
+  ): Observable<any> {
+    return this.categoriaFicheroService
+      .editarCategoriaFichero(nombre, tipo, descripcion, idCategoriaFichero)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCategoriasFichero()
+              .pipe(tap((categorias) => this.datosStore.setCategoriasFichero(categorias)))
+              .subscribe();
+            this.idiomaService
+              .tVars('categoriasFichero.categoriaFicheroModificada', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoCategoriaFichero', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
   borrarCategoriaFichero(id: string): Observable<any> {
     return this.categoriaFicheroService.deleteCategoriaFichero(id).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.loadAllCategoriasFichero().pipe(
-            tap(categorias => this.datosStore.setCategoriasFichero(categorias))
-          ).subscribe();
-          this.idiomaService.tVars('categoriasFichero.categoriaFicheroEliminada', { id }).then(mensaje => {
-            console.log(mensaje);
-          });
+          this.loadAllCategoriasFichero()
+            .pipe(tap((categorias) => this.datosStore.setCategoriasFichero(categorias)))
+            .subscribe();
+          this.idiomaService
+            .tVars('categoriasFichero.categoriaFicheroEliminada', { id })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoCategoriaFichero', { id }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoCategoriaFichero', { id })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
@@ -1686,28 +1871,28 @@ export class OrquestadorService {
     archivo: File,
     idCenad: string
   ): Observable<any> {
-    return this.cartografiaService.crearCartografia(
-      nombre,
-      descripcion,
-      escala,
-      archivo,
-      idCenad
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCartografias(idCenad).pipe(
-            tap(cartografias => this.cenadStore.setCartografias(cartografias))
-          ).subscribe();
-          this.idiomaService.tVars('cartografias.cartografiaCreada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoCartografia', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.cartografiaService
+      .crearCartografia(nombre, descripcion, escala, archivo, idCenad)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCartografias(idCenad)
+              .pipe(tap((cartografias) => this.cenadStore.setCartografias(cartografias)))
+              .subscribe();
+            this.idiomaService
+              .tVars('cartografias.cartografiaCreada', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoCartografia', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarCartografia(
@@ -1719,46 +1904,60 @@ export class OrquestadorService {
     idCenad: string,
     idCartografia: string
   ): Observable<any> {
-    return this.cartografiaService.editarCartografia(
-      nombre,
-      descripcion,
-      escala,
-      archivoCartografia,
-      archivoActual,
-      idCenad,
-      idCartografia
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllCartografias(idCenad).pipe(
-            tap(cartografias => this.cenadStore.setCartografias(cartografias))
-          ).subscribe();
-          this.idiomaService.tVars('cartografias.cartografiaModificada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoCartografia', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.cartografiaService
+      .editarCartografia(
+        nombre,
+        descripcion,
+        escala,
+        archivoCartografia,
+        archivoActual,
+        idCenad,
+        idCartografia
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllCartografias(idCenad)
+              .pipe(tap((cartografias) => this.cenadStore.setCartografias(cartografias)))
+              .subscribe();
+            this.idiomaService
+              .tVars('cartografias.cartografiaModificada', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoCartografia', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  borrarCartografia(nombreArchivo: string, idCartografia: string, idCenad: string): Observable<any> {
+  borrarCartografia(
+    nombreArchivo: string,
+    idCartografia: string,
+    idCenad: string
+  ): Observable<any> {
     return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, idCenad).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.idiomaService.tVars('cartografias.cartografiaEliminada', { nombreArchivo }).then(mensaje => {
-            console.log(mensaje);
-          });
-          this.loadAllCartografias(idCenad).pipe(
-            tap(cartografias => this.cenadStore.setCartografias(cartografias))
-          ).subscribe();
+          this.idiomaService
+            .tVars('cartografias.cartografiaEliminada', { nombreArchivo })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
+          this.loadAllCartografias(idCenad)
+            .pipe(tap((cartografias) => this.cenadStore.setCartografias(cartografias)))
+            .subscribe();
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoCartografia', { nombreArchivo }).then(mensaje => {
-            console.error(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoCartografia', { nombreArchivo })
+            .then((mensaje) => {
+              console.error(mensaje);
+            });
         }
       })
     );
@@ -1771,7 +1970,7 @@ export class OrquestadorService {
   // --- CRUD FicherosRecurso ---
   loadFicherosDeRecurso(idRecurso: string): Observable<FicheroRecurso[] | null> {
     return this.ficheroService.getAllFicherosDeRecurso(idRecurso).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaFicheros'), err);
         return of([]);
       })
@@ -1780,7 +1979,7 @@ export class OrquestadorService {
 
   loadFicheroRecursoSeleccionado(idFichero: string): Observable<FicheroRecurso | null> {
     return this.ficheroService.getFicheroRecursoSeleccionado(idFichero).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaFichero'), err);
         return of(null);
       })
@@ -1794,27 +1993,24 @@ export class OrquestadorService {
     idCenad: string,
     idRecurso: string
   ): Observable<any> {
-    return this.ficheroService.crearFicheroRecurso(
-      nombre,
-      descripcion,
-      archivo,
-      idCategoriaFichero,
-      idCenad,
-      idRecurso
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadFicherosDeRecurso(idRecurso).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroCreado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoFichero', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.ficheroService
+      .crearFicheroRecurso(nombre, descripcion, archivo, idCategoriaFichero, idCenad, idRecurso)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadFicherosDeRecurso(idRecurso).subscribe();
+            this.idiomaService.tVars('ficheros.ficheroCreado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoFichero', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarFicheroRecurso(
@@ -1827,46 +2023,61 @@ export class OrquestadorService {
     idCategoriaFichero: string,
     idFichero: string
   ): Observable<any> {
-    return this.ficheroService.editarFicheroRecurso(
-      nombre,
-      descripcion,
-      archivo,
-      nombreArchivoActual,
-      idCenad,
-      idRecurso,
-      idCategoriaFichero,
-      idFichero
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadFicherosDeRecurso(idRecurso).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroModificado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoFichero', { nombre }).then(mensaje => {
-            console.error(mensaje);
-          });
-        }
-      })
-    );
+    return this.ficheroService
+      .editarFicheroRecurso(
+        nombre,
+        descripcion,
+        archivo,
+        nombreArchivoActual,
+        idCenad,
+        idRecurso,
+        idCategoriaFichero,
+        idFichero
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadFicherosDeRecurso(idRecurso).subscribe();
+            this.idiomaService.tVars('ficheros.ficheroModificado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoFichero', { nombre })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  borrarFicheroRecurso(nombreArchivo: string, idFichero: string, idCenad: string, idRecurso: string): Observable<any> {
-    return this.ficheroService.deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso).pipe(
-      tap(res => {
-        if (res) {
-          this.loadFicherosDeRecurso(idRecurso).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroEliminado', { nombreArchivo }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoFichero', { nombreArchivo }).then(mensaje => {
-            console.log(mensaje);
-          });
-        }
-      })
-    );
+  borrarFicheroRecurso(
+    nombreArchivo: string,
+    idFichero: string,
+    idCenad: string,
+    idRecurso: string
+  ): Observable<any> {
+    return this.ficheroService
+      .deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadFicherosDeRecurso(idRecurso).subscribe();
+            this.idiomaService
+              .tVars('ficheros.ficheroEliminado', { nombreArchivo })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorBorrandoFichero', { nombreArchivo })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          }
+        })
+      );
   }
 
   getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
@@ -1879,7 +2090,7 @@ export class OrquestadorService {
   //--- CRUD FicherosSolicitud ---
   loadDocumentacionCenad(idSolicitud: string): Observable<FicheroSolicitud[] | null> {
     return this.ficheroService.getAllDocumentacionSolicitudCenad(idSolicitud).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorFicheros'), err);
         return of([]);
       })
@@ -1888,7 +2099,7 @@ export class OrquestadorService {
 
   loadDocumentacionUnidad(idSolicitud: string): Observable<FicheroSolicitud[] | null> {
     return this.ficheroService.getAllDocumentacionSolicitudUnidad(idSolicitud).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaFicheros'), err);
         return of([]);
       })
@@ -1897,7 +2108,7 @@ export class OrquestadorService {
 
   loadFicheroSolicitudSeleccionado(idFichero: string): Observable<FicheroSolicitud | null> {
     return this.ficheroService.getFicheroSolicitudSeleccionado(idFichero).pipe(
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaFichero'), err);
         return of(null);
       })
@@ -1912,27 +2123,31 @@ export class OrquestadorService {
     idCenad: string,
     idSolicitud: string
   ): Observable<any> {
-    return this.ficheroService.crearFicheroSolicitudCenad(
-      nombre,
-      descripcion,
-      archivo,
-      idCategoriaFichero,
-      idCenad,
-      idSolicitud
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionCenad(idSolicitud).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroCreado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoFichero', { nombre }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+    return this.ficheroService
+      .crearFicheroSolicitudCenad(
+        nombre,
+        descripcion,
+        archivo,
+        idCategoriaFichero,
+        idCenad,
+        idSolicitud
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadDocumentacionCenad(idSolicitud).subscribe();
+            this.idiomaService.tVars('ficheros.ficheroCreado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoFichero', { nombre })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
   crearFicheroSolicitudUnidad(
@@ -1943,27 +2158,31 @@ export class OrquestadorService {
     idCenad: string,
     idSolicitud: string
   ): Observable<any> {
-    return this.ficheroService.crearFicheroSolicitudUnidad(
-      nombre,
-      descripcion,
-      archivo,
-      idCategoriaFichero,
-      idCenad,
-      idSolicitud
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionUnidad(idSolicitud).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroCreado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorCreandoFichero', { nombre }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+    return this.ficheroService
+      .crearFicheroSolicitudUnidad(
+        nombre,
+        descripcion,
+        archivo,
+        idCategoriaFichero,
+        idCenad,
+        idSolicitud
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadDocumentacionUnidad(idSolicitud).subscribe();
+            this.idiomaService.tVars('ficheros.ficheroCreado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorCreandoFichero', { nombre })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarFicheroSolicitudCenad(
@@ -1976,29 +2195,33 @@ export class OrquestadorService {
     idCategoriaFichero: string,
     idFichero: string
   ): Observable<any> {
-    return this.ficheroService.editarFicheroSolicitud(
-      nombre,
-      descripcion,
-      archivo,
-      nombreArchivoActual,
-      idCenad,
-      idSolicitud,
-      idCategoriaFichero,
-      idFichero
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionCenad(idSolicitud).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroModificado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoFichero', { nombre }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+    return this.ficheroService
+      .editarFicheroSolicitud(
+        nombre,
+        descripcion,
+        archivo,
+        nombreArchivoActual,
+        idCenad,
+        idSolicitud,
+        idCategoriaFichero,
+        idFichero
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadDocumentacionCenad(idSolicitud).subscribe();
+            this.idiomaService.tVars('ficheros.ficheroModificado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoFichero', { nombre })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarFicheroSolicitudUnidad(
@@ -2011,70 +2234,104 @@ export class OrquestadorService {
     idCategoriaFichero: string,
     idFichero: string
   ): Observable<any> {
-    return this.ficheroService.editarFicheroSolicitud(
-      nombre,
-      descripcion,
-      archivo,
-      nombreArchivoActual,
-      idCenad,
-      idSolicitud,
-      idCategoriaFichero,
-      idFichero
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionUnidad(idSolicitud).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroModificado', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoFichero', { nombre }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+    return this.ficheroService
+      .editarFicheroSolicitud(
+        nombre,
+        descripcion,
+        archivo,
+        nombreArchivoActual,
+        idCenad,
+        idSolicitud,
+        idCategoriaFichero,
+        idFichero
+      )
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadDocumentacionUnidad(idSolicitud).subscribe();
+            this.idiomaService.tVars('ficheros.ficheroModificado', { nombre }).then((mensaje) => {
+              console.log(mensaje);
+            });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoFichero', { nombre })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  borrarFicheroSolicitudCenad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionCenad(idSolicitud).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroBorrado', { nombreArchivo }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoFichero', { nombreArchivo }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+  borrarFicheroSolicitudCenad(
+    nombreArchivo: string,
+    idFichero: string,
+    idCenad: string,
+    idSolicitud: string
+  ): Observable<any> {
+    return this.ficheroService
+      .deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadDocumentacionCenad(idSolicitud).subscribe();
+            this.idiomaService
+              .tVars('ficheros.ficheroBorrado', { nombreArchivo })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorBorrandoFichero', { nombreArchivo })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  borrarFicheroSolicitudUnidad(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.ficheroService.deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud).pipe(
-      tap(res => {
-        if (res) {
-          this.loadDocumentacionUnidad(idSolicitud).subscribe();
-          this.idiomaService.tVars('ficheros.ficheroBorrado', { nombreArchivo }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoFichero', { nombreArchivo }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+  borrarFicheroSolicitudUnidad(
+    nombreArchivo: string,
+    idFichero: string,
+    idCenad: string,
+    idSolicitud: string
+  ): Observable<any> {
+    return this.ficheroService
+      .deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadDocumentacionUnidad(idSolicitud).subscribe();
+            this.idiomaService
+              .tVars('ficheros.ficheroBorrado', { nombreArchivo })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorBorrandoFichero', { nombreArchivo })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
-  getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<void> {
+  getArchivoSolicitud(
+    nombreArchivo: string,
+    idCenad: string,
+    idSolicitud: string
+  ): Observable<void> {
     return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
   }
 
-  getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<Blob> {
+  getImagenSolicitud(
+    nombreArchivo: string,
+    idCenad: string,
+    idSolicitud: string
+  ): Observable<Blob> {
     return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
   }
 
@@ -2085,24 +2342,21 @@ export class OrquestadorService {
     archivo: File,
     idCenad: string
   ): Observable<any> {
-    return this.normativaService.crearNormativa(
-      nombre,
-      descripcion,
-      archivo,
-      idCenad
-    ).pipe(
-      tap(res => {
+    return this.normativaService.crearNormativa(nombre, descripcion, archivo, idCenad).pipe(
+      tap((res) => {
         if (res) {
-          this.loadAllNormativas(idCenad).pipe(
-            tap(normativas => this.cenadStore.setNormativas(normativas))
-          ).subscribe();
-          this.idiomaService.tVars('normativas.normativaCreada', { nombre }).then(mensaje => {
+          this.loadAllNormativas(idCenad)
+            .pipe(tap((normativas) => this.cenadStore.setNormativas(normativas)))
+            .subscribe();
+          this.idiomaService.tVars('normativas.normativaCreada', { nombre }).then((mensaje) => {
             console.log(mensaje);
           });
         } else {
-          this.idiomaService.tVars('orquestador.errorCreandoNormativa', { nombre }).then(mensaje => {
-            console.warn(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorCreandoNormativa', { nombre })
+            .then((mensaje) => {
+              console.warn(mensaje);
+            });
         }
       })
     );
@@ -2116,45 +2370,48 @@ export class OrquestadorService {
     idCenad: string,
     idNormativa: string
   ): Observable<any> {
-    return this.normativaService.editarNormativa(
-      nombre,
-      descripcion,
-      archivoNormativa,
-      archivoActual,
-      idCenad,
-      idNormativa
-    ).pipe(
-      tap(res => {
-        if (res) {
-          this.loadAllNormativas(idCenad).pipe(
-            tap(normativas => this.cenadStore.setNormativas(normativas))
-          ).subscribe();
-          this.idiomaService.tVars('normativas.normativaModificada', { nombre }).then(mensaje => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService.tVars('orquestador.errorActualizandoNormativa', { nombre }).then(mensaje => {
-            console.warn(mensaje);
-          });
-        }
-      })
-    );
+    return this.normativaService
+      .editarNormativa(nombre, descripcion, archivoNormativa, archivoActual, idCenad, idNormativa)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllNormativas(idCenad)
+              .pipe(tap((normativas) => this.cenadStore.setNormativas(normativas)))
+              .subscribe();
+            this.idiomaService
+              .tVars('normativas.normativaModificada', { nombre })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorActualizandoNormativa', { nombre })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
   borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string): Observable<any> {
     return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, idCenad).pipe(
-      tap(res => {
+      tap((res) => {
         if (res) {
-          this.idiomaService.tVars('normativas.normativaBorrada', { nombreArchivo }).then(mensaje => {
-            console.log(mensaje);
-          });
-          this.loadAllNormativas(idCenad).pipe(
-            tap(normativas => this.cenadStore.setNormativas(normativas))
-          ).subscribe();
+          this.idiomaService
+            .tVars('normativas.normativaBorrada', { nombreArchivo })
+            .then((mensaje) => {
+              console.log(mensaje);
+            });
+          this.loadAllNormativas(idCenad)
+            .pipe(tap((normativas) => this.cenadStore.setNormativas(normativas)))
+            .subscribe();
         } else {
-          this.idiomaService.tVars('orquestador.errorBorrandoNormativa', { nombreArchivo }).then(mensaje => {
-            console.warn(mensaje);
-          });
+          this.idiomaService
+            .tVars('orquestador.errorBorrandoNormativa', { nombreArchivo })
+            .then((mensaje) => {
+              console.warn(mensaje);
+            });
         }
       })
     );
@@ -2165,30 +2422,72 @@ export class OrquestadorService {
   }
 
   // --- GETTERS ---
-  getCenads(): Cenad[] { return this.datosStore.cenads(); }
-  getCategoriasFichero(): CategoriaFichero[] { return this.datosStore.categoriasFichero(); }
-  getTiposFormulario(): TipoFormulario[] { return this.datosStore.tiposFormulario(); }
-  getUnidades(): Unidad[] { return this.datosStore.unidades(); }
-  getArmas(): Arma[] { return this.datosStore.armas(); }
-  getUsuariosSuperadministrador(): UsuarioSuperAdministrador[] { return this.datosStore.usuariosSuperadministrador(); }
-  getUsuariosAdministrador(): UsuarioAdministrador[] { return this.datosStore.usuariosAdministrador(); }
-  getUsuariosNormal(): UsuarioNormal[] { return this.datosStore.usuariosNormal(); }
-  getUrlApi(): string | null { return this.datosStore.urlApi(); }
-  getUsuarioLogueado() { return this.usuarioLogueadoStore.usuarioLogueado(); }
-  getCenadPropio() { return this.usuarioLogueadoStore.cenadPropio(); }
-  getUnidad() { return this.usuarioLogueadoStore.unidad(); }
-  getcategoriasCenad(): Categoria[] { return this.cenadStore.categorias(); }
-  getcategoriasPadreCenad(): Categoria[] { return this.cenadStore.categoriasPadre(); }
-  getrecursosCenad(): Recurso[] { return this.cenadStore.recursos(); }
-  getcartografiasCenad(): Cartografia[] { return this.cenadStore.cartografias(); }
-  getnormativasCenad(): Normativa[] { return this.cenadStore.normativas(); }
-  getsolicitudesCenad(): Solicitud[] { return this.cenadStore.solicitudes(); }
-  getUsuariosGestorCenad(): UsuarioGestor[] { return this.cenadStore.usuariosGestor(); }
-  getUsuarioAdministradorCenad(): UsuarioAdministrador | null { return this.cenadStore.usuarioAdministrador(); }
-  getCenadVisitado(): Cenad | null { return this.cenadStore.cenadVisitado(); }
+  getCenads(): Cenad[] {
+    return this.datosStore.cenads();
+  }
+  getCategoriasFichero(): CategoriaFichero[] {
+    return this.datosStore.categoriasFichero();
+  }
+  getTiposFormulario(): TipoFormulario[] {
+    return this.datosStore.tiposFormulario();
+  }
+  getUnidades(): Unidad[] {
+    return this.datosStore.unidades();
+  }
+  getArmas(): Arma[] {
+    return this.datosStore.armas();
+  }
+  getUsuariosSuperadministrador(): UsuarioSuperAdministrador[] {
+    return this.datosStore.usuariosSuperadministrador();
+  }
+  getUsuariosAdministrador(): UsuarioAdministrador[] {
+    return this.datosStore.usuariosAdministrador();
+  }
+  getUsuariosNormal(): UsuarioNormal[] {
+    return this.datosStore.usuariosNormal();
+  }
+  getUrlApi(): string | null {
+    return this.datosStore.urlApi();
+  }
+  getUsuarioLogueado() {
+    return this.usuarioLogueadoStore.usuarioLogueado();
+  }
+  getCenadPropio() {
+    return this.usuarioLogueadoStore.cenadPropio();
+  }
+  getUnidad() {
+    return this.usuarioLogueadoStore.unidad();
+  }
+  getcategoriasCenad(): Categoria[] {
+    return this.cenadStore.categorias();
+  }
+  getcategoriasPadreCenad(): Categoria[] {
+    return this.cenadStore.categoriasPadre();
+  }
+  getrecursosCenad(): Recurso[] {
+    return this.cenadStore.recursos();
+  }
+  getcartografiasCenad(): Cartografia[] {
+    return this.cenadStore.cartografias();
+  }
+  getnormativasCenad(): Normativa[] {
+    return this.cenadStore.normativas();
+  }
+  getsolicitudesCenad(): Solicitud[] {
+    return this.cenadStore.solicitudes();
+  }
+  getUsuariosGestorCenad(): UsuarioGestor[] {
+    return this.cenadStore.usuariosGestor();
+  }
+  getUsuarioAdministradorCenad(): UsuarioAdministrador | null {
+    return this.cenadStore.usuarioAdministrador();
+  }
+  getCenadVisitado(): Cenad | null {
+    return this.cenadStore.cenadVisitado();
+  }
 
   async getDatosDeUsuario() {
-    const rol = this.auth.rol()!;//obliga a que no sea nulo.si fuera nulo petaria, pero es que si fuera nulo no se ha logueado y no se lanza este metodo
+    const rol = this.auth.rol()!; //obliga a que no sea nulo.si fuera nulo petaria, pero es que si fuera nulo no se ha logueado y no se lanza este metodo
     const username = this.auth.username()!;
     const { usuario, cenad, unidad } = await this.usuarioService.getDatosUsuario(rol, username);
     this.usuarioLogueadoStore.setUsuario(usuario);

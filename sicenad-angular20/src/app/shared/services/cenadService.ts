@@ -25,22 +25,25 @@ export class CenadService {
     );
   }
 
-  getCenadsSinAdmin(): Observable<Cenad[] | null> {
-    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioAdministradorId eq ''`;
+  getCenadsSinAdmin(): Observable<Cenad[]> {
+    // Para listar CENADs sin administrador el campo lookup viene como null en SharePoint,
+    // por eso comparamos con null (no con cadena vacía). Seleccionamos los campos que usamos.
+    const filter = `$select=Id,nombre,descripcion,direccion,tfno,email,escudo,infoCenad,provincia&$filter=usuarioAdministradorId eq null`;
     const endpoint = `${this.urlBasic}?${filter}`;
     return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
       catchError((err) => {
-        console.error(err);
+        console.error('Error obteniendo CENADs sin administrador:', err);
         return of([]);
       })
     );
   }
 
   getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad> {
-    const urlCenads = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq ${idUsuarioAdministrador}`;
+    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioAdministradorId eq ${idUsuarioAdministrador}`;
+    const urlCenads = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
       map((res) => {
-        const cenads = res?.d?.results || [];
+        const cenads = res || [];
         const cenad = cenads[0];
         if (!cenad) throw new Error('Cenad no encontrado');
         return cenad;
@@ -53,8 +56,8 @@ export class CenadService {
   }
 
   getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad> {
-    //lo hare en usuarioService
-    const urlCenads = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq '1'`;
+    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioGestorId eq ${idUsuarioGestor}`;
+    const urlCenads = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
       map((res) => {
         const cenads = res?.d?.results || [];
@@ -334,10 +337,45 @@ export class CenadService {
     // Si existe un infoCenad previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
     // mostramos un toast de error. Si no existe, subimos directamente.
     if (infoCenad) {
-      return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, `infoCenad/${infoCenad}`).pipe(
-        switchMap((borradoOk: boolean) => {
-          if (!borradoOk) {
-            console.warn('Abortando subida: no se pudo borrar el infoCenad anterior.');
+      return this.apiService
+        .borrarArchivoSharePoint(nombreBiblioteca, `infoCenad/${infoCenad}`)
+        .pipe(
+          switchMap((borradoOk: boolean) => {
+            if (!borradoOk) {
+              console.warn('Abortando subida: no se pudo borrar el infoCenad anterior.');
+              return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+                switchMap((mensaje) => {
+                  this.utilService.toast(
+                    mensaje || 'No se pudo borrar el infoCenad anterior. Operación abortada.',
+                    'error'
+                  );
+                  return of(null);
+                }),
+                catchError(() => {
+                  this.utilService.toast(
+                    'No se pudo borrar el infoCenad anterior. Operación abortada.',
+                    'error'
+                  );
+                  return of(null);
+                })
+              );
+            }
+            // Borrado OK -> subimos el nuevo infoCenad
+            return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
+              switchMap((resInfoCenad) => {
+                const nuevoInfoCenadName = resInfoCenad?.d?.Name || resInfoCenad?.Name || '';
+                if (!nuevoInfoCenadName) return of(null);
+                infoCenad = nuevoInfoCenadName;
+                return patchInfoCenad();
+              }),
+              catchError((err) => {
+                console.error('Error subiendo el nuevo infoCenad:', err);
+                return of(null);
+              })
+            );
+          }),
+          catchError((err) => {
+            console.warn('Error borrando el infoCenad anterior:', err);
             return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
               switchMap((mensaje) => {
                 this.utilService.toast(
@@ -354,41 +392,8 @@ export class CenadService {
                 return of(null);
               })
             );
-          }
-          // Borrado OK -> subimos el nuevo infoCenad
-          return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
-            switchMap((resInfoCenad) => {
-              const nuevoInfoCenadName = resInfoCenad?.d?.Name || resInfoCenad?.Name || '';
-              if (!nuevoInfoCenadName) return of(null);
-              infoCenad = nuevoInfoCenadName;
-              return patchInfoCenad();
-            }),
-            catchError((err) => {
-              console.error('Error subiendo el nuevo infoCenad:', err);
-              return of(null);
-            })
-          );
-        }),
-        catchError((err) => {
-          console.warn('Error borrando el infoCenad anterior:', err);
-          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
-            switchMap((mensaje) => {
-              this.utilService.toast(
-                mensaje || 'No se pudo borrar el infoCenad anterior. Operación abortada.',
-                'error'
-              );
-              return of(null);
-            }),
-            catchError(() => {
-              this.utilService.toast(
-                'No se pudo borrar el infoCenad anterior. Operación abortada.',
-                'error'
-              );
-              return of(null);
-            })
-          );
-        })
-      );
+          })
+        );
     }
     // No había infoCenad previo: subimos y parchamos directamente
     return this.apiService.subirArchivo(endpointUpload, archivoInfoCenad).pipe(
@@ -408,5 +413,37 @@ export class CenadService {
   getInfoCenad(infoCenad: string, nombreBiblioteca: string): Observable<Blob> {
     const endpoint = `/${nombreBiblioteca}/infoCenad/${infoCenad}`;
     return this.apiService.mostrarArchivo(endpoint);
+  }
+
+  asignarCenad(idUsuarioAdministrador: string, idCenad: string): Observable<any> {
+    const endpoint = 'Cenads';
+    return this.apiService
+      .request<any>(endpoint, 'PATCH', {
+        usuarioAdministradorId: idUsuarioAdministrador,
+        Id: idCenad,
+      })
+      .pipe(
+        map((res) => !!res),
+        tap((ok) => {
+          if (!ok) return;
+          // tVars devuelve una Promise<string> en este repo; usamos .then() para el toast
+          this.idiomaService
+            .tVars('cenads.cenadModificado', { nombre: `del usuario ${idUsuarioAdministrador}` })
+            .then((mensaje) => {
+              this.utilService.toast(mensaje || 'CENAD modificado', 'success');
+            })
+            .catch(() => {
+              this.utilService.toast('CENAD modificado', 'success');
+            });
+        }),
+        catchError((err) => {
+          console.error('Error asignando administrador a CENAD:', err);
+          const errMsg =
+            (this.idiomaService.t && this.idiomaService.t('errorGeneral')) ||
+            'Error al asignar administrador';
+          this.utilService.toast(errMsg, 'error');
+          return of(false);
+        })
+      );
   }
 }

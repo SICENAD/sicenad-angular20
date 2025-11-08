@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
 import { Usuario } from '@interfaces/models/usuario';
 import { UsuarioModalComponent } from '../usuarioModal/usuarioModal.component';
@@ -14,10 +14,9 @@ import { Unidad } from '@interfaces/models/unidad';
   selector: 'app-usuario',
   imports: [UsuarioModalComponent],
   templateUrl: './usuario.component.html',
-  styleUrls: ['./usuario.component.css']
+  styleUrls: ['./usuario.component.css'],
 })
 export class UsuarioComponent {
-
   private orquestadorService = inject(OrquestadorService);
 
   usuario = input.required<Usuario>();
@@ -25,7 +24,11 @@ export class UsuarioComponent {
   cenad = signal<Cenad | undefined>(undefined);
   unidad = signal<Unidad | undefined>(undefined);
 
-  get usuarioTipado(): UsuarioSuperAdministrador | UsuarioAdministrador | UsuarioGestor | UsuarioNormal {
+  get usuarioTipado():
+    | UsuarioSuperAdministrador
+    | UsuarioAdministrador
+    | UsuarioGestor
+    | UsuarioNormal {
     switch (this.usuario()?.rol) {
       case RolUsuario.Superadministrador:
         return this.usuario() as UsuarioSuperAdministrador;
@@ -55,7 +58,7 @@ export class UsuarioComponent {
           },
           error: (error) => {
             console.error(error);
-          }
+          },
         });
         break;
       case this.rolUsuario.Gestor:
@@ -69,7 +72,7 @@ export class UsuarioComponent {
           },
           error: (error) => {
             console.error(error);
-          }
+          },
         });
         break;
       case this.rolUsuario.Normal:
@@ -82,7 +85,7 @@ export class UsuarioComponent {
           },
           error: (error) => {
             console.error(error);
-          }
+          },
         });
         break;
       default:
@@ -90,8 +93,7 @@ export class UsuarioComponent {
     }
   }
 
-  ngOnInit(): void {
+  cargarCenadOUnidadEffect = effect(() => {
     this.cargarCenadOUnidad();
-  }
-
+  });
 }
