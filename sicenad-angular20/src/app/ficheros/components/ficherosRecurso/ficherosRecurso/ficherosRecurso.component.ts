@@ -158,23 +158,23 @@ export class FicherosRecursoComponent {
       next: (categoriasFichero) => {
         // Agrupar por Id
         const mapaCategorias = new Map<string, CategoriaFichero>();
-        for (const { Id, nombre, tipo, descripcion, fichero } of categoriasFichero) {
+        for (const { Id, nombre, tipo_categoriaFichero, descripcion, fichero } of categoriasFichero) {
           const IdKey = Id!; // <-- afirmamos que nunca será undefined
           const nombreKey = nombre!;
-          const tipoKey = tipo!;
+          const tipoKey = tipo_categoriaFichero!;
           const descripcionKey = descripcion!;
           if (!mapaCategorias.has(IdKey)) {
-            mapaCategorias.set(IdKey, { Id: IdKey, nombre: nombreKey, tipo: tipoKey, descripcion: descripcionKey, ficheros: [] });
+            mapaCategorias.set(IdKey, { Id: IdKey, nombre: nombreKey, tipo_categoriaFichero: tipoKey, descripcion: descripcionKey, ficheros: [] });
           }
           mapaCategorias.get(IdKey)!.ficheros!.push(fichero);
         }
         const categoriasUnicas = Array.from(mapaCategorias.values());
         // Actualizamos los signals
         this.categoriasFicheroImagenesMisFicheros.set(
-          categoriasUnicas.filter(cat => cat.tipo === 0)
+          categoriasUnicas.filter(cat => cat.tipo_categoriaFichero === 0)
         );
         this.categoriasFicheroNoImagenesMisFicheros.set(
-          categoriasUnicas.filter(cat => cat.tipo === 1)
+          categoriasUnicas.filter(cat => cat.tipo_categoriaFichero === 1)
         );
       },
       error: (error) => {

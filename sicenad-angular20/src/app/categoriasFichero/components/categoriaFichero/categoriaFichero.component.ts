@@ -6,9 +6,11 @@ import { CategoriaFichero } from '@interfaces/models/categoriaFichero';
   selector: 'app-categoriaFichero',
   imports: [CategoriaFicheroModalComponent],
   templateUrl: './categoriaFichero.component.html',
-  styleUrls: ['./categoriaFichero.component.css']
+  styleUrls: ['./categoriaFichero.component.css'],
 })
 export class CategoriaFicheroComponent {
-
-    categoriaFichero = input.required<CategoriaFichero>();
+  categoriaFichero = input.required<CategoriaFichero>();
+  get tipoString(): string {
+    return this.categoriaFichero().tipo_categoriaFichero === 0 ? 'Imagen' : 'Otros archivos';
+  }
 }

@@ -40,10 +40,10 @@ export class CategoriaFicheroService {
     );
   }
 
-  crearCategoriaFichero(nombre: string, tipo: number, descripcion: string): Observable<any> {
+  crearCategoriaFichero(nombre: string, tipo_categoriaFichero: number, descripcion: string): Observable<any> {
     const endpoint = 'CategoriasFichero';
     return this.apiService
-      .request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipo, descripcion })
+      .request<any>(endpoint, 'POST', { nombre: nombre.toUpperCase(), tipo_categoriaFichero, descripcion })
       .pipe(
         map((res) => !!res),
         tap(async () => {
@@ -59,12 +59,12 @@ export class CategoriaFicheroService {
       );
   }
 
-  editarCategoriaFichero(nombre: string, tipo: number, descripcion: string, idCategoriaFichero: string): Observable<any> {
+  editarCategoriaFichero(nombre: string, tipo_categoriaFichero: number, descripcion: string, idCategoriaFichero: string): Observable<any> {
     const endpoint = 'CategoriasFichero';
     return this.apiService
       .request<any>(endpoint, 'PATCH', {
         nombre: nombre.toUpperCase(),
-        tipo,
+        tipo_categoriaFichero,
         descripcion,
         Id: idCategoriaFichero,
       })

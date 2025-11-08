@@ -5,7 +5,7 @@ export interface CategoriaFichero {
   Id: string;
   nombre: string;
   descripcion: string;
-  tipo: number;
+  tipo_categoriaFichero: number;
   ficheros?: Fichero[];
   cartografias?: Cartografia[];
   url?: string;
