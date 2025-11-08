@@ -431,6 +431,7 @@ export class OrquestadorService {
               return of(registerRes); // devolvemos el resultado del registro aunque no se pueda actualizar
             }
             // Editamos el usuario para asignarle el CENAD
+            // mas bien en cenad añado el administrador
             return this.actualizarUsuarioAdministrador(
               username,
               tfno,

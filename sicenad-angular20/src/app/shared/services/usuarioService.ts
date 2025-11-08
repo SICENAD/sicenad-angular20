@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, firstValueFrom, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable, of, switchMap, tap, throwError, from } from 'rxjs';
 import { ApiService } from './apiService';
 import { Usuario } from '@interfaces/models/usuario';
 import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
@@ -160,7 +160,8 @@ export class UsuarioService {
   }
 
   getAllUsuariosGestorCenad(idCenad: string): Observable<UsuarioGestor[]> {
-    const urlGestores = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad} and rol eq 'Gestor'`;
+    const filter = `$expand=cenad&$select=Id,username,rol,descripcion,tfno,email,emailAdmitido,cenad/Id,cenad/nombre&$filter=cenadId eq ${idCenad} and rol eq '${RolUsuario.Gestor}'`;
+    const urlGestores = `${this.urlBasic}?${encodeURI(filter).replace(/'/g, '%27')}`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
       catchError((err) => {
         console.error(err);
@@ -180,10 +181,11 @@ export class UsuarioService {
   }
 
   getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
-    const urlAdministradores = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad} and rol eq 'Administrador'`;
+  const filter = `$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=cenadId eq ${idCenad} and rol eq '${RolUsuario.Administrador}'`;
+  const urlAdministradores = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlAdministradores, 'GET').pipe(
       map((res) => {
-        const usuarios = res?.d?.results || [];
+        const usuarios = res || [];
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -196,10 +198,10 @@ export class UsuarioService {
   }
 
   getUsuarioSuperadministradorPorUsername(username: string): Observable<UsuarioSuperAdministrador | null> {
-    const urlSuperadministradores = `${this.urlBasic}?$filter=username eq ${username}`;
+    const urlSuperadministradores = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlSuperadministradores, 'GET').pipe(
       map((res) => {
-        const usuarios = res?.d?.results || [];
+        const usuarios = res || [];
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -212,10 +214,10 @@ export class UsuarioService {
   }
 
   getUsuarioAdministradorPorUsername(username: string): Observable<UsuarioAdministrador | null> {
-    const urlAdministradores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Administrador'`;
+    const urlAdministradores = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlAdministradores, 'GET').pipe(
       map((res) => {
-        const usuarios = res?.d?.results || [];
+        const usuarios = res || [];
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -228,10 +230,10 @@ export class UsuarioService {
   }
 
   getUsuarioGestorPorUsername(username: string): Observable<UsuarioGestor | null> {
-    const urlGestores = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Gestor'`;
+    const urlGestores = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
       map((res) => {
-        const usuarios = res?.d?.results || [];
+        const usuarios = res || [];
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -244,10 +246,11 @@ export class UsuarioService {
   }
 
   getUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
-    const urlGestores = `${this.urlBasic}?$expand=cenad&$filter=recursoId eq ${idRecurso} and rol eq 'Gestor'`;
+    const filter = `$expand=cenad&$select=Id,username,rol,cenad/Id,cenad/nombre&$filter=recursoId eq ${idRecurso} and rol eq '${RolUsuario.Gestor}'`;
+    const urlGestores = `${this.urlBasic}?${encodeURI(filter).replace(/'/g, '%27')}`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
       map((res) => {
-        const usuarios = res?.d?.results || [];
+        const usuarios = res || [];
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -260,10 +263,10 @@ export class UsuarioService {
   }
 
   getUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
-    const urlNormales = `${this.urlBasic}?$filter=username eq ${username} and rol eq 'Normal'`;
+    const urlNormales = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlNormales, 'GET').pipe(
       map((res) => {
-        const usuarios = res?.d?.results || [];
+  const usuarios = res || [];
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -438,9 +441,7 @@ export class UsuarioService {
       case RolUsuario.Administrador: {
         const usuario = await firstValueFrom(this.getUsuarioAdministradorPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
-            username,
-          });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
           throw new Error(mensaje);
         }
         const cenad = await firstValueFrom(this.cenadService.getCenadDeAdministrador(usuario.Id));
@@ -453,9 +454,7 @@ export class UsuarioService {
       case RolUsuario.Gestor: {
         const usuario = await firstValueFrom(this.getUsuarioGestorPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
-            username,
-          });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
           throw new Error(mensaje);
         }
         const cenad = await firstValueFrom(this.cenadService.getCenadDeGestor(usuario.Id));
@@ -468,18 +467,12 @@ export class UsuarioService {
       case RolUsuario.Normal: {
         const usuario = await firstValueFrom(this.getUsuarioNormalPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
-            username,
-          });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
           throw new Error(mensaje);
         }
-        const unidad = await firstValueFrom(
-          this.unidadService.getUnidadDeUsuarioNormal(usuario.Id)
-        );
+        const unidad = await firstValueFrom(this.unidadService.getUnidadDeUsuarioNormal(usuario.Id));
         if (!unidad) {
-          const mensaje = await this.idiomaService.tVars('unidades.unidadNoEncontrada', {
-            unidad: unidad!.nombre || '',
-          });
+          const mensaje = await this.idiomaService.tVars('unidades.unidadNoEncontrada', { unidad: '' });
           throw new Error(mensaje);
         }
         return { usuario, unidad };
@@ -487,9 +480,7 @@ export class UsuarioService {
       case RolUsuario.Superadministrador: {
         const usuario = await firstValueFrom(this.getUsuarioSuperadministradorPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
-            username,
-          });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
           throw new Error(mensaje);
         }
         return { usuario };
