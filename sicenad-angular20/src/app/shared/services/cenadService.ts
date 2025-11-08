@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, concatMap, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, concatMap, map, Observable, of, switchMap, tap, throwError, from } from 'rxjs';
 import { ApiService } from './apiService';
 import { Cenad } from '@interfaces/models/cenad';
 import { UtilService } from './utilService';
@@ -26,7 +26,7 @@ export class CenadService {
   }
 
   getCenadsSinAdmin(): Observable<Cenad[] | null> {
-  const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioAdministradorId eq ''`;
+    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioAdministradorId eq ''`;
     const endpoint = `${this.urlBasic}?${filter}`;
     return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
       catchError((err) => {
@@ -118,15 +118,17 @@ export class CenadService {
                   console.log(escudo);
                   if (!escudo) return of(false);
                   const endpointCenad = 'Cenads';
-                  return this.apiService.request<any>(endpointCenad, 'PATCH', { Id: idCenad, escudo }).pipe(
-                    tap(async () => {
-                      const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', {
-                        nombre,
-                      });
-                      this.utilService.toast(mensaje, 'success');
-                    }),
-                    map(() => true)
-                  );
+                  return this.apiService
+                    .request<any>(endpointCenad, 'PATCH', { Id: idCenad, escudo })
+                    .pipe(
+                      tap(async () => {
+                        const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', {
+                          nombre,
+                        });
+                        this.utilService.toast(mensaje, 'success');
+                      }),
+                      map(() => true)
+                    );
                 })
               );
             })
@@ -151,7 +153,7 @@ export class CenadService {
     idCenad: string
   ): Observable<any> {
     let escudo = escudoActual || '';
-    const endpointCenad = `/cenads/${idCenad}`;
+    const endpoint = 'Cenads';
     const body: Partial<Cenad> = {
       nombre: nombre.toUpperCase(),
       provincia,
@@ -159,39 +161,92 @@ export class CenadService {
       tfno,
       email,
       descripcion,
+      Id: idCenad,
     };
     const patchCenad = (): Observable<string | null> => {
       if (escudo) body.escudo = escudo;
-      return this.apiService.request<any>(endpointCenad, 'PATCH', body).pipe(
-        tap(async () => {
-          const mensaje = await this.idiomaService.tVars('cenads.cenadEditado', { nombre });
-          this.utilService.toast(mensaje, 'success');
-        }),
-        map(() => escudo),
-        catchError((err) => {
-          console.error(err);
-          return of(null);
-        })
-      );
+      return this.apiService
+        .request<any>(endpoint, 'PATCH', body)
+        .pipe(
+          map((res) => !!res),
+          tap(async () => {
+            const mensaje = await this.idiomaService.tVars('cenads.cenadEditado', { nombre });
+            this.utilService.toast(mensaje, 'success');
+          }),
+          map(() => escudo),
+          catchError((err) => {
+            console.error(err);
+            return of(null);
+          })
+        );
     };
     if (!archivoEscudo) return patchCenad();
-    const endpointUpload = `/files/${idCenad}/subirEscudo`;
-    return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
-      concatMap((nuevoEscudo) => {
-        if (!nuevoEscudo) return of(null);
-        if (escudo) {
-          const endpointBorrar = `/files/${idCenad}/borrarEscudo/${escudo}`;
-          return this.apiService.borrarArchivo(endpointBorrar).pipe(
-            map(() => {
-              escudo = nuevoEscudo;
-              return null;
+    const nombreBiblioteca = nombre.toUpperCase();
+    const endpointUpload = `/${nombreBiblioteca}/escudo`;
+    // Si existe un escudo previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
+    // mostramos un toast de error. Si no existe, subimos directamente.
+    if (escudo) {
+      return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, `escudo/${escudo}`).pipe(
+        switchMap((borradoOk: boolean) => {
+          if (!borradoOk) {
+            console.warn('Abortando subida: no se pudo borrar el escudo anterior.');
+            return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+              switchMap((mensaje) => {
+                this.utilService.toast(
+                  mensaje || 'No se pudo borrar el escudo anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              }),
+              catchError(() => {
+                this.utilService.toast('No se pudo borrar el escudo anterior. Operación abortada.', 'error');
+                return of(null);
+              })
+            );
+          }
+          // Borrado OK -> subimos el nuevo escudo
+          return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
+            switchMap((resEscudo) => {
+              const nuevoEscudoName = resEscudo?.d?.Name || resEscudo?.Name || '';
+              if (!nuevoEscudoName) return of(null);
+              escudo = nuevoEscudoName;
+              return patchCenad();
             }),
-            switchMap(() => patchCenad())
+            catchError((err) => {
+              console.error('Error subiendo el nuevo escudo:', err);
+              return of(null);
+            })
           );
-        } else {
-          escudo = nuevoEscudo;
-          return patchCenad();
-        }
+        }),
+        catchError((err) => {
+          console.warn('Error borrando el escudo anterior:', err);
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast('No se pudo borrar el escudo anterior. Operación abortada.', 'error');
+              return of(null);
+            })
+          );
+        })
+      );
+    }
+    // No había escudo previo: subimos y parchamos directamente
+    return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
+      switchMap((resEscudo) => {
+        const nuevoEscudoName = resEscudo?.d?.Name || resEscudo?.Name || '';
+        if (!nuevoEscudoName) return of(null);
+        escudo = nuevoEscudoName;
+        return patchCenad();
+      }),
+      catchError((err) => {
+        console.error('Error subiendo el nuevo escudo (sin previo):', err);
+        return of(null);
       })
     );
   }
@@ -200,7 +255,7 @@ export class CenadService {
     // Primero intentamos obtener el CENAD para conocer su nombre y borrar la biblioteca asociada
     return this.getCenadSeleccionado(idCenad).pipe(
       switchMap((cenad) => {
-        const nombreBiblioteca = (cenad!.nombre).toUpperCase();
+        const nombreBiblioteca = cenad!.nombre.toUpperCase();
         if (!nombreBiblioteca) {
           // Si no hay nombre, continuamos con el borrado del registro
           return this.apiService.request<any>('Cenads', 'DELETE', { Id: idCenad });
@@ -208,7 +263,10 @@ export class CenadService {
         // Intentamos borrar la biblioteca; si falla (404/409 u otro), lo registramos y continuamos
         return this.apiService.borrarBibliotecaDocumentos(nombreBiblioteca).pipe(
           catchError((err) => {
-            console.warn('No se pudo borrar la biblioteca de documentos, se continúa con el borrado del CENAD:', err);
+            console.warn(
+              'No se pudo borrar la biblioteca de documentos, se continúa con el borrado del CENAD:',
+              err
+            );
             return of(false);
           }),
           switchMap(() => this.apiService.request<any>('Cenads', 'DELETE', { Id: idCenad }))
@@ -242,16 +300,18 @@ export class CenadService {
     idCenad: string
   ): Observable<any> {
     let infoCenad = infoCenadActual || '';
-    const endpointCenad = `/cenads/${idCenad}`;
+    const endpoint = 'Cenads';
     const body: Partial<Cenad> = {
       direccion: this.utilService.toTitleCase(direccion),
       tfno,
       email,
       descripcion,
+      Id: idCenad,
     };
     const patchInfoCenad = (): Observable<string | null> => {
       if (infoCenad) body.infoCenad = infoCenad;
-      return this.apiService.request<any>(endpointCenad, 'PATCH', body).pipe(
+      return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
+        map((res) => !!res),
         tap(async () => {
           const mensaje = await this.idiomaService.tVars('cenads.infoCenadEditado');
           this.utilService.toast(mensaje, 'success');

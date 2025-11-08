@@ -4,6 +4,7 @@
   "proxyDomain": "mdef",
   "urlApi": "/sharepoint/_api/web/lists",
   "urlSitio": "/sharepoint",
+  "webServerRelativeUrl": "/et/aclog/zonaprivada/sicenad",
   "urlApiDesarrolloSharepoint": "/sharepoint/_api/web/lists",
   "urlApiProduccionSharepoint": "https://colabora.mdef.es/et/aclog/zonaprivada/sicenad/_api/web/lists",
   "urlSitioDesarrolloSharepoint": "/sharepoint",

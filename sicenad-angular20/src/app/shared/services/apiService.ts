@@ -382,37 +382,6 @@ export class ApiService {
   }
 
   /**
-   * Crea una biblioteca de documentos en el sitio (lista con BaseTemplate = 101)
-   * @param nombre Nombre de la biblioteca a crear
-   */
-  crearBibliotecaDocumentos(nombre: string): Observable<any> {
-    return this.getRequestDigest().pipe(
-      switchMap((digest) => {
-        const url = `${this.utils.urlApi()}`;
-        const body = {
-          __metadata: { type: 'SP.List' },
-          Title: nombre,
-          BaseTemplate: 101,
-          AllowContentTypes: true,
-          ContentTypesEnabled: true,
-        };
-        const headers = new HttpHeaders({
-          Accept: 'application/json;odata=verbose',
-          'Content-Type': 'application/json;odata=verbose',
-          'X-RequestDigest': digest,
-        });
-        return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
-          map((res) => res?.d),
-          catchError((err) => {
-            console.error('Error al crear biblioteca de documentos:', err);
-            return throwError(() => err);
-          })
-        );
-      })
-    );
-  }
-
-  /**
    * 🗂️ Crea carpetas intermedias si no existen (Observable)
    */
   crearCarpetasSiNoExisten(
@@ -482,7 +451,7 @@ export class ApiService {
     const url = `${this.utils.urlSitio()}/_layouts/15/download.aspx?SourceUrl=${encodeURIComponent(
       this.utils.urlSitio() + '/' + libraryName + '/' + relativePath
     )}`;
-    console.log(url);
+    console.log('mostrarArchivoSharePoint url:', url);
     return this.http.get(url, { responseType: 'blob', withCredentials: true }).pipe(
       catchError((err) => {
         console.error('Error al mostrar archivo SharePoint:', err);
@@ -497,7 +466,7 @@ export class ApiService {
   borrarArchivoSharePoint(libraryName: string, relativePath: string): Observable<boolean> {
     return this.getRequestDigest().pipe(
       switchMap((digest) => {
-        const url = `${this.utils.urlSitio()}/_api/web/GetFileByServerRelativeUrl('${libraryName}/${relativePath}')`;
+        const url = `${this.utils.urlSitio()}/_api/web/GetFileByServerRelativeUrl('${this.utils.webServerRelativeUrl()}/${libraryName}/${relativePath}')`;
         const headers = new HttpHeaders({
           Accept: 'application/json;odata=verbose',
           'X-HTTP-Method': 'DELETE',
@@ -541,7 +510,9 @@ export class ApiService {
     rutaCarpeta: string,
     digest: string
   ): Observable<boolean> {
-    const carpetaUrl = `${this.utils.urlSitio()}/${nombreBiblioteca}/${rutaCarpeta}`;
+  // ServerRelativeUrl debe ser relativo al web, no incluir el prefix de urlSitio aquí.
+  // Las demás funciones de subida/creación usan 'LibraryName/folder/subfolder' como serverRelativeUrl.
+  const carpetaUrl = `${nombreBiblioteca}/${rutaCarpeta}`.replace(/\/+/g, '/').replace(/^\/+/, '');
     const getFoldersUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${carpetaUrl}')/Folders`;
     const getFilesUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${carpetaUrl}')/Files`;
     // 1️⃣ Obtener subcarpetas y archivos
@@ -567,21 +538,22 @@ export class ApiService {
       switchMap(([subcarpetas, archivos]) => {
         // 2️⃣ Borrar archivos
         const borrarArchivos$ = from(archivos).pipe(
-          concatMap((file: any) =>
-            this.borrarArchivoSharePoint(
-              nombreBiblioteca,
-              file.ServerRelativeUrl.replace(`${this.utils.urlSitio()}/`, '')
-            )
-          ),
+          concatMap((file: any) => {
+            // Normalizamos la ruta relativa: eliminamos el prefijo urlSitio() si existe
+            // y cualquier slash inicial para evitar 'libraryName//subpath' en las llamadas
+            let rel = file.ServerRelativeUrl || '';
+            rel = rel.replace(`${this.utils.urlSitio()}/`, '');
+            rel = rel.replace(/^\/+/, '');
+            return this.borrarArchivoSharePoint(nombreBiblioteca, rel);
+          }),
           toArray()
         );
         // 3️⃣ Borrar subcarpetas recursivamente
         const borrarSubcarpetas$ = from(subcarpetas).pipe(
           concatMap((sub: any) => {
-            const subRuta = sub.ServerRelativeUrl.replace(
-              `${this.utils.urlSitio()}/${nombreBiblioteca}/`,
-              ''
-            );
+            let subRuta = sub.ServerRelativeUrl || '';
+            subRuta = subRuta.replace(`${this.utils.urlSitio()}/${nombreBiblioteca}/`, '');
+            subRuta = subRuta.replace(/^\/+/, '');
             return this._borrarCarpetaRecursivaInterna(nombreBiblioteca, subRuta, digest);
           }),
           toArray()
@@ -606,32 +578,29 @@ export class ApiService {
   }
 
   /**
-   * 📚 Crea una biblioteca de documentos con el nombre de la entidad (cenad.nombre)
+   * Crea una biblioteca de documentos en el sitio (lista con BaseTemplate = 101)
+   * @param nombre Nombre de la biblioteca a crear con el nombre de la entidad (cenad.nombre)
    */
-  crearBibliotecaCenad(nombre: string): Observable<any> {
-    const url = this.utils.urlApi();
+  crearBibliotecaDocumentos(nombre: string): Observable<any> {
     return this.getRequestDigest().pipe(
       switchMap((digest) => {
+        const url = `${this.utils.urlApi()}`;
+        const body = {
+          __metadata: { type: 'SP.List' },
+          Title: nombre,
+          BaseTemplate: 101,
+          AllowContentTypes: true,
+          ContentTypesEnabled: true,
+        };
         const headers = new HttpHeaders({
           Accept: 'application/json;odata=verbose',
           'Content-Type': 'application/json;odata=verbose',
           'X-RequestDigest': digest,
         });
-        const body = {
-          __metadata: { type: 'SP.List' },
-          AllowContentTypes: true,
-          BaseTemplate: 101, // Document Library
-          ContentTypesEnabled: true,
-          Title: nombre,
-        };
-        return this.http.post(url, body, { headers, withCredentials: true }).pipe(
-          tap(() => console.log(`✅ Biblioteca de documentos creada: ${nombre}`)),
+        return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
+          map((res) => res?.d),
           catchError((err) => {
-            if (err.status === 409) {
-              console.warn(`⚠️ Biblioteca "${nombre}" ya existe`);
-              return of(null);
-            }
-            console.error('❌ Error al crear biblioteca:', err);
+            console.error('Error al crear biblioteca de documentos:', err);
             return throwError(() => err);
           })
         );

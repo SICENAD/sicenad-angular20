@@ -83,6 +83,7 @@ export class UtilsStore {
   // --- GETTERS ---
   urlApi = computed(() => this.properties()?.urlApi || '');
   urlSitio = computed(() => this.properties()?.urlSitio || '');
+  webServerRelativeUrl = computed(() => this.properties()?.webServerRelativeUrl || '');
   passwordForRegister = computed(() => this.properties()?.passwordForRegister || '');
   minutosExpiracionLocalStorage = computed<number>(() => {
     const val = this.properties()?.minutosExpiracionLocalStorage;
