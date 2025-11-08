@@ -5,6 +5,7 @@ import { Cenad } from '@interfaces/models/cenad';
 import { UtilService } from './utilService';
 import { IdiomaService } from './idiomaService';
 import { UtilsStore } from '@stores/utils.store';
+import { __metadata } from 'tslib';
 
 @Injectable({ providedIn: 'root' })
 export class CenadService {
@@ -25,7 +26,8 @@ export class CenadService {
   }
 
   getCenadsSinAdmin(): Observable<Cenad[] | null> {
-    const endpoint = `${this.urlBasic}?$expand=usuarioAdministrador&$filter=usuarioAdministradorId eq ''`;
+  const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioAdministradorId eq ''`;
+    const endpoint = `${this.urlBasic}?${filter}`;
     return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
       catchError((err) => {
         console.error(err);
@@ -71,8 +73,7 @@ export class CenadService {
     const urlCenads = `${this.urlBasic}(${idCenad})`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
       map((res) => {
-        const cenads = res?.d?.results || [];
-        const cenad = cenads[0];
+        const cenad = res;
         if (!cenad) throw new Error('Cenad no encontrado');
         return cenad;
       }),
@@ -82,19 +83,6 @@ export class CenadService {
       })
     );
   }
-  /*
-//metodo para crear cenad en sharepoint creando la biblioteca de ese cenad
-crearCenad(entidad: any): Observable<any> {
-  return this.crearElemento('Cenads', entidad).pipe(
-    switchMap(res => {
-      // Crear biblioteca usando exactamente cenad.nombre
-      return this.crearBibliotecaCenad(entidad.nombre).pipe(
-        map(() => res) // devolver la respuesta original de crearElemento
-      );
-    })
-  );
-}
-*/
 
   crearCenad(
     nombre: string,
@@ -120,21 +108,26 @@ crearCenad(entidad: any): Observable<any> {
           const idCenad = resCrear.Id;
           console.log(idCenad);
           if (!archivoEscudo) return of(true);
-          const endpointUpload = `/${nombre.toUpperCase()}/escudo`;
-          return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
-            switchMap((resEscudo) => {
-              const escudo: string = resEscudo.d.Name;
-              console.log(escudo);
-              if (!escudo) return of(false);
-              const endpointCenad = 'Cenads';
-              return this.apiService.request<any>(endpointCenad, 'PATCH', { Id: idCenad, escudo }).pipe(
-                tap(async () => {
-                  const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', {
-                    nombre,
-                  });
-                  this.utilService.toast(mensaje, 'success');
-                }),
-                map(() => true)
+          // Crear la biblioteca de documentos asociada al CENAD antes de subir el escudo
+          return this.apiService.crearBibliotecaDocumentos(nombre.toUpperCase()).pipe(
+            switchMap(() => {
+              const endpointUpload = `/${nombre.toUpperCase()}/escudo`;
+              return this.apiService.subirArchivo(endpointUpload, archivoEscudo).pipe(
+                switchMap((resEscudo) => {
+                  const escudo: string = resEscudo.d.Name;
+                  console.log(escudo);
+                  if (!escudo) return of(false);
+                  const endpointCenad = 'Cenads';
+                  return this.apiService.request<any>(endpointCenad, 'PATCH', { Id: idCenad, escudo }).pipe(
+                    tap(async () => {
+                      const mensaje = await this.idiomaService.tVars('cenads.cenadCreado', {
+                        nombre,
+                      });
+                      this.utilService.toast(mensaje, 'success');
+                    }),
+                    map(() => true)
+                  );
+                })
               );
             })
           );
@@ -204,9 +197,23 @@ crearCenad(entidad: any): Observable<any> {
   }
 
   deleteCenad(idCenad: string): Observable<any> {
-    //const endpointCarpeta = `/files/${idCenad}/borrarCarpetaCenad`;
-    const endpoint = 'Cenads';
-    return this.apiService.request<any>(endpoint, 'DELETE', { Id: idCenad }).pipe(
+    // Primero intentamos obtener el CENAD para conocer su nombre y borrar la biblioteca asociada
+    return this.getCenadSeleccionado(idCenad).pipe(
+      switchMap((cenad) => {
+        const nombreBiblioteca = (cenad!.nombre).toUpperCase();
+        if (!nombreBiblioteca) {
+          // Si no hay nombre, continuamos con el borrado del registro
+          return this.apiService.request<any>('Cenads', 'DELETE', { Id: idCenad });
+        }
+        // Intentamos borrar la biblioteca; si falla (404/409 u otro), lo registramos y continuamos
+        return this.apiService.borrarBibliotecaDocumentos(nombreBiblioteca).pipe(
+          catchError((err) => {
+            console.warn('No se pudo borrar la biblioteca de documentos, se continúa con el borrado del CENAD:', err);
+            return of(false);
+          }),
+          switchMap(() => this.apiService.request<any>('Cenads', 'DELETE', { Id: idCenad }))
+        );
+      }),
       tap(async (res) => {
         const mensaje = await this.idiomaService.tVars('cenads.cenadEliminado', {
           id: idCenad,
@@ -218,15 +225,6 @@ crearCenad(entidad: any): Observable<any> {
         return of(false);
       })
     );
-
-    /*
-//cuando borre un cenad querre borrar la biblioteca de documentos asociada a ese cenad
-this.apiService.borrarBiblioteca(cenad.nombre)
-  .subscribe(ok => {
-    if (ok) console.log('Biblioteca borrada correctamente');
-  });
-
-    */
   }
 
   getEscudo(escudo: string, idCenad: string): Observable<Blob> {

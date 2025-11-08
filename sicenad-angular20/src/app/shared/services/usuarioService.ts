@@ -187,7 +187,7 @@ export class UsuarioService {
       map((res) => {
         const usuarios = res || [];
         const usuario = usuarios[0];
-        if (!usuario) throw new Error('Usuario no encontrado');
+        if (!usuario) throw new Error(`Usuario del CENAD ${idCenad} no encontrado`);
         return usuario;
       }),
       catchError((err) => {

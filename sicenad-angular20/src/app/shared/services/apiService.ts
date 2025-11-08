@@ -77,8 +77,13 @@ export class ApiService {
         );
         break;
       case 'GET':
-      default:
-        observable = from(this.getListaElementos(endpoint)) as Observable<T>;
+        // Si la URL corresponde a un elemento individual (/items(<id>)) usamos getElemento
+        if (typeof endpoint === 'string' && /items\(/i.test(endpoint)) {
+          observable = this.getElemento(endpoint) as Observable<T>;
+        } else {
+          observable = this.getListaElementos(endpoint) as Observable<T>;
+        }
+        break;
     }
     return observable.pipe(
       catchError(async (err) => {
@@ -176,6 +181,20 @@ export class ApiService {
       map((res) => res?.d?.results ?? []),
       catchError((err) => {
         console.error('Error al obtener lista de elementos', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  /**
+   * Obtiene un único elemento (por ejemplo /items(123)) devolviendo res.d
+   */
+  getElemento(url: string): Observable<any> {
+    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+    return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
+      map((res) => res?.d ?? null),
+      catchError((err) => {
+        console.error('Error al obtener elemento', err);
         return throwError(() => err);
       })
     );
@@ -355,9 +374,40 @@ export class ApiService {
           )
         );
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error('Error en subir archivo con fecth : ', err);
         return throwError(() => err);
+      })
+    );
+  }
+
+  /**
+   * Crea una biblioteca de documentos en el sitio (lista con BaseTemplate = 101)
+   * @param nombre Nombre de la biblioteca a crear
+   */
+  crearBibliotecaDocumentos(nombre: string): Observable<any> {
+    return this.getRequestDigest().pipe(
+      switchMap((digest) => {
+        const url = `${this.utils.urlApi()}`;
+        const body = {
+          __metadata: { type: 'SP.List' },
+          Title: nombre,
+          BaseTemplate: 101,
+          AllowContentTypes: true,
+          ContentTypesEnabled: true,
+        };
+        const headers = new HttpHeaders({
+          Accept: 'application/json;odata=verbose',
+          'Content-Type': 'application/json;odata=verbose',
+          'X-RequestDigest': digest,
+        });
+        return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
+          map((res) => res?.d),
+          catchError((err) => {
+            console.error('Error al crear biblioteca de documentos:', err);
+            return throwError(() => err);
+          })
+        );
       })
     );
   }
@@ -593,7 +643,7 @@ export class ApiService {
    * 🗑️ Elimina una biblioteca de documentos completa (por nombre)
    * @param nombreBiblioteca Nombre exacto de la biblioteca (Title)
    */
-  borrarBiblioteca(nombreBiblioteca: string): Observable<boolean> {
+  borrarBibliotecaDocumentos(nombreBiblioteca: string): Observable<boolean> {
     return this.getRequestDigest().pipe(
       switchMap((digest) => {
         const url = `${this.utils.urlApi()}/getbytitle('${nombreBiblioteca}')`;
