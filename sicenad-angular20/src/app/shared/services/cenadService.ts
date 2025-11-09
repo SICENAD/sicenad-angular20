@@ -330,7 +330,7 @@ export class CenadService {
     };
     if (!archivoInfoCenad) return patchInfoCenad();
     const nombreBiblioteca = nombre.toUpperCase();
-    const endpointUpload = `/${nombreBiblioteca}/escudo`;
+    const endpointUpload = `/${nombreBiblioteca}/infoCenad`;
     // Si existe un infoCenad previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
     // mostramos un toast de error. Si no existe, subimos directamente.
     if (infoCenad) {
