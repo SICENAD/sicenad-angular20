@@ -18,7 +18,7 @@ import { UtilsStore } from '@stores/utils.store';
   selector: 'app-infoCenad',
   imports: [ReactiveFormsModule, FontAwesomeModule, RouterLink, TranslateModule, UpperCasePipe],
   templateUrl: './infoCenad-page.component.html',
-  styleUrls: ['./infoCenad-page.component.css']
+  styleUrls: ['./infoCenad-page.component.css'],
 })
 export class InfoCenadPageComponent {
   private auth = inject(AuthStore);
@@ -33,18 +33,15 @@ export class InfoCenadPageComponent {
   faVolver = this.iconosStore.faVolver;
   routesPaths = RoutesPaths;
   cambiaBoton = signal(false);
-  btnVista = signal("Administrador");
+  btnVista = signal('Administrador');
   etiquetaBoton = signal<string>(this.idiomaService.t('homeCenadVisitado.btnAdmin'));
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
-  isAdminEsteCenad = computed(() => {
-    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.Id : '';
-    return (this.cenadVisitado()?.Id === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
-  });
+  isAdminEsteCenad = signal(false);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   previewInfoCenad = signal<string>('');
-  infoCenadActual = signal<string>((this.cenadVisitado()?.infoCenad || ''));
+  infoCenadActual = signal<string>(this.cenadVisitado()?.infoCenad || '');
   urlInfoCenadActual = signal<string>('');
   infoCenadFile = signal<File | null>(null);
   cenadForm: FormGroup = this.fb.group({
@@ -52,26 +49,46 @@ export class InfoCenadPageComponent {
     tfno: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
     email: ['', [Validators.required, Validators.email]],
     descripcion: ['', Validators.required],
-    infoCenad: [null] // archivo opcional, se reemplaza si se carga uno nuevo
+    infoCenad: [null], // archivo opcional, se reemplaza si se carga uno nuevo
   });
 
-  get direccion() { return this.cenadForm.get('direccion'); }
-  get tfno() { return this.cenadForm.get('tfno'); }
-  get email() { return this.cenadForm.get('email'); }
-  get descripcion() { return this.cenadForm.get('descripcion'); }
-  get infoCenad() { return this.cenadForm.get('infoCenad'); }
+  get direccion() {
+    return this.cenadForm.get('direccion');
+  }
+  get tfno() {
+    return this.cenadForm.get('tfno');
+  }
+  get email() {
+    return this.cenadForm.get('email');
+  }
+  get descripcion() {
+    return this.cenadForm.get('descripcion');
+  }
+  get infoCenad() {
+    return this.cenadForm.get('infoCenad');
+  }
 
   private esperarYCargarInfoCenad = void effect(() => {
     this.infoCenadActual.set(this.cenadVisitado()?.infoCenad || '');
     const infoCenad = this.cenadVisitado()?.infoCenad;
     if (!infoCenad) return;
     if (!this.cenadVisitado()) return;
-    this.orquestadorService.getInfoCenad(infoCenad, this.cenadVisitado()!.nombre).subscribe(
-      {
-        next: blob => this.urlInfoCenadActual.set(URL.createObjectURL(blob)),
-        error: err => console.error(err)
-      });
+    this.orquestadorService.getInfoCenad(infoCenad, this.cenadVisitado()!.nombre).subscribe({
+      next: (blob) => this.urlInfoCenadActual.set(URL.createObjectURL(blob)),
+      error: (err) => console.error(err),
+    });
   });
+
+  adminEsteCenadEffect = effect(() => {
+    this.isAdminDeEsteCenad();
+  });
+
+  isAdminDeEsteCenad() {
+    this.isAdminEsteCenad.set(
+      this.auth.rol() === RolUsuario.Administrador &&
+        this.cenadVisitado()?.Id === this.usuarioLogueado.cenadPropio()?.Id
+    );
+  }
 
   cambiaRol() {
     if (this.cambiaBoton()) {
@@ -80,7 +97,11 @@ export class InfoCenadPageComponent {
       this.cambiaBoton.set(true);
     }
     this.btnVista.set(this.cambiaBoton() ? 'Previa' : 'Administrador');
-    this.etiquetaBoton.set(this.cambiaBoton() ? this.idiomaService.t('homeCenadVisitado.btnPrevia') : this.idiomaService.t('homeCenadVisitado.btnAdmin'));
+    this.etiquetaBoton.set(
+      this.cambiaBoton()
+        ? this.idiomaService.t('homeCenadVisitado.btnPrevia')
+        : this.idiomaService.t('homeCenadVisitado.btnAdmin')
+    );
   }
 
   ngOnDestroy() {
@@ -97,7 +118,7 @@ export class InfoCenadPageComponent {
         tfno: this.cenadVisitado()?.tfno,
         email: this.cenadVisitado()?.email,
         descripcion: this.cenadVisitado()?.descripcion,
-        infoCenad: this.cenadVisitado()?.infoCenad
+        infoCenad: this.cenadVisitado()?.infoCenad,
       });
     }
   }
@@ -107,7 +128,7 @@ export class InfoCenadPageComponent {
     if (file) {
       this.cenadForm.patchValue({ infoCenad: file });
       const reader = new FileReader();
-      reader.onload = e => this.previewInfoCenad.set(e.target?.result as string)
+      reader.onload = (e) => this.previewInfoCenad.set(e.target?.result as string);
       reader.readAsDataURL(file);
       this.infoCenadFile.set(file);
     } else {
@@ -122,37 +143,39 @@ export class InfoCenadPageComponent {
     }
     const { direccion, tfno, email, descripcion } = this.cenadForm.value;
     const archivoInfoCenad = this.infoCenadFile();
-    this.orquestadorService.actualizarInfoCenad(
-      this.cenadVisitado()!.nombre,
-      direccion,
-      tfno,
-      email,
-      descripcion,
-      archivoInfoCenad,             // archivo opcional
-      this.infoCenadActual(),  // archivo anterior
-      this.cenadVisitado()!.Id
-    ).subscribe({
-      next: res => {
-        if (res) {
-          this.infoCenadActual.set(res);
-          this.cenadVisitado()!.infoCenad = this.infoCenadActual(); // actualizamos el infoCenad en el objeto cenad
-          // 🔹 Pedimos el archivo actualizado para refrescar la URL
-          this.orquestadorService.getInfoCenad(res, this.cenadVisitado()!.nombre).subscribe({
-            next: blob => {
-              // Revocamos la URL anterior para evitar fugas de memoria
-              const oldUrl = this.urlInfoCenadActual();
-              if (oldUrl) URL.revokeObjectURL(oldUrl);
-              // Asignamos la nueva URL
-              this.urlInfoCenadActual.set(URL.createObjectURL(blob));
-            },
-            error: err => console.error(err)
-          });
-          this.cenadForm.patchValue({ infoCenad: null });
-          this.previewInfoCenad.set('');
-          this.infoCenadFile.set(null);
-          if (this.fileInput) this.fileInput.nativeElement.value = '';
-        }
-      }
-    });
+    this.orquestadorService
+      .actualizarInfoCenad(
+        this.cenadVisitado()!.nombre,
+        direccion,
+        tfno,
+        email,
+        descripcion,
+        archivoInfoCenad, // archivo opcional
+        this.infoCenadActual(), // archivo anterior
+        this.cenadVisitado()!.Id
+      )
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.infoCenadActual.set(res);
+            this.cenadVisitado()!.infoCenad = this.infoCenadActual(); // actualizamos el infoCenad en el objeto cenad
+            // 🔹 Pedimos el archivo actualizado para refrescar la URL
+            this.orquestadorService.getInfoCenad(res, this.cenadVisitado()!.nombre).subscribe({
+              next: (blob) => {
+                // Revocamos la URL anterior para evitar fugas de memoria
+                const oldUrl = this.urlInfoCenadActual();
+                if (oldUrl) URL.revokeObjectURL(oldUrl);
+                // Asignamos la nueva URL
+                this.urlInfoCenadActual.set(URL.createObjectURL(blob));
+              },
+              error: (err) => console.error(err),
+            });
+            this.cenadForm.patchValue({ infoCenad: null });
+            this.previewInfoCenad.set('');
+            this.infoCenadFile.set(null);
+            if (this.fileInput) this.fileInput.nativeElement.value = '';
+          }
+        },
+      });
   }
 }

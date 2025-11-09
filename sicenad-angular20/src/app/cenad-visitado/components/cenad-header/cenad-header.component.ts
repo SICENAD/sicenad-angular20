@@ -68,15 +68,19 @@ export class CenadHeaderComponent implements OnInit {
   isCenadZaragoza = signal(false);
   menuVisible = signal(false);
 
-    adminOGestorEsteCenad = effect(() => {
+  adminOGestorEsteCenad = effect(() => {
     this.isAdminOGestorEsteCenad();
   });
 
   isAdminOGestorEsteCenad() {
-    this.isAdminEsteCenad.set(this.auth.rol() === RolUsuario.Administrador &&
-      this.cenad()?.Id === this.usuarioLogueado.cenadPropio()?.Id);
-      this.isGestorEsteCenad.set(this.auth.rol() === RolUsuario.Gestor &&
-      this.cenad()?.Id === this.usuarioLogueado.cenadPropio()?.Id);
+    this.isAdminEsteCenad.set(
+      this.auth.rol() === RolUsuario.Administrador &&
+        this.cenad()?.Id === this.usuarioLogueado.cenadPropio()?.Id
+    );
+    this.isGestorEsteCenad.set(
+      this.auth.rol() === RolUsuario.Gestor &&
+        this.cenad()?.Id === this.usuarioLogueado.cenadPropio()?.Id
+    );
   }
   toggleMenu() {
     this.menuVisible.set(!this.menuVisible());

@@ -1,8 +1,8 @@
-import { effect, inject, Injectable, signal } from "@angular/core";
-import { Cenad } from "@interfaces/models/cenad";
-import { Unidad } from "@interfaces/models/unidad";
-import { Usuario } from "@interfaces/models/usuario";
-import { LocalStorageService } from "@services/localStorageService";
+import { effect, inject, Injectable, signal } from '@angular/core';
+import { Cenad } from '@interfaces/models/cenad';
+import { Unidad } from '@interfaces/models/unidad';
+import { Usuario } from '@interfaces/models/usuario';
+import { LocalStorageService } from '@services/localStorageService';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioLogueadoStore {
@@ -13,12 +13,14 @@ export class UsuarioLogueadoStore {
   private _unidad = signal<Unidad | null>(null);
   private _usuarioLogueado = signal<Usuario | null>(null);
 
-// --- GETTERS --- (usando computedAntiExpiracionLocalStorage)
+  // --- GETTERS --- (usando computedAntiExpiracionLocalStorage)
   cenadPropio = this.localStorageService.computedAntiExpiracionLocalStorage(this._cenadPropio);
   unidad = this.localStorageService.computedAntiExpiracionLocalStorage(this._unidad);
-  usuarioLogueado = this.localStorageService.computedAntiExpiracionLocalStorage(this._usuarioLogueado);
+  usuarioLogueado = this.localStorageService.computedAntiExpiracionLocalStorage(
+    this._usuarioLogueado
+  );
 
-// --- EFFECTS ---
+  // --- EFFECTS ---
   private persist = effect(() => {
     this.localStorageService.setItem('cenadPropio', this._cenadPropio());
     this.localStorageService.setItem('unidad', this._unidad());
@@ -30,14 +32,26 @@ export class UsuarioLogueadoStore {
   }
 
   // --- MÉTODOS DE UTILIDAD: SET / ADD / REMOVE / CLEAR ---
-   setCenadPropio(c: Cenad | null) { this._cenadPropio.set(c); }
-  clearCenadPropio() { this._cenadPropio.set(null); }
+  setCenadPropio(c: Cenad | null) {
+    this._cenadPropio.set(c);
+  }
+  clearCenadPropio() {
+    this._cenadPropio.set(null);
+  }
 
-  setUnidad(u: Unidad | null) { this._unidad.set(u); }
-  clearUnidad() { this._unidad.set(null); }
+  setUnidad(u: Unidad | null) {
+    this._unidad.set(u);
+  }
+  clearUnidad() {
+    this._unidad.set(null);
+  }
 
-  setUsuario(u: Usuario | null) { this._usuarioLogueado.set(u); }
-  clearUsuario() { this._usuarioLogueado.set(null); }
+  setUsuario(u: Usuario | null) {
+    this._usuarioLogueado.set(u);
+  }
+  clearUsuario() {
+    this._usuarioLogueado.set(null);
+  }
 
   loadFromLocalStorage() {
     this._cenadPropio.set(this.localStorageService.getItem<Cenad | null>('cenadPropio'));
