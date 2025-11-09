@@ -1,5 +1,15 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, of, tap, throwError, switchMap } from 'rxjs';
+import {
+  catchError,
+  map,
+  Observable,
+  of,
+  tap,
+  throwError,
+  switchMap,
+  from,
+  firstValueFrom,
+} from 'rxjs';
 import { ApiService } from './apiService';
 import { Categoria } from '@interfaces/models/categoria';
 import { UtilService } from './utilService';
@@ -17,6 +27,7 @@ export class CategoriaService {
   getAll(idCenad: string): Observable<Categoria[]> {
     const urlCategorias = `${this.urlBasic}?$select=Id,nombre,descripcion&$filter=cenadId eq ${idCenad}`;
     return this.apiService.request<any>(urlCategorias, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Categoria>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -29,6 +40,7 @@ export class CategoriaService {
     // (campo lookup almacenado como categoriaPadreId en SharePoint/Api)
     const urlCategorias = `${this.urlBasic}?$select=Id,nombre,descripcion&$filter=cenadId eq ${idCenad} and categoriaPadreId eq null`;
     return this.apiService.request<any>(urlCategorias, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Categoria>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -39,6 +51,7 @@ export class CategoriaService {
   getSubCategorias(idCategoria: string): Observable<Categoria[]> {
     const urlCategorias = `${this.urlBasic}?$select=Id,nombre,descripcion&$filter=categoriaPadreId eq ${idCategoria}`;
     return this.apiService.request<any>(urlCategorias, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Categoria>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -47,35 +60,52 @@ export class CategoriaService {
   }
 
   getSubCategoriasAnidadas(idCategoria: string): Observable<Categoria[]> {
-    const endpoint = `/categorias/${idCategoria}/subcategoriasAnidadas?size=1000`;
-    return this.apiService
-      .request<{ _embedded: { categorias: Categoria[] } }>(endpoint, 'GET')
-      .pipe(
-        map(
-          (res) =>
-            res._embedded?.categorias.map((item) => ({
-              ...item,
-              url: (item as any)._links?.self?.href,
-            })) || []
-        ),
-        catchError((err) => {
-          console.error(err);
-          return of([]);
-        })
-      );
+    // Implementación imperativa usando async/await dentro de from(...)
+    return from(
+      (async () => {
+        const result: Categoria[] = [];
+        const queue: string[] = [idCategoria];
+        const visited = new Set<string>();
+        // Dequeue para obtener hijos; no añadimos la raíz a result (si quieres incluir la raíz, añadela)
+        while (queue.length) {
+          const curId = queue.shift()!;
+          if (!curId || visited.has(curId)) continue;
+          visited.add(curId);
+          let hijasRaw: any = [];
+          try {
+            hijasRaw = await firstValueFrom(this.getSubCategorias(curId));
+          } catch {
+            hijasRaw = [];
+          }
+          const hijas: Categoria[] = this.utilService.ensureArray<Categoria>(hijasRaw);
+          for (const h of hijas) {
+            if (!h || !h.Id) continue;
+            if (visited.has(h.Id)) continue;
+            result.push(h);
+            queue.push(h.Id);
+          }
+        }
+        return result;
+      })()
+    ).pipe(
+      catchError((err) => {
+        console.error('Error en subcategorias anidadas iterativo:', err);
+        return of([]);
+      })
+    );
   }
 
-  getCategoriaSeleccionada(idCategoria: string): Observable<Categoria> {
+  getCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
     const urlCategoria = `${this.urlBasic}(${idCategoria})`;
     return this.apiService.request<any>(urlCategoria, 'GET').pipe(
-      map((res) => {
-        const cenad = res;
-        if (!cenad) throw new Error('Categoría no encontrada');
-        return cenad;
+      map((res) => this.utilService.ensureObject<Categoria>(res)),
+      map((cat) => {
+        if (!cat) throw new Error('Categoría no encontrada');
+        return cat;
       }),
       catchError((err) => {
-        console.error('❌ Error:', err);
-        return throwError(() => err);
+        console.error('Error obteniendo categoría seleccionada:', err);
+        return of(null);
       })
     );
   }
@@ -154,7 +184,9 @@ export class CategoriaService {
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map((res) => !!res),
       tap(async () => {
-        const mensaje = await this.idiomaService.tVars('categorias.categoriaModificada', { nombre: body.nombre });
+        const mensaje = await this.idiomaService.tVars('categorias.categoriaModificada', {
+          nombre: body.nombre,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
       catchError((err) => {
@@ -167,11 +199,13 @@ export class CategoriaService {
   deleteCategoria(idCategoria: string): Observable<any> {
     const endpoint = 'Categorias';
     return this.apiService.request<any>(endpoint, 'DELETE', { Id: idCategoria }).pipe(
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('categorias.categoriaEliminada', { id: idCategoria });
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('categorias.categoriaEliminada', {
+          id: idCategoria,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })

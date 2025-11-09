@@ -109,4 +109,29 @@ export class UtilService {
     }
     return token;
   }
+
+  // Normaliza respuesta si getElementos devuelve res bruto
+  ensureArray<T>(res: any): T[] {
+    if (!res) return [];
+    if (Array.isArray(res)) return res as T[];
+    if (res.d?.results && Array.isArray(res.d.results)) return res.d.results as T[];
+    // Si la API devolviera un objeto único (no array), lo convertimos en array de 1 elemento
+    return [res] as T[];
+  }
+
+  /**
+   * Normaliza una respuesta que representa un único elemento y devuelve el objeto o null.
+   * Maneja las formas comunes: res.d (objeto), res.d.results[0], array[0], o el propio objeto.
+   */
+  ensureObject<T>(res: any): T | null {
+    if (!res) return null;
+    if (res.d) {
+      // OData verbose: res.d puede ser el objeto o contener results
+      if (Array.isArray(res.d.results)) return (res.d.results[0] as T) ?? null;
+      return (res.d as T) ?? null;
+    }
+    if (Array.isArray(res)) return (res[0] as T) ?? null;
+    if (typeof res === 'object') return res as T;
+    return null;
+  }
 }
