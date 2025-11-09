@@ -97,11 +97,10 @@ export class CategoriaService {
 
   getCategoriaSeleccionada(idCategoria: string): Observable<Categoria | null> {
     const urlCategoria = `${this.urlBasic}(${idCategoria})`;
-    return this.apiService.request<any>(urlCategoria, 'GET').pipe(
-      map((res) => this.utilService.ensureObject<Categoria>(res)),
+    return this.apiService.getElemento(urlCategoria).pipe(
       map((cat) => {
         if (!cat) throw new Error('Categoría no encontrada');
-        return cat;
+        return cat as Categoria;
       }),
       catchError((err) => {
         console.error('Error obteniendo categoría seleccionada:', err);

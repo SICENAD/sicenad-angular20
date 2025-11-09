@@ -13,7 +13,6 @@ import {
   toArray,
   forkJoin,
   tap,
-  buffer,
 } from 'rxjs';
 import { UtilsStore } from '@stores/utils.store';
 import { UtilService } from './utilService';
@@ -178,7 +177,7 @@ export class ApiService {
   getListaElementos(url: string): Observable<any[]> {
     const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
     return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
-      map((res) => res?.d?.results ?? []),
+      map((res) => this.utilService.ensureArray<any>(res)),
       catchError((err) => {
         console.error('Error al obtener lista de elementos', err);
         return throwError(() => err);
@@ -192,7 +191,7 @@ export class ApiService {
   getElemento(url: string): Observable<any> {
     const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
     return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
-      map((res) => res?.d ?? null),
+      map((res) => this.utilService.ensureObject<any>(res)),
       catchError((err) => {
         console.error('Error al obtener elemento', err);
         return throwError(() => err);
