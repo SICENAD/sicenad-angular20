@@ -16,10 +16,8 @@ export class ArmaService {
 
   getAll(): Observable<Arma[]> {
     const endpoint = this.urlBasic;
-    return this.apiService.request<Arma[]>(endpoint, 'GET').pipe(
-      map(res =>
-        res?.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map(res => this.utilService.ensureArray<Arma>(res)),
       catchError(err => {
         console.error(err);
         return of([]);

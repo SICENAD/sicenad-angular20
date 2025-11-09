@@ -17,7 +17,8 @@ export class CenadService {
 
   getAll(): Observable<Cenad[]> {
     const endpoint = this.urlBasic;
-    return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Cenad>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -30,7 +31,8 @@ export class CenadService {
     // por eso comparamos con null (no con cadena vacía). Seleccionamos los campos que usamos.
     const filter = `$select=Id,nombre,descripcion,direccion,tfno,email,escudo,infoCenad,provincia&$filter=usuarioAdministradorId eq null`;
     const endpoint = `${this.urlBasic}?${filter}`;
-    return this.apiService.request<Cenad[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Cenad>(res)),
       catchError((err) => {
         console.error('Error obteniendo CENADs sin administrador:', err);
         return of([]);
@@ -38,51 +40,43 @@ export class CenadService {
     );
   }
 
-  getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad> {
-    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioAdministradorId eq ${idUsuarioAdministrador}`;
+  getCenadDeAdministrador(idUsuarioAdministrador: string): Observable<Cenad | null> {
+    const filter = `$select=Id,nombre,descripcion,direccion,tfno,email,escudo,infoCenad,provincia&$filter=usuarioAdministradorId eq ${idUsuarioAdministrador}`;
     const urlCenads = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
       map((res) => {
-        const cenads = res || [];
-        const cenad = cenads[0];
-        if (!cenad) throw new Error('Cenad no encontrado');
-        return cenad;
+        const cenads = this.utilService.ensureArray<Cenad>(res);
+        return cenads[0] || null;
       }),
       catchError((err) => {
-        console.error('❌ Error en login:', err);
-        return throwError(() => err);
+        console.error('Error obteniendo CENAD por administrador:', err);
+        return of(null);
       })
     );
   }
 
-  getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad> {
+  getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
     const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioGestorId eq ${idUsuarioGestor}`;
     const urlCenads = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
       map((res) => {
-        const cenads = res?.d?.results || [];
-        const cenad = cenads[0];
-        if (!cenad) throw new Error('Cenad no encontrado');
-        return cenad;
+        const cenads = this.utilService.ensureArray<Cenad>(res);
+        return cenads[0] || null;
       }),
       catchError((err) => {
-        console.error('❌ Error en login:', err);
-        return throwError(() => err);
+        console.error('Error obteniendo CENAD por gestor:', err);
+        return of(null);
       })
     );
   }
 
-  getCenadSeleccionado(idCenad: string): Observable<Cenad> {
+  getCenadSeleccionado(idCenad: string): Observable<Cenad | null> {
     const urlCenads = `${this.urlBasic}(${idCenad})`;
     return this.apiService.request<any>(urlCenads, 'GET').pipe(
-      map((res) => {
-        const cenad = res;
-        if (!cenad) throw new Error('Cenad no encontrado');
-        return cenad;
-      }),
+      map((res) => this.utilService.ensureObject<Cenad>(res)),
       catchError((err) => {
-        console.error('❌ Error en login:', err);
-        return throwError(() => err);
+        console.error('Error obteniendo CENAD seleccionado:', err);
+        return of(null);
       })
     );
   }

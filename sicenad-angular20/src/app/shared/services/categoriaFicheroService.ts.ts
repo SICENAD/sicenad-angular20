@@ -16,7 +16,8 @@ export class CategoriaFicheroService {
 
   getAll(): Observable<CategoriaFichero[]> {
     const endpoint = this.urlBasic;
-    return this.apiService.request<CategoriaFichero[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map(res => this.utilService.ensureArray<CategoriaFichero>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -28,7 +29,7 @@ export class CategoriaFicheroService {
     const urlCategoriasFichero = `${this.urlBasic}?$expand=fichero&$filter=ficheroId eq ${idFichero}`;
     return this.apiService.request<any>(urlCategoriasFichero, 'GET').pipe(
       map((res) => {
-        const categoriasFichero = res?.d?.results || [];
+        const categoriasFichero = this.utilService.ensureArray<CategoriaFichero>(res);
         const categoriaFichero = categoriasFichero[0];
         if (!categoriaFichero) throw new Error('Categoria de fichero no encontrada');
         return categoriaFichero;

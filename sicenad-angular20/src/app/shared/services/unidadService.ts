@@ -16,7 +16,8 @@ export class UnidadService {
 
   getAll(): Observable<Unidad[]> {
     const endpoint = this.urlBasic;
-    return this.apiService.request<Unidad[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Unidad>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -29,7 +30,7 @@ export class UnidadService {
     const urlUnidades = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlUnidades, 'GET').pipe(
       map((res) => {
-        const unidades = res || [];
+        const unidades = this.utilService.ensureArray<Unidad>(res);
         const unidad = unidades[0];
         if (!unidad) throw new Error('Unidad no encontrada');
         return unidad;

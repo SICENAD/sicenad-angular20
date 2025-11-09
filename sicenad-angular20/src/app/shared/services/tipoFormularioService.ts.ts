@@ -16,7 +16,8 @@ export class TipoFormularioService {
 
   getAll(): Observable<TipoFormulario[]> {
     const endpoint = this.urlBasic;
-    return this.apiService.request<TipoFormulario[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<TipoFormulario>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -24,18 +25,18 @@ export class TipoFormularioService {
     );
   }
 
-  getTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario> {
+  getTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
     const urlTipoFormulario = `${this.urlBasic}?$expand=recurso&$filter=recursoId eq ${idRecurso}`;
     return this.apiService.request<any>(urlTipoFormulario, 'GET').pipe(
       map((res) => {
-        const tiposFormulario = res?.d?.results || [];
+        const tiposFormulario = this.utilService.ensureArray<TipoFormulario>(res);
         const tipoFormulario = tiposFormulario[0];
         if (!tipoFormulario) throw new Error('Tipo de formulario no encontrado');
         return tipoFormulario;
       }),
       catchError((err) => {
-        console.error('❌ Error en login:', err);
-        return throwError(() => err);
+        console.error(err);
+        return of(null);
       })
     );
   }
