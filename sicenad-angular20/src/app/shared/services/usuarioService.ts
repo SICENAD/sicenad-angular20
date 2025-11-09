@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, firstValueFrom, map, Observable, of, switchMap, tap, throwError, from } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { ApiService } from './apiService';
 import { Usuario } from '@interfaces/models/usuario';
 import { UsuarioSuperAdministrador } from '@interfaces/models/usuarioSuperadministrador';
@@ -36,7 +36,7 @@ export class UsuarioService {
       .getListaElementosFiltrados(lista, filtro, ['username', 'password', 'rol'])
       .pipe(
         map((res) => {
-          const usuarios = res?.d?.results || [];
+          const usuarios = this.utilService.ensureArray<any>(res);
           const usuario = usuarios[0];
           if (!usuario) throw new Error('Usuario no encontrado');
           if (usuario.password !== password) throw new Error('Contraseña incorrecta');
@@ -76,6 +76,8 @@ export class UsuarioService {
     return this.apiService
       .getListaElementosFiltrados(nombreLista, `username eq '${username}'`)
       .pipe(
+        // Normalizamos cualquier forma de respuesta a un array
+        map((res) => this.utilService.ensureArray<any>(res)),
         switchMap((usuariosExistentes: any[]) => {
           if (usuariosExistentes.length > 0) {
             // ⚠️ Usuario ya existe → mostramos alerta y terminamos sin error
@@ -84,10 +86,13 @@ export class UsuarioService {
           }
           // Crea el usuario y devuelve solo los campos que espera tu interfaz
           return this.apiService.request<any>(nombreLista, 'POST', nuevoUsuario).pipe(
-            map((res) => ({
-              usernameRegistrado: res?.username ?? username,
-              rolRegistrado: res?.rol ?? rol,
-            })),
+            map((res) => {
+              const r = this.utilService.ensureObject<any>(res);
+              return {
+                usernameRegistrado: r?.username ?? username,
+                rolRegistrado: r?.rol ?? rol,
+              };
+            }),
             catchError((err) => {
               console.error('❌ Error en registerUsuario:', err);
               return throwError(() => err);
@@ -107,10 +112,13 @@ export class UsuarioService {
     const body = { id: idUsuario, password: password };
 
     return this.apiService.request<any>(nombreLista, 'PATCH', body).pipe(
-      map((res) => ({
-        username: res?.username ?? '',
-        rol: res?.rol ?? '',
-      })),
+      map((res) => {
+        const r = this.utilService.ensureObject<any>(res);
+        return {
+          username: r?.username ?? '',
+          rol: r?.rol ?? '',
+        };
+      }),
       catchError((err) => {
         console.error('❌ Error al cambiar la contraseña:', err);
         return throwError(() => err);
@@ -120,7 +128,8 @@ export class UsuarioService {
 
   getAll(): Observable<Usuario[]> {
     const endpoint = this.urlBasic;
-    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Usuario>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -131,7 +140,8 @@ export class UsuarioService {
   getAllUsuariosSuperadministrador(): Observable<UsuarioSuperAdministrador[]> {
     const filtro = `rol eq 'Superadministrador'`;
     const endpoint = `${this.urlBasic}?$filter=${filtro}`;
-    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<UsuarioSuperAdministrador>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -142,7 +152,8 @@ export class UsuarioService {
   getAllUsuariosAdministrador(): Observable<UsuarioAdministrador[]> {
     const filtro = `rol eq 'Administrador'`;
     const endpoint = `${this.urlBasic}?$filter=${filtro}`;
-    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<UsuarioAdministrador>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -153,7 +164,9 @@ export class UsuarioService {
   getAllUsuariosGestor(): Observable<UsuarioGestor[]> {
     const filtro = `rol eq 'Gestor'`;
     const endpoint = `${this.urlBasic}?$filter=${filtro}`;
-    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(      catchError((err) => {
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<UsuarioGestor>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -164,6 +177,7 @@ export class UsuarioService {
     const filter = `$expand=cenad&$select=Id,username,rol,descripcion,tfno,email,emailAdmitido,cenad/Id,cenad/nombre&$filter=cenadId eq ${idCenad} and rol eq '${RolUsuario.Gestor}'`;
     const urlGestores = `${this.urlBasic}?${encodeURI(filter).replace(/'/g, '%27')}`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<UsuarioGestor>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -174,7 +188,9 @@ export class UsuarioService {
   getAllUsuariosNormal(): Observable<UsuarioNormal[]> {
     const filtro = `rol eq 'Normal'`;
     const endpoint = `${this.urlBasic}?$filter=${filtro}`;
-    return this.apiService.request<Usuario[]>(endpoint, 'GET').pipe(      catchError((err) => {
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<UsuarioNormal>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -182,13 +198,13 @@ export class UsuarioService {
   }
 
   getUsuarioAdministradorCenad(idCenad: string): Observable<UsuarioAdministrador | null> {
-  const filter = `$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=cenadId eq ${idCenad} and rol eq '${RolUsuario.Administrador}'`;
-  const urlAdministradores = `${this.urlBasic}?${filter}`;
+    const filter = `$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=cenadId eq ${idCenad} and rol eq '${RolUsuario.Administrador}'`;
+    const urlAdministradores = `${this.urlBasic}?${filter}`;
     return this.apiService.request<any>(urlAdministradores, 'GET').pipe(
       map((res) => {
-        const usuarios = res || [];
+        const usuarios = this.utilService.ensureArray<UsuarioAdministrador>(res);
         const usuario = usuarios[0];
-        if (!usuario) throw new Error(`Usuario del CENAD ${idCenad} no encontrado`);
+        if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
       }),
       catchError((err) => {
@@ -198,11 +214,13 @@ export class UsuarioService {
     );
   }
 
-  getUsuarioSuperadministradorPorUsername(username: string): Observable<UsuarioSuperAdministrador | null> {
+  getUsuarioSuperadministradorPorUsername(
+    username: string
+  ): Observable<UsuarioSuperAdministrador | null> {
     const urlSuperadministradores = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlSuperadministradores, 'GET').pipe(
       map((res) => {
-        const usuarios = res || [];
+        const usuarios = this.utilService.ensureArray<UsuarioSuperAdministrador>(res);
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -218,7 +236,7 @@ export class UsuarioService {
     const urlAdministradores = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlAdministradores, 'GET').pipe(
       map((res) => {
-        const usuarios = res || [];
+        const usuarios = this.utilService.ensureArray<UsuarioAdministrador>(res);
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -234,7 +252,7 @@ export class UsuarioService {
     const urlGestores = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
       map((res) => {
-        const usuarios = res || [];
+        const usuarios = this.utilService.ensureArray<UsuarioGestor>(res);
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -251,7 +269,7 @@ export class UsuarioService {
     const urlGestores = `${this.urlBasic}?${encodeURI(filter).replace(/'/g, '%27')}`;
     return this.apiService.request<any>(urlGestores, 'GET').pipe(
       map((res) => {
-        const usuarios = res || [];
+        const usuarios = this.utilService.ensureArray<UsuarioGestor>(res);
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -267,7 +285,7 @@ export class UsuarioService {
     const urlNormales = `${this.urlBasic}?$select=Id,username,rol,descripcion,tfno,email,emailAdmitido&$filter=username eq '${username}'`;
     return this.apiService.request<any>(urlNormales, 'GET').pipe(
       map((res) => {
-  const usuarios = res || [];
+        const usuarios = this.utilService.ensureArray<UsuarioNormal>(res);
         const usuario = usuarios[0];
         if (!usuario) throw new Error('Usuario no encontrado');
         return usuario;
@@ -442,7 +460,9 @@ export class UsuarioService {
       case RolUsuario.Administrador: {
         const usuario = await firstValueFrom(this.getUsuarioAdministradorPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
           throw new Error(mensaje);
         }
         const cenad = await firstValueFrom(this.cenadService.getCenadDeAdministrador(usuario.Id));
@@ -455,7 +475,9 @@ export class UsuarioService {
       case RolUsuario.Gestor: {
         const usuario = await firstValueFrom(this.getUsuarioGestorPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
           throw new Error(mensaje);
         }
         const cenad = await firstValueFrom(this.cenadService.getCenadDeGestor(usuario.Id));
@@ -468,20 +490,30 @@ export class UsuarioService {
       case RolUsuario.Normal: {
         const usuario = await firstValueFrom(this.getUsuarioNormalPorUsername(username));
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
           throw new Error(mensaje);
         }
-        const unidad = await firstValueFrom(this.unidadService.getUnidadDeUsuarioNormal(usuario.Id));
+        const unidad = await firstValueFrom(
+          this.unidadService.getUnidadDeUsuarioNormal(usuario.Id)
+        );
         if (!unidad) {
-          const mensaje = await this.idiomaService.tVars('unidades.unidadNoEncontrada', { unidad: '' });
+          const mensaje = await this.idiomaService.tVars('unidades.unidadNoEncontrada', {
+            unidad: '',
+          });
           throw new Error(mensaje);
         }
         return { usuario, unidad };
       }
       case RolUsuario.Superadministrador: {
-        const usuario = await firstValueFrom(this.getUsuarioSuperadministradorPorUsername(username));
+        const usuario = await firstValueFrom(
+          this.getUsuarioSuperadministradorPorUsername(username)
+        );
         if (!usuario) {
-          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', { username });
+          const mensaje = await this.idiomaService.tVars('usuarios.usuarioNoEncontrado', {
+            username,
+          });
           throw new Error(mensaje);
         }
         return { usuario };
