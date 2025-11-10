@@ -114,7 +114,10 @@ export class UtilService {
   ensureArray<T>(res: any): T[] {
     if (!res) return [];
     if (Array.isArray(res)) return res as T[];
+    // OData verbose: res.d.results
     if (res.d?.results && Array.isArray(res.d.results)) return res.d.results as T[];
+    // OData minimal/none: res.value
+    if (res.value && Array.isArray(res.value)) return res.value as T[];
     // Si la API devolviera un objeto único (no array), lo convertimos en array de 1 elemento
     return [res] as T[];
   }
@@ -130,6 +133,8 @@ export class UtilService {
       if (Array.isArray(res.d.results)) return (res.d.results[0] as T) ?? null;
       return (res.d as T) ?? null;
     }
+    // OData minimal/none: res.value (array) -> tomar primer elemento
+    if (res.value && Array.isArray(res.value)) return (res.value[0] as T) ?? null;
     if (Array.isArray(res)) return (res[0] as T) ?? null;
     if (typeof res === 'object') return res as T;
     return null;

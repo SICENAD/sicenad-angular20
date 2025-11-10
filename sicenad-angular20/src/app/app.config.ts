@@ -1,11 +1,11 @@
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, Provider, provideZoneChangeDetection, isDevMode, importProvidersFrom } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
 import { routes } from './app.routes';
-import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { UtilsStore } from '@stores/utils.store';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, Observable, map } from 'rxjs';
 import { tokenApiInterceptor } from '@shared/interceptors/tokenApi.interceptor';
 import { globalHttpErrorInterceptor } from '@shared/interceptors/globalHttpError.interceptor';
 import { filesInterceptor } from '@shared/interceptors/files.interceptor';
@@ -27,6 +27,12 @@ import localeEs from '@angular/common/locales/es';
 import localeFr from '@angular/common/locales/fr';
 import localeIt from '@angular/common/locales/it';
 import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
+import localeDe from '@angular/common/locales/de';
+import localePt from '@angular/common/locales/pt';
+import localeZh from '@angular/common/locales/zh';
+
+
 import { CustomDateFormatter } from '@shared/customFormat/customDateFormatter';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
@@ -34,15 +40,18 @@ registerLocaleData(localeEs, 'es');
 registerLocaleData(localeFr, 'fr');
 registerLocaleData(localeIt, 'it');
 registerLocaleData(localeRu, 'ru');
+registerLocaleData(localeEn, 'en');
+registerLocaleData(localeDe, 'de');
+registerLocaleData(localePt, 'pt');
+registerLocaleData(localeZh, 'zh');
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
-    provideHttpClient(withInterceptors([tokenApiInterceptor, filesInterceptor
-      //, globalHttpErrorInterceptor  // no lo quiero usar de momento
-    ])), // Provee HttpClient a toda la app
+    //provideHttpClient(withFetch(), withInterceptors([tokenApiInterceptor, filesInterceptor
+    provideHttpClient(withFetch()), // Provee HttpClient a toda la app
     provideAnimations(),
     provideAngularCalendar(), // Configuración global de angular-calendar
     // Configuración global de ngx-toastr
@@ -95,6 +104,18 @@ export function provideAngularCalendar(): Provider[] {
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
   const base = document.getElementsByTagName('base')[0].href;
   return {
-    getTranslation: (lang: string): Observable<any> => http.get(`${base}languages/${lang}.json`)
+    getTranslation: (lang: string): Observable<any> =>
+      // Algunos hosts (p.ej. bibliotecas de SharePoint) no permiten servir ficheros .json
+      // Leemos como text y parseamos JSON manualmente, igual que hacemos con properties.txt
+      http.get(`${base}languages/${lang}.txt`, { responseType: 'text' as 'text' }).pipe(
+        map((text) => {
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            console.error(`Error parseando idioma ${lang}:`, e);
+            return {};
+          }
+        })
+      ),
   };
 }

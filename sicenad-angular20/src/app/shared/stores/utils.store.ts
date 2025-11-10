@@ -113,6 +113,21 @@ export class UtilsStore {
   idiomasDisponibles = computed(() => this.properties()?.idiomasDisponibles || []);
   coloresDisponibles = computed(() => this.properties()?.coloresDisponibles || {});
 
+  // Recomendación de credenciales para peticiones fetch/xhr
+  // Devuelve 'same-origin' si urlApi resuelve al mismo origin que la app, o 'include' si es cross-origin
+  credentialsRecommendation = computed<string>(() => {
+    const props = this.properties();
+    const raw = props?.urlApi;
+    if (!raw) return 'same-origin';
+    try {
+      // Resolvemos urlApi relativo respecto al origen actual
+      const resolved = new URL(raw, window.location.origin);
+      return resolved.origin === window.location.origin ? 'same-origin' : 'include';
+    } catch {
+      return 'same-origin';
+    }
+  });
+
   // --- PARSE SEGURO ---
   parseJSON<T>(json: string | null, fallback: T): T {
     if (!json) return fallback;
@@ -130,8 +145,11 @@ export class UtilsStore {
   */
   cargarPropiedadesIniciales(): Observable<any> {
     if (this.properties()) return of(this.properties());
-    const filePath = `${environment.publicPath}properties.txt`;
-    return this.http.get(filePath, { responseType: 'text' }).pipe(
+  const filePath = `${environment.publicPath}properties.txt`;
+  console.log(`Cargando properties desde: ${filePath}`);
+  // En producción puede requerirse la cookie de autenticación de SharePoint
+  // enviamos withCredentials para que el navegador adjunte cookies del sitio
+  return this.http.get(filePath, { responseType: 'text' as 'text', withCredentials: this.credentialsRecommendation() === 'include' }).pipe(
       map((text) => {
         try {
           return JSON.parse(text);
@@ -140,9 +158,25 @@ export class UtilsStore {
         }
       }),
       tap((res) => {
+        // No alteramos la URL que el administrador haya puesto en properties.txt.
+        // Dejarla tal cual evita sorpresas al desplegar en distintos entornos.
+        // Registramos para diagnóstico y resolvemos la URL contra window.location.origin
+        let resolvedHref = '';
+        let recommendation = 'same-origin';
+        try {
+          if (res && res.urlApi) {
+            console.log('Properties.urlApi (original):', res.urlApi);
+            const resolved = new URL(res.urlApi, window.location.origin);
+            resolvedHref = resolved.href;
+            recommendation = resolved.origin === window.location.origin ? 'same-origin' : 'include';
+          }
+        } catch (e) {
+          // ignore en entornos no-browser o formatos raros
+        }
         this.setProperties(res);
         console.log('🔹 Properties cargadas:', res);
-        console.log('urlapi:', this.urlApi());
+        console.log('urlApi (resuelta):', resolvedHref || res.urlApi);
+        console.log('Recomendación credentials:', recommendation, "(use 'same-origin' si la app y la API comparten origen, o 'include' si son distintos)");
       }),
       catchError((err) => {
         console.error('Error cargando properties.txt:', err);

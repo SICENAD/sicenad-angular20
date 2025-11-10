@@ -39,7 +39,10 @@ export class UsuarioService {
           const usuarios = this.utilService.ensureArray<any>(res);
           const usuario = usuarios[0];
           if (!usuario) throw new Error('Usuario no encontrado');
-          if (usuario.password !== password) throw new Error('Contraseña incorrecta');
+          // Normalizar tipos y espacios para evitar falsos negativos (p.ej. number vs string, espacios)
+          const pwdStored = usuario.password != null ? String(usuario.password).trim() : '';
+          const pwdGiven = password != null ? String(password).trim() : '';
+          if (pwdStored !== pwdGiven) throw new Error('Contraseña incorrecta');
           return {
             token: this.utilService.generarTokenAleatorio(),
             username: usuario.username,

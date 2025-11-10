@@ -33,6 +33,17 @@ export class ApiService {
     return this.injector.get(AuthStore);
   }
 
+  // Determina si debemos enviar credenciales cross-site.
+  // Usamos la recomendación resuelta en UtilsStore ('same-origin' | 'include').
+  private getWithCredentialsFlag(): boolean {
+    try {
+      return this.utils.credentialsRecommendation() === 'include';
+    } catch (e) {
+      // Si por alguna razón no está disponible, ser conservador y enviar credenciales
+      return true;
+    }
+  }
+
   getUrlApi(): string {
     const value = this.localStorageService.getItem<string>('urlApi');
     if (value && value.trim()) return value;
@@ -145,9 +156,9 @@ export class ApiService {
   private getRequestDigest(): Observable<string> {
     const el = document.getElementById('__REQUESTDIGEST') as HTMLInputElement;
     if (el?.value) return of(el.value);
-    const url = `${this.utils.urlSitio()}/_api/contextinfo`;
-    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-    return this.http.post<any>(url, {}, { headers, withCredentials: true }).pipe(
+  const url = `${this.utils.urlSitio()}/_api/contextinfo`;
+  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+  return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
       map((res: any) => res?.d?.GetContextWebInformation?.FormDigestValue),
       catchError((err) => {
         console.error('Error al obtener digest', err);
@@ -160,9 +171,9 @@ export class ApiService {
    * Devuelve el EntityTypeFullName de una lista
    */
   private obtenerEntityType(nombreLista: string): Observable<string> {
-    const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')?$select=ListItemEntityTypeFullName`;
-    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-    return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
+  const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')?$select=ListItemEntityTypeFullName`;
+  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
       map((res) => res?.d?.ListItemEntityTypeFullName ?? ''),
       catchError((err) => {
         console.error('Error al obtener EntityTypeFullName:', err);
@@ -175,8 +186,8 @@ export class ApiService {
    * Obtiene elementos de una lista (con url completa o personalizada)
    */
   getListaElementos(url: string): Observable<any[]> {
-    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-    return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
+  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
       map((res) => this.utilService.ensureArray<any>(res)),
       catchError((err) => {
         console.error('Error al obtener lista de elementos', err);
@@ -189,8 +200,8 @@ export class ApiService {
    * Obtiene un único elemento (por ejemplo /items(123)) devolviendo res.d
    */
   getElemento(url: string): Observable<any> {
-    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-    return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
+  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
       map((res) => this.utilService.ensureObject<any>(res)),
       catchError((err) => {
         console.error('Error al obtener elemento', err);
@@ -218,7 +229,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       Accept: 'application/json;odata=verbose',
     });
-    return this.http.get<any>(url, { headers, withCredentials: true }).pipe(
+  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
       catchError((err) => {
         console.error(`❌ Error en getListaElementosFiltrados('${nombreLista}')`, err);
         return throwError(() => err);
@@ -244,7 +255,7 @@ export class ApiService {
               'X-RequestDigest': digest,
             });
             const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items`;
-            return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
+            return this.http.post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
               map((res) => res?.d),
               catchError((err) => {
                 console.error('Error al crear elemento:', err);
@@ -277,14 +288,14 @@ export class ApiService {
               'IF-MATCH': '*',
             });
             const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`;
-            return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
+            return this.http.post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
               switchMap(() =>
                 // Después del MERGE, pedimos el elemento actualizado
                 this.http.get<any>(
                   `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`,
                   {
                     headers: new HttpHeaders({ Accept: 'application/json;odata=verbose' }),
-                    withCredentials: true,
+                    withCredentials: this.getWithCredentialsFlag(),
                   }
                 )
               ),
@@ -313,7 +324,7 @@ export class ApiService {
           'X-RequestDigest': digest,
         });
         const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`;
-        return this.http.post<any>(url, {}, { headers, withCredentials: true }).pipe(
+  return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
           map(() => true),
           catchError((err) => {
             console.error('Error al eliminar elemento:', err);
@@ -359,7 +370,8 @@ export class ApiService {
                     'X-RequestDigest': digest,
                     'Content-Type': 'application/octet-stream',
                   },
-                  credentials: 'include',
+                  // Use the UtilsStore recommendation: 'same-origin' or 'include'
+                  credentials: this.utils.credentialsRecommendation() as RequestCredentials,
                 });
                 if (!response.ok) {
                   const text = await response.text();
@@ -400,7 +412,7 @@ export class ApiService {
           Accept: 'application/json;odata=verbose',
           'X-RequestDigest': digest,
         });
-        return this.http.post<any>(folderUrl, {}, { headers, withCredentials: true }).pipe(
+  return this.http.post<any>(folderUrl, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
           catchError((err) => {
             if (err.status === 409) return of(void 0); // carpeta ya existe
             console.warn(`⚠️ Error al crear carpeta '${part}':`, err);
@@ -424,7 +436,7 @@ export class ApiService {
     const fileUrl = `${this.utils.urlSitio()}/_layouts/15/download.aspx?SourceUrl=${encodeURIComponent(
       `${this.utils.urlSitio()}/${libraryName}/${relativePath}`
     )}`;
-    return this.http.get(fileUrl, { responseType: 'blob', withCredentials: true }).pipe(
+  return this.http.get(fileUrl, { responseType: 'blob', withCredentials: this.getWithCredentialsFlag() }).pipe(
       map((blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -451,7 +463,7 @@ export class ApiService {
       this.utils.urlSitio() + '/' + libraryName + '/' + relativePath
     )}`;
     console.log('mostrarArchivoSharePoint url:', url);
-    return this.http.get(url, { responseType: 'blob', withCredentials: true }).pipe(
+  return this.http.get(url, { responseType: 'blob', withCredentials: this.getWithCredentialsFlag() }).pipe(
       catchError((err) => {
         console.error('Error al mostrar archivo SharePoint:', err);
         return throwError(() => err);
@@ -472,7 +484,7 @@ export class ApiService {
           'IF-MATCH': '*',
           'X-RequestDigest': digest,
         });
-        return this.http.post<any>(url, {}, { headers, withCredentials: true }).pipe(
+  return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
           map(() => {
             console.log(`🗑️ Archivo eliminado: ${relativePath}`);
             return true;
@@ -518,7 +530,7 @@ export class ApiService {
     const folders$ = this.http
       .get<any>(getFoldersUrl, {
         headers: new HttpHeaders({ Accept: 'application/json;odata=verbose' }),
-        withCredentials: true,
+        withCredentials: this.getWithCredentialsFlag(),
       })
       .pipe(
         map((res) => res?.d?.results ?? []),
@@ -527,7 +539,7 @@ export class ApiService {
     const files$ = this.http
       .get<any>(getFilesUrl, {
         headers: new HttpHeaders({ Accept: 'application/json;odata=verbose' }),
-        withCredentials: true,
+        withCredentials: this.getWithCredentialsFlag(),
       })
       .pipe(
         map((res) => res?.d?.results ?? []),
@@ -566,7 +578,7 @@ export class ApiService {
               'IF-MATCH': '*',
               'X-RequestDigest': digest,
             });
-            return this.http.post<any>(url, {}, { headers, withCredentials: true }).pipe(
+            return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
               map(() => true),
               catchError(() => of(false))
             );
@@ -596,7 +608,7 @@ export class ApiService {
           'Content-Type': 'application/json;odata=verbose',
           'X-RequestDigest': digest,
         });
-        return this.http.post<any>(url, body, { headers, withCredentials: true }).pipe(
+  return this.http.post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
           map((res) => res?.d),
           catchError((err) => {
             console.error('Error al crear biblioteca de documentos:', err);
@@ -621,7 +633,7 @@ export class ApiService {
           'IF-MATCH': '*',
           'X-RequestDigest': digest,
         });
-        return this.http.post(url, {}, { headers, withCredentials: true }).pipe(
+  return this.http.post(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
           tap(() => console.log(`🗑️ Biblioteca eliminada: ${nombreBiblioteca}`)),
           map(() => true),
           catchError((err) => {
