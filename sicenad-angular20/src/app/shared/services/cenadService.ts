@@ -425,7 +425,7 @@ export class CenadService {
           if (!ok) return;
           // tVars devuelve una Promise<string> en este repo; usamos .then() para el toast
           this.idiomaService
-            .tVars('cenads.cenadModificado', { nombre: `del usuario ${idUsuarioAdministrador}` })
+            .tVars('cenads.cenadEditado', { nombre: `del usuario ${idUsuarioAdministrador}` })
             .then((mensaje) => {
               this.utilService.toast(mensaje || 'CENAD modificado', 'success');
             })
