@@ -36,6 +36,7 @@ export class NormativaModalComponent {
   idModal = computed(() => this._idModal() + this.idNormativa());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idNormativa());
   idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.normativa()?.nombreArchivo || ''));
@@ -85,7 +86,7 @@ export class NormativaModalComponent {
     }
     const { nombre, descripcion } = this.normativaForm.value;
     const archivo = this.archivoFile();
-    this.orquestadorService.actualizarNormativa(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.idNormativa()).subscribe({
+    this.orquestadorService.actualizarNormativa(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.nombreCenad(), this.idNormativa()).subscribe({
       next: res => {
         if (res) {
           this.output.emit(); // notificamos al padre
@@ -98,7 +99,7 @@ export class NormativaModalComponent {
   }
   borrarNormativa() {
     const nombreArchivo = this.normativa()?.nombreArchivo || '';
-    this.orquestadorService.borrarNormativa(nombreArchivo, this.idNormativa(), this.idCenad()).subscribe(() => {
+    this.orquestadorService.borrarNormativa(nombreArchivo, this.idNormativa(), this.idCenad(), this.nombreCenad()).subscribe(() => {
       this.output.emit(); // notificamos al padre
     });
   }

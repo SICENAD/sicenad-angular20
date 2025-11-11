@@ -1966,8 +1966,8 @@ export class OrquestadorService {
     );
   }
 
-  getArchivoCartografia(nombreArchivo: string, idCenad: string): Observable<void> {
-    return this.cartografiaService.getArchivoCartografia(nombreArchivo, idCenad);
+  getArchivoCartografia(nombreArchivo: string, nombreCenad: string): Observable<void> {
+    return this.cartografiaService.getArchivoCartografia(nombreArchivo, nombreCenad);
   }
 
   // --- CRUD FicherosRecurso ---
@@ -2343,9 +2343,10 @@ export class OrquestadorService {
     nombre: string,
     descripcion: string,
     archivo: File,
-    idCenad: string
+    idCenad: string,
+    nombreCenad: string
   ): Observable<any> {
-    return this.normativaService.crearNormativa(nombre, descripcion, archivo, idCenad).pipe(
+    return this.normativaService.crearNormativa(nombre, descripcion, archivo, idCenad, nombreCenad).pipe(
       tap((res) => {
         if (res) {
           this.loadAllNormativas(idCenad)
@@ -2371,10 +2372,11 @@ export class OrquestadorService {
     archivoNormativa: File | null,
     archivoActual: string,
     idCenad: string,
+    nombreCenad: string,
     idNormativa: string
   ): Observable<any> {
     return this.normativaService
-      .editarNormativa(nombre, descripcion, archivoNormativa, archivoActual, idCenad, idNormativa)
+      .editarNormativa(nombre, descripcion, archivoNormativa, archivoActual, nombreCenad, idNormativa)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2397,8 +2399,8 @@ export class OrquestadorService {
       );
   }
 
-  borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string): Observable<any> {
-    return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, idCenad).pipe(
+  borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string, nombreCenad: string): Observable<any> {
+    return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, nombreCenad).pipe(
       tap((res) => {
         if (res) {
           this.idiomaService
@@ -2420,8 +2422,8 @@ export class OrquestadorService {
     );
   }
 
-  getArchivoNormativa(nombreArchivo: string, idCenad: string): Observable<void> {
-    return this.normativaService.getArchivoNormativa(nombreArchivo, idCenad);
+  getArchivoNormativa(nombreArchivo: string, nombreCenad: string): Observable<void> {
+    return this.normativaService.getArchivoNormativa(nombreArchivo, nombreCenad);
   }
 
   // --- GETTERS ---

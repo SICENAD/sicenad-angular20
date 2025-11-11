@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs";
+import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Normativa } from "@interfaces/models/normativa";
 import { UtilsStore } from "@stores/utils.store";
@@ -12,14 +12,13 @@ export class NormativaService {
   private utilService = inject(UtilService);
   private utils = inject(UtilsStore);
   private idiomaService = inject(IdiomaService);
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Cartografias')/items`;
 
   getAll(idCenad: string): Observable<Normativa[]> {
-    const endpoint = `/cenads/${idCenad}/normativas?size=1000`;
-    return this.apiService.request<{ _embedded: { ficheros: Normativa[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.ficheros.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const endpoint = `${this.urlBasic}?$select=Id,nombre,descripcion,nombreArchivo&$filter=cenadId eq ${idCenad}`;
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Normativa>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -27,10 +26,16 @@ export class NormativaService {
   }
 
   getNormativaSeleccionada(idNormativa: string): Observable<Normativa | null> {
-    const endpoint = `/ficheros/${idNormativa}`;
-    return this.apiService.request<Normativa>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+    const urlNormativa = `${this.urlBasic}(${idNormativa})`;
+    return this.apiService.getElemento(urlNormativa).pipe(
+      map((c) => {
+        if (!c) throw new Error('Normativa no encontrada');
+        return c as Normativa;
+      }),
+      catchError((err) => {
+        console.error('Error obteniendo Normativa seleccionada:', err);
+        return of(null);
+      })
     );
   }
 
@@ -38,101 +43,196 @@ export class NormativaService {
     nombre: string,
     descripcion: string,
     archivo: File,
-    idCenad: string
+    idCenad: string,
+    nombreCenad: string
   ): Observable<any> {
-    const endpoint = `/ficheros`;
-    const body = {
-      nombre: nombre.toUpperCase(),
-      descripcion,
-      categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${this.utils.categoriaFicheroCartografia()}`,
-      cenad: `${this.apiService.getUrlApi()}/cenads/${idCenad}`
-    };
-    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
-      switchMap(resCrear => {
-        const idNormativa = resCrear.Id;
-        if (!archivo) return of(true);
-        const endpointUpload = `/files/${idCenad}/subirNormativa`;
-        return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
-          switchMap((nombreArchivo: string) => {
-            if (!nombreArchivo) return of(false);
-            const endpointNormativa = `${endpoint}/${idNormativa}`;
-            return this.apiService.request<any>(endpointNormativa, 'PATCH', { nombreArchivo }).pipe(
-              tap(async () => {
-                const mensaje = await this.idiomaService.tVars('normativas.normativaCreada', { nombre });
-                this.utilService.toast(mensaje, 'success');
-              }),
-              map(() => true)
-            );
-          })
-        );
-      }),
-      catchError(err => { console.error(err); return of(false); })
-    );
+     const endpoint = `Normativas`;
+    return this.apiService
+      .request<any>(endpoint, 'POST', {
+        nombre: nombre.toUpperCase(),
+        descripcion,
+        cenadId: idCenad
+      })
+      .pipe(
+        switchMap((resCrear) => {
+          const idNormativa = resCrear.Id;
+          console.log(idNormativa);
+          if (!archivo) return of(true);
+          const endpointUpload = `/${nombreCenad}/normativa`;
+          return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
+            switchMap((resArchivo) => {
+              const archivo: string = resArchivo.d.Name;
+              console.log(archivo);
+              if (!archivo) return of(false);
+              const endpointNormativa = 'Normativas';
+              return this.apiService
+                .request<any>(endpointNormativa, 'PATCH', { Id: idNormativa, nombreArchivo: archivo })
+                .pipe(
+                  tap(async () => {
+                    const mensaje = await this.idiomaService.tVars('normativas.normativaCreada', {
+                      nombre,
+                    });
+                    this.utilService.toast(mensaje, 'success');
+                  }),
+                  map(() => true)
+                );
+            })
+          );
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
   }
-
   editarNormativa(
     nombre: string,
     descripcion: string,
     archivoNormativa: File | null,
     archivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idNormativa: string
   ): Observable<any> {
-    let nombreArchivo = archivoActual || '';
-    const endpointNormativa = `/ficheros/${idNormativa}`;
-    const body: Partial<Normativa> = {
-      nombre: nombre.toUpperCase(),
-      descripcion,
-    };
-    const patchNormativa = (): Observable<string | null> => {
-      if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-      return this.apiService.request<any>(endpointNormativa, 'PATCH', body).pipe(
-        tap(async () => {
-          const mensaje = await this.idiomaService.tVars('normativas.normativaModificada', { nombre });
-          this.utilService.toast(mensaje, 'success');
-        }),
-        map(() => nombreArchivo),
-        catchError(err => { console.error(err); return of(null); })
-      );
-    };
-    if (!archivoNormativa) return patchNormativa();
-    const endpointUpload = `/files/${idCenad}/subirNormativa`;
-    return this.apiService.subirArchivo(endpointUpload, archivoNormativa).pipe(
-      concatMap(nuevaNormativa => {
-        if (!nuevaNormativa) return of(null);
-        if (nombreArchivo) {
-          const endpointBorrar = `/files/${idCenad}/borrarNormativa/${nombreArchivo}`;
-          return this.apiService.borrarArchivo(endpointBorrar).pipe(
-            map(() => {
-              nombreArchivo = nuevaNormativa;
-              return null;
+     let nombreArchivo = archivoActual || '';
+        const endpoint = 'Normativas';
+        const body: Partial<Normativa> = {
+          nombre: nombre.toUpperCase(),
+          descripcion,
+          Id: idNormativa
+        };
+        const patchNormativa = (): Observable<string | null> => {
+          if (nombreArchivo) body.nombreArchivo = nombreArchivo;
+          return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
+            map((res) => !!res),
+            tap(async () => {
+              const mensaje = await this.idiomaService.tVars('normativas.normativaEditada', { nombre });
+              this.utilService.toast(mensaje, 'success');
             }),
-            switchMap(() => patchNormativa())
+            map(() => nombreArchivo),
+            catchError((err) => {
+              console.error(err);
+              return of(null);
+            })
           );
-        } else {
-          nombreArchivo = nuevaNormativa;
-          return patchNormativa();
+        };
+        if (!archivoNormativa) return patchNormativa();
+        const nombreBiblioteca = nombreCenad;
+        const endpointUpload = `/${nombreBiblioteca}/normativa`;
+        // Si existe un archivo previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
+        // mostramos un toast de error. Si no existe, subimos directamente.
+        if (nombreArchivo) {
+          return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, `normativa/${nombreArchivo}`).pipe(
+            switchMap((borradoOk: boolean) => {
+              if (!borradoOk) {
+                console.warn('Abortando subida: no se pudo borrar el archivo anterior.');
+                return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+                  switchMap((mensaje) => {
+                    this.utilService.toast(
+                      mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
+                      'error'
+                    );
+                    return of(null);
+                  }),
+                  catchError(() => {
+                    this.utilService.toast(
+                      'No se pudo borrar el archivo anterior. Operación abortada.',
+                      'error'
+                    );
+                    return of(null);
+                  })
+                );
+              }
+              // Borrado OK -> subimos el nuevo archivo
+              return this.apiService.subirArchivo(endpointUpload, archivoNormativa).pipe(
+                switchMap((resArchivo) => {
+                  const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+                  if (!nuevoArchivoName) return of(null);
+                  nombreArchivo = nuevoArchivoName;
+                  return patchNormativa();
+                }),
+                catchError((err) => {
+                  console.error('Error subiendo el nuevo archivo:', err);
+                  return of(null);
+                })
+              );
+            }),
+            catchError((err) => {
+              console.warn('Error borrando el archivo anterior:', err);
+              return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+                switchMap((mensaje) => {
+                  this.utilService.toast(
+                    mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
+                    'error'
+                  );
+                  return of(null);
+                }),
+                catchError(() => {
+                  this.utilService.toast(
+                    'No se pudo borrar el archivo anterior. Operación abortada.',
+                    'error'
+                  );
+                  return of(null);
+                })
+              );
+            })
+          );
         }
+        // No había archivo previo: subimos y parchamos directamente
+        return this.apiService.subirArchivo(endpointUpload, archivoNormativa).pipe(
+          switchMap((resArchivo) => {
+            const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+            if (!nuevoArchivoName) return of(null);
+            nombreArchivo = nuevoArchivoName;
+            return patchNormativa();
+          }),
+          catchError((err) => {
+            console.error('Error subiendo el nuevo archivo (sin previo):', err);
+            return of(null);
+          })
+        );
+      }
+  deleteNormativa(nombreArchivo: string, idNormativa: string, nombreCenad: string): Observable<any> {
+ const endpoint = 'Normativas';
+    return this.apiService.borrarArchivoSharePoint(nombreCenad, `normativa/${nombreArchivo}`).pipe(
+      switchMap((borradoOk: boolean) => {
+        if (!borradoOk) {
+          console.warn('Abortando subida: no se pudo borrar el escudo anterior.');
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast(
+                'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            })
+          );
+        }
+        // Borrado OK -> borramos la cartografia
+        return this.apiService.request<any>(endpoint, 'DELETE', { Id: idNormativa }).pipe(
+          tap(async (res) => {
+            const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', {
+              nombreArchivo: nombreArchivo,
+            });
+            this.utilService.toast(mensaje, 'success');
+          }),
+          catchError((err) => {
+            console.error(err);
+            return of(false);
+          })
+        );
       })
     );
   }
 
-  deleteNormativa(nombreArchivo: string, idNormativa: string, idCenad: string): Observable<any> {
-    const endpointNormativa = `/ficheros/${idNormativa}`;
-    const endpointArchivo = `/files/${idCenad}/borrarNormativa/${nombreArchivo}`;
-    return this.apiService.borrarArchivo(endpointArchivo).pipe(
-      switchMap(() => this.apiService.request<any>(endpointNormativa, 'DELETE')),
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', { id: idNormativa });
-        this.utilService.toast(mensaje, 'success');
-      }),
-      map(() => true),
-      catchError(err => { console.error(err); return of(false); })
-    );
-  }
-
-  getArchivoNormativa(nombreArchivo: string, idCenad: string): Observable<void> {
-    const endpoint = `/files/${idCenad}/normativas/${nombreArchivo}`;
+  getArchivoNormativa(nombreArchivo: string, nombreCenad: string): Observable<void> {
+    const endpoint = `/${nombreCenad}/normativa/${nombreArchivo}`;
     return this.apiService.descargarArchivo(endpoint, nombreArchivo);
   }
 }

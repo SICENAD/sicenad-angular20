@@ -71,8 +71,9 @@ export class NormativasPageComponent {
       return;
     }
     const idCenad = this.cenadVisitado()?.Id || '';
+    const nombreCenad = this.cenadVisitado()?.nombre || '';
     const { nombre, descripcion, nombreArchivo } = this.normativaForm.value;
-    this.orquestadorService.crearNormativa(nombre, descripcion, nombreArchivo, idCenad).subscribe(success => {
+    this.orquestadorService.crearNormativa(nombre, descripcion, nombreArchivo, idCenad, nombreCenad).subscribe(success => {
       if (success) {
         this.normativaForm.reset();
         if (this.fileInput) this.fileInput.nativeElement.value = '';
