@@ -12,7 +12,7 @@ export class NormativaService {
   private utilService = inject(UtilService);
   private utils = inject(UtilsStore);
   private idiomaService = inject(IdiomaService);
-  private urlBasic = `${this.utils.urlApi()}/getbytitle('Cartografias')/items`;
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Normativas')/items`;
 
   getAll(idCenad: string): Observable<Normativa[]> {
     const endpoint = `${this.urlBasic}?$select=Id,nombre,descripcion,nombreArchivo&$filter=cenadId eq ${idCenad}`;
