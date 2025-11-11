@@ -1993,11 +1993,11 @@ export class OrquestadorService {
     descripcion: string,
     archivo: File,
     idCategoriaFichero: string,
-    idCenad: string,
+    nombreCenad: string,
     idRecurso: string
   ): Observable<any> {
     return this.ficheroService
-      .crearFicheroRecurso(nombre, descripcion, archivo, idCategoriaFichero, idCenad, idRecurso)
+      .crearFicheroRecurso(nombre, descripcion, archivo, idCategoriaFichero, nombreCenad, idRecurso)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2021,7 +2021,7 @@ export class OrquestadorService {
     descripcion: string,
     archivo: File | null,
     nombreArchivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idRecurso: string,
     idCategoriaFichero: string,
     idFichero: string
@@ -2032,7 +2032,7 @@ export class OrquestadorService {
         descripcion,
         archivo,
         nombreArchivoActual,
-        idCenad,
+        nombreCenad,
         idRecurso,
         idCategoriaFichero,
         idFichero
@@ -2058,11 +2058,11 @@ export class OrquestadorService {
   borrarFicheroRecurso(
     nombreArchivo: string,
     idFichero: string,
-    idCenad: string,
+    nombreCenad: string,
     idRecurso: string
   ): Observable<any> {
     return this.ficheroService
-      .deleteFicheroRecurso(nombreArchivo, idFichero, idCenad, idRecurso)
+      .deleteFicheroRecurso(nombreArchivo, idFichero, nombreCenad, idRecurso)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2083,11 +2083,11 @@ export class OrquestadorService {
       );
   }
 
-  getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
-    return this.ficheroService.getArchivoRecurso(nombreArchivo, idCenad, idRecurso);
+  getArchivoRecurso(nombreArchivo: string, nombreCenad: string, idRecurso: string): Observable<void> {
+    return this.ficheroService.getArchivoRecurso(nombreArchivo, nombreCenad, idRecurso);
   }
-  getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<Blob> {
-    return this.ficheroService.getImagenRecurso(nombreArchivo, idCenad, idRecurso);
+  getImagenRecurso(nombreArchivo: string, nombreCenad: string, idRecurso: string): Observable<Blob> {
+    return this.ficheroService.getImagenRecurso(nombreArchivo, nombreCenad, idRecurso);
   }
 
   //--- CRUD FicherosSolicitud ---
@@ -2123,7 +2123,7 @@ export class OrquestadorService {
     descripcion: string,
     archivo: File,
     idCategoriaFichero: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string
   ): Observable<any> {
     return this.ficheroService
@@ -2132,7 +2132,7 @@ export class OrquestadorService {
         descripcion,
         archivo,
         idCategoriaFichero,
-        idCenad,
+        nombreCenad,
         idSolicitud
       )
       .pipe(
@@ -2158,7 +2158,7 @@ export class OrquestadorService {
     descripcion: string,
     archivo: File,
     idCategoriaFichero: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string
   ): Observable<any> {
     return this.ficheroService
@@ -2167,7 +2167,7 @@ export class OrquestadorService {
         descripcion,
         archivo,
         idCategoriaFichero,
-        idCenad,
+        nombreCenad,
         idSolicitud
       )
       .pipe(
@@ -2193,7 +2193,7 @@ export class OrquestadorService {
     descripcion: string,
     archivo: File | null,
     nombreArchivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string,
     idCategoriaFichero: string,
     idFichero: string
@@ -2204,7 +2204,7 @@ export class OrquestadorService {
         descripcion,
         archivo,
         nombreArchivoActual,
-        idCenad,
+        nombreCenad,
         idSolicitud,
         idCategoriaFichero,
         idFichero
@@ -2232,7 +2232,7 @@ export class OrquestadorService {
     descripcion: string,
     archivo: File | null,
     nombreArchivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string,
     idCategoriaFichero: string,
     idFichero: string
@@ -2243,7 +2243,7 @@ export class OrquestadorService {
         descripcion,
         archivo,
         nombreArchivoActual,
-        idCenad,
+        nombreCenad,
         idSolicitud,
         idCategoriaFichero,
         idFichero
@@ -2269,11 +2269,11 @@ export class OrquestadorService {
   borrarFicheroSolicitudCenad(
     nombreArchivo: string,
     idFichero: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string
   ): Observable<any> {
     return this.ficheroService
-      .deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud)
+      .deleteFicheroSolicitud(nombreArchivo, idFichero, nombreCenad, idSolicitud)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2297,11 +2297,11 @@ export class OrquestadorService {
   borrarFicheroSolicitudUnidad(
     nombreArchivo: string,
     idFichero: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string
   ): Observable<any> {
     return this.ficheroService
-      .deleteFicheroSolicitud(nombreArchivo, idFichero, idCenad, idSolicitud)
+      .deleteFicheroSolicitud(nombreArchivo, idFichero, nombreCenad, idSolicitud)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2324,18 +2324,18 @@ export class OrquestadorService {
 
   getArchivoSolicitud(
     nombreArchivo: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string
   ): Observable<void> {
-    return this.ficheroService.getArchivoSolicitud(nombreArchivo, idCenad, idSolicitud);
+    return this.ficheroService.getArchivoSolicitud(nombreArchivo, nombreCenad, idSolicitud);
   }
 
   getImagenSolicitud(
     nombreArchivo: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string
   ): Observable<Blob> {
-    return this.ficheroService.getImagenSolicitud(nombreArchivo, idCenad, idSolicitud);
+    return this.ficheroService.getImagenSolicitud(nombreArchivo, nombreCenad, idSolicitud);
   }
 
   // --- CRUD Normativas ---

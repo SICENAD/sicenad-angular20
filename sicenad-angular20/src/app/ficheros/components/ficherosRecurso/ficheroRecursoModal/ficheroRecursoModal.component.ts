@@ -37,7 +37,7 @@ export class FicheroRecursoModalComponent {
   _idModalEliminar = signal('modal-fichero-eliminar-' + this.fichero()?.Id);
   idModal = computed(() => this._idModal() + this.idFichero());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idFichero());
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.fichero()?.nombreArchivo || ''));
@@ -109,7 +109,7 @@ export class FicheroRecursoModalComponent {
     }
     const { nombre, descripcion, categoriaFichero } = this.ficheroForm.value;
     const archivo = this.archivoFile();
-    this.orquestadorService.actualizarFicheroRecurso(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.idRecurso(), categoriaFichero.Id, this.idFichero()).subscribe({
+    this.orquestadorService.actualizarFicheroRecurso(nombre, descripcion, archivo, this.archivoActual(), this.nombreCenad(), this.idRecurso(), categoriaFichero.Id, this.idFichero()).subscribe({
       next: res => {
         if (res) {
           this.output.emit(); // notificamos al padre
@@ -122,7 +122,7 @@ export class FicheroRecursoModalComponent {
   }
   borrarFichero() {
     const nombreArchivo = this.fichero()?.nombreArchivo || '';
-    this.orquestadorService.borrarFicheroRecurso(nombreArchivo, this.idFichero(), this.idCenad(), this.idRecurso()).subscribe(() => {
+    this.orquestadorService.borrarFicheroRecurso(nombreArchivo, this.idFichero(), this.nombreCenad(), this.idRecurso()).subscribe(() => {
       this.output.emit(); // notificamos al padre
     });
   }

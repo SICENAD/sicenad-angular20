@@ -86,10 +86,10 @@ export class FicherosRecursoComponent {
       categorias.forEach((categoriaFichero: CategoriaFichero) => {
         categoriaFichero.ficheros!.forEach((fichero: FicheroRecurso) => {
           const nombreArchivo = fichero.nombreArchivo;
-          const idCenad = this.cenadVisitado()!.Id;
+          const nombreCenad = this.cenadVisitado()!.nombre;
           const idRecurso = this.idRecurso() || '';
           if (!nombreArchivo) return;
-          this.orquestadorService.getImagenRecurso(nombreArchivo, idCenad, idRecurso).subscribe({
+          this.orquestadorService.getImagenRecurso(nombreArchivo, nombreCenad, idRecurso).subscribe({
             next: blob => fichero.urlImagen = URL.createObjectURL(blob),
             error: err => console.error(err)
           });
@@ -100,12 +100,12 @@ export class FicherosRecursoComponent {
 
   descargar(fichero: FicheroRecurso): void {
     const archivo = fichero.nombreArchivo;
-    const idCenad = this.cenadVisitado()!.Id;
+    const nombreCenad = this.cenadVisitado()!.nombre;
     const idRecurso = this.idRecurso() || '';
     if (!archivo) {
       return;
     }
-    this.orquestadorService.getArchivoRecurso(archivo, idCenad, idRecurso).subscribe({
+    this.orquestadorService.getArchivoRecurso(archivo, nombreCenad, idRecurso).subscribe({
       next: () => {
       },
       error: (err) => {
@@ -128,10 +128,10 @@ export class FicherosRecursoComponent {
       this.ficheroForm.markAllAsTouched();
       return;
     }
-    const idCenad = this.cenadVisitado()?.Id || '';
+    const nombreCenad = this.cenadVisitado()?.nombre || '';
     const idRecurso = this.idRecurso() || '';
     const { nombre, descripcion, categoriaFichero, nombreArchivo } = this.ficheroForm.value;
-    this.orquestadorService.crearFicheroRecurso(nombre, descripcion, nombreArchivo, categoriaFichero.Id, idCenad, idRecurso).subscribe(success => {
+    this.orquestadorService.crearFicheroRecurso(nombre, descripcion, nombreArchivo, categoriaFichero.Id, nombreCenad, idRecurso).subscribe(success => {
       if (success) {
         this.ficheroForm.reset();
         this.output.emit(); // notificamos al padre

@@ -214,7 +214,7 @@ export class NormativaService {
             })
           );
         }
-        // Borrado OK -> borramos la cartografia
+        // Borrado OK -> borramos la normativa
         return this.apiService.request<any>(endpoint, 'DELETE', { Id: idNormativa }).pipe(
           tap(async (res) => {
             const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', {

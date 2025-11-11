@@ -91,12 +91,12 @@ export class FicherosSolicitudComponent {
 
   descargar(fichero: FicheroSolicitud): void {
     const archivo = fichero.nombreArchivo;
-    const idCenad = this.cenadVisitado()!.Id;
+    const nombreCenad = this.cenadVisitado()!.nombre;
     const idSolicitud = this.idSolicitud() || '';
     if (!archivo) {
       return;
     }
-    this.orquestadorService.getArchivoSolicitud(archivo, idCenad, idSolicitud).subscribe({
+    this.orquestadorService.getArchivoSolicitud(archivo, nombreCenad, idSolicitud).subscribe({
       error: (err) => {
         console.error(err);
       }
@@ -108,11 +108,11 @@ export class FicherosSolicitudComponent {
       this.ficheroForm.markAllAsTouched();
       return;
     }
-    const idCenad = this.cenadVisitado()?.Id || '';
+    const nombreCenad = this.cenadVisitado()?.nombre || '';
     const idSolicitud = this.idSolicitud() || '';
     const { nombre, descripcion, categoriaFichero, nombreArchivo } = this.ficheroForm.value;
     if (this.isCenad()) {
-      this.orquestadorService.crearFicheroSolicitudCenad(nombre, descripcion, nombreArchivo, categoriaFichero.Id, idCenad, idSolicitud).subscribe(success => {
+      this.orquestadorService.crearFicheroSolicitudCenad(nombre, descripcion, nombreArchivo, categoriaFichero.Id, nombreCenad, idSolicitud).subscribe(success => {
         if (success) {
           this.ficheroForm.reset();
           this.output.emit(); // notificamos al padre
@@ -120,7 +120,7 @@ export class FicherosSolicitudComponent {
         }
       });
     } else {
-      this.orquestadorService.crearFicheroSolicitudCenad(nombre, descripcion, nombreArchivo, categoriaFichero.Id, idCenad, idSolicitud).subscribe(success => {
+      this.orquestadorService.crearFicheroSolicitudCenad(nombre, descripcion, nombreArchivo, categoriaFichero.Id, nombreCenad, idSolicitud).subscribe(success => {
         if (success) {
           this.ficheroForm.reset();
           this.output.emit(); // notificamos al padre

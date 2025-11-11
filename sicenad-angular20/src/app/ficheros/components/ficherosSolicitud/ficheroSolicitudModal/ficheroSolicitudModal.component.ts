@@ -38,7 +38,7 @@ export class FicheroSolicitudModalComponent {
   _idModalEliminar = signal('modal-fichero-eliminar-' + this.fichero()?.Id);
   idModal = computed(() => this._idModal() + this.idFichero());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idFichero());
-  idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.fichero()?.nombreArchivo || ''));
@@ -111,7 +111,7 @@ export class FicheroSolicitudModalComponent {
     const { nombre, descripcion, categoriaFichero } = this.ficheroForm.value;
     const archivo = this.archivoFile();
     if (this.isCenad()) {
-      this.orquestadorService.actualizarFicheroSolicitudCenad(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.idSolicitud(), categoriaFichero.Id, this.idFichero()).subscribe({
+      this.orquestadorService.actualizarFicheroSolicitudCenad(nombre, descripcion, archivo, this.archivoActual(), this.nombreCenad(), this.idSolicitud(), categoriaFichero.Id, this.idFichero()).subscribe({
         next: res => {
           if (res) {
             this.output.emit(); // notificamos al padre
@@ -122,7 +122,7 @@ export class FicheroSolicitudModalComponent {
         }
       });
     } else {
-      this.orquestadorService.actualizarFicheroSolicitudUnidad(nombre, descripcion, archivo, this.archivoActual(), this.idCenad(), this.idSolicitud(), categoriaFichero.Id, this.idFichero()).subscribe({
+      this.orquestadorService.actualizarFicheroSolicitudUnidad(nombre, descripcion, archivo, this.archivoActual(), this.nombreCenad(), this.idSolicitud(), categoriaFichero.Id, this.idFichero()).subscribe({
         next: res => {
           if (res) {
             this.output.emit(); // notificamos al padre
@@ -138,11 +138,11 @@ export class FicheroSolicitudModalComponent {
     borrarFichero() {
       const nombreArchivo = this.fichero()?.nombreArchivo || '';
       if (this.isCenad()) {
-      this.orquestadorService.borrarFicheroSolicitudCenad(nombreArchivo, this.idFichero(), this.idCenad(), this.idSolicitud()).subscribe(() => {
+      this.orquestadorService.borrarFicheroSolicitudCenad(nombreArchivo, this.idFichero(), this.nombreCenad(), this.idSolicitud()).subscribe(() => {
         this.output.emit(); // notificamos al padre
       });
     } else {
-      this.orquestadorService.borrarFicheroSolicitudUnidad(nombreArchivo, this.idFichero(), this.idCenad(), this.idSolicitud()).subscribe(() => {
+      this.orquestadorService.borrarFicheroSolicitudUnidad(nombreArchivo, this.idFichero(), this.nombreCenad(), this.idSolicitud()).subscribe(() => {
         this.output.emit(); // notificamos al padre
       });
     }

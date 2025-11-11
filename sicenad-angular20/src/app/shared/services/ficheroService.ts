@@ -1,27 +1,28 @@
 import { inject, Injectable } from "@angular/core";
-import { catchError, concatMap, map, Observable, of, switchMap, tap } from "rxjs";
+import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { UtilService } from "./utilService";
 import { FicheroRecurso } from "@interfaces/models/ficheroRecurso";
 import { FicheroSolicitud } from "@interfaces/models/ficheroSolicitud";
 import { Fichero } from "@interfaces/models/fichero";
 import { IdiomaService } from "./idiomaService";
+import { UtilsStore } from "@stores/utils.store";
 
 @Injectable({ providedIn: 'root' })
 export class FicheroService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
+  private utils = inject(UtilsStore);
   private idiomaService = inject(IdiomaService);
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Ficheros')/items`;
 
   getAllFicheros(idRecurso: string | null, idSolicitud: string | null, isCenad: boolean | null): Observable<Fichero[]> {
-    const endpoint = idRecurso ? `/recursos/${idRecurso}/ficheros?size=1000`
-      : isCenad ? `/solicitudes/${idSolicitud}/documentacionCenad?size=1000`
-        : `/solicitudes/${idSolicitud}/documentacionUnidad?size=1000`;
-    return this.apiService.request<{ _embedded: { ficheros: Fichero[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.ficheros.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const endpoint = idRecurso ? `${this.urlBasic}?$select=Id,nombre,descripcion,nombreArchivo,categoriaFicheroId&$filter=recursoId eq ${idRecurso}`
+      : isCenad ? `${this.urlBasic}?$select=Id,nombre,descripcion,nombreArchivo,categoriaFicheroId&$filter=solicitudRecursoCenadId eq ${idSolicitud}`
+        : `${this.urlBasic}?$select=Id,nombre,descripcion,nombreArchivo,categoriaFicheroId&$filter=solicitudRecursoUnidadId eq ${idSolicitud}`;
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Fichero>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -29,52 +30,69 @@ export class FicheroService {
   }
 
   getFicheroSeleccionado(idFichero: string): Observable<Fichero | null> {
-    const endpoint = `/ficheros/${idFichero}`;
-    return this.apiService.request<Fichero>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+    const urlFichero = `${this.urlBasic}(${idFichero})`;
+    return this.apiService.getElemento(urlFichero).pipe(
+      map((c) => {
+        if (!c) throw new Error('Fichero no encontrado');
+        return c as Fichero;
+      }),
+      catchError((err) => {
+        console.error('Error obteniendo Fichero seleccionado:', err);
+        return of(null);
+      })
     );
   }
 
-  crearFichero(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, idCenad: string, idRecurso: string | null, idSolicitud: string | null, isCenad: boolean | null): Observable<any> {
-    const endpoint = `/ficheros`;
+  crearFichero(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, nombreCenad: string, idRecurso: string | null, idSolicitud: string | null, isCenad: boolean | null): Observable<any> {
+    const endpoint = 'Ficheros';
+    let endpointUpload = '';
     const body: any = {
       nombre: nombre.toUpperCase(),
       descripcion,
-      categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${idCategoriaFichero}`,
-      cenad: `${this.apiService.getUrlApi()}/cenads/${idCenad}`
+      categoriaFicheroId: idCategoriaFichero,
     };
     if (idRecurso) {
-      body.recurso = `${this.apiService.getUrlApi()}/recursos/${idRecurso}`;
+      body.recursoId = idRecurso;
+      endpointUpload = `/${nombreCenad}/recursos/${idRecurso}`;
     }
     if (idSolicitud) {
+      endpointUpload = `/${nombreCenad}/solicitudes/${idSolicitud}`;
       if (isCenad) {
-        body.solicitudRecursoCenad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`;
+        body.solicitudRecursoCenadId = idSolicitud;
       } else {
-        body.solicitudRecursoUnidad = `${this.apiService.getUrlApi()}/solicitudes/${idSolicitud}`;
+        body.solicitudRecursoUnidadId = idSolicitud;
       }
     }
-    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
-      switchMap(resCrear => {
-        const idFichero = resCrear.Id;
-        if (!archivo) return of(true);
-        const endpointUpload = body.recurso ? `/files/${idCenad}/subirDocRecurso/${idRecurso}` : `/files/${idCenad}/subirDocSolicitud/${idSolicitud}`;
-        return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
-          switchMap((nombreArchivo: string) => {
-            if (!nombreArchivo) return of(false);
-            const endpointCartografia = `${endpoint}/${idFichero}`;
-            return this.apiService.request<any>(endpointCartografia, 'PATCH', { nombreArchivo }).pipe(
-              tap(async () => {
-                const mensaje = await this.idiomaService.tVars('archivos.exitoSubida', { nombre });
-                this.utilService.toast(mensaje, 'success');
-              }),
-              map(() => true)
-            );
-          })
-        );
-      }),
-      catchError(err => { console.error(err); return of(false); })
-    );
+    return this.apiService
+      .request<any>(endpoint, 'POST', body).pipe(
+        switchMap((resCrear) => {
+          const idFichero = resCrear.Id;
+          console.log(idFichero);
+          if (!archivo) return of(true);
+          return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
+            switchMap((resArchivo) => {
+              const archivo: string = resArchivo.d.Name;
+              console.log(archivo);
+              if (!archivo) return of(false);
+              return this.apiService
+                .request<any>(endpoint, 'PATCH', { Id: idFichero, nombreArchivo: archivo })
+                .pipe(
+                  tap(async () => {
+                    const mensaje = await this.idiomaService.tVars('ficheros.ficheroCreado', {
+                      nombre,
+                    });
+                    this.utilService.toast(mensaje, 'success');
+                  }),
+                  map(() => true)
+                );
+            })
+          );
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
   }
 
   editarFichero(
@@ -82,22 +100,33 @@ export class FicheroService {
     descripcion: string,
     archivo: File | null,
     nombreArchivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idRecurso: string | null,
     idSolicitud: string | null,
     idCategoriaFichero: string,
     idFichero: string
   ): Observable<any> {
     let nombreArchivo = nombreArchivoActual || '';
-    const endpointFichero = `/ficheros/${idFichero}`;
+    const endpoint = 'Normativas';
+    let endpointUpload = '';
+    let pathBorrar = '';
     const body: any = {
       nombre: nombre.toUpperCase(),
       descripcion,
-      categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${idCategoriaFichero}`
+      categoriaFicheroId: idCategoriaFichero,
+      Id: idFichero
     };
+    if (idRecurso) {
+      endpointUpload = `/${nombreCenad}/recursos/${idRecurso}`;
+      pathBorrar = `recursos/${idRecurso}/${nombreArchivo}`;
+    }
+    if (idSolicitud) {
+      endpointUpload = `/${nombreCenad}/solicitudes/${idSolicitud}`;
+      pathBorrar = `solicitudes/${idSolicitud}/${nombreArchivo}`;
+    }
     const patchFichero = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-      return this.apiService.request<any>(endpointFichero, 'PATCH', body).pipe(
+      return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
         tap(async () => {
           const mensaje = await this.idiomaService.tVars('archivos.modificado', { nombre });
           this.utilService.toast(mensaje, 'success');
@@ -107,38 +136,123 @@ export class FicheroService {
       );
     };
     if (!archivo) return patchFichero();
-    const endpointUpload = idRecurso ? `/files/${idCenad}/subirDocRecurso/${idRecurso}` : `/files/${idCenad}/subirDocSolicitud/${idSolicitud}`;
-    return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
-      concatMap(nuevoFichero => {
-        if (!nuevoFichero) return of(null);
-        if (nombreArchivo) {
-          const endpointBorrar = idRecurso ? `/files/${idCenad}/borrarDocRecurso/${idRecurso}/${nombreArchivo}` : `/files/${idCenad}/borrarDocSolicitud/${idSolicitud}/${nombreArchivo}`;
-          return this.apiService.borrarArchivo(endpointBorrar).pipe(
-            map(() => {
-              nombreArchivo = nuevoFichero;
-              return null;
+    const nombreBiblioteca = nombreCenad;
+    if (nombreArchivo) {
+      return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, pathBorrar).pipe(
+        switchMap((borradoOk: boolean) => {
+          if (!borradoOk) {
+            console.warn('Abortando subida: no se pudo borrar el archivo anterior.');
+            return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+              switchMap((mensaje) => {
+                this.utilService.toast(
+                  mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              }),
+              catchError(() => {
+                this.utilService.toast(
+                  'No se pudo borrar el archivo anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              })
+            );
+          }
+          // Borrado OK -> subimos el nuevo archivo
+          return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
+            switchMap((resArchivo) => {
+              const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+              if (!nuevoArchivoName) return of(null);
+              nombreArchivo = nuevoArchivoName;
+              return patchFichero();
             }),
-            switchMap(() => patchFichero())
+            catchError((err) => {
+              console.error('Error subiendo el nuevo archivo:', err);
+              return of(null);
+            })
           );
-        } else {
-          nombreArchivo = nuevoFichero;
-          return patchFichero();
-        }
+        }),
+        catchError((err) => {
+          console.warn('Error borrando el archivo anterior:', err);
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast(
+                'No se pudo borrar el archivo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            })
+          );
+        })
+      );
+    }
+    // No había archivo previo: subimos y parchamos directamente
+    return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
+      switchMap((resArchivo) => {
+        const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+        if (!nuevoArchivoName) return of(null);
+        nombreArchivo = nuevoArchivoName;
+        return patchFichero();
+      }),
+      catchError((err) => {
+        console.error('Error subiendo el nuevo archivo (sin previo):', err);
+        return of(null);
       })
     );
   }
 
-  deleteFichero(nombreArchivo: string, idFichero: string, idCenad: string, idRecurso: string | null, idSolicitud: string | null): Observable<any> {
-    const endpointFichero = `/ficheros/${idFichero}`;
-    const endpointArchivo = idRecurso ? `/files/${idCenad}/borrarDocRecurso/${idRecurso}/${nombreArchivo}` : `/files/${idCenad}/borrarDocSolicitud/${idSolicitud}/${nombreArchivo}`;
-    return this.apiService.borrarArchivo(endpointArchivo).pipe(
-      switchMap(() => this.apiService.request<any>(endpointFichero, 'DELETE')),
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('archivos.ficheroEliminado', { id: idFichero });
-        this.utilService.toast(mensaje, 'success');
-      }),
-      map(() => true),
-      catchError(err => { console.error(err); return of(false); })
+  deleteFichero(nombreArchivo: string, idFichero: string, nombreCenad: string, idRecurso: string | null, idSolicitud: string | null): Observable<any> {
+    const endpoint = 'Ficheros';
+    let pathBorrar = '';
+    if (idRecurso) {
+      pathBorrar = `recursos/${idRecurso}/${nombreArchivo}`;
+    }
+    if (idSolicitud) {
+      pathBorrar = `solicitudes/${idSolicitud}/${nombreArchivo}`;
+    }
+    return this.apiService.borrarArchivoSharePoint(nombreCenad, pathBorrar).pipe(
+      switchMap((borradoOk: boolean) => {
+        if (!borradoOk) {
+          console.warn('Abortando subida: no se pudo borrar el escudo anterior.');
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast(
+                'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            })
+          );
+        }
+        // Borrado OK -> borramos el fichero
+        return this.apiService.request<any>(endpoint, 'DELETE', { Id: idFichero }).pipe(
+          tap(async (res) => {
+            const mensaje = await this.idiomaService.tVars('ficheros.ficheroEliminado', {
+              nombreArchivo: nombreArchivo,
+            });
+            this.utilService.toast(mensaje, 'success');
+          }),
+          catchError((err) => {
+            console.error(err);
+            return of(false);
+          })
+        );
+      })
     );
   }
 
@@ -162,16 +276,16 @@ export class FicheroService {
     return this.getFicheroSeleccionado(idFichero) as Observable<FicheroSolicitud | null>;
   }
 
-  crearFicheroRecurso(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, idCenad: string, idRecurso: string): Observable<any> {
-    return this.crearFichero(nombre, descripcion, archivo, idCategoriaFichero, idCenad, idRecurso, null, null);
+  crearFicheroRecurso(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, nombreCenad: string, idRecurso: string): Observable<any> {
+    return this.crearFichero(nombre, descripcion, archivo, idCategoriaFichero, nombreCenad, idRecurso, null, null);
   }
 
-  crearFicheroSolicitudCenad(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.crearFichero(nombre, descripcion, archivo, idCategoriaFichero, idCenad, null, idSolicitud, true);
+  crearFicheroSolicitudCenad(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, nombreCenad: string, idSolicitud: string): Observable<any> {
+    return this.crearFichero(nombre, descripcion, archivo, idCategoriaFichero, nombreCenad, null, idSolicitud, true);
   }
 
-  crearFicheroSolicitudUnidad(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.crearFichero(nombre, descripcion, archivo, idCategoriaFichero, idCenad, null, idSolicitud, false);
+  crearFicheroSolicitudUnidad(nombre: string, descripcion: string, archivo: File | null, idCategoriaFichero: string, nombreCenad: string, idSolicitud: string): Observable<any> {
+    return this.crearFichero(nombre, descripcion, archivo, idCategoriaFichero, nombreCenad, null, idSolicitud, false);
   }
 
   editarFicheroRecurso(
@@ -179,12 +293,12 @@ export class FicheroService {
     descripcion: string,
     archivo: File | null,
     nombreArchivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idRecurso: string,
     idCategoriaFichero: string,
     idFichero: string
   ): Observable<any> {
-    return this.editarFichero(nombre, descripcion, archivo, nombreArchivoActual, idCenad, idRecurso, null, idCategoriaFichero, idFichero);
+    return this.editarFichero(nombre, descripcion, archivo, nombreArchivoActual, nombreCenad, idRecurso, null, idCategoriaFichero, idFichero);
   }
 
   editarFicheroSolicitud(
@@ -192,45 +306,57 @@ export class FicheroService {
     descripcion: string,
     archivo: File | null,
     nombreArchivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idSolicitud: string,
     idCategoriaFichero: string,
     idFichero: string
   ): Observable<any> {
-    return this.editarFichero(nombre, descripcion, archivo, nombreArchivoActual, idCenad, null, idSolicitud, idCategoriaFichero, idFichero);
+    return this.editarFichero(nombre, descripcion, archivo, nombreArchivoActual, nombreCenad, null, idSolicitud, idCategoriaFichero, idFichero);
   }
 
-  deleteFicheroRecurso(nombreArchivo: string, idFichero: string, idCenad: string, idRecurso: string): Observable<any> {
-    return this.deleteFichero(nombreArchivo, idFichero, idCenad, idRecurso, null);
+  deleteFicheroRecurso(nombreArchivo: string, idFichero: string, nombreCenad: string, idRecurso: string): Observable<any> {
+    return this.deleteFichero(nombreArchivo, idFichero, nombreCenad, idRecurso, null);
   }
 
-  deleteFicheroSolicitud(nombreArchivo: string, idFichero: string, idCenad: string, idSolicitud: string): Observable<any> {
-    return this.deleteFichero(nombreArchivo, idFichero, idCenad, null, idSolicitud);
+  deleteFicheroSolicitud(nombreArchivo: string, idFichero: string, nombreCenad: string, idSolicitud: string): Observable<any> {
+    return this.deleteFichero(nombreArchivo, idFichero, nombreCenad, null, idSolicitud);
   }
 
-  getArchivo(nombreArchivo: string, idCenad: string, idRecurso: string | null, idSolicitud: string | null): Observable<void> {
-    const endpoint = idRecurso ? `/files/${idCenad}/docRecursos/${idRecurso}/${nombreArchivo}` : `/files/${idCenad}/docSolicitudes/${idSolicitud}/${nombreArchivo}`;
+  getArchivo(nombreArchivo: string, nombreCenad: string, idRecurso: string | null, idSolicitud: string | null): Observable<void> {
+    let endpoint = '';
+    if (idRecurso) {
+      endpoint = `/${nombreCenad}/recursos/${idRecurso}/${nombreArchivo}`;
+    }
+    if (idSolicitud) {
+      endpoint = `/${nombreCenad}/solicitudes/${idSolicitud}/${nombreArchivo}`;
+    }
     return this.apiService.descargarArchivo(endpoint, nombreArchivo);
   }
 
-  getArchivoRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<void> {
-    return this.getArchivo(nombreArchivo, idCenad, idRecurso, null);
+  getArchivoRecurso(nombreArchivo: string, nombreCenad: string, idRecurso: string): Observable<void> {
+    return this.getArchivo(nombreArchivo, nombreCenad, idRecurso, null);
   }
 
-  getArchivoSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<void> {
-    return this.getArchivo(nombreArchivo, idCenad, null, idSolicitud);
+  getArchivoSolicitud(nombreArchivo: string, nombreCenad: string, idSolicitud: string): Observable<void> {
+    return this.getArchivo(nombreArchivo, nombreCenad, null, idSolicitud);
   }
 
-  getImagen(nombreArchivo: string, idCenad: string, idRecurso: string | null, idSolicitud: string | null): Observable<Blob> {
-    const endpoint = idRecurso ? `/files/${idCenad}/docRecursos/${idRecurso}/${nombreArchivo}` : `/files/${idCenad}/docSolicitudes/${idSolicitud}/${nombreArchivo}`;
+  getImagen(nombreArchivo: string, nombreCenad: string, idRecurso: string | null, idSolicitud: string | null): Observable<Blob> {
+    let endpoint = '';
+    if (idRecurso) {
+      endpoint = `/${nombreCenad}/recursos/${idRecurso}/${nombreArchivo}`;
+    }
+    if (idSolicitud) {
+      endpoint = `/${nombreCenad}/solicitudes/${idSolicitud}/${nombreArchivo}`;
+    }
     return this.apiService.mostrarArchivo(endpoint);
   }
 
-  getImagenRecurso(nombreArchivo: string, idCenad: string, idRecurso: string): Observable<Blob> {
-    return this.getImagen(nombreArchivo, idCenad, idRecurso, null);
+  getImagenRecurso(nombreArchivo: string, nombreCenad: string, idRecurso: string): Observable<Blob> {
+    return this.getImagen(nombreArchivo, nombreCenad, idRecurso, null);
   }
 
-  getImagenSolicitud(nombreArchivo: string, idCenad: string, idSolicitud: string): Observable<Blob> {
-    return this.getImagen(nombreArchivo, idCenad, null, idSolicitud);
+  getImagenSolicitud(nombreArchivo: string, nombreCenad: string, idSolicitud: string): Observable<Blob> {
+    return this.getImagen(nombreArchivo, nombreCenad, null, idSolicitud);
   }
 }
