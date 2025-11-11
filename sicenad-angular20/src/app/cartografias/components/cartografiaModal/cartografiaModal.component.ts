@@ -37,6 +37,7 @@ export class CartografiaModalComponent {
   idModal = computed(() => this._idModal() + this.idCartografia());
   idModalEliminar = computed(() => this._idModalEliminar() + this.idCartografia());
   idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   archivoActual = signal<string>((this.cartografia()?.nombreArchivo || ''));
@@ -89,7 +90,7 @@ export class CartografiaModalComponent {
     }
     const { nombre, descripcion, escala } = this.cartografiaForm.value;
     const archivo = this.archivoFile();
-    this.orquestadorService.actualizarCartografia(nombre, descripcion, escala, archivo, this.archivoActual(), this.idCenad(), this.idCartografia()).subscribe({
+    this.orquestadorService.actualizarCartografia(nombre, descripcion, escala, archivo, this.archivoActual(), this.idCenad(), this.nombreCenad(), this.idCartografia()).subscribe({
       next: res => {
         if (res) {
           this.output.emit(); // notificamos al padre
@@ -101,7 +102,7 @@ export class CartografiaModalComponent {
   }
   borrarCartografia() {
     const nombreArchivo = this.cartografia()?.nombreArchivo || '';
-    this.orquestadorService.borrarCartografia(nombreArchivo, this.idCartografia(), this.idCenad()).subscribe(() => {
+    this.orquestadorService.borrarCartografia(nombreArchivo, this.idCartografia(), this.idCenad(), this.nombreCenad()).subscribe(() => {
       this.output.emit(); // notificamos al padre
     });
   }

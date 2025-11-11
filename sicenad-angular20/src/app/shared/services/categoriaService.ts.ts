@@ -5,7 +5,6 @@ import {
   Observable,
   of,
   tap,
-  throwError,
   switchMap,
   from,
   firstValueFrom,

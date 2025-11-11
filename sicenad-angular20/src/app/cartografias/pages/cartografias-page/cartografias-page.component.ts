@@ -74,8 +74,9 @@ export class CartografiasPageComponent {
       return;
     }
     const idCenad = this.cenadVisitado()?.Id || '';
+    const nombreCenad = this.cenadVisitado()?.nombre || '';
     const { nombre, descripcion, escala, nombreArchivo } = this.cartografiaForm.value;
-    this.orquestadorService.crearCartografia(nombre, descripcion, escala, nombreArchivo, idCenad).subscribe(success => {
+    this.orquestadorService.crearCartografia(nombre, descripcion, escala, nombreArchivo, idCenad, nombreCenad).subscribe(success => {
       if (success) {
         this.cartografiaForm.reset();
         if (this.fileInput) this.fileInput.nativeElement.value = '';

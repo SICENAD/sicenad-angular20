@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, concatMap, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ApiService } from './apiService';
 import { Cartografia } from '@interfaces/models/cartografia';
 import { UtilsStore } from '@stores/utils.store';
@@ -15,8 +15,9 @@ export class CartografiaService {
   private urlBasic = `${this.utils.urlApi()}/getbytitle('Cartografias')/items`;
 
   getAll(idCenad: string): Observable<Cartografia[]> {
-    const urlCartografias = `${this.urlBasic}?$expand=cenad&$filter=cenadId eq ${idCenad}`;
-    return this.apiService.request<any>(urlCartografias, 'GET').pipe(
+    const endpoint = `${this.urlBasic}?$select=Id,nombre,descripcion,nombreArchivo,escala&$filter=cenadId eq ${idCenad}`;
+    return this.apiService.request<any>(endpoint, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Cartografia>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -25,10 +26,14 @@ export class CartografiaService {
   }
 
   getCartografiaSeleccionada(idCartografia: string): Observable<Cartografia | null> {
-    const endpoint = `/cartografias/${idCartografia}`;
-    return this.apiService.request<Cartografia>(endpoint, 'GET').pipe(
+    const urlCartografia = `${this.urlBasic}(${idCartografia})`;
+    return this.apiService.getElemento(urlCartografia).pipe(
+      map((c) => {
+        if (!c) throw new Error('Cartografía no encontrada');
+        return c as Cartografia;
+      }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error obteniendo Cartografía seleccionada:', err);
         return of(null);
       })
     );
@@ -39,44 +44,48 @@ export class CartografiaService {
     descripcion: string,
     escala: string,
     archivo: File,
-    idCenad: string
+    idCenad: string,
+    nombreCenad: string
   ): Observable<any> {
-    const endpoint = `/cartografias`;
-    const body = {
-      nombre: nombre.toUpperCase(),
-      descripcion,
-      escala,
-      categoriaFichero: `${this.apiService.getUrlApi()}/categorias_fichero/${this.utils.categoriaFicheroCartografia()}`,
-      cenad: `${this.apiService.getUrlApi()}/cenads/${idCenad}`,
-    };
-    return this.apiService.request<any>(endpoint, 'POST', body).pipe(
-      switchMap((resCrear) => {
-        const idCartografia = resCrear.Id;
-        if (!archivo) return of(true);
-        const endpointUpload = `/files/${idCenad}/subirCartografia`;
-        return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
-          switchMap((nombreArchivo: string) => {
-            if (!nombreArchivo) return of(false);
-            const endpointCartografia = `${endpoint}/${idCartografia}`;
-            return this.apiService
-              .request<any>(endpointCartografia, 'PATCH', { nombreArchivo })
-              .pipe(
-                tap(async () => {
-                  const mensaje = await this.idiomaService.tVars('cartografias.cartografiaCreada', {
-                    nombre,
-                  });
-                  this.utilService.toast(mensaje, 'success');
-                }),
-                map(() => true)
-              );
-          })
-        );
-      }),
-      catchError((err) => {
-        console.error(err);
-        return of(false);
+    const endpoint = `Cartografias`;
+    return this.apiService
+      .request<any>(endpoint, 'POST', {
+        nombre: nombre.toUpperCase(),
+        escala,
+        descripcion,
+        cenadId: idCenad
       })
-    );
+      .pipe(
+        switchMap((resCrear) => {
+          const idCartografia = resCrear.Id;
+          console.log(idCartografia);
+          if (!archivo) return of(true);
+          const endpointUpload = `/${nombreCenad}/cartografia`;
+          return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
+            switchMap((resArchivo) => {
+              const archivo: string = resArchivo.d.Name;
+              console.log(archivo);
+              if (!archivo) return of(false);
+              const endpointCartografia = 'Cartografias';
+              return this.apiService
+                .request<any>(endpointCartografia, 'PATCH', { Id: idCartografia, nombreArchivo: archivo })
+                .pipe(
+                  tap(async () => {
+                    const mensaje = await this.idiomaService.tVars('cartografias.cartografiaCreada', {
+                      nombre,
+                    });
+                    this.utilService.toast(mensaje, 'success');
+                  }),
+                  map(() => true)
+                );
+            })
+          );
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
   }
 
   editarCartografia(
@@ -85,23 +94,23 @@ export class CartografiaService {
     escala: string,
     archivoCartografia: File | null,
     archivoActual: string,
-    idCenad: string,
+    nombreCenad: string,
     idCartografia: string
   ): Observable<any> {
     let nombreArchivo = archivoActual || '';
-    const endpointCartografia = `/cartografias/${idCartografia}`;
+    const endpoint = 'Cartografias';
     const body: Partial<Cartografia> = {
       nombre: nombre.toUpperCase(),
-      descripcion,
       escala,
+      descripcion,
+      Id: idCartografia
     };
     const patchCartografia = (): Observable<string | null> => {
       if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-      return this.apiService.request<any>(endpointCartografia, 'PATCH', body).pipe(
+      return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
+        map((res) => !!res),
         tap(async () => {
-          const mensaje = await this.idiomaService.tVars('cartografias.cartografiaModificada', {
-            nombre,
-          });
+          const mensaje = await this.idiomaService.tVars('cartografias.cartografiaEditada', { nombre });
           this.utilService.toast(mensaje, 'success');
         }),
         map(() => nombreArchivo),
@@ -112,23 +121,78 @@ export class CartografiaService {
       );
     };
     if (!archivoCartografia) return patchCartografia();
-    const endpointUpload = `/files/${idCenad}/subirCartografia`;
-    return this.apiService.subirArchivo(endpointUpload, archivoCartografia).pipe(
-      concatMap((nuevaCartografia) => {
-        if (!nuevaCartografia) return of(null);
-        if (nombreArchivo) {
-          const endpointBorrar = `/files/${idCenad}/borrarCartografia/${nombreArchivo}`;
-          return this.apiService.borrarArchivo(endpointBorrar).pipe(
-            map(() => {
-              nombreArchivo = nuevaCartografia;
-              return null;
+    const nombreBiblioteca = nombreCenad;
+    const endpointUpload = `/${nombreBiblioteca}/cartografia`;
+    // Si existe un archivo previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
+    // mostramos un toast de error. Si no existe, subimos directamente.
+    if (nombreArchivo) {
+      return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, `cartografia/${nombreArchivo}`).pipe(
+        switchMap((borradoOk: boolean) => {
+          if (!borradoOk) {
+            console.warn('Abortando subida: no se pudo borrar el archivo anterior.');
+            return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+              switchMap((mensaje) => {
+                this.utilService.toast(
+                  mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              }),
+              catchError(() => {
+                this.utilService.toast(
+                  'No se pudo borrar el archivo anterior. Operación abortada.',
+                  'error'
+                );
+                return of(null);
+              })
+            );
+          }
+          // Borrado OK -> subimos el nuevo archivo
+          return this.apiService.subirArchivo(endpointUpload, archivoCartografia).pipe(
+            switchMap((resArchivo) => {
+              const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+              if (!nuevoArchivoName) return of(null);
+              nombreArchivo = nuevoArchivoName;
+              return patchCartografia();
             }),
-            switchMap(() => patchCartografia())
+            catchError((err) => {
+              console.error('Error subiendo el nuevo archivo:', err);
+              return of(null);
+            })
           );
-        } else {
-          nombreArchivo = nuevaCartografia;
-          return patchCartografia();
-        }
+        }),
+        catchError((err) => {
+          console.warn('Error borrando el archivo anterior:', err);
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast(
+                'No se pudo borrar el archivo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            })
+          );
+        })
+      );
+    }
+    // No había archivo previo: subimos y parchamos directamente
+    return this.apiService.subirArchivo(endpointUpload, archivoCartografia).pipe(
+      switchMap((resArchivo) => {
+        const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+        if (!nuevoArchivoName) return of(null);
+        nombreArchivo = nuevoArchivoName;
+        return patchCartografia();
+      }),
+      catchError((err) => {
+        console.error('Error subiendo el nuevo archivo (sin previo):', err);
+        return of(null);
       })
     );
   }
@@ -136,28 +200,49 @@ export class CartografiaService {
   deleteCartografia(
     nombreArchivo: string,
     idCartografia: string,
-    idCenad: string
+    nombreCenad: string
   ): Observable<any> {
-    const endpointCartografia = `/cartografias/${idCartografia}`;
-    const endpointArchivo = `/files/${idCenad}/borrarCartografia/${nombreArchivo}`;
-    return this.apiService.borrarArchivo(endpointArchivo).pipe(
-      switchMap(() => this.apiService.request<any>(endpointCartografia, 'DELETE')),
-      tap(async (res) => {
-        const mensaje = await this.idiomaService.tVars('cartografias.cartografiaEliminada', {
-          id: idCartografia,
-        });
-        this.utilService.toast(mensaje, 'success');
-      }),
-      map(() => true),
-      catchError((err) => {
-        console.error(err);
-        return of(false);
+    const endpoint = 'Cartografias';
+    return this.apiService.borrarArchivoSharePoint(nombreCenad, `cartografia/${nombreArchivo}`).pipe(
+      switchMap((borradoOk: boolean) => {
+        if (!borradoOk) {
+          console.warn('Abortando subida: no se pudo borrar el escudo anterior.');
+          return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
+            switchMap((mensaje) => {
+              this.utilService.toast(
+                mensaje || 'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            }),
+            catchError(() => {
+              this.utilService.toast(
+                'No se pudo borrar el escudo anterior. Operación abortada.',
+                'error'
+              );
+              return of(null);
+            })
+          );
+        }
+        // Borrado OK -> borramos la cartografia
+        return this.apiService.request<any>(endpoint, 'DELETE', { Id: idCartografia }).pipe(
+          tap(async (res) => {
+            const mensaje = await this.idiomaService.tVars('cartografias.cartografiaEliminada', {
+              nombreArchivo: nombreArchivo,
+            });
+            this.utilService.toast(mensaje, 'success');
+          }),
+          catchError((err) => {
+            console.error(err);
+            return of(false);
+          })
+        );
       })
     );
   }
 
-  getArchivoCartografia(nombreArchivo: string, idCenad: string): Observable<void> {
-    const endpoint = `/files/${idCenad}/cartografias/${nombreArchivo}`;
+  getArchivoCartografia(nombreArchivo: string, nombreCenad: string): Observable<void> {
+    const endpoint = `/${nombreCenad}/cartografia/${nombreArchivo}`;
     return this.apiService.descargarArchivo(endpoint, nombreArchivo);
   }
 }

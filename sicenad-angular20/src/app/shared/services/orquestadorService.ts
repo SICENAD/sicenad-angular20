@@ -1869,10 +1869,11 @@ export class OrquestadorService {
     descripcion: string,
     escala: string,
     archivo: File,
-    idCenad: string
+    idCenad: string,
+    nombreCenad: string
   ): Observable<any> {
     return this.cartografiaService
-      .crearCartografia(nombre, descripcion, escala, archivo, idCenad)
+      .crearCartografia(nombre, descripcion, escala, archivo, idCenad, nombreCenad)
       .pipe(
         tap((res) => {
           if (res) {
@@ -1902,6 +1903,7 @@ export class OrquestadorService {
     archivoCartografia: File | null,
     archivoActual: string,
     idCenad: string,
+    nombreCenad: string,
     idCartografia: string
   ): Observable<any> {
     return this.cartografiaService
@@ -1911,7 +1913,7 @@ export class OrquestadorService {
         escala,
         archivoCartografia,
         archivoActual,
-        idCenad,
+        nombreCenad,
         idCartografia
       )
       .pipe(
@@ -1939,9 +1941,10 @@ export class OrquestadorService {
   borrarCartografia(
     nombreArchivo: string,
     idCartografia: string,
-    idCenad: string
+    idCenad: string,
+    nombreCenad: string
   ): Observable<any> {
-    return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, idCenad).pipe(
+    return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, nombreCenad).pipe(
       tap((res) => {
         if (res) {
           this.idiomaService

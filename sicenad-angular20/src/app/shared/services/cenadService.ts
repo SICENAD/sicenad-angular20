@@ -71,8 +71,8 @@ export class CenadService {
   }
 
   getCenadSeleccionado(idCenad: string): Observable<Cenad | null> {
-    const urlCenads = `${this.urlBasic}(${idCenad})`;
-     return this.apiService.getElemento(urlCenads).pipe(
+    const urlCenad = `${this.urlBasic}(${idCenad})`;
+     return this.apiService.getElemento(urlCenad).pipe(
           map((c) => {
             if (!c) throw new Error('CENAD no encontrado');
             return c as Cenad;
