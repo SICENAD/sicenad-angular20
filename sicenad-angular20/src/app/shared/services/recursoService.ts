@@ -4,20 +4,24 @@ import { ApiService } from "./apiService";
 import { Recurso } from "@interfaces/models/recurso";
 import { UtilService } from "./utilService";
 import { IdiomaService } from "./idiomaService";
+import { UtilsStore } from "@stores/utils.store";
 
 @Injectable({ providedIn: 'root' })
 export class RecursoService {
+  private utils = inject(UtilsStore);
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Recursos')/items`;
 
   getAll(idCenad: string): Observable<Recurso[]> {
-    const endpoint = `/cenads/${idCenad}/recursos?size=1000`;
-    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,categoriaId,usuarioGestorId,tipoFormularioId,cenad/Id,cenad/nombre&$expand=cenad&$filter=cenadId eq ${idCenad}`;
+    return this.apiService.request<any>(urlRecursos, 'GET').pipe(
+      map((res) => {
+        const arr = this.utilService.ensureArray<Recurso>(res) as any[];
+        return arr.map(item => ({ ...item, cenadNombre: (item.cenad && (item.cenad as any).nombre) ? (item.cenad as any).nombre : null }));
+      }),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -25,12 +29,10 @@ export class RecursoService {
   }
 
   getRecursosDeCategoria(idCategoria: string): Observable<Recurso[]> {
-    const endpoint = `/categorias/${idCategoria}/recursos?size=1000`;
-    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,conDatosEspecificosSolicitud,datosEspecificosSolicitud,usuarioGestorId,tipoFormularioId,&$filter=categoriaId eq ${idCategoria}`;
+    return this.apiService.request<any>(urlRecursos, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Recurso>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })

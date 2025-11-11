@@ -13,6 +13,7 @@ export interface Recurso {
   conDatosEspecificosSolicitud: boolean;
   datosEspecificosSolicitud: string;
   cenad?: Cenad;
+  cenadNombre?: string;
   categoria?: Categoria;
   usuarioGestor?: UsuarioGestor;
   tipoFormulario?: TipoFormulario;
