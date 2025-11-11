@@ -24,6 +24,7 @@ export class NormativaComponent {
 
   idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   isAdminEsteCenad = computed(() => {
     let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.Id : '';
     return (this.cenadVisitado()?.Id === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
@@ -37,7 +38,7 @@ export class NormativaComponent {
     if (!archivo) {
       return;
     }
-    this.orquestadorService.getArchivoNormativa(archivo, this.idCenad()).subscribe({
+    this.orquestadorService.getArchivoNormativa(archivo, this.nombreCenad()).subscribe({
       error: (err) => {
         console.error(err);
       }

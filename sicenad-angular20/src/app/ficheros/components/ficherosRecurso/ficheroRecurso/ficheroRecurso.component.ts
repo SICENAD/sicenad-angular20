@@ -21,6 +21,7 @@ export class FicheroRecursoComponent {
   private orquestadorService = inject(OrquestadorService);
   idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   faDownload = this.iconoStore.faDownload;
 
   fichero = input.required<FicheroRecurso>();
@@ -35,7 +36,7 @@ export class FicheroRecursoComponent {
     if (!archivo) {
       return;
     }
-    this.orquestadorService.getArchivoRecurso(archivo, this.idCenad(), this.idRecurso()).subscribe({
+    this.orquestadorService.getArchivoRecurso(archivo, this.nombreCenad(), this.idRecurso()).subscribe({
       next: () => {
       },
       error: (err) => {

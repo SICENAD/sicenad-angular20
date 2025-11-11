@@ -14,21 +14,26 @@ import { IdiomaService } from '@services/idiomaService';
   selector: 'app-cartografia',
   imports: [CartografiaModalComponent, FontAwesomeModule],
   templateUrl: './cartografia.component.html',
-  styleUrls: ['./cartografia.component.css']
+  styleUrls: ['./cartografia.component.css'],
 })
 export class CartografiaComponent {
-
   private auth = inject(AuthStore);
   private cenadStore = inject(CenadStore);
-  private usuarioLogueado = inject(UsuarioLogueadoStore); private iconoStore = inject(IconosStore);
+  private usuarioLogueado = inject(UsuarioLogueadoStore);
+  private iconoStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
   private idiomaService = inject(IdiomaService);
 
   idCenad = computed(() => this.cenadStore.cenadVisitado()?.Id || '');
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
+  nombreCenad = computed(() => this.cenadStore.cenadVisitado()?.nombre || '');
   isAdminEsteCenad = computed(() => {
-    let idCenadPropio = this.usuarioLogueado.cenadPropio() ? this.usuarioLogueado.cenadPropio()?.Id : '';
-    return (this.cenadVisitado()?.Id === idCenadPropio) && (this.auth.rol() === RolUsuario.Administrador);
+    let idCenadPropio = this.usuarioLogueado.cenadPropio()
+      ? this.usuarioLogueado.cenadPropio()?.Id
+      : '';
+    return (
+      this.cenadVisitado()?.Id === idCenadPropio && this.auth.rol() === RolUsuario.Administrador
+    );
   });
   faDownload = this.iconoStore.faDownload;
 
@@ -37,22 +42,22 @@ export class CartografiaComponent {
   descargar(): void {
     const archivo = this.cartografia().nombreArchivo;
     if (!archivo) {
-      this.idiomaService.tVars('archivos.noArchivo').then(mensaje => {
+      this.idiomaService.tVars('archivos.noArchivo').then((mensaje) => {
         console.warn(mensaje);
       });
       return;
     }
-    this.orquestadorService.getArchivoCartografia(archivo, this.idCenad()).subscribe({
+    this.orquestadorService.getArchivoCartografia(archivo, this.nombreCenad()).subscribe({
       next: () => {
-        this.idiomaService.tVars('archivos.exitoDescarga').then(mensaje => {
+        this.idiomaService.tVars('archivos.exitoDescarga').then((mensaje) => {
           console.log(mensaje);
         });
       },
       error: (err) => {
-        this.idiomaService.tVars('archivos.errorDescarga').then(mensaje => {
+        this.idiomaService.tVars('archivos.errorDescarga').then((mensaje) => {
           console.error(mensaje);
         });
-      }
+      },
     });
   }
 }
