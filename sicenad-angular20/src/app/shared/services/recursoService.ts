@@ -5,6 +5,7 @@ import { Recurso } from "@interfaces/models/recurso";
 import { UtilService } from "./utilService";
 import { IdiomaService } from "./idiomaService";
 import { UtilsStore } from "@stores/utils.store";
+import { Cenad } from "@interfaces/models/cenad";
 
 @Injectable({ providedIn: 'root' })
 export class RecursoService {
@@ -15,11 +16,11 @@ export class RecursoService {
   private urlBasic = `${this.utils.urlApi()}/getbytitle('Recursos')/items`;
 
   getAll(idCenad: string): Observable<Recurso[]> {
-    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,categoriaId,usuarioGestorId,tipoFormularioId,cenad/Id,cenad/nombre&$expand=cenad&$filter=cenadId eq ${idCenad}`;
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,categoriaId,usuarioGestorId,tipoFormularioId,cenad/nombre&$expand=cenad&$filter=cenadId eq ${idCenad}`;
     return this.apiService.request<any>(urlRecursos, 'GET').pipe(
       map((res) => {
         const arr = this.utilService.ensureArray<Recurso>(res) as any[];
-        return arr.map(item => ({ ...item, cenadNombre: (item.cenad && (item.cenad as any).nombre) ? (item.cenad as any).nombre : null }));
+        return arr.map(item => ({ ...item, cenadNombre: (item.cenad && (item.cenad as any).nombre) ? (item.cenad as any).nombre : null, cenad: (item.cenad) ? (item.cenad as Cenad) : null }));
       }),
       catchError((err) => {
         console.error(err);
