@@ -10,7 +10,7 @@
       <fa-icon class="" [icon]="faConsultar"></fa-icon>
     </a>
     }
-    <p class="ms-1 mt-1 mb-1">{{ recurso().nombre }} {{ recurso().cenadNombre }} {{ recurso().cenad?.nombre }}</p>
+    <p class="ms-1 mt-1 mb-1">{{ recurso().nombre }}</p>
     @if ((isAdminEsteCenad())) {
       <app-recursoModal [recurso]="recurso()" class="ms-1 mt-1 mb-1"></app-recursoModal>
     }

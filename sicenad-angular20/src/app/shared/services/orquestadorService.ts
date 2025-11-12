@@ -1197,10 +1197,10 @@ export class OrquestadorService {
     idCenad: string,
     idTipoFormulario: string,
     idCategoria: string,
-    idGestor: string
+    idGestor: string,
   ): Observable<any> {
     return this.recursoService
-      .crearRecurso(nombre, descripcion, otros, idTipoFormulario, idCategoria, idGestor)
+      .crearRecurso(nombre, descripcion, otros, idTipoFormulario, idCategoria, idGestor, idCenad)
       .pipe(
         tap((res) => {
           if (res) {

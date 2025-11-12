@@ -1,11 +1,12 @@
-import { inject, Injectable } from "@angular/core";
-import { catchError, map, Observable, of, tap } from "rxjs";
-import { ApiService } from "./apiService";
-import { Recurso } from "@interfaces/models/recurso";
-import { UtilService } from "./utilService";
-import { IdiomaService } from "./idiomaService";
-import { UtilsStore } from "@stores/utils.store";
-import { Cenad } from "@interfaces/models/cenad";
+import { inject, Injectable } from '@angular/core';
+import { catchError, map, Observable, of, tap, switchMap, forkJoin } from 'rxjs';
+import { ApiService } from './apiService';
+import { Recurso } from '@interfaces/models/recurso';
+import { UtilService } from './utilService';
+import { IdiomaService } from './idiomaService';
+import { UtilsStore } from '@stores/utils.store';
+import { Categoria } from '@interfaces/models/categoria';
+import { CategoriaService } from './categoriaService.ts';
 
 @Injectable({ providedIn: 'root' })
 export class RecursoService {
@@ -13,15 +14,13 @@ export class RecursoService {
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
+  private categoriaService = inject(CategoriaService);
   private urlBasic = `${this.utils.urlApi()}/getbytitle('Recursos')/items`;
 
   getAll(idCenad: string): Observable<Recurso[]> {
-    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,categoriaId,usuarioGestorId,tipoFormularioId,cenad/nombre&$expand=cenad&$filter=cenadId eq ${idCenad}`;
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&$expand=usuarioGestor&$filter=cenadId eq ${idCenad}`;
     return this.apiService.request<any>(urlRecursos, 'GET').pipe(
-      map((res) => {
-        const arr = this.utilService.ensureArray<Recurso>(res) as any[];
-        return arr.map(item => ({ ...item, cenadNombre: (item.cenad && (item.cenad as any).nombre) ? (item.cenad as any).nombre : null, cenad: (item.cenad) ? (item.cenad as Cenad) : null }));
-      }),
+      map((res) => this.utilService.ensureArray<Recurso>(res)),
       catchError((err) => {
         console.error(err);
         return of([]);
@@ -30,7 +29,7 @@ export class RecursoService {
   }
 
   getRecursosDeCategoria(idCategoria: string): Observable<Recurso[]> {
-    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,conDatosEspecificosSolicitud,datosEspecificosSolicitud,usuarioGestorId,tipoFormularioId,&$filter=categoriaId eq ${idCategoria}`;
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&$expand=usuarioGestor&$filter=categoriaId eq ${idCategoria}`;
     return this.apiService.request<any>(urlRecursos, 'GET').pipe(
       map((res) => this.utilService.ensureArray<Recurso>(res)),
       catchError((err) => {
@@ -41,25 +40,42 @@ export class RecursoService {
   }
 
   getRecursosDeSubcategorias(idCategoria: string): Observable<Recurso[]> {
-    const endpoint = `/categorias/${idCategoria}/recursosDeSubcategorias?size=1000`;
-    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
-        console.error(err);
+    // Obtenemos recursivamente las subcategorías y luego pedimos los recursos de cada una,
+    // aplanamos el resultado y eliminamos duplicados por Id.
+    return this.categoriaService.getSubCategoriasAnidadas(idCategoria).pipe(
+      switchMap((subcats: Categoria[]) => {
+        // Incluir la propia categoría (raíz) para que si es hoja se obtengan sus recursos
+        const childIds = (subcats || [])
+          .map((c) => (c as any)?.Id)
+          .filter(Boolean)
+          .map(String);
+        const ids = Array.from(new Set<string>([String(idCategoria), ...childIds]));
+        const calls = ids.map((id) => this.getRecursosDeCategoria(String(id)));
+        return forkJoin(calls).pipe(
+          map((arrays: Recurso[][]) => {
+            const flat = ([] as Recurso[]).concat(...arrays.map((a) => a || []));
+            const mapById = new Map<string, Recurso>();
+            for (const r of flat) {
+              const rid = String((r as any)?.Id || (r as any)?.id || '');
+              if (!rid) continue;
+              if (!mapById.has(rid)) mapById.set(rid, r);
+            }
+            return Array.from(mapById.values());
+          })
+        );
+      }),
+      catchError((err) => {
+        console.error('Error obteniendo recursos de subcategorías:', err);
         return of([]);
       })
     );
   }
 
   getRecursosDeGestor(idGestor: string): Observable<Recurso[]> {
-    const endpoint = `/usuarios_gestor/${idGestor}/recursos?size=1000`;
-    return this.apiService.request<{ _embedded: { recursos: Recurso[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.recursos.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&expand=usuarioGestor&$filter=usuarioGestorId eq ${idGestor}`;
+    return this.apiService.request<any>(urlRecursos, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Recurso>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -67,83 +83,122 @@ export class RecursoService {
   }
 
   getRecursoSeleccionado(idRecurso: string): Observable<Recurso | null> {
-    const endpoint = `/recursos/${idRecurso}`;
-    return this.apiService.request<Recurso>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+    const urlRecurso = `${this.urlBasic}(${idRecurso})?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&expand=usuarioGestor`;
+    return this.apiService.getElemento(urlRecurso).pipe(
+      map((c) => {
+        if (!c) throw new Error('Recurso no encontrado');
+        return c as Recurso;
+      }),
+      catchError((err) => {
+        console.error('Error obteniendo Recurso seleccionado:', err);
+        return of(null);
+      })
     );
   }
 
   getRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
     const endpoint = `/solicitudes/${idSolicitud}/recurso`;
     return this.apiService.request<Recurso>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+      catchError((err) => {
+        console.error(err);
+        return of(null);
+      })
     );
   }
 
-  crearRecurso(nombre: string, descripcion: string, otros: string, idTipoFormulario: string, idCategoria: string, idGestor: string): Observable<any> {
-    const endpoint = `/recursos`;
+  crearRecurso(
+    nombre: string,
+    descripcion: string,
+    otros: string,
+    idTipoFormulario: string,
+    idCategoria: string,
+    idGestor: string,
+    idCenad: string
+  ): Observable<any> {
+    const endpoint = 'Recursos';
     const body: any = {
       nombre: nombre.toUpperCase(),
       descripcion: descripcion,
       otros: otros,
-      tipoFormulario: `${this.apiService.getUrlApi()}/tipos_formulario/${idTipoFormulario}`,
-      categoria: `${this.apiService.getUrlApi()}/categorias/${idCategoria}`,
-      usuarioGestor: `${this.apiService.getUrlApi()}/usuarios_gestor/${idGestor}`
+      cenadId: idCenad,
+      tipoFormularioId: idTipoFormulario,
+      categoriaId: idCategoria,
+      usuarioGestorId: idGestor,
     };
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
-      map(res => !!res),
+      map((res) => !!res),
       tap(async () => {
         const mensaje = await this.idiomaService.tVars('recursos.recursoCreado', { nombre });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })
     );
   }
 
-  editarRecurso(nombre: string, descripcion: string, otros: string, idTipoFormulario: string, idCategoria: string, idGestor: string, idRecurso: string): Observable<any> {
-    const endpoint = `/recursos/${idRecurso}`;
+  editarRecurso(
+    nombre: string,
+    descripcion: string,
+    otros: string,
+    idTipoFormulario: string,
+    idCategoria: string,
+    idGestor: string,
+    idRecurso: string
+  ): Observable<any> {
+    const endpoint = 'Recursos';
     const body: any = {
       nombre: nombre.toUpperCase(),
       descripcion: descripcion,
       otros: otros,
-      tipoFormulario: `${this.apiService.getUrlApi()}/tipos_formulario/${idTipoFormulario}`,
-      categoria: `${this.apiService.getUrlApi()}/categorias/${idCategoria}`,
-      usuarioGestor: `${this.apiService.getUrlApi()}/usuarios_gestor/${idGestor}`
-    }
+      tipoFormularioId: idTipoFormulario,
+      categoriaId: idCategoria,
+      usuarioGestorId: idGestor,
+      Id: idRecurso
+    };
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
-      map(res => !!res),
+      map((res) => !!res),
       tap(async () => {
-        const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', { nombre });
+        const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', {
+          nombre: body.nombre,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })
     );
   }
 
-  editarRecursoDetalle(nombre: string, descripcion: string, otros: string, conDatosEspecificosSolicitud: boolean, datosEspecificosSolicitud: string, idRecurso: string): Observable<any> {
-    const endpoint = `/recursos/${idRecurso}`;
+  editarRecursoDetalle(
+    nombre: string,
+    descripcion: string,
+    otros: string,
+    conDatosEspecificosSolicitud: boolean,
+    datosEspecificosSolicitud: string,
+    idRecurso: string
+  ): Observable<any> {
+const endpoint = 'Recursos';
     const body: any = {
       nombre: nombre.toUpperCase(),
       descripcion: descripcion,
       otros: otros,
       conDatosEspecificosSolicitud: conDatosEspecificosSolicitud,
-      datosEspecificosSolicitud: datosEspecificosSolicitud
-    }
+      datosEspecificosSolicitud: datosEspecificosSolicitud,
+      Id: idRecurso
+    };
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
-      map(res => !!res),
+      map((res) => !!res),
       tap(async () => {
-        const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', { nombre });
+        const mensaje = await this.idiomaService.tVars('recursos.recursoModificado', {
+          nombre: body.nombre,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })
@@ -151,17 +206,19 @@ export class RecursoService {
   }
 
   deleteRecurso(idRecurso: string): Observable<any> {
-    const endpoint = `/recursos/${idRecurso}`;
-    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('recursos.recursoEliminado', { id: idRecurso });
+    const endpoint = 'Recursos';
+    return this.apiService.request<any>(endpoint, 'DELETE', { Id: idRecurso }).pipe(
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('recursos.recursoEliminado', {
+          id: idRecurso,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })
     );
+//aqui tendre que borrar la carpeta del recurso
   }
-
 }

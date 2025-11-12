@@ -268,17 +268,14 @@ export class UsuarioService {
   }
 
   getUsuarioGestorDeRecurso(idRecurso: string): Observable<UsuarioGestor | null> {
-    const filter = `$expand=cenad&$select=Id,username,rol,cenad/Id,cenad/nombre&$filter=recursoId eq ${idRecurso} and rol eq '${RolUsuario.Gestor}'`;
-    const urlGestores = `${this.urlBasic}?${encodeURI(filter).replace(/'/g, '%27')}`;
-    return this.apiService.request<any>(urlGestores, 'GET').pipe(
-      map((res) => {
-        const usuarios = this.utilService.ensureArray<UsuarioGestor>(res);
-        const usuario = usuarios[0];
-        if (!usuario) throw new Error('Usuario no encontrado');
-        return usuario;
+    const urlUsuario = `${this.utils.urlApi()}/getbytitle('Recursos')/items(${idRecurso})?$select=usuarioGestor/Id,usuarioGestor/username,usuarioGestor/rol&$expand=usuarioGestor`;
+    return this.apiService.getElemento(urlUsuario).pipe(
+      map((u) => {
+        if (!u) throw new Error('Usuario no encontrado');
+        return u as UsuarioGestor;
       }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error obteniendo Usuario seleccionado:', err);
         return of(null);
       })
     );

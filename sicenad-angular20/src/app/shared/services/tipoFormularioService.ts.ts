@@ -26,16 +26,14 @@ export class TipoFormularioService {
   }
 
   getTipoFormularioDeRecurso(idRecurso: string): Observable<TipoFormulario | null> {
-    const urlTipoFormulario = `${this.urlBasic}?$expand=recurso&$filter=recursoId eq ${idRecurso}`;
-    return this.apiService.request<any>(urlTipoFormulario, 'GET').pipe(
-      map((res) => {
-        const tiposFormulario = this.utilService.ensureArray<TipoFormulario>(res);
-        const tipoFormulario = tiposFormulario[0];
-        if (!tipoFormulario) throw new Error('Tipo de formulario no encontrado');
-        return tipoFormulario;
+    const urlTipoFormulario = `${this.utils.urlApi()}/getbytitle('Recursos')/items(${idRecurso})?$select=tipoFormulario/Id,tipoFormulario/nombre,tipoFormulario/descripcion&$expand=tipoFormulario`;
+    return this.apiService.getElemento(urlTipoFormulario).pipe(
+      map((t) => {
+        if (!t) throw new Error('TipoFormulario no encontrado');
+        return t as TipoFormulario;
       }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error obteniendo TipoFormulario seleccionado:', err);
         return of(null);
       })
     );

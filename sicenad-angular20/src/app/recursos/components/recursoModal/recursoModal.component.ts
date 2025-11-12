@@ -13,10 +13,9 @@ import { IconosStore } from '@stores/iconos.store';
   selector: 'app-recursoModal',
   imports: [ReactiveFormsModule, FontAwesomeModule, TranslateModule, UpperCasePipe],
   templateUrl: './recursoModal.component.html',
-  styleUrls: ['./recursoModal.component.css']
+  styleUrls: ['./recursoModal.component.css'],
 })
 export class RecursoModalComponent {
-
   private iconos = inject(IconosStore);
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
@@ -47,75 +46,75 @@ export class RecursoModalComponent {
     otros: [''],
     categoria: [null, Validators.required],
     tipoFormulario: [null, Validators.required],
-    usuarioGestor: [null, Validators.required]
+    usuarioGestor: [null, Validators.required],
   });
 
-  get nombre() { return this.recursoForm.get('nombre'); }
-  get descripcion() { return this.recursoForm.get('descripcion'); }
-  get otros() { return this.recursoForm.get('otros'); }
-  get categoria() { return this.recursoForm.get('categoria'); }
-  get tipoFormulario() { return this.recursoForm.get('tipoFormulario'); }
-  get usuarioGestor() { return this.recursoForm.get('usuarioGestor'); }
-
-  constructor() {
-    // Este effect ahora se ejecuta en un contexto válido
-    effect(() => {
-      const recursoActual = this.recurso();
-      const categorias = this.categorias();
-      const tiposFormulario = this.tiposFormulario();
-      const usuariosGestor = this.usuariosGestor();
-      if (!categorias || !tiposFormulario || !usuariosGestor || !recursoActual) return;
-
-      // Cargar la categoría del recurso
-      this.orquestadorService.loadCategoriaDeRecurso(recursoActual.Id).subscribe({
-        next: (categoria) => {
-          const categoriaRef = categoria
-            ? categorias.find(c => c.Id === categoria.Id) || null
-            : null;
-
-          this.recursoForm.patchValue({ categoria: categoriaRef });
-        },
-        error: () => {
-          this.recursoForm.patchValue({ categoria: null });
-        }
-      });
-      // Cargar el tipo de formulario del recurso
-      this.orquestadorService.loadTipoFormularioDeRecurso(recursoActual.Id).subscribe({
-        next: (tipoFormulario) => {
-          const tipoFormularioRef = tipoFormulario
-            ? tiposFormulario.find(t => t.Id === tipoFormulario.Id) || null
-            : null;
-
-          this.recursoForm.patchValue({ tipoFormulario: tipoFormularioRef });
-        },
-        error: () => {
-          this.recursoForm.patchValue({ tipoFormulario: null });
-        }
-      });
-      // Cargar el usuario gestor del recurso
-      this.orquestadorService.loadUsuarioGestorDeRecurso(recursoActual.Id).subscribe({
-        next: (usuarioGestor) => {
-          const usuarioGestorRef = usuarioGestor
-            ? usuariosGestor.find(u => u.Id === usuarioGestor.Id) || null
-            : null;
-
-          this.recursoForm.patchValue({ usuarioGestor: usuarioGestorRef });
-        },
-        error: () => {
-          this.recursoForm.patchValue({ usuarioGestor: null });
-        }
-      });
-    });
+  get nombre() {
+    return this.recursoForm.get('nombre');
+  }
+  get descripcion() {
+    return this.recursoForm.get('descripcion');
+  }
+  get otros() {
+    return this.recursoForm.get('otros');
+  }
+  get categoria() {
+    return this.recursoForm.get('categoria');
+  }
+  get tipoFormulario() {
+    return this.recursoForm.get('tipoFormulario');
+  }
+  get usuarioGestor() {
+    return this.recursoForm.get('usuarioGestor');
   }
 
   ngOnInit(): void {
     if (!this.recurso()) return;
-
     // Cargar los valores básicos
     this.recursoForm.patchValue({
       nombre: this.recurso()?.nombre || '',
       descripcion: this.recurso()?.descripcion || '',
-      otros: this.recurso()?.otros || ''
+      otros: this.recurso()?.otros || '',
+      categoria: this.recurso()!.categoria,
+      tipoFormulario: this.recurso()!.tipoFormulario,
+      usuarioGestor: this.recurso()!.usuarioGestor,
+    });
+    console.log(this.recursoForm.value);
+    // Intentamos resolver las referencias a las instancias que están en los stores
+    // (las select comparan por referencia, por eso es necesario asignar la misma instancia)
+    this.resolveReferencesFromStores();
+  }
+  constructor() {
+    // Además, si las listas se cargan de forma asíncrona después del init, volvemos a intentar
+    effect(() => {
+      if (!this.recurso()) return;
+      // Leer las computeds para que el effect se dispare cuando cambien
+      const _cats = this.categorias();
+      const _tipos = this.tiposFormulario();
+      const _users = this.usuariosGestor();
+      // Si al menos una lista contiene elementos reintentar resolver
+      if ((_cats && _cats.length) || (_tipos && _tipos.length) || (_users && _users.length)) {
+        this.resolveReferencesFromStores();
+      }
+    });
+  }
+  private resolveReferencesFromStores() {
+    const recurso = this.recurso();
+    if (!recurso) return;
+    const categorias = this.categorias() || [];
+    const tipos = this.tiposFormulario() || [];
+    const usuarios = this.usuariosGestor() || [];
+    const catId = (recurso as any)?.categoria?.Id ?? (recurso as any)?.categoriaId ?? null;
+    const tipoId = (recurso as any)?.tipoFormulario?.Id ?? (recurso as any)?.tipoFormularioId ?? null;
+    const usuarioId = (recurso as any)?.usuarioGestor?.Id ?? (recurso as any)?.usuarioGestorId ?? null;
+    const categoriaRef = categorias.find((c: any) => String(c?.Id) === String(catId)) || null;
+    const tipoRef = tipos.find((t: any) => String(t?.Id) === String(tipoId)) || null;
+    const usuarioRef = usuarios.find((u: any) => String(u?.Id) === String(usuarioId)) || null;
+    // Solo parcheamos si encontramos las referencias correctas (o null explícito)
+    this.recursoForm.patchValue({
+      categoria: categoriaRef,
+      tipoFormulario: tipoRef,
+      usuarioGestor: usuarioRef,
     });
   }
 
@@ -124,26 +123,40 @@ export class RecursoModalComponent {
       this.recursoForm.markAllAsTouched();
       return;
     }
-    const { nombre, descripcion, otros, categoria, tipoFormulario, usuarioGestor } = this.recursoForm.value;
+    const { nombre, descripcion, otros, categoria, tipoFormulario, usuarioGestor } =
+      this.recursoForm.value;
     let otrosVacio = '';
     if (otros) {
       otrosVacio = otros;
     }
-    this.orquestadorService.actualizarRecurso(nombre, descripcion, otrosVacio, this.cenadVisitado()!.Id, tipoFormulario.Id, categoria.Id, usuarioGestor.Id, this.idRecurso()).subscribe({
-      next: res => {
-        if (res) {
-          this.output.emit(); // notificamos al padre
-        }
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+    this.orquestadorService
+      .actualizarRecurso(
+        nombre,
+        descripcion,
+        otrosVacio,
+        this.cenadVisitado()!.Id,
+        tipoFormulario.Id,
+        categoria.Id,
+        usuarioGestor.Id,
+        this.idRecurso()
+      )
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.output.emit(); // notificamos al padre
+          }
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      });
   }
 
   borrarRecurso() {
-    this.orquestadorService.borrarRecurso(this.idRecurso(), this.cenadVisitado()!.Id).subscribe(() => {
-      this.output.emit(); // notificamos al padre
-    });
+    this.orquestadorService
+      .borrarRecurso(this.idRecurso(), this.cenadVisitado()!.Id)
+      .subscribe(() => {
+        this.output.emit(); // notificamos al padre
+      });
   }
 }

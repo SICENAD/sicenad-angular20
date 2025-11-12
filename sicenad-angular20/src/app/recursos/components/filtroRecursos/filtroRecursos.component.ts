@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { OrquestadorService } from '@services/orquestadorService';
 import { CenadStore } from '@stores/cenad.store';
@@ -12,7 +12,7 @@ import { UpperCasePipe } from '@angular/common';
   selector: 'app-filtroRecursos',
   imports: [FontAwesomeModule, TranslateModule, UpperCasePipe],
   templateUrl: './filtroRecursos.component.html',
-  styleUrls: ['./filtroRecursos.component.css']
+  styleUrls: ['./filtroRecursos.component.css'],
 })
 export class FiltroRecursosComponent {
   // Servicios y stores
@@ -48,7 +48,7 @@ export class FiltroRecursosComponent {
       : this.recursos();
     // Filtro por nombre
     if (term) {
-      listaBase = listaBase.filter(r => r.nombre.toLowerCase().includes(term));
+      listaBase = listaBase.filter((r) => r.nombre.toLowerCase().includes(term));
     }
     return listaBase;
   });
@@ -71,7 +71,7 @@ export class FiltroRecursosComponent {
           this.recursosCategoriaSeleccionada.set([]);
           this.recursosFiltradosChange.emit([]);
           this.categoriaSeleccionadaChange.emit(null);
-        }
+        },
       });
       // Cargar subcategorías directas
       this.orquestadorService.loadSubcategorias(categoria.Id).subscribe({
@@ -80,7 +80,7 @@ export class FiltroRecursosComponent {
           console.error(err);
           this.subcategorias.set([]);
           this.recursosCategoriaSeleccionada.set([]);
-        }
+        },
       });
     } else {
       // Si es null, se resetea a la vista principal
@@ -108,7 +108,7 @@ export class FiltroRecursosComponent {
         console.error(err);
         // Si da error 502 u otro, volvemos a la vista raíz
         this.limpiarCategoria();
-      }
+      },
     });
   }
 
@@ -124,6 +124,13 @@ export class FiltroRecursosComponent {
   /** Devuelve true si la categoría es categoriaPadre */
   esCategoriaPadre(categoria: Categoria | null): boolean {
     if (!categoria) return false; // Si no hay categoría seleccionada, no es padre
-    return this.categoriasPadre().some(c => c.Id === categoria.Id);
+    return this.categoriasPadre().some((c) => c.Id === categoria.Id);
+  }
+
+  constructor() {
+    effect(() => {
+      if (!this.recursos()) return;
+      this.limpiarCategoria();
+    });
   }
 }

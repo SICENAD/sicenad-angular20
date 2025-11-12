@@ -130,11 +130,14 @@ export class CategoriaService {
   }
 
   getCategoriaDeRecurso(idRecurso: string): Observable<Categoria | null> {
-    const endpoint = `/recursos/${idRecurso}/categoria`;
-    return this.apiService.request<Categoria>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlCategoria = `${this.utils.urlApi()}/getbytitle('Recursos')/items(${idRecurso})?$select=categoria/Id,categoria/nombre,categoria/descripcion&$expand=categoria`;
+    return this.apiService.getElemento(urlCategoria).pipe(
+      map((c) => {
+        if (!c) throw new Error('Categoría no encontrada');
+        return c as Categoria;
+      }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error obteniendo Categoría seleccionada:', err);
         return of(null);
       })
     );
