@@ -48,15 +48,13 @@ export class RecursoDetallePageComponent {
   usuariosGestor = computed(() => this.cenadStore.usuariosGestor());
   categorias = computed(() => this.cenadStore.categorias());
   recursos = computed(() => this.cenadStore.recursos());
-  idGestorDelRecurso = signal<string>('');
+  idGestorDelRecurso = signal<string>('a');
   categoria = signal<Categoria | null>(null);
   recurso = signal<Recurso | null>(null);
   ficheros = signal<FicheroRecurso[]>([]);
   solicitudesValidadas = signal<Solicitud[]>([]);
 
-  isGestorEsteRecurso = computed(() => {
-    return (this.usuarioLogueado.usuarioLogueado()?.Id === this.idGestorDelRecurso()) && (this.auth.rol() === RolUsuario.Gestor);
-  });
+  isGestorEsteRecurso = signal(false);
 
   recursoForm: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
@@ -71,6 +69,13 @@ export class RecursoDetallePageComponent {
   get otros() { return this.recursoForm.get('otros'); }
   get conDatosEspecificosSolicitud() { return this.recursoForm.get('conDatosEspecificosSolicitud'); }
   get datosEspecificosSolicitud() { return this.recursoForm.get('datosEspecificosSolicitud'); }
+
+  isGestorDeEsteRecurso() {
+    this.isGestorEsteRecurso.set(
+      this.auth.rol() === RolUsuario.Gestor &&
+      this.idGestorDelRecurso() === this.usuarioLogueado.usuarioLogueado()?.Id
+    );
+  }
 
   constructor() {
     // Este effect ahora se ejecuta en un contexto válido
@@ -102,28 +107,10 @@ export class RecursoDetallePageComponent {
       if (!usuariosGestor || !categorias || !recursoActual) return;
       if (this.idRecurso() === undefined) return;
       // Cargar la categoría del recurso
-      this.orquestadorService.loadCategoriaDeRecurso(this.idRecurso()).subscribe({
-        next: (categoria) => {
-          const categoriaRef = categoria
-            ? categorias.find(c => c.Id === categoria.Id) || null
-            : null;
-
-          this.categoria.set(categoriaRef ? categoriaRef : null);
-        },
-        error: () => {
-        }
-      });
+      this.categoria.set(this.recurso()!.categoria!);
       // Cargar el usuario gestor del recurso
-      this.orquestadorService.loadUsuarioGestorDeRecurso(this.idRecurso()).subscribe({
-        next: (usuarioGestor) => {
-          const usuarioGestorRef = usuarioGestor
-            ? usuariosGestor.find(u => u.Id === usuarioGestor.Id) || null
-            : null;
-          this.idGestorDelRecurso.set(usuarioGestorRef ? usuarioGestorRef.Id : '');
-        },
-        error: () => {
-        }
-      });
+      this.idGestorDelRecurso.set(this.recurso()!.usuarioGestor!.Id);
+      this.isGestorDeEsteRecurso();
     });
     // Cargar los ficheros del recurso
     this.recargarFicheros();

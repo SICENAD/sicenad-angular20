@@ -26,12 +26,12 @@ export class UnidadService {
   }
 
   getUnidadDeUsuarioNormal(idUsuarioNormal: string): Observable<Unidad | null> {
-    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, poc&$filter=usuarioNormalId eq ${idUsuarioNormal}`;
-    const urlUnidades = `${this.urlBasic}?${filter}`;
-    return this.apiService.request<any>(urlUnidades, 'GET').pipe(
+    const filter = `$select=unidad/Id,unidad/nombre,unidad/descripcion,unidad/direccion,unidad/tfno,unidad/email,unidad/poc&$expand=unidad&$filter=Id eq ${idUsuarioNormal}`;
+    const urlUnidad = `${this.utils.urlApi()}/getbytitle('Usuarios')/items?${filter}`;
+    return this.apiService.request<any>(urlUnidad, 'GET').pipe(
       map((res) => {
-        const unidades = this.utilService.ensureArray<Unidad>(res);
-        const unidad = unidades[0];
+        const unidades = this.utilService.ensureArray<any>(res);
+        const unidad = unidades[0].unidad;
         if (!unidad) throw new Error('Unidad no encontrada');
         return unidad;
       }),

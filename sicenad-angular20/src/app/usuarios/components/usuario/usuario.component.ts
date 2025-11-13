@@ -65,7 +65,6 @@ export class UsuarioComponent {
         this.orquestadorService.loadCenadDeGestor(this.usuario().Id).subscribe({
           next: (cenad) => {
             if (cenad) {
-              console.log(cenad);
               // Aquí podrías guardar en un signal o propiedad local
               this.cenad.set(cenad);
             }

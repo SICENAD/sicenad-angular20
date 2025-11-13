@@ -56,12 +56,12 @@ export class CenadService {
   }
 
   getCenadDeGestor(idUsuarioGestor: string): Observable<Cenad | null> {
-    const filter = `$select=Id,nombre, descripcion, direccion, tfno, email, escudo, infoCenad, provincia&$filter=usuarioGestorId eq ${idUsuarioGestor}`;
-    const urlCenads = `${this.urlBasic}?${filter}`;
-    return this.apiService.request<any>(urlCenads, 'GET').pipe(
+    const filter = `$select=cenad/Id,cenad/nombre,cenad/descripcion,cenad/direccion,cenad/tfno,cenad/email,cenad/escudo,cenad/infoCenad,cenad/provincia&$expand=cenad&$filter=Id eq ${idUsuarioGestor}`;
+    const urlCenad = `${this.utils.urlApi()}/getbytitle('Usuarios')/items?${filter}`;
+    return this.apiService.request<any>(urlCenad, 'GET').pipe(
       map((res) => {
-        const cenads = this.utilService.ensureArray<Cenad>(res);
-        return cenads[0] || null;
+        const cenads = this.utilService.ensureArray<any>(res);
+        return cenads[0].cenad || null;
       }),
       catchError((err) => {
         console.error('Error obteniendo CENAD por gestor:', err);

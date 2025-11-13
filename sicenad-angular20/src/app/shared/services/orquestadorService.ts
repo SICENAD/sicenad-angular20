@@ -851,7 +851,7 @@ export class OrquestadorService {
               .pipe(tap((usuarios) => this.datosStore.setUsuariosNormal(usuarios)))
               .subscribe();
             this.idiomaService.tVars('usuarios.usuarioModificado', { username }).then((mensaje) => {
-              console.error(mensaje);
+              console.log(mensaje);
             });
           } else {
             this.idiomaService

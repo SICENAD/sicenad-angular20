@@ -72,7 +72,7 @@ export class RecursoService {
   }
 
   getRecursosDeGestor(idGestor: string): Observable<Recurso[]> {
-    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&expand=usuarioGestor&$filter=usuarioGestorId eq ${idGestor}`;
+    const urlRecursos = `${this.urlBasic}?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&$expand=usuarioGestor&$filter=usuarioGestorId eq ${idGestor}`;
     return this.apiService.request<any>(urlRecursos, 'GET').pipe(
       map((res) => this.utilService.ensureArray<Recurso>(res)),
       catchError((err) => {
@@ -83,7 +83,7 @@ export class RecursoService {
   }
 
   getRecursoSeleccionado(idRecurso: string): Observable<Recurso | null> {
-    const urlRecurso = `${this.urlBasic}(${idRecurso})?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&expand=usuarioGestor`;
+    const urlRecurso = `${this.urlBasic}(${idRecurso})?$select=Id,nombre,descripcion,otros,conDatosEspecificosSolicitud,datosEspecificosSolicitud,cenad/nombre,categoria/Id,categoria/nombre,categoria/descripcion,tipoFormulario/Id,tipoFormulario/nombre,usuarioGestor/Id,usuarioGestor/username&$expand=tipoFormulario&$expand=categoria&$expand=cenad&$expand=usuarioGestor`;
     return this.apiService.getElemento(urlRecurso).pipe(
       map((c) => {
         if (!c) throw new Error('Recurso no encontrado');
