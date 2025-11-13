@@ -26,11 +26,12 @@ export class CategoriaFicheroService {
   }
 
   getCategoriaFicheroDeFichero(idFichero: string): Observable<CategoriaFichero | null> {
-    const urlCategoriasFichero = `${this.urlBasic}?$expand=fichero&$filter=ficheroId eq ${idFichero}`;
-    return this.apiService.request<any>(urlCategoriasFichero, 'GET').pipe(
+    const filter = `$select=categoriaFichero/Id,categoriaFichero/nombre,categoriaFichero/descripcion,categoriaFichero/tipo_categoriaFichero&$expand=categoriaFichero&$filter=Id eq ${idFichero}`;
+    const urlCategoriaFichero = `${this.utils.urlApi()}/getbytitle('Ficheros')/items?${filter}`;
+    return this.apiService.request<any>(urlCategoriaFichero, 'GET').pipe(
       map((res) => {
-        const categoriasFichero = this.utilService.ensureArray<CategoriaFichero>(res);
-        const categoriaFichero = categoriasFichero[0];
+        const categoriasFichero = this.utilService.ensureArray<any>(res);
+        const categoriaFichero = categoriasFichero[0].categoriaFichero;
         if (!categoriaFichero) throw new Error('Categoria de fichero no encontrada');
         return categoriaFichero;
       }),
