@@ -5,13 +5,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
-import { OrquestadorService } from '@services/orquestadorService';
 import { UtilService } from '@services/utilService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
-
 @Component({
   selector: 'app-solicitud',
   imports: [RouterLink, FontAwesomeModule],
@@ -24,7 +22,6 @@ export class SolicitudComponent {
   private usuarioLogueadoStore = inject(UsuarioLogueadoStore);
   private iconoStore = inject(IconosStore);
   utilService = inject(UtilService);
-  private orquestadorService = inject(OrquestadorService);
 
   faEdit = this.iconoStore.faEdit;
   faConsultar = this.iconoStore.faConsultar;
@@ -32,43 +29,46 @@ export class SolicitudComponent {
   readonly routesPaths = RoutesPaths;
 
   recursos = computed(() => this.cenadStore.recursos());
-  recurso = signal<Recurso | null>(null);
   usuarioLogueado = computed(() => this.usuarioLogueadoStore.usuarioLogueado());
   miUnidad = computed(() => this.usuarioLogueadoStore.unidad());
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
   });
   isGestorEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Gestor);
+    return (
+      this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id &&
+      this.auth.rol() === RolUsuario.Gestor
+    );
   });
   isAdminEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Administrador);
+    return (
+      this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id &&
+      this.auth.rol() === RolUsuario.Administrador
+    );
   });
 
   solicitud = input<Solicitud>();
-  isEditable = computed(() => this.solicitud()?.estado === 'Borrador' || (this.solicitud()?.estado === 'Solicitada' && (this.isAdminEsteCenad() || this.isGestorEsteCenad())));
-  fechaSolicitudString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaSolicitud));
-  fechaInicioString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraInicioRecurso));
-  fechaFinString = computed(() => this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraFinRecurso));
+  recurso = signal<Recurso | undefined>(this.solicitud()?.recurso);
+  isEditable = computed(
+    () =>
+      this.solicitud()?.estado === 'Borrador' ||
+      (this.solicitud()?.estado === 'Solicitada' &&
+        (this.isAdminEsteCenad() || this.isGestorEsteCenad()))
+  );
+  fechaSolicitudString = computed(() =>
+    this.utilService.fechaDiaMesYear(this.solicitud()?.fechaSolicitud)
+  );
+  fechaInicioString = computed(() =>
+    this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraInicioRecurso)
+  );
+  fechaFinString = computed(() =>
+    this.utilService.fechaDiaMesYear(this.solicitud()?.fechaHoraFinRecurso)
+  );
 
   constructor() {
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
-      const solicitudActual = this.solicitud();
-      const recursos = this.recursos();
-      if (!recursos || !solicitudActual) return;
-      // Cargar la categoría del recurso
-      this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.Id).subscribe({
-        next: (recurso) => {
-          const recursoRef = recurso
-            ? recursos.find(r => r.Id === recurso.Id) || null
-            : null;
-          this.recurso.set(recursoRef);
-        },
-        error: () => {
-          this.recurso.set(null);
-        }
-      });
+      this.recurso.set(this.solicitud()!.recurso);
     });
   }
 }

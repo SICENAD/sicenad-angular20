@@ -20,7 +20,14 @@ import { UtilsStore } from '@stores/utils.store';
 
 @Component({
   selector: 'app-solicitudDetalle',
-  imports: [RouterLink, ReactiveFormsModule, FontAwesomeModule, FicherosSolicitudComponent, TranslateModule, UpperCasePipe],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    FicherosSolicitudComponent,
+    TranslateModule,
+    UpperCasePipe,
+  ],
   templateUrl: './solicitudDetalle-page.component.html',
   styleUrls: ['./solicitudDetalle-page.component.css'],
 })
@@ -43,7 +50,6 @@ export class SolicitudDetallePageComponent {
 
   estados = signal<string[]>(this.utils.estadosSolicitud());
   recursos = computed(() => this.cenadStore.recursos());
-  recurso = signal<Recurso | null>(null);
   documentacionCenad = signal<FicheroSolicitud[]>([]);
   documentacionUnidad = signal<FicheroSolicitud[]>([]);
   usuarioLogueado = computed(() => this.usuarioLogueadoStore.usuarioLogueado());
@@ -51,14 +57,26 @@ export class SolicitudDetallePageComponent {
     return this.cenadStore.cenadVisitado();
   });
   isGestorEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Gestor);
+    return (
+      this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id &&
+      this.auth.rol() === RolUsuario.Gestor
+    );
   });
   isAdminEsteCenad = computed(() => {
-    return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Administrador);
+    return (
+      this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id &&
+      this.auth.rol() === RolUsuario.Administrador
+    );
   });
   idSolicitud = computed(() => this.route.snapshot.params['idSolicitud']);
   solicitud = signal<Solicitud | null>(null);
-  isEditable = computed(() => this.solicitud()?.estado === 'Borrador' || (this.solicitud()?.estado === 'Solicitada' && (this.isAdminEsteCenad() || this.isGestorEsteCenad())));
+  recurso = signal<Recurso | undefined>(this.solicitud()?.recurso);
+  isEditable = computed(
+    () =>
+      this.solicitud()?.estado === 'Borrador' ||
+      (this.solicitud()?.estado === 'Solicitada' &&
+        (this.isAdminEsteCenad() || this.isGestorEsteCenad()))
+  );
   _idModal = signal('modal-solicitud-' + this.idSolicitud());
   _idModalEliminar = signal('modal-solicitud-eliminar-' + this.idSolicitud());
   idModal = computed(() => this._idModal() + this.idSolicitud());
@@ -78,35 +96,41 @@ export class SolicitudDetallePageComponent {
     estado: [''],
   });
 
-  get observaciones() { return this.solicitudForm.get('observaciones'); }
-  get observacionesCenad() { return this.solicitudForm.get('observacionesCenad'); }
-  get jefeUnidadUsuaria() { return this.solicitudForm.get('jefeUnidadUsuaria'); }
-  get pocEjercicio() { return this.solicitudForm.get('pocEjercicio'); }
-  get tlfnRedactor() { return this.solicitudForm.get('tlfnRedactor'); }
-  get fechaSolicitud() { return this.solicitudForm.get('fechaSolicitud'); }
-  get fechaInicio() { return this.solicitudForm.get('fechaInicio'); }
-  get fechaFin() { return this.solicitudForm.get('fechaFin'); }
-  get fechaFinDocumentacion() { return this.solicitudForm.get('fechaFinDocumentacion'); }
-  get estado() { return this.solicitudForm.get('estado'); }
+  get observaciones() {
+    return this.solicitudForm.get('observaciones');
+  }
+  get observacionesCenad() {
+    return this.solicitudForm.get('observacionesCenad');
+  }
+  get jefeUnidadUsuaria() {
+    return this.solicitudForm.get('jefeUnidadUsuaria');
+  }
+  get pocEjercicio() {
+    return this.solicitudForm.get('pocEjercicio');
+  }
+  get tlfnRedactor() {
+    return this.solicitudForm.get('tlfnRedactor');
+  }
+  get fechaSolicitud() {
+    return this.solicitudForm.get('fechaSolicitud');
+  }
+  get fechaInicio() {
+    return this.solicitudForm.get('fechaInicio');
+  }
+  get fechaFin() {
+    return this.solicitudForm.get('fechaFin');
+  }
+  get fechaFinDocumentacion() {
+    return this.solicitudForm.get('fechaFinDocumentacion');
+  }
+  get estado() {
+    return this.solicitudForm.get('estado');
+  }
 
   constructor() {
     // Este effect ahora se ejecuta en un contexto válido
     effect(() => {
-      const solicitudActual = this.solicitud();
-      const recursos = this.recursos();
-      if (!recursos || !solicitudActual) return;
-      // Cargar el recurso de la solicitud
-      this.orquestadorService.loadRecursoDeSolicitud(solicitudActual.Id).subscribe({
-        next: (recurso) => {
-          const recursoRef = recurso
-            ? recursos.find(r => r.Id === recurso.Id) || null
-            : null;
-          this.recurso.set(recursoRef);
-        },
-        error: () => {
-          this.recurso.set(null);
-        }
-      });
+      this.recurso.set(this.solicitud()?.recurso);
     });
     // Cargar la solicitud
     effect(() => {
@@ -119,7 +143,7 @@ export class SolicitudDetallePageComponent {
         },
         error: () => {
           this.solicitud.set(null);
-        }
+        },
       });
     });
     this.recargarDocumentacionCenad();
@@ -135,11 +159,18 @@ export class SolicitudDetallePageComponent {
       jefeUnidadUsuaria: this.solicitud()?.jefeUnidadUsuaria || '',
       pocEjercicio: this.solicitud()?.pocEjercicio || '',
       tlfnRedactor: this.solicitud()?.tlfnRedactor || '',
-      fechaSolicitud: this.utilService.isoToLocalDate(this.solicitud()?.fechaSolicitud?.toString()) || new Date(),
-      fechaInicio: this.utilService.isoToLocalDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()) || new Date(),
-      fechaFin: this.utilService.isoToLocalDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) || new Date(),
-      fechaFinDocumentacion: this.utilService.isoToLocalDate(this.solicitud()?.fechaFinDocumentacion?.toString()) || null,
-      estado: this.solicitud()?.estado || ''
+      fechaSolicitud:
+        this.utilService.isoToLocalDate(this.solicitud()?.fechaSolicitud?.toString()) || new Date(),
+      fechaInicio:
+        this.utilService.isoToLocalDateTime(this.solicitud()?.fechaHoraInicioRecurso?.toString()) ||
+        new Date(),
+      fechaFin:
+        this.utilService.isoToLocalDateTime(this.solicitud()?.fechaHoraFinRecurso?.toString()) ||
+        new Date(),
+      fechaFinDocumentacion:
+        this.utilService.isoToLocalDate(this.solicitud()?.fechaFinDocumentacion?.toString()) ||
+        null,
+      estado: this.solicitud()?.estado || '',
     });
     this.estadoInicial = this.solicitud()?.estado || '';
   }
@@ -149,8 +180,7 @@ export class SolicitudDetallePageComponent {
       next: (ficheros) => {
         this.documentacionCenad.set(ficheros ?? []);
       },
-      error: () => {
-      }
+      error: () => {},
     });
   }
 
@@ -159,8 +189,7 @@ export class SolicitudDetallePageComponent {
       next: (ficheros) => {
         this.documentacionUnidad.set(ficheros ?? []);
       },
-      error: () => {
-      }
+      error: () => {},
     });
   }
 
@@ -169,28 +198,64 @@ export class SolicitudDetallePageComponent {
       this.solicitudForm.markAllAsTouched();
       return;
     }
-    const { observaciones, observacionesCenad, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, fechaFinDocumentacion, estado } = this.solicitudForm.value;
-    this.orquestadorService.actualizarSolicitud(observaciones, jefeUnidadUsuaria, pocEjercicio, tlfnRedactor, fechaInicio, fechaFin, estado, this.cenadVisitado()!.Id, this.idSolicitud(), observacionesCenad, fechaFinDocumentacion).subscribe({
-      next: res => {
-        if (res) {
-          this.estadoInicial !== estado && this.orquestadorService.notificarCambioEstado(this.solicitud()!.Id).subscribe();
-          this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.Id, this.routesPaths.solicitudes]);
-        }
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+    const {
+      observaciones,
+      observacionesCenad,
+      jefeUnidadUsuaria,
+      pocEjercicio,
+      tlfnRedactor,
+      fechaInicio,
+      fechaFin,
+      fechaFinDocumentacion,
+      estado,
+    } = this.solicitudForm.value;
+    this.orquestadorService
+      .actualizarSolicitud(
+        observaciones,
+        jefeUnidadUsuaria,
+        pocEjercicio,
+        tlfnRedactor,
+        fechaInicio,
+        fechaFin,
+        estado,
+        this.cenadVisitado()!.Id,
+        this.idSolicitud(),
+        observacionesCenad,
+        fechaFinDocumentacion
+      )
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.estadoInicial !== estado &&
+              this.orquestadorService.notificarCambioEstado(this.solicitud()!.Id).subscribe();
+            this.router.navigate([
+              this.routesPaths.cenadHome,
+              this.cenadVisitado()?.Id,
+              this.routesPaths.solicitudes,
+            ]);
+          }
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      });
   }
 
   borrarSolicitud() {
-    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!, this.solicitud()!.estado).subscribe({
-      next: res => {
-        res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.Id, this.routesPaths.solicitudes]);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+    this.orquestadorService
+      .borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!, this.solicitud()!.estado)
+      .subscribe({
+        next: (res) => {
+          res &&
+            this.router.navigate([
+              this.routesPaths.cenadHome,
+              this.cenadVisitado()?.Id,
+              this.routesPaths.solicitudes,
+            ]);
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      });
   }
 }

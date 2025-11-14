@@ -353,7 +353,7 @@
     "nuevaPlanificacion": "Nueva Planificación",
     "fechaSolicitud": "Fecha de solicitud",
     "fechaObligatoria": "La fecha es obligatoria",
-    "poc": "POC para el Ejercicio",
+    "poc": "POC del Ejercicio",
     "pocObligatorio": "El POC es obligatorio",
     "tlfnRedactor": "Redactor (Teléfono)",
     "categoria": "Categoría",
