@@ -272,7 +272,21 @@ export class UsuarioService {
     return this.apiService.getElemento(urlUsuario).pipe(
       map((u) => {
         if (!u) throw new Error('Usuario no encontrado');
-        return u as UsuarioGestor;
+        return u.usuarioGestor as UsuarioGestor;
+      }),
+      catchError((err) => {
+        console.error('Error obteniendo Usuario seleccionado:', err);
+        return of(null);
+      })
+    );
+  }
+
+  getUsuarioNormalDeSolicitud(idSolicitud: string): Observable<UsuarioNormal | null> {
+    const urlUsuario = `${this.utils.urlApi()}/getbytitle('Solicitudes')/items(${idSolicitud})?$select=usuarioNormal/Id,usuarioNormal/username,usuarioNormal/rol&$expand=usuarioNormal`;
+    return this.apiService.getElemento(urlUsuario).pipe(
+      map((u) => {
+        if (!u) throw new Error('Usuario no encontrado');
+        return u.usuarioNormal as UsuarioNormal;
       }),
       catchError((err) => {
         console.error('Error obteniendo Usuario seleccionado:', err);

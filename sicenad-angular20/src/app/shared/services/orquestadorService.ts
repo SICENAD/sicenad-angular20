@@ -814,6 +814,17 @@ export class OrquestadorService {
   }
 
   // --- CRUD UsuariosNormal ---
+  loadUsuarioNormalDeSolicitud(idSolicitud: string): Observable<UsuarioNormal | null> {
+    return this.usuarioService.getUsuarioNormalDeSolicitud(idSolicitud).pipe(
+      catchError((err) => {
+        this.idiomaService.tVars('orquestador.errorCargaUsuario').then((mensaje) => {
+          console.error(mensaje);
+        });
+        return of(null);
+      })
+    );
+  }
+
   loadUsuarioNormalPorUsername(username: string): Observable<UsuarioNormal | null> {
     return this.usuarioService.getUsuarioNormalPorUsername(username).pipe(
       catchError((err) => {

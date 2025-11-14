@@ -9,6 +9,8 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
 import { Recurso } from '@interfaces/models/recurso';
 import { Solicitud } from '@interfaces/models/solicitud';
+import { UsuarioGestor } from '@interfaces/models/usuarioGestor';
+import { UsuarioNormal } from '@interfaces/models/usuarioNormal';
 import { TranslateModule } from '@ngx-translate/core';
 import { OrquestadorService } from '@services/orquestadorService';
 import { UtilService } from '@services/utilService';
@@ -47,20 +49,15 @@ export class SolicitudDetallePageComponent {
 
   faVolver = this.iconoStore.faVolver;
   readonly routesPaths = RoutesPaths;
-
-  estados = signal<string[]>(this.utils.estadosSolicitud());
+  todosEstados = signal<string[]>(this.utils.estadosSolicitud());
+  //estados seran solo los seleccionables, que dependeran del usuario
+  estados = signal<string[]>(['Borrador', 'Solicitada', 'Cancelada']);
   recursos = computed(() => this.cenadStore.recursos());
   documentacionCenad = signal<FicheroSolicitud[]>([]);
   documentacionUnidad = signal<FicheroSolicitud[]>([]);
   usuarioLogueado = computed(() => this.usuarioLogueadoStore.usuarioLogueado());
   cenadVisitado = computed(() => {
     return this.cenadStore.cenadVisitado();
-  });
-  isGestorEsteCenad = computed(() => {
-    return (
-      this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id &&
-      this.auth.rol() === RolUsuario.Gestor
-    );
   });
   isAdminEsteCenad = computed(() => {
     return (
@@ -71,11 +68,18 @@ export class SolicitudDetallePageComponent {
   idSolicitud = computed(() => this.route.snapshot.params['idSolicitud']);
   solicitud = signal<Solicitud | null>(null);
   recurso = signal<Recurso | undefined>(this.solicitud()?.recurso);
-  isEditable = computed(
-    () =>
-      this.solicitud()?.estado === 'Borrador' ||
-      (this.solicitud()?.estado === 'Solicitada' &&
-        (this.isAdminEsteCenad() || this.isGestorEsteCenad()))
+  usuarioNormal = signal<UsuarioNormal | undefined>(this.solicitud()?.usuarioNormal);
+  usuarioGestor = signal<UsuarioGestor | null>(null);
+  isGestorEsteRecurso = signal<boolean>(false);
+  isUsuarioNormalEstaSolicitud = signal<boolean>(false);
+  isEditable = computed(    () =>
+      //quiero que borrador y la solicitada la puedan editar el usuarioNormal de la solicitud y el administrador del cenad
+      ((this.solicitud()?.estado === 'Borrador' || this.solicitud()?.estado === 'Solicitada') &&
+        (this.isAdminEsteCenad() || this.isUsuarioNormalEstaSolicitud())) ||
+      //quiero que la validada la pueda editar el administrador del cenad y el gestor del recurso
+      (this.solicitud()?.estado === 'Validada' &&
+        (this.isAdminEsteCenad() || this.isGestorEsteRecurso()))
+    //quiero que la rechazada y la cancelada no se puedan editar
   );
   _idModal = signal('modal-solicitud-' + this.idSolicitud());
   _idModalEliminar = signal('modal-solicitud-eliminar-' + this.idSolicitud());
@@ -132,6 +136,9 @@ export class SolicitudDetallePageComponent {
     effect(() => {
       this.recurso.set(this.solicitud()?.recurso);
     });
+    effect(() => {
+      this.usuarioNormal.set(this.solicitud()?.usuarioNormal);
+    });
     // Cargar la solicitud
     effect(() => {
       const idSol = this.idSolicitud();
@@ -145,6 +152,32 @@ export class SolicitudDetallePageComponent {
           this.solicitud.set(null);
         },
       });
+    });
+    effect(() => {
+      if (!this.recurso()) return;
+      this.orquestadorService.loadUsuarioGestorDeRecurso(this.recurso()!.Id).subscribe({
+        next: (u) => {
+          this.usuarioGestor.set(u);
+        },
+        error: () => {
+          this.usuarioGestor.set(null);
+        },
+      });
+    });
+    effect(() => {
+      this.isGestorEsteRecurso.set(
+        this.usuarioLogueadoStore.usuarioLogueado()!.Id === this.usuarioGestor()?.Id &&
+          this.auth.rol() === RolUsuario.Gestor
+      );
+    });
+    effect(() => {
+      (this.isAdminEsteCenad() || this.isGestorEsteRecurso()) ? this.estados.set(this.todosEstados()) : this.estados.set(['Borrador', 'Solicitada', 'Cancelada']);
+    });
+    effect(() => {
+      this.isUsuarioNormalEstaSolicitud.set(
+        this.usuarioLogueadoStore.usuarioLogueado()!.Id === this.usuarioNormal()?.Id &&
+          this.auth.rol() === RolUsuario.Normal
+      );
     });
     this.recargarDocumentacionCenad();
     this.recargarDocumentacionUnidad();

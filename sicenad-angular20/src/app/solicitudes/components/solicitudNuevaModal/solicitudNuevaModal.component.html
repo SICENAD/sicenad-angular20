@@ -27,9 +27,13 @@
     <div class="modal-content">
       <div class="modal-header">
         @if (usuarioLogueado()?.rol === misRoles.Superadministrador) {
-        <h1 class="modal-title fs-5" id="modal-nueva-solicitud-Label">{{ 'solicitudes.nuevaPlanificacion' | translate }}</h1>
+        <h1 class="modal-title fs-5" id="modal-nueva-solicitud-Label">
+          {{ 'solicitudes.nuevaPlanificacion' | translate }}
+        </h1>
         } @else {
-        <h1 class="modal-title fs-5" id="modal-nueva-solicitud-Label">{{ 'solicitudes.nuevaSolicitud' | translate }}</h1>
+        <h1 class="modal-title fs-5" id="modal-nueva-solicitud-Label">
+          {{ 'solicitudes.nuevaSolicitud' | translate }}
+        </h1>
         }
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -37,7 +41,10 @@
         <form class="formulario" [formGroup]="solicitudForm">
           <div class="row py-2 justify-content-between">
             <div class="col-lg-2 col-md-12">
-              <label class="me-2">{{ 'solicitudes.unidad' | translate | uppercase }} <sup class="text-danger">*</sup></label>
+              <label class="me-2"
+                >{{ 'solicitudes.unidad' | translate | uppercase }}
+                <sup class="text-danger">*</sup></label
+              >
               @if (usuarioLogueado()?.rol !== misRoles.Normal) {
               <select class="form-select" aria-label="unidad" formControlName="unidad">
                 <option [ngValue]="null">{{ 'solicitudes.seleccioneUnidad' | translate }}</option>
@@ -50,7 +57,10 @@
               }
             </div>
             <div class="col-lg-2 col-md-12">
-              <label>{{ 'solicitudes.jefeUnidad' | translate | uppercase }} <sup class="text-danger">*</sup></label>
+              <label
+                >{{ 'solicitudes.jefeUnidad' | translate | uppercase }}
+                <sup class="text-danger">*</sup></label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -63,7 +73,10 @@
               }
             </div>
             <div class="col-lg-2 col-md-12">
-              <label for="fechaSolicitud">{{ 'solicitudes.fechaSolicitud' | translate | uppercase }} <sup class="text-danger">*</sup></label>
+              <label for="fechaSolicitud"
+                >{{ 'solicitudes.fechaSolicitud' | translate | uppercase }}
+                <sup class="text-danger">*</sup></label
+              >
               <input
                 type="date"
                 class="form-control"
@@ -75,7 +88,10 @@
               }
             </div>
             <div class="col-lg-2 col-md-12">
-              <label>{{ 'solicitudes.poc' | translate | uppercase }} <sup class="text-danger">*</sup></label>
+              <label
+                >{{ 'solicitudes.poc' | translate | uppercase }}
+                <sup class="text-danger">*</sup></label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -88,7 +104,10 @@
               }
             </div>
             <div class="col-lg-2 col-md-12">
-              <label>{{ 'solicitudes.tlfnRedactor' | translate | uppercase }} <sup class="text-danger">*</sup></label>
+              <label
+                >{{ 'solicitudes.tlfnRedactor' | translate | uppercase }}
+                <sup class="text-danger">*</sup></label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -118,7 +137,9 @@
                 (change)="onCategoriaChange($event)"
                 class="form-select mb-3"
               >
-                <option [ngValue]="null" disabled>{{ 'solicitudes.seleccionaCategoria' | translate }}</option>
+                <option [ngValue]="null" disabled>
+                  {{ 'solicitudes.seleccionaCategoria' | translate }}
+                </option>
                 @for (c of categoriasFiltradas(); track c.Id) {
                 <option [ngValue]="c">
                   {{ c.nombre.toUpperCase() }}
@@ -128,15 +149,24 @@
               }
               <div class="d-flex gap-2 mb-2">
                 @if (historialCategorias().length > 0) {
-                <button (click)="retroceder()" class="btn btn-secondary">{{ 'comun.atras' | translate }}</button>
-                <button (click)="borrarFiltros()" class="btn btn-danger">{{ 'solicitudes.borrarFiltros' | translate }}</button>
+                <button (click)="retroceder()" class="btn btn-secondary">
+                  {{ 'comun.atras' | translate }}
+                </button>
+                <button (click)="borrarFiltros()" class="btn btn-danger">
+                  {{ 'solicitudes.borrarFiltros' | translate }}
+                </button>
                 }
               </div>
             </div>
             <div class="col-lg-4 col-md-12">
-              <label>{{ 'solicitudes.recurso' | translate | uppercase}} <sup class="text-danger me-2">*</sup></label>
+              <label
+                >{{ 'solicitudes.recurso' | translate | uppercase }}
+                <sup class="text-danger me-2">*</sup></label
+              >
               <select name="recursos" id="recursos" formControlName="recurso">
-                <option [ngValue]="null" disabled selected>{{ 'solicitudes.seleccionaRecurso' | translate }}</option>
+                <option [ngValue]="null" disabled selected>
+                  {{ 'solicitudes.seleccionaRecurso' | translate }}
+                </option>
                 @for (recurso of recursos(); track recurso.Id) {
                 <option [ngValue]="recurso">
                   {{ recurso.nombre }}
@@ -148,14 +178,20 @@
               }
             </div>
             <div class="col-lg-2 col-md-12">
-              <label for="fechaInicio">{{ 'solicitudes.fechaInicio' | translate | uppercase }}: <sup class="text-danger"></sup></label>
+              <label for="fechaInicio"
+                >{{ 'solicitudes.fechaInicio' | translate | uppercase }}:
+                <sup class="text-danger"></sup
+              ></label>
               <input type="datetime-local" class="form-control" formControlName="fechaInicio" />
               @if (fechaInicio?.touched && fechaInicio?.invalid) {
               <span class="text-danger">{{ 'solicitudes.fechaObligatoria' | translate }}</span>
               }
             </div>
             <div class="col-lg-2 col-md-12">
-              <label for="fechaFin">{{ 'solicitudes.fechaFin' | translate | uppercase }}: <sup class="text-danger"></sup></label>
+              <label for="fechaFin"
+                >{{ 'solicitudes.fechaFin' | translate | uppercase }}:
+                <sup class="text-danger"></sup
+              ></label>
               <input type="datetime-local" class="form-control" formControlName="fechaFin" />
               @if (fechaFin?.touched && fechaFin?.invalid) {
               <span class="text-danger">{{ 'solicitudes.fechaObligatoria' | translate }}</span>
@@ -171,18 +207,14 @@
                 formControlName="observaciones"
                 placeholder="{{ 'solicitudes.observaciones' | translate }}"
               >
-              </textarea>
+              </textarea
+              >
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn"
-          data-bs-dismiss="modal"
-          (click)="resetForm()"
-        >
+        <button type="button" class="btn" data-bs-dismiss="modal" (click)="resetForm()">
           {{ 'comun.cerrar' | translate }}
         </button>
         @if (usuarioLogueado()?.rol === misRoles.Superadministrador) {

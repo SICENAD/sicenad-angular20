@@ -58,9 +58,9 @@ export class SolicitudNuevaModalComponent {
     jefeUnidadUsuaria: ['', Validators.required],
     pocEjercicio: ['', Validators.required],
     tlfnRedactor: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-    fechaSolicitud: [new Date(), Validators.required],
-    fechaInicio: [new Date(), Validators.required],
-    fechaFin: [new Date(), Validators.required],
+    fechaSolicitud: [this.formatDateTimeLocal(new Date()), Validators.required],
+    fechaInicio: [this.formatDateTimeLocal(new Date()), Validators.required],
+    fechaFin: [this.formatDateTimeLocal(new Date()), Validators.required],
     estado: ['Borrador', Validators.required],
     categoria: [null],
     recurso: [null, Validators.required],
@@ -79,7 +79,23 @@ export class SolicitudNuevaModalComponent {
   get categoria() { return this.solicitudForm.get('categoria'); }
 
   ngOnInit() {
+    // Si el usuario es Normal, fijamos su unidad en el formulario para que sea válida
+    if (this.usuarioLogueado()?.rol === RolUsuario.Normal) {
+      const m = this.miUnidad();
+      if (m) this.solicitudForm.patchValue({ unidad: m });
+    }
     this.cargarCategoriasPadre();
+  }
+
+  private pad2(n: number) { return n < 10 ? '0' + n : String(n); }
+  private formatDateTimeLocal(d: Date): string {
+    // Formato yyyy-MM-ddTHH:mm compatible con input[type=datetime-local]
+    const year = d.getFullYear();
+    const month = this.pad2(d.getMonth() + 1);
+    const day = this.pad2(d.getDate());
+    const hours = this.pad2(d.getHours());
+    const minutes = this.pad2(d.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   /** Carga inicial de categorías padre */
@@ -298,9 +314,9 @@ export class SolicitudNuevaModalComponent {
       .subscribe({
         next: (success) => {
           if (success) {
-            this.solicitudForm.reset();
+            // Usar resetForm para restablecer valores por defecto que el formulario espera
+            this.resetForm();
             // 🔹 Volver siempre a la vista inicial de categorías principales
-            this.cargarCategoriasPadre();
             this.getSolicitudes(estado);
           }
         },
@@ -327,7 +343,24 @@ export class SolicitudNuevaModalComponent {
   }
 
   resetForm() {
-    this.solicitudForm.reset();
+    // Restablecer campos con valores por defecto compatibles con los inputs
+    const now = new Date();
+    const fechaDefault = this.formatDateTimeLocal(now);
+    const unidadDefault = this.usuarioLogueado()?.rol === RolUsuario.Normal ? this.miUnidad() : null;
+    this.solicitudForm.reset({
+      unidad: unidadDefault,
+      observaciones: '',
+      jefeUnidadUsuaria: '',
+      pocEjercicio: '',
+      tlfnRedactor: '',
+      fechaSolicitud: fechaDefault,
+      fechaInicio: fechaDefault,
+      fechaFin: fechaDefault,
+      estado: 'Borrador',
+      categoria: null,
+      recurso: null
+    });
+    // Recargar filtros y recursos
     this.cargarCategoriasPadre();
   }
 }
