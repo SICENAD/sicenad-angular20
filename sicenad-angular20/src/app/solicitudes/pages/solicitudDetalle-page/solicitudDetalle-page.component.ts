@@ -184,7 +184,7 @@ export class SolicitudDetallePageComponent {
   }
 
   borrarSolicitud() {
-    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!.Id, this.solicitud()!.estado).subscribe({
+    this.orquestadorService.borrarSolicitud(this.idSolicitud(), this.cenadVisitado()!, this.solicitud()!.estado).subscribe({
       next: res => {
         res && this.router.navigate([this.routesPaths.cenadHome, this.cenadVisitado()?.Id, this.routesPaths.solicitudes]);
       },

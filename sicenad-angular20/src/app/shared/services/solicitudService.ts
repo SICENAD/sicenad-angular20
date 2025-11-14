@@ -1,23 +1,24 @@
 import { inject, Injectable } from "@angular/core";
-import { catchError, map, Observable, of, tap } from "rxjs";
+import { catchError, map, Observable, of, switchMap, tap } from "rxjs";
 import { ApiService } from "./apiService";
 import { Solicitud } from "@interfaces/models/solicitud";
 import { UtilService } from "./utilService";
 import { IdiomaService } from "./idiomaService";
+import { UtilsStore } from "@stores/utils.store";
 
 @Injectable({ providedIn: 'root' })
 export class SolicitudService {
+  private utils = inject(UtilsStore);
   private apiService = inject(ApiService);
   private utilService = inject(UtilService);
   private idiomaService = inject(IdiomaService);
+  private urlBasic = `${this.utils.urlApi()}/getbytitle('Solicitudes')/items`;
 
   getAll(idCenad: string): Observable<Solicitud[]> {
-    const endpoint = `/cenads/${idCenad}/solicitudes?size=1000`;
-    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
-      map(res =>
-        res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || []
-      ),
-      catchError(err => {
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=cenadId eq ${idCenad}`;
+    return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Solicitud>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -25,13 +26,10 @@ export class SolicitudService {
   }
 
   getSolicitudesPorEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
-    const endpoint = `/cenads/${idCenad}/solicitudesEstado/${estado}?size=1000`;
-    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
-      map(res => {
-        console.log(`Solicitudes recibidas con estado ${estado}:`, res);
-        return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
-      }),
-      catchError(err => {
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=cenadId eq ${idCenad} and estado=${estado}`;
+    return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Solicitud>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -39,12 +37,10 @@ export class SolicitudService {
   }
 
   getSolicitudesDeRecurso(idRecurso: string): Observable<Solicitud[]> {
-    const endpoint = `/recursos/${idRecurso}/solicitudes?size=1000`;
-    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
-      map(res => {
-        return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
-      }),
-      catchError(err => {
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=recursoId eq ${idRecurso}`;
+    return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Solicitud>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -52,12 +48,10 @@ export class SolicitudService {
   }
 
   getSolicitudesDeRecursoPorEstado(idRecurso: string, estado: string): Observable<Solicitud[]> {
-    const endpoint = `/recursos/${idRecurso}/solicitudesEstado/${estado}?size=1000`;
-    return this.apiService.request<{ _embedded: { solicitudes: Solicitud[] } }>(endpoint, 'GET').pipe(
-      map(res => {
-        return res._embedded?.solicitudes.map(item => ({ ...item, url: (item as any)._links?.self?.href })) || [];
-      }),
-      catchError(err => {
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=recursoId eq ${idRecurso} and estado=${estado}`;
+    return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
+      map((res) => this.utilService.ensureArray<Solicitud>(res)),
+      catchError((err) => {
         console.error(err);
         return of([]);
       })
@@ -65,10 +59,16 @@ export class SolicitudService {
   }
 
   getSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
-    const endpoint = `/solicitudes/${idSolicitud}`;
-    return this.apiService.request<Solicitud>(endpoint, 'GET').pipe(
-      map(res => ({ ...res, url: (res as any)._links?.self?.href })),
-      catchError(err => { console.error(err); return of(null); })
+    const urlSolicitud = `${this.urlBasic}(${idSolicitud})?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal`;
+    return this.apiService.getElemento(urlSolicitud).pipe(
+      map((s) => {
+        if (!s) throw new Error('Solicitud no encontrada');
+        return s as Solicitud;
+      }),
+      catchError((err) => {
+        console.error('Error obteniendo Solicitud seleccionada:', err);
+        return of(null);
+      })
     );
   }
 
@@ -83,9 +83,10 @@ export class SolicitudService {
     fechaHoraFinRecurso: Date,
     estado: string,
     idRecurso: string,
-    idUsuarioNormal: string
+    idUsuarioNormal: string,
+    idCenad: string
   ): Observable<any> {
-    const endpoint = `/solicitudes`;
+    const endpoint = 'Solicitudes';
     const body: any = {
       observaciones: observaciones,
       unidadUsuaria: unidadUsuaria,
@@ -97,15 +98,17 @@ export class SolicitudService {
       fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
       fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
       estado: estado,
-      recurso: `${this.apiService.getUrlApi()}/recursos/${idRecurso}`,
-      usuarioNormal: `${this.apiService.getUrlApi()}/usuarios_normal/${idUsuarioNormal}`
+      cenadId: idCenad,
+      recursoId: idRecurso,
+      usuarioNormalId: idUsuarioNormal
     };
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
-      map(res => !!res),
-      tap(() => {
-        this.utilService.toast(this.idiomaService.t('solicitudes.solicitudCreada'), 'success');
+      map((res) => !!res),
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudCreada', { nombre });
+        this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })
@@ -124,7 +127,7 @@ export class SolicitudService {
     observacionesCenad: string,
     fechaFinDocumentacion: Date
   ): Observable<any> {
-    const endpoint = `/solicitudes/${idSolicitud}`;
+    const endpoint = 'Solicitudes';
     const fechaFinDocumentacionCondicional = fechaFinDocumentacion ? this.utilService.localDateTimeToIso(fechaFinDocumentacion) : null;
     const body: any = {
       observaciones: observaciones,
@@ -136,28 +139,43 @@ export class SolicitudService {
       fechaUltModSolicitud: this.utilService.localDateTimeToIso(new Date()),
       fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
       fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
-      estado: estado
+      estado: estado,
+      Id: idSolicitud
     };
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
-      map(res => !!res),
-      tap(() => {
-        this.utilService.toast(this.idiomaService.t('solicitudes.solicitudModificada'), 'success');
+      map((res) => !!res),
+      tap(async () => {
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudModificada', {
+          nombre: body.nombre,
+        });
+        this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })
     );
   }
 
-  deleteSolicitud(idSolicitud: string): Observable<any> {
-    const endpoint = `/solicitudes/${idSolicitud}`;
-    return this.apiService.request<any>(endpoint, 'DELETE').pipe(
-      tap(async res => {
-        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada', { id: idSolicitud });
+  deleteSolicitud(idSolicitud: string, nombreCenad: string): Observable<any> {
+    const endpoint = 'Solicitudes';
+    // Intentamos borrar la carpeta; si falla (404/409 u otro), lo registramos y continuamos
+    return this.apiService.borrarCarpeta(`/${nombreCenad}/solicitudes/${idSolicitud}`).pipe(
+      catchError((err) => {
+        console.warn(
+          `No se pudo borrar la carpeta de la solicitud ${idSolicitud}, se continúa con el borrado de la solicitud: ${err}`
+        );
+        return of(false);
+      }),
+      switchMap(() => this.apiService.request<any>(endpoint, 'DELETE', { Id: idSolicitud })
+      ),
+      tap(async (res) => {
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada', {
+          id: idSolicitud,
+        });
         this.utilService.toast(mensaje, 'success');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(err);
         return of(false);
       })

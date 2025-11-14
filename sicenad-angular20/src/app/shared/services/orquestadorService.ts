@@ -1291,8 +1291,8 @@ export class OrquestadorService {
       );
   }
 
-  borrarRecurso(idRecurso: string, idCenad: string): Observable<any> {
-    return this.recursoService.deleteRecurso(idRecurso).pipe(
+  borrarRecurso(idRecurso: string, cenad: Cenad): Observable<any> {
+    return this.recursoService.deleteRecurso(idRecurso, cenad.nombre).pipe(
       tap((res) => {
         if (res) {
           this.idiomaService
@@ -1300,7 +1300,7 @@ export class OrquestadorService {
             .then((mensaje) => {
               console.log(mensaje);
             });
-          this.loadAllRecursos(idCenad)
+          this.loadAllRecursos(cenad.Id)
             .pipe(tap((recursos) => this.cenadStore.setRecursos(recursos)))
             .subscribe();
         } else {
@@ -1386,7 +1386,8 @@ export class OrquestadorService {
         fechaHoraFinRecurso,
         estado,
         idRecurso,
-        idUsuarioNormal
+        idUsuarioNormal,
+        idCenad
       )
       .pipe(
         tap((res) => {
@@ -1471,16 +1472,16 @@ export class OrquestadorService {
       );
   }
 
-  borrarSolicitud(idSolicitud: string, idCenad: string, estado: string): Observable<any> {
-    return this.solicitudService.deleteSolicitud(idSolicitud).pipe(
+  borrarSolicitud(idSolicitud: string, cenad: Cenad, estado: string): Observable<any> {
+    return this.solicitudService.deleteSolicitud(idSolicitud, cenad.nombre).pipe(
       tap((res) => {
         if (res) {
           console.log(this.idiomaService.t('solicitudes.solicitudEliminada'));
-          this.loadAllSolicitudes(idCenad)
+          this.loadAllSolicitudes(cenad.Id)
             .pipe(
               tap((solicitudes) => {
                 this.cenadStore.setSolicitudes(solicitudes);
-                this.loadAllSolicitudesEstado(idCenad, estado)
+                this.loadAllSolicitudesEstado(cenad.Id, estado)
                   .pipe(
                     tap((solicitudes) => {
                       switch (estado) {

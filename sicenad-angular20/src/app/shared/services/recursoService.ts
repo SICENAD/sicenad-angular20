@@ -97,11 +97,14 @@ export class RecursoService {
   }
 
   getRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
-    const endpoint = `/solicitudes/${idSolicitud}/recurso`;
-    return this.apiService.request<Recurso>(endpoint, 'GET').pipe(
-      map((res) => ({ ...res, url: (res as any)._links?.self?.href })),
+    const urlRecurso = `${this.utils.urlApi()}/getbytitle('Solicitudes')/items(${idSolicitud})?$select=recurso/Id,recurso/nombre,recurso/descripcion&$expand=recurso`;
+    return this.apiService.getElemento(urlRecurso).pipe(
+      map((r) => {
+        if (!r) throw new Error('Recurso no encontrado');
+        return r as Recurso;
+      }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error obteniendo Recurso seleccionado:', err);
         return of(null);
       })
     );
@@ -181,7 +184,7 @@ export class RecursoService {
     datosEspecificosSolicitud: string,
     idRecurso: string
   ): Observable<any> {
-const endpoint = 'Recursos';
+    const endpoint = 'Recursos';
     const body: any = {
       nombre: nombre.toUpperCase(),
       descripcion: descripcion,
@@ -205,9 +208,18 @@ const endpoint = 'Recursos';
     );
   }
 
-  deleteRecurso(idRecurso: string): Observable<any> {
+  deleteRecurso(idRecurso: string, nombreCenad: string): Observable<any> {
     const endpoint = 'Recursos';
-    return this.apiService.request<any>(endpoint, 'DELETE', { Id: idRecurso }).pipe(
+    // Intentamos borrar la carpeta; si falla (404/409 u otro), lo registramos y continuamos
+    return this.apiService.borrarCarpeta(`/${nombreCenad}/recursos/${idRecurso}`).pipe(
+      catchError((err) => {
+        console.warn(
+          `No se pudo borrar la carpeta del recurso ${idRecurso}, se continúa con el borrado del recurso: ${err}`
+        );
+        return of(false);
+      }),
+      switchMap(() => this.apiService.request<any>(endpoint, 'DELETE', { Id: idRecurso })
+      ),
       tap(async (res) => {
         const mensaje = await this.idiomaService.tVars('recursos.recursoEliminado', {
           id: idRecurso,
@@ -219,6 +231,5 @@ const endpoint = 'Recursos';
         return of(false);
       })
     );
-//aqui tendre que borrar la carpeta del recurso
   }
 }

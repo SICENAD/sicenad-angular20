@@ -154,7 +154,7 @@ export class RecursoModalComponent {
 
   borrarRecurso() {
     this.orquestadorService
-      .borrarRecurso(this.idRecurso(), this.cenadVisitado()!.Id)
+      .borrarRecurso(this.idRecurso(), this.cenadVisitado()!)
       .subscribe(() => {
         this.output.emit(); // notificamos al padre
       });
