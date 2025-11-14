@@ -15,7 +15,7 @@ export class SolicitudService {
   private urlBasic = `${this.utils.urlApi()}/getbytitle('Solicitudes')/items`;
 
   getAll(idCenad: string): Observable<Solicitud[]> {
-    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=cenadId eq ${idCenad}`;
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,usuarioNormal/Id,usuarioNormal/username&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=cenadId eq ${idCenad}`;
     return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
       map((res) => this.utilService.ensureArray<Solicitud>(res)),
       catchError((err) => {
@@ -26,7 +26,7 @@ export class SolicitudService {
   }
 
   getSolicitudesPorEstado(idCenad: string, estado: string): Observable<Solicitud[]> {
-    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=cenadId eq ${idCenad} and estado=${estado}`;
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,usuarioNormal/Id,usuarioNormal/username&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=cenadId eq ${idCenad} and estado eq '${estado}'`;
     return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
       map((res) => this.utilService.ensureArray<Solicitud>(res)),
       catchError((err) => {
@@ -37,7 +37,7 @@ export class SolicitudService {
   }
 
   getSolicitudesDeRecurso(idRecurso: string): Observable<Solicitud[]> {
-    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=recursoId eq ${idRecurso}`;
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,usuarioNormal/Id,usuarioNormal/username&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=recursoId eq ${idRecurso}`;
     return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
       map((res) => this.utilService.ensureArray<Solicitud>(res)),
       catchError((err) => {
@@ -48,7 +48,7 @@ export class SolicitudService {
   }
 
   getSolicitudesDeRecursoPorEstado(idRecurso: string, estado: string): Observable<Solicitud[]> {
-    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=recursoId eq ${idRecurso} and estado=${estado}`;
+    const urlSolicitudes = `${this.urlBasic}?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,usuarioNormal/Id,usuarioNormal/username&$expand=recurso&$expand=cenad&$expand=usuarioNormal&$filter=recursoId eq ${idRecurso} and estado eq '${estado}'`;
     return this.apiService.request<any>(urlSolicitudes, 'GET').pipe(
       map((res) => this.utilService.ensureArray<Solicitud>(res)),
       catchError((err) => {
@@ -59,7 +59,7 @@ export class SolicitudService {
   }
 
   getSolicitudSeleccionada(idSolicitud: string): Observable<Solicitud | null> {
-    const urlSolicitud = `${this.urlBasic}(${idSolicitud})?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,recurso/descripcion,usuarioNormal/Id,usuarioNormal/username&$expand=tipoFormulario&$expand=recurso&$expand=cenad&$expand=usuarioNormal`;
+    const urlSolicitud = `${this.urlBasic}(${idSolicitud})?$select=Id,observaciones,observacionesCenad,jefeUnidadUsuaria,pocEjercicio,tlfnRedactor,estado,fechaSolicitud,fechaUltModSolicitud,fechaHoraInicioRecurso,fechaHoraFinRecurso,fechaFinDocumentacion,unidadUsuaria,cenad/nombre,recurso/Id,recurso/nombre,usuarioNormal/Id,usuarioNormal/username&$expand=recurso&$expand=cenad&$expand=usuarioNormal`;
     return this.apiService.getElemento(urlSolicitud).pipe(
       map((s) => {
         if (!s) throw new Error('Solicitud no encontrada');
@@ -105,7 +105,7 @@ export class SolicitudService {
     return this.apiService.request<any>(endpoint, 'POST', body).pipe(
       map((res) => !!res),
       tap(async () => {
-        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudCreada', { nombre });
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudCreada');
         this.utilService.toast(mensaje, 'success');
       }),
       catchError((err) => {
@@ -145,9 +145,7 @@ export class SolicitudService {
     return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
       map((res) => !!res),
       tap(async () => {
-        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudModificada', {
-          nombre: body.nombre,
-        });
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudModificada');
         this.utilService.toast(mensaje, 'success');
       }),
       catchError((err) => {
@@ -170,9 +168,7 @@ export class SolicitudService {
       switchMap(() => this.apiService.request<any>(endpoint, 'DELETE', { Id: idSolicitud })
       ),
       tap(async (res) => {
-        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada', {
-          id: idSolicitud,
-        });
+        const mensaje = await this.idiomaService.tVars('solicitudes.solicitudEliminada');
         this.utilService.toast(mensaje, 'success');
       }),
       catchError((err) => {

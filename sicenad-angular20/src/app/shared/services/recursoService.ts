@@ -97,7 +97,7 @@ export class RecursoService {
   }
 
   getRecursoDeSolicitud(idSolicitud: string): Observable<Recurso | null> {
-    const urlRecurso = `${this.utils.urlApi()}/getbytitle('Solicitudes')/items(${idSolicitud})?$select=recurso/Id,recurso/nombre,recurso/descripcion&$expand=recurso`;
+    const urlRecurso = `${this.utils.urlApi()}/getbytitle('Solicitudes')/items(${idSolicitud})?$select=recurso/Id,recurso/nombre&$expand=recurso`;
     return this.apiService.getElemento(urlRecurso).pipe(
       map((r) => {
         if (!r) throw new Error('Recurso no encontrado');
