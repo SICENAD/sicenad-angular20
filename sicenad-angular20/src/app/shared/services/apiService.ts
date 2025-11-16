@@ -13,6 +13,7 @@ import {
   toArray,
   forkJoin,
   tap,
+  firstValueFrom,
 } from 'rxjs';
 import { UtilsStore } from '@stores/utils.store';
 import { UtilService } from './utilService';
@@ -31,6 +32,62 @@ export class ApiService {
   // Inyección tardía de AuthStore usando getter
   private get auth(): AuthStore {
     return this.injector.get(AuthStore);
+  }
+
+  private generateGuid(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
+  private logSharePointFileSizeLimitFromError(err: any) {
+    try {
+      let msg = '';
+      if (!err) return;
+      if (typeof err === 'string') msg = err;
+      else if (err.message) msg = err.message;
+      else msg = JSON.stringify(err);
+
+      const m = msg.match(/Chained=\(Value=(\d+)\)/i) || msg.match(/Value=(\d{6,})/i);
+      if (m && m[1]) {
+        const bytes = parseInt(m[1], 10);
+        if (!isNaN(bytes) && bytes > 0) {
+          const human = this.humanFileSize(bytes);
+          const message = `SharePoint reporta un límite aproximado de archivo: ${bytes} bytes (${human}).`;
+          console.warn(message);
+          try {
+            this.utilService.toast(message, 'warning');
+          } catch {}
+          return;
+        }
+      }
+
+      if (/FileTooLarge|FileTooBig|File is too large/i.test(msg)) {
+        const message =
+          'SharePoint ha respondido con FileTooLarge; puede que el archivo exceda el límite configurado en el servidor.';
+        console.warn(message, msg);
+        try {
+          this.utilService.toast(message, 'warning');
+        } catch {}
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  private humanFileSize(bytes: number): string {
+    const thresh = 1024;
+    if (Math.abs(bytes) < thresh) return bytes + ' B';
+    const units = ['KB', 'MB', 'GB', 'TB'];
+    let u = -1;
+    let b = bytes;
+    do {
+      b /= thresh;
+      ++u;
+    } while (Math.abs(b) >= thresh && u < units.length - 1);
+    return b.toFixed(2) + ' ' + units[u];
   }
 
   // Determina si debemos enviar credenciales cross-site.
@@ -70,7 +127,6 @@ export class ApiService {
         );
         break;
       case 'PATCH':
-        console.log(body?.Id);
         if (!body?.Id) {
           return throwError(() => new Error('No se indicó ID para PATCH'));
         }
@@ -111,8 +167,6 @@ export class ApiService {
     const parts = url.replace(/^\/+/, '').split('/');
     const libraryName = parts.shift()!; // primera parte = biblioteca
     const relativePath = parts.join('/'); // resto = ruta relativa + archivo
-    console.log(libraryName);
-    console.log(relativePath);
     return this.mostrarArchivoSharePoint(libraryName, relativePath).pipe(
       catchError((err) => {
         console.error('Error al mostrar archivo:', err);
@@ -156,58 +210,66 @@ export class ApiService {
   private getRequestDigest(): Observable<string> {
     const el = document.getElementById('__REQUESTDIGEST') as HTMLInputElement;
     if (el?.value) return of(el.value);
-  const url = `${this.utils.urlSitio()}/_api/contextinfo`;
-  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-  return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-      map((res: any) => res?.d?.GetContextWebInformation?.FormDigestValue),
-      catchError((err) => {
-        console.error('Error al obtener digest', err);
-        return throwError(() => err);
-      })
-    );
+    const url = `${this.utils.urlSitio()}/_api/contextinfo`;
+    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+    return this.http
+      .post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        map((res: any) => res?.d?.GetContextWebInformation?.FormDigestValue),
+        catchError((err) => {
+          console.error('Error al obtener digest', err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
    * Devuelve el EntityTypeFullName de una lista
    */
   private obtenerEntityType(nombreLista: string): Observable<string> {
-  const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')?$select=ListItemEntityTypeFullName`;
-  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-      map((res) => res?.d?.ListItemEntityTypeFullName ?? ''),
-      catchError((err) => {
-        console.error('Error al obtener EntityTypeFullName:', err);
-        return throwError(() => err);
-      })
-    );
+    const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')?$select=ListItemEntityTypeFullName`;
+    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+    return this.http
+      .get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        map((res) => res?.d?.ListItemEntityTypeFullName ?? ''),
+        catchError((err) => {
+          console.error('Error al obtener EntityTypeFullName:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
    * Obtiene elementos de una lista (con url completa o personalizada)
    */
   getListaElementos(url: string): Observable<any[]> {
-  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-      map((res) => this.utilService.ensureArray<any>(res)),
-      catchError((err) => {
-        console.error('Error al obtener lista de elementos', err);
-        return throwError(() => err);
-      })
-    );
+    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+    return this.http
+      .get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        map((res) => this.utilService.ensureArray<any>(res)),
+        catchError((err) => {
+          console.error('Error al obtener lista de elementos', err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
    * Obtiene un único elemento (por ejemplo /items(123)) devolviendo res.d
    */
   getElemento(url: string): Observable<any> {
-  const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
-  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-      map((res) => this.utilService.ensureObject<any>(res)),
-      catchError((err) => {
-        console.error('Error al obtener elemento', err);
-        return throwError(() => err);
-      })
-    );
+    const headers = new HttpHeaders({ Accept: 'application/json;odata=verbose' });
+    return this.http
+      .get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        map((res) => this.utilService.ensureObject<any>(res)),
+        catchError((err) => {
+          console.error('Error al obtener elemento', err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
@@ -229,12 +291,14 @@ export class ApiService {
     const headers = new HttpHeaders({
       Accept: 'application/json;odata=verbose',
     });
-  return this.http.get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-      catchError((err) => {
-        console.error(`❌ Error en getListaElementosFiltrados('${nombreLista}')`, err);
-        return throwError(() => err);
-      })
-    );
+    return this.http
+      .get<any>(url, { headers, withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        catchError((err) => {
+          console.error(`❌ Error en getListaElementosFiltrados('${nombreLista}')`, err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
@@ -255,13 +319,15 @@ export class ApiService {
               'X-RequestDigest': digest,
             });
             const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items`;
-            return this.http.post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-              map((res) => res?.d),
-              catchError((err) => {
-                console.error('Error al crear elemento:', err);
-                return throwError(() => err);
-              })
-            );
+            return this.http
+              .post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() })
+              .pipe(
+                map((res) => res?.d),
+                catchError((err) => {
+                  console.error('Error al crear elemento:', err);
+                  return throwError(() => err);
+                })
+              );
           })
         )
       )
@@ -288,23 +354,25 @@ export class ApiService {
               'IF-MATCH': '*',
             });
             const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`;
-            return this.http.post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-              switchMap(() =>
-                // Después del MERGE, pedimos el elemento actualizado
-                this.http.get<any>(
-                  `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`,
-                  {
-                    headers: new HttpHeaders({ Accept: 'application/json;odata=verbose' }),
-                    withCredentials: this.getWithCredentialsFlag(),
-                  }
-                )
-              ),
-              map((res) => res.d),
-              catchError((err) => {
-                console.error('❌ Error al editar elemento:', err);
-                return throwError(() => err);
-              })
-            );
+            return this.http
+              .post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() })
+              .pipe(
+                switchMap(() =>
+                  // Después del MERGE, pedimos el elemento actualizado
+                  this.http.get<any>(
+                    `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`,
+                    {
+                      headers: new HttpHeaders({ Accept: 'application/json;odata=verbose' }),
+                      withCredentials: this.getWithCredentialsFlag(),
+                    }
+                  )
+                ),
+                map((res) => res.d),
+                catchError((err) => {
+                  console.error('❌ Error al editar elemento:', err);
+                  return throwError(() => err);
+                })
+              );
           })
         )
       )
@@ -324,18 +392,19 @@ export class ApiService {
           'X-RequestDigest': digest,
         });
         const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items(${id})`;
-  return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-          map(() => true),
-          catchError((err) => {
-            console.error('Error al eliminar elemento:', err);
-            return of(false);
-          })
-        );
+        return this.http
+          .post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() })
+          .pipe(
+            map(() => true),
+            catchError((err) => {
+              console.error('Error al eliminar elemento:', err);
+              return of(false);
+            })
+          );
       })
     );
   }
 
-  // ------------------ ARCHIVOS (SharePoint Foundation 2019) ------------------
   // ------------------ ARCHIVOS (SharePoint Foundation 2019) ------------------
 
   /**
@@ -344,6 +413,11 @@ export class ApiService {
    * @param archivo Archivo a subir
    */
   subirArchivoSharePoint(urlUpload: string, archivo: File, overwrite = true): Observable<string> {
+    // Usar subida por chunks si el archivo supera 1 MB
+    const CHUNK_THRESHOLD = 1 * 1024 * 1024; // 1 MB
+    if (archivo.size > CHUNK_THRESHOLD) {
+      return this.subirArchivoSharePointChunked(urlUpload, archivo, overwrite, 1 * 1024 * 1024);
+    }
     return this.getRequestDigest().pipe(
       switchMap((digest) => {
         // Separar biblioteca y posibles subcarpetas
@@ -356,30 +430,51 @@ export class ApiService {
             from(archivo.arrayBuffer()).pipe(
               switchMap(async (buffer) => {
                 const baseFolder = folderPath
-                  ? `${libraryName}/${folderPath}`.replace(/\/+$/, '')
+                  ? `${libraryName}/${folderPath}`.replace(/\\/g, '/')
                   : libraryName;
                 const url = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${baseFolder}')/Files/add(url='${
                   archivo.name
                 }',overwrite=${overwrite})`;
-                console.log(`Subiendo archivo con fetch a : ${url}`);
-                const response = await fetch(url, {
-                  method: 'POST',
-                  body: buffer,
-                  headers: {
-                    Accept: 'application/json;odata=verbose',
-                    'X-RequestDigest': digest,
-                    'Content-Type': 'application/octet-stream',
-                  },
-                  // Use the UtilsStore recommendation: 'same-origin' or 'include'
-                  credentials: this.utils.credentialsRecommendation() as RequestCredentials,
-                });
-                if (!response.ok) {
-                  const text = await response.text();
-                  throw new Error(`Error ${response.status}: ${text}`);
+                try {
+                  const response = await fetch(url, {
+                    method: 'POST',
+                    body: buffer,
+                    headers: {
+                      Accept: 'application/json;odata=verbose',
+                      'X-RequestDigest': digest,
+                      'Content-Type': 'application/octet-stream',
+                    },
+                    // Use the UtilsStore recommendation: 'same-origin' or 'include'
+                    credentials: this.utils.credentialsRecommendation() as RequestCredentials,
+                  });
+                  if (!response.ok) {
+                    const text = await response.text().catch(() => '');
+                    // Intentar eliminar placeholder parcial en el servidor
+                    try {
+                      const relPath = folderPath ? `${folderPath}/${archivo.name}` : archivo.name;
+                      await firstValueFrom(this.borrarArchivoSharePoint(libraryName, relPath));
+                      console.warn('[SP Upload] placeholder eliminado tras fallo:', relPath);
+                    } catch (delErr) {
+                      console.warn('[SP Upload] fallo al eliminar placeholder tras fallo:', delErr);
+                    }
+                    throw new Error(`Error ${response.status}: ${text}`);
+                  }
+                  const data = await response.json();
+                  return data;
+                } catch (err) {
+                  // En caso de excepciones (network, timeouts, etc.) intentar borrar placeholder
+                  try {
+                    const relPath = folderPath ? `${folderPath}/${archivo.name}` : archivo.name;
+                    await firstValueFrom(this.borrarArchivoSharePoint(libraryName, relPath));
+                    console.warn('[SP Upload] placeholder eliminado tras excepción:', relPath);
+                  } catch (delErr) {
+                    console.warn(
+                      '[SP Upload] fallo al eliminar placeholder tras excepción:',
+                      delErr
+                    );
+                  }
+                  throw err;
                 }
-                const data = await response.json();
-                console.log('Subida correcta: ', data);
-                return data;
               })
             )
           )
@@ -393,6 +488,280 @@ export class ApiService {
   }
 
   /**
+   * Subida por fragmentos (StartUpload / ContinueUpload / FinishUpload) usando chunkSize por defecto 1MB
+   */
+  subirArchivoSharePointChunked(
+    urlUpload: string,
+    archivo: File,
+    overwrite = true,
+    chunkSize = 1 * 1024 * 1024
+  ): Observable<any> {
+    return new Observable<any>((subscriber) => {
+      (async () => {
+        // variables en scope para el catch
+        let libraryName: string | null = null;
+        let folderPath: string | null = null;
+        let serverRelative: string | null = null;
+        let digestVal: string | null = null;
+        let uploadId: string | null = null; // declarado en scope exterior para poder cerrarlo en el catch
+        try {
+          const digest = (digestVal = await firstValueFrom(this.getRequestDigest()));
+          const parts = urlUpload.split('/').filter((p) => p.trim().length > 0);
+          libraryName = parts.shift()!;
+          folderPath = parts.join('/');
+          await firstValueFrom(this.crearCarpetasSiNoExisten(libraryName, folderPath, digest));
+          const baseFolder = folderPath
+            ? `${libraryName}/${folderPath}`.replace(/\\/g, '/')
+            : libraryName;
+          serverRelative = `${this.utils.webServerRelativeUrl()}/${baseFolder}/${archivo.name}`
+            .replace(/\\/g, '/')
+            .replace(/\/\/+/g, '/');
+          // Crear placeholder vacío
+          try {
+            const addUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${baseFolder}')/Files/add(url='${
+              archivo.name
+            }',overwrite=${overwrite})`;
+            const zero = new Uint8Array(0);
+            const resAdd = await fetch(addUrl, {
+              method: 'POST',
+              body: zero,
+              headers: {
+                Accept: 'application/json;odata=verbose',
+                'X-RequestDigest': digest,
+                'Content-Type': 'application/octet-stream',
+              },
+              credentials: this.utils.credentialsRecommendation() as RequestCredentials,
+            });
+            if (!resAdd.ok) {
+              if (resAdd.status !== 409 && resAdd.status !== 201 && resAdd.status !== 200) {
+                const txt = await resAdd.text().catch(() => '');
+                throw new Error(`Error creando placeholder: ${resAdd.status}: ${txt}`);
+              }
+            }
+          } catch (err) {
+            throw err;
+          }
+          uploadId = this.generateGuid();
+          try {
+            this.utilService.blockingProgressStart(uploadId, `Subiendo ${archivo.name}`);
+          } catch {}
+          const totalSize = archivo.size;
+          try {
+            this.localStorageService.resetExpiry();
+          } catch {}
+          let offset = 0;
+          let isFirst = true;
+          let chunkIndex = 0;
+          let json: any = null;
+          while (offset < totalSize) {
+            const start = offset;
+            const end = Math.min(offset + chunkSize, totalSize);
+            const blob = archivo.slice(start, end);
+            const buffer = await blob.arrayBuffer();
+            let opUrl: string;
+            if (isFirst)
+              opUrl = `${this.utils.urlSitio()}/_api/web/GetFileByServerRelativeUrl('${serverRelative}')/StartUpload(uploadId=guid'${uploadId}')`;
+            else if (end < totalSize)
+              opUrl = `${this.utils.urlSitio()}/_api/web/GetFileByServerRelativeUrl('${serverRelative}')/ContinueUpload(uploadId=guid'${uploadId}',fileOffset=${offset})`;
+            else
+              opUrl = `${this.utils.urlSitio()}/_api/web/GetFileByServerRelativeUrl('${serverRelative}')/FinishUpload(uploadId=guid'${uploadId}',fileOffset=${offset})`;
+            const maxAttempts = 5;
+            let attempt = 0;
+            let success = false;
+            let lastErr: any = null;
+            while (attempt < maxAttempts && !success) {
+              attempt++;
+              try {
+                try {
+                  console.debug('[SP Upload] chunk', {
+                    uploadId,
+                    chunkIndex,
+                    attempt,
+                    start,
+                    end,
+                    chunkSize,
+                    totalSize,
+                    opUrl,
+                  });
+                } catch {}
+                const response = await fetch(opUrl, {
+                  method: 'POST',
+                  body: buffer,
+                  headers: {
+                    Accept: 'application/json;odata=verbose',
+                    'X-RequestDigest': digest,
+                    'Content-Type': 'application/octet-stream',
+                  },
+                  credentials: this.utils.credentialsRecommendation() as RequestCredentials,
+                });
+                if (!response.ok) {
+                  const text = await response.text().catch(() => '');
+                  console.warn('[SP Upload] chunk failed', {
+                    uploadId,
+                    chunkIndex,
+                    attempt,
+                    status: response.status,
+                    text: text.slice ? text.slice(0, 2000) : text,
+                  });
+                  try {
+                    this.logSharePointFileSizeLimitFromError(text);
+                  } catch {}
+                  throw new Error(`Chunk upload error ${response.status}: ${text}`);
+                }
+                const respText = await response.text().catch(() => '');
+                let returnedOffset: number | null = null;
+                if (respText) {
+                  try {
+                    const parsed = JSON.parse(respText);
+                    const findNumbers = (o: any, acc: number[] = []): number[] => {
+                      if (o == null) return acc;
+                      if (typeof o === 'number' && Number.isFinite(o)) acc.push(Math.floor(o));
+                      else if (typeof o === 'string') {
+                        const m = o.match(/(\d{5,})/g);
+                        if (m) m.forEach((x: string) => acc.push(parseInt(x, 10)));
+                      } else if (Array.isArray(o)) o.forEach((v) => findNumbers(v, acc));
+                      else if (typeof o === 'object')
+                        Object.values(o).forEach((v) => findNumbers(v, acc));
+                      return acc;
+                    };
+                    const nums = findNumbers(parsed, []);
+                    if (nums.length) {
+                      const candidats = nums.filter((n) => n > 0 && n <= totalSize);
+                      if (candidats.length) returnedOffset = Math.max(...candidats);
+                    }
+                    if (end >= totalSize) json = parsed;
+                  } catch (e) {
+                    const m = respText.match(/(\d{5,})/g);
+                    if (m && m.length) {
+                      const nums = m
+                        .map((x) => parseInt(x, 10))
+                        .filter((n) => !isNaN(n) && n > 0 && n <= totalSize);
+                      if (nums.length) returnedOffset = Math.max(...nums);
+                      if (end >= totalSize) {
+                        try {
+                          json = JSON.parse(respText);
+                        } catch {
+                          json = null;
+                        }
+                      }
+                    }
+                  }
+                } else {
+                  if (end >= totalSize) json = null;
+                }
+                try {
+                  this.localStorageService.resetExpiry();
+                } catch {}
+                if (returnedOffset && returnedOffset > 0 && returnedOffset <= totalSize)
+                  offset = returnedOffset;
+                else offset = end;
+                success = true;
+              } catch (err) {
+                lastErr = err;
+                await new Promise((r) => setTimeout(r, attempt * 500));
+              }
+            }
+            if (!success) throw lastErr;
+            isFirst = false;
+            chunkIndex++;
+            try {
+              const percent = Math.min(100, Math.round((offset / totalSize) * 100));
+              try {
+                if (uploadId)
+                  this.utilService.blockingProgressUpdate(
+                    uploadId,
+                    `Subiendo ${archivo.name} ${percent}%`
+                  );
+              } catch {}
+              if (end >= totalSize) {
+                try {
+                  if (uploadId)
+                    this.utilService.blockingProgressComplete(
+                      uploadId,
+                      `Subida completada: ${archivo.name}`
+                    );
+                } catch {}
+              }
+            } catch {}
+          }
+          try {
+            const finalResult = json?.d ? json : { d: json };
+            subscriber.next(finalResult);
+          } catch {}
+          subscriber.complete();
+        } catch (err) {
+          // intentar eliminar placeholder por serverRelative
+          try {
+            if (serverRelative) {
+              try {
+                const digestToUse = digestVal
+                  ? digestVal
+                  : await firstValueFrom(this.getRequestDigest());
+                const delUrl = `${this.utils.urlSitio()}/_api/web/GetFileByServerRelativeUrl('${serverRelative}')`;
+                const res = await fetch(delUrl, {
+                  method: 'POST',
+                  headers: {
+                    'X-RequestDigest': digestToUse,
+                    'X-HTTP-Method': 'DELETE',
+                    'IF-MATCH': '*',
+                  },
+                  credentials: this.utils.credentialsRecommendation() as RequestCredentials,
+                });
+                if (!res.ok) {
+                  const txt = await res.text().catch(() => '');
+                  console.warn('[SP Upload] fallo al eliminar placeholder por serverRelative', {
+                    serverRelative,
+                    status: res.status,
+                    text: txt.slice ? txt.slice(0, 2000) : txt,
+                  });
+                } else {
+                  console.warn(
+                    '[SP Upload] placeholder eliminado (serverRelative):',
+                    serverRelative
+                  );
+                }
+              } catch (delErr) {
+                console.warn(
+                  '[SP Upload] excepcion al eliminar placeholder por serverRelative:',
+                  delErr
+                );
+              }
+            } else if (libraryName) {
+              try {
+                const relPath = folderPath ? `${folderPath}/${archivo.name}` : archivo.name;
+                await firstValueFrom(this.borrarArchivoSharePoint(libraryName, relPath));
+                console.warn('[SP Upload] placeholder eliminado (fallback):', relPath);
+              } catch (delErr) {
+                console.warn('[SP Upload] fallo al eliminar placeholder (fallback):', delErr);
+              }
+            } else {
+              console.warn(
+                '[SP Upload] no se dispone de serverRelative ni libraryName para eliminar placeholder'
+              );
+            }
+          } catch (e) {}
+          try {
+            this.logSharePointFileSizeLimitFromError(err);
+          } catch {}
+          // Mostrar overlay de error y permitir cierre
+          try {
+            const errMsg =
+              err && (err as any).message
+                ? String((err as any).message)
+                : String(err || 'Error en la subida');
+            if (uploadId) {
+              try {
+                this.utilService.blockingProgressError(uploadId, errMsg);
+              } catch {}
+            }
+          } catch (e) {}
+          subscriber.error(err);
+        }
+      })();
+    });
+  }
+
+  /**
    * 🗂️ Crea carpetas intermedias si no existen (Observable)
    */
   crearCarpetasSiNoExisten(
@@ -401,10 +770,8 @@ export class ApiService {
     digest: string
   ): Observable<void> {
     if (!folderPath) return of(void 0);
-
     const parts = folderPath.split('/').filter((p) => p.trim().length > 0);
     let currentPath = libraryName;
-
     return from(parts).pipe(
       concatMap((part) => {
         const folderUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${currentPath}')/folders/add('${part}')`;
@@ -412,16 +779,18 @@ export class ApiService {
           Accept: 'application/json;odata=verbose',
           'X-RequestDigest': digest,
         });
-  return this.http.post<any>(folderUrl, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-          catchError((err) => {
-            if (err.status === 409) return of(void 0); // carpeta ya existe
-            console.warn(`⚠️ Error al crear carpeta '${part}':`, err);
-            return throwError(() => err);
-          }),
-          tap(() => {
-            currentPath += `/${part}`;
-          })
-        );
+        return this.http
+          .post<any>(folderUrl, {}, { headers, withCredentials: this.getWithCredentialsFlag() })
+          .pipe(
+            catchError((err) => {
+              if (err.status === 409) return of(void 0); // carpeta ya existe
+              console.error(`⚠️ Error al crear carpeta '${part}':`, err);
+              return throwError(() => err);
+            }),
+            tap(() => {
+              currentPath += `/${part}`;
+            })
+          );
       }),
       toArray(),
       map(() => void 0)
@@ -436,22 +805,24 @@ export class ApiService {
     const fileUrl = `${this.utils.urlSitio()}/_layouts/15/download.aspx?SourceUrl=${encodeURIComponent(
       `${this.utils.urlSitio()}/${libraryName}/${relativePath}`
     )}`;
-  return this.http.get(fileUrl, { responseType: 'blob', withCredentials: this.getWithCredentialsFlag() }).pipe(
-      map((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = relativePath.split('/').pop()!;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }),
-      map(() => void 0),
-      catchError((err) => {
-        alert(this.idiomaService.t('errorDescarga'));
-        console.error(err);
-        return throwError(() => err);
-      })
-    );
+    return this.http
+      .get(fileUrl, { responseType: 'blob', withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        map((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = relativePath.split('/').pop()!;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        }),
+        map(() => void 0),
+        catchError((err) => {
+          alert(this.idiomaService.t('errorDescarga'));
+          console.error(err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
@@ -462,13 +833,14 @@ export class ApiService {
     const url = `${this.utils.urlSitio()}/_layouts/15/download.aspx?SourceUrl=${encodeURIComponent(
       this.utils.urlSitio() + '/' + libraryName + '/' + relativePath
     )}`;
-    console.log('mostrarArchivoSharePoint url:', url);
-  return this.http.get(url, { responseType: 'blob', withCredentials: this.getWithCredentialsFlag() }).pipe(
-      catchError((err) => {
-        console.error('Error al mostrar archivo SharePoint:', err);
-        return throwError(() => err);
-      })
-    );
+    return this.http
+      .get(url, { responseType: 'blob', withCredentials: this.getWithCredentialsFlag() })
+      .pipe(
+        catchError((err) => {
+          console.error('Error al mostrar archivo SharePoint:', err);
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
@@ -484,16 +856,17 @@ export class ApiService {
           'IF-MATCH': '*',
           'X-RequestDigest': digest,
         });
-  return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-          map(() => {
-            console.log(`🗑️ Archivo eliminado: ${relativePath}`);
-            return true;
-          }),
-          catchError((err) => {
-            console.error('❌ Error en eliminarArchivo:', err);
-            return of(false);
-          })
-        );
+        return this.http
+          .post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() })
+          .pipe(
+            map(() => {
+              return true;
+            }),
+            catchError((err) => {
+              console.error('❌ Error en eliminarArchivo:', err);
+              return of(false);
+            })
+          );
       })
     );
   }
@@ -521,9 +894,11 @@ export class ApiService {
     rutaCarpeta: string,
     digest: string
   ): Observable<boolean> {
-  // ServerRelativeUrl debe ser relativo al web, no incluir el prefix de urlSitio aquí.
-  // Las demás funciones de subida/creación usan 'LibraryName/folder/subfolder' como serverRelativeUrl.
-  const carpetaUrl = `${nombreBiblioteca}/${rutaCarpeta}`.replace(/\/+/g, '/').replace(/^\/+/, '');
+    // ServerRelativeUrl debe ser relativo al web, no incluir el prefix de urlSitio aquí.
+    // Las demás funciones de subida/creación usan 'LibraryName/folder/subfolder' como serverRelativeUrl.
+    const carpetaUrl = `${nombreBiblioteca}/${rutaCarpeta}`
+      .replace(/\/+/g, '/')
+      .replace(/^\/+/, '');
     const getFoldersUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${carpetaUrl}')/Folders`;
     const getFilesUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${carpetaUrl}')/Files`;
     // 1️⃣ Obtener subcarpetas y archivos
@@ -578,10 +953,12 @@ export class ApiService {
               'IF-MATCH': '*',
               'X-RequestDigest': digest,
             });
-            return this.http.post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-              map(() => true),
-              catchError(() => of(false))
-            );
+            return this.http
+              .post<any>(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() })
+              .pipe(
+                map(() => true),
+                catchError(() => of(false))
+              );
           })
         );
       })
@@ -608,13 +985,15 @@ export class ApiService {
           'Content-Type': 'application/json;odata=verbose',
           'X-RequestDigest': digest,
         });
-  return this.http.post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-          map((res) => res?.d),
-          catchError((err) => {
-            console.error('Error al crear biblioteca de documentos:', err);
-            return throwError(() => err);
-          })
-        );
+        return this.http
+          .post<any>(url, body, { headers, withCredentials: this.getWithCredentialsFlag() })
+          .pipe(
+            map((res) => res?.d),
+            catchError((err) => {
+              console.error('Error al crear biblioteca de documentos:', err);
+              return throwError(() => err);
+            })
+          );
       })
     );
   }
@@ -633,14 +1012,15 @@ export class ApiService {
           'IF-MATCH': '*',
           'X-RequestDigest': digest,
         });
-  return this.http.post(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() }).pipe(
-          tap(() => console.log(`🗑️ Biblioteca eliminada: ${nombreBiblioteca}`)),
-          map(() => true),
-          catchError((err) => {
-            console.error('❌ Error al eliminar la biblioteca:', err);
-            return of(false);
-          })
-        );
+        return this.http
+          .post(url, {}, { headers, withCredentials: this.getWithCredentialsFlag() })
+          .pipe(
+            map(() => true),
+            catchError((err) => {
+              console.error('❌ Error al eliminar la biblioteca:', err);
+              return of(false);
+            })
+          );
       })
     );
   }

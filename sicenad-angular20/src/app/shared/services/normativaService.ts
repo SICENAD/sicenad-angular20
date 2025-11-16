@@ -1,10 +1,10 @@
-import { inject, Injectable } from "@angular/core";
-import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from "rxjs";
-import { ApiService } from "./apiService";
-import { Normativa } from "@interfaces/models/normativa";
-import { UtilsStore } from "@stores/utils.store";
-import { UtilService } from "./utilService";
-import { IdiomaService } from "./idiomaService";
+import { inject, Injectable } from '@angular/core';
+import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { ApiService } from './apiService';
+import { Normativa } from '@interfaces/models/normativa';
+import { UtilsStore } from '@stores/utils.store';
+import { UtilService } from './utilService';
+import { IdiomaService } from './idiomaService';
 
 @Injectable({ providedIn: 'root' })
 export class NormativaService {
@@ -46,27 +46,30 @@ export class NormativaService {
     idCenad: string,
     nombreCenad: string
   ): Observable<any> {
-     const endpoint = `Normativas`;
+    const endpoint = `Normativas`;
+    let normativaId = '';
     return this.apiService
       .request<any>(endpoint, 'POST', {
         nombre: nombre.toUpperCase(),
         descripcion,
-        cenadId: idCenad
+        cenadId: idCenad,
       })
       .pipe(
         switchMap((resCrear) => {
           const idNormativa = resCrear.Id;
-          console.log(idNormativa);
+          normativaId = idNormativa;
           if (!archivo) return of(true);
           const endpointUpload = `/${nombreCenad}/normativa`;
           return this.apiService.subirArchivo(endpointUpload, archivo).pipe(
             switchMap((resArchivo) => {
               const archivo: string = resArchivo.d.Name;
-              console.log(archivo);
               if (!archivo) return of(false);
               const endpointNormativa = 'Normativas';
               return this.apiService
-                .request<any>(endpointNormativa, 'PATCH', { Id: idNormativa, nombreArchivo: archivo })
+                .request<any>(endpointNormativa, 'PATCH', {
+                  Id: idNormativa,
+                  nombreArchivo: archivo,
+                })
                 .pipe(
                   tap(async () => {
                     const mensaje = await this.idiomaService.tVars('normativas.normativaCreada', {
@@ -81,6 +84,7 @@ export class NormativaService {
         }),
         catchError((err) => {
           console.error(err);
+          this.deleteNormativa('', normativaId, nombreCenad, true).subscribe();
           return of(false);
         })
       );
@@ -93,114 +97,130 @@ export class NormativaService {
     nombreCenad: string,
     idNormativa: string
   ): Observable<any> {
-     let nombreArchivo = archivoActual || '';
-        const endpoint = 'Normativas';
-        const body: Partial<Normativa> = {
-          nombre: nombre.toUpperCase(),
-          descripcion,
-          Id: idNormativa
-        };
-        const patchNormativa = (): Observable<string | null> => {
-          if (nombreArchivo) body.nombreArchivo = nombreArchivo;
-          return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
-            map((res) => !!res),
-            tap(async () => {
-              const mensaje = await this.idiomaService.tVars('normativas.normativaEditada', { nombre });
-              this.utilService.toast(mensaje, 'success');
-            }),
-            map(() => nombreArchivo),
-            catchError((err) => {
-              console.error(err);
-              return of(null);
-            })
-          );
-        };
-        if (!archivoNormativa) return patchNormativa();
-        const nombreBiblioteca = nombreCenad;
-        const endpointUpload = `/${nombreBiblioteca}/normativa`;
-        // Si existe un archivo previo, intentamos borrarlo PRIMERO. Si el borrado falla, abortamos y
-        // mostramos un toast de error. Si no existe, subimos directamente.
-        if (nombreArchivo) {
-          return this.apiService.borrarArchivoSharePoint(nombreBiblioteca, `normativa/${nombreArchivo}`).pipe(
-            switchMap((borradoOk: boolean) => {
-              if (!borradoOk) {
-                console.warn('Abortando subida: no se pudo borrar el archivo anterior.');
-                return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
-                  switchMap((mensaje) => {
-                    this.utilService.toast(
-                      mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
-                      'error'
-                    );
-                    return of(null);
-                  }),
-                  catchError(() => {
-                    this.utilService.toast(
-                      'No se pudo borrar el archivo anterior. Operación abortada.',
-                      'error'
-                    );
-                    return of(null);
-                  })
+    let nombreArchivo = archivoActual || '';
+    const endpoint = 'Normativas';
+    const body: Partial<Normativa> = {
+      nombre: nombre.toUpperCase(),
+      descripcion,
+      Id: idNormativa,
+    };
+    const patchNormativa = (): Observable<string | null> => {
+      if (nombreArchivo) body.nombreArchivo = nombreArchivo;
+      return this.apiService.request<any>(endpoint, 'PATCH', body).pipe(
+        map((res) => !!res),
+        tap(async () => {
+          const mensaje = await this.idiomaService.tVars('normativas.normativaModificada', {
+            nombre,
+          });
+          this.utilService.toast(mensaje, 'success');
+        }),
+        map(() => nombreArchivo),
+        catchError((err) => {
+          console.error(err);
+          return of(null);
+        })
+      );
+    };
+    if (!archivoNormativa) return patchNormativa();
+    const nombreBiblioteca = nombreCenad;
+    const endpointUpload = `/${nombreBiblioteca}/normativa`;
+    // Si existe un archivo previo, primero subimos el nuevo. Solo si la subida es correcta
+    // intentaremos borrar el archivo antiguo. Si la subida falla, conservamos el archivo viejo
+    // y no modificamos la entidad. Si el borrado del antiguo falla, mostramos un aviso pero
+    // seguimos y actualizamos el nombreArchivo al nuevo valor.
+    if (nombreArchivo) {
+      return this.apiService.subirArchivo(endpointUpload, archivoNormativa).pipe(
+        switchMap((resArchivo) => {
+          const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
+          if (!nuevoArchivoName) return of(null);
+          // Intentar borrar el archivo antiguo (no crítico): si falla, avisar pero continuar
+          const antiguo = nombreArchivo;
+          nombreArchivo = nuevoArchivoName;
+          return this.apiService
+            .borrarArchivoSharePoint(nombreBiblioteca, `normativa/${antiguo}`)
+            .pipe(
+              switchMap((borradoOk: boolean) => {
+                if (!borradoOk) {
+                  // Mostrar advertencia y continuar con el nuevo archivo en la entidad
+                  from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).subscribe(
+                    (mensaje) => {
+                      this.utilService.toast(
+                        mensaje ||
+                          'No se pudo borrar el archivo anterior. Se conservará en el servidor.',
+                        'warning'
+                      );
+                    }
+                  );
+                }
+                return patchNormativa();
+              }),
+              catchError((err) => {
+                console.warn(
+                  'No se pudo borrar el archivo antiguo, pero la subida fue correcta:',
+                  err
                 );
-              }
-              // Borrado OK -> subimos el nuevo archivo
-              return this.apiService.subirArchivo(endpointUpload, archivoNormativa).pipe(
-                switchMap((resArchivo) => {
-                  const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
-                  if (!nuevoArchivoName) return of(null);
-                  nombreArchivo = nuevoArchivoName;
-                  return patchNormativa();
-                }),
-                catchError((err) => {
-                  console.error('Error subiendo el nuevo archivo:', err);
-                  return of(null);
-                })
-              );
-            }),
-            catchError((err) => {
-              console.warn('Error borrando el archivo anterior:', err);
-              return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
-                switchMap((mensaje) => {
-                  this.utilService.toast(
-                    mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
-                    'error'
-                  );
-                  return of(null);
-                }),
-                catchError(() => {
-                  this.utilService.toast(
-                    'No se pudo borrar el archivo anterior. Operación abortada.',
-                    'error'
-                  );
-                  return of(null);
-                })
-              );
-            })
+                from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).subscribe(
+                  (mensaje) => {
+                    this.utilService.toast(
+                      mensaje ||
+                        'No se pudo borrar el archivo anterior. Se conservará en el servidor.',
+                      'warning'
+                    );
+                  }
+                );
+                return patchNormativa();
+              })
+            );
+        }),
+        catchError((err) => {
+          console.error('Error subiendo el nuevo archivo:', err);
+          // No borramos nada y conservamos el archivo y nombre antiguos
+          this.utilService.toast(
+            'Error subiendo el nuevo archivo. Se conserva la versión anterior.',
+            'error'
           );
-        }
-        // No había archivo previo: subimos y parchamos directamente
-        return this.apiService.subirArchivo(endpointUpload, archivoNormativa).pipe(
-          switchMap((resArchivo) => {
-            const nuevoArchivoName = resArchivo?.d?.Name || resArchivo?.Name || '';
-            if (!nuevoArchivoName) return of(null);
-            nombreArchivo = nuevoArchivoName;
-            return patchNormativa();
-          }),
-          catchError((err) => {
-            console.error('Error subiendo el nuevo archivo (sin previo):', err);
-            return of(null);
-          })
-        );
-      }
-  deleteNormativa(nombreArchivo: string, idNormativa: string, nombreCenad: string): Observable<any> {
- const endpoint = 'Normativas';
+          return of(null);
+        })
+      );
+    }
+    // Caso no esperado (nunca debería ocurrir): aplicar patch como fallback
+    console.warn('editarNormativa: no se detectó archivo previo; ejecutando fallback de patch.');
+    return patchNormativa();
+  }
+
+  deleteNormativa(
+    nombreArchivo: string,
+    idNormativa: string,
+    nombreCenad: string,
+    evitarBorrado?: boolean
+  ): Observable<any> {
+    let evitarElBorrado = evitarBorrado ? evitarBorrado : false;
+    const endpoint = 'Normativas';
+    if (evitarElBorrado || !nombreArchivo) {
+      console.log('Evitar borrado activado, borrara solo normativa, sin borrar archivo.');
+      return this.apiService.request<any>(endpoint, 'DELETE', { Id: idNormativa }).pipe(
+        tap(async (res) => {
+          if (!evitarElBorrado) {
+            const mensaje = await this.idiomaService.tVars('normativas.normativaEliminada', {
+              nombreArchivo: idNormativa,
+            });
+            this.utilService.toast(mensaje, 'success');
+          }
+        }),
+        catchError((err) => {
+          console.error(err);
+          return of(false);
+        })
+      );
+    }
     return this.apiService.borrarArchivoSharePoint(nombreCenad, `normativa/${nombreArchivo}`).pipe(
       switchMap((borradoOk: boolean) => {
         if (!borradoOk) {
-          console.warn('Abortando subida: no se pudo borrar el escudo anterior.');
+          console.warn('Abortando subida: no se pudo borrar el archivo anterior.');
           return from(this.idiomaService.tVars('archivos.errorBorrarArchivo')).pipe(
             switchMap((mensaje) => {
               this.utilService.toast(
-                mensaje || 'No se pudo borrar el escudo anterior. Operación abortada.',
+                mensaje || 'No se pudo borrar el archivo anterior. Operación abortada.',
                 'error'
               );
               return of(null);

@@ -98,6 +98,7 @@ export class SolicitudService {
       fechaHoraInicioRecurso: this.utilService.localDateTimeToIso(fechaHoraInicioRecurso),
       fechaHoraFinRecurso: this.utilService.localDateTimeToIso(fechaHoraFinRecurso),
       estado: estado,
+      estadoPrevio: estado,
       cenadId: idCenad,
       recursoId: idRecurso,
       usuarioNormalId: idUsuarioNormal

@@ -52,7 +52,7 @@ export class FicheroSolicitudComponent {
     if (!archivo) {
       return;
     }
-    this.orquestadorService.getArchivoSolicitud(archivo, this.nombreCenad(), this.idSolicitud()).subscribe({
+    this.orquestadorService.getArchivoSolicitud(archivo, this.nombreCenad(), this.idSolicitud(), this.isCenad()!).subscribe({
       next: () => {
       },
       error: (err) => {

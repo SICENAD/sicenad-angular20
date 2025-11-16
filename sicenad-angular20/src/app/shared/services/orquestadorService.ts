@@ -449,7 +449,7 @@ export class OrquestadorService {
       tap(() => {
         this.loadAllUsuariosAdministrador().subscribe();
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorRegistroAdmin'), err);
         return of(null as unknown as RegisterResponse);
       })
@@ -1208,7 +1208,7 @@ export class OrquestadorService {
     idCenad: string,
     idTipoFormulario: string,
     idCategoria: string,
-    idGestor: string,
+    idGestor: string
   ): Observable<any> {
     return this.recursoService
       .crearRecurso(nombre, descripcion, otros, idTipoFormulario, idCategoria, idGestor, idCenad)
@@ -1898,6 +1898,7 @@ export class OrquestadorService {
                 console.log(mensaje);
               });
           } else {
+            this.loadAllCartografias(idCenad).subscribe();
             this.idiomaService
               .tVars('orquestador.errorCreandoCartografia', { nombre })
               .then((mensaje) => {
@@ -1956,26 +1957,28 @@ export class OrquestadorService {
     idCenad: string,
     nombreCenad: string
   ): Observable<any> {
-    return this.cartografiaService.deleteCartografia(nombreArchivo, idCartografia, nombreCenad).pipe(
-      tap((res) => {
-        if (res) {
-          this.idiomaService
-            .tVars('cartografias.cartografiaEliminada', { nombreArchivo })
-            .then((mensaje) => {
-              console.log(mensaje);
-            });
-          this.loadAllCartografias(idCenad)
-            .pipe(tap((cartografias) => this.cenadStore.setCartografias(cartografias)))
-            .subscribe();
-        } else {
-          this.idiomaService
-            .tVars('orquestador.errorBorrandoCartografia', { nombreArchivo })
-            .then((mensaje) => {
-              console.error(mensaje);
-            });
-        }
-      })
-    );
+    return this.cartografiaService
+      .deleteCartografia(nombreArchivo, idCartografia, nombreCenad)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.idiomaService
+              .tVars('cartografias.cartografiaEliminada', { nombreArchivo })
+              .then((mensaje) => {
+                console.log(mensaje);
+              });
+            this.loadAllCartografias(idCenad)
+              .pipe(tap((cartografias) => this.cenadStore.setCartografias(cartografias)))
+              .subscribe();
+          } else {
+            this.idiomaService
+              .tVars('orquestador.errorBorrandoCartografia', { nombreArchivo })
+              .then((mensaje) => {
+                console.error(mensaje);
+              });
+          }
+        })
+      );
   }
 
   getArchivoCartografia(nombreArchivo: string, nombreCenad: string): Observable<void> {
@@ -2018,6 +2021,7 @@ export class OrquestadorService {
               console.log(mensaje);
             });
           } else {
+            this.loadFicherosDeRecurso(idRecurso).subscribe();
             this.idiomaService
               .tVars('orquestador.errorCreandoFichero', { nombre })
               .then((mensaje) => {
@@ -2095,10 +2099,18 @@ export class OrquestadorService {
       );
   }
 
-  getArchivoRecurso(nombreArchivo: string, nombreCenad: string, idRecurso: string): Observable<void> {
+  getArchivoRecurso(
+    nombreArchivo: string,
+    nombreCenad: string,
+    idRecurso: string
+  ): Observable<void> {
     return this.ficheroService.getArchivoRecurso(nombreArchivo, nombreCenad, idRecurso);
   }
-  getImagenRecurso(nombreArchivo: string, nombreCenad: string, idRecurso: string): Observable<Blob> {
+  getImagenRecurso(
+    nombreArchivo: string,
+    nombreCenad: string,
+    idRecurso: string
+  ): Observable<Blob> {
     return this.ficheroService.getImagenRecurso(nombreArchivo, nombreCenad, idRecurso);
   }
 
@@ -2155,6 +2167,7 @@ export class OrquestadorService {
               console.log(mensaje);
             });
           } else {
+            this.loadDocumentacionCenad(idSolicitud).subscribe();
             this.idiomaService
               .tVars('orquestador.errorCreandoFichero', { nombre })
               .then((mensaje) => {
@@ -2190,6 +2203,7 @@ export class OrquestadorService {
               console.log(mensaje);
             });
           } else {
+            this.loadDocumentacionUnidad(idSolicitud).subscribe();
             this.idiomaService
               .tVars('orquestador.errorCreandoFichero', { nombre })
               .then((mensaje) => {
@@ -2219,7 +2233,8 @@ export class OrquestadorService {
         nombreCenad,
         idSolicitud,
         idCategoriaFichero,
-        idFichero
+        idFichero,
+        true
       )
       .pipe(
         tap((res) => {
@@ -2258,7 +2273,8 @@ export class OrquestadorService {
         nombreCenad,
         idSolicitud,
         idCategoriaFichero,
-        idFichero
+        idFichero,
+        false
       )
       .pipe(
         tap((res) => {
@@ -2285,7 +2301,7 @@ export class OrquestadorService {
     idSolicitud: string
   ): Observable<any> {
     return this.ficheroService
-      .deleteFicheroSolicitud(nombreArchivo, idFichero, nombreCenad, idSolicitud)
+      .deleteFicheroSolicitud(nombreArchivo, idFichero, nombreCenad, idSolicitud, true)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2313,7 +2329,7 @@ export class OrquestadorService {
     idSolicitud: string
   ): Observable<any> {
     return this.ficheroService
-      .deleteFicheroSolicitud(nombreArchivo, idFichero, nombreCenad, idSolicitud)
+      .deleteFicheroSolicitud(nombreArchivo, idFichero, nombreCenad, idSolicitud, false)
       .pipe(
         tap((res) => {
           if (res) {
@@ -2337,17 +2353,19 @@ export class OrquestadorService {
   getArchivoSolicitud(
     nombreArchivo: string,
     nombreCenad: string,
-    idSolicitud: string
+    idSolicitud: string,
+    isCenad: boolean
   ): Observable<void> {
-    return this.ficheroService.getArchivoSolicitud(nombreArchivo, nombreCenad, idSolicitud);
+    return this.ficheroService.getArchivoSolicitud(nombreArchivo, nombreCenad, idSolicitud, isCenad);
   }
 
   getImagenSolicitud(
     nombreArchivo: string,
     nombreCenad: string,
-    idSolicitud: string
+    idSolicitud: string,
+    isCenad: boolean
   ): Observable<Blob> {
-    return this.ficheroService.getImagenSolicitud(nombreArchivo, nombreCenad, idSolicitud);
+    return this.ficheroService.getImagenSolicitud(nombreArchivo, nombreCenad, idSolicitud, isCenad);
   }
 
   // --- CRUD Normativas ---
@@ -2358,24 +2376,27 @@ export class OrquestadorService {
     idCenad: string,
     nombreCenad: string
   ): Observable<any> {
-    return this.normativaService.crearNormativa(nombre, descripcion, archivo, idCenad, nombreCenad).pipe(
-      tap((res) => {
-        if (res) {
-          this.loadAllNormativas(idCenad)
-            .pipe(tap((normativas) => this.cenadStore.setNormativas(normativas)))
-            .subscribe();
-          this.idiomaService.tVars('normativas.normativaCreada', { nombre }).then((mensaje) => {
-            console.log(mensaje);
-          });
-        } else {
-          this.idiomaService
-            .tVars('orquestador.errorCreandoNormativa', { nombre })
-            .then((mensaje) => {
-              console.warn(mensaje);
+    return this.normativaService
+      .crearNormativa(nombre, descripcion, archivo, idCenad, nombreCenad)
+      .pipe(
+        tap((res) => {
+          if (res) {
+            this.loadAllNormativas(idCenad)
+              .pipe(tap((normativas) => this.cenadStore.setNormativas(normativas)))
+              .subscribe();
+            this.idiomaService.tVars('normativas.normativaCreada', { nombre }).then((mensaje) => {
+              console.log(mensaje);
             });
-        }
-      })
-    );
+          } else {
+            this.loadAllNormativas(idCenad).subscribe();
+            this.idiomaService
+              .tVars('orquestador.errorCreandoNormativa', { nombre })
+              .then((mensaje) => {
+                console.warn(mensaje);
+              });
+          }
+        })
+      );
   }
 
   actualizarNormativa(
@@ -2388,7 +2409,14 @@ export class OrquestadorService {
     idNormativa: string
   ): Observable<any> {
     return this.normativaService
-      .editarNormativa(nombre, descripcion, archivoNormativa, archivoActual, nombreCenad, idNormativa)
+      .editarNormativa(
+        nombre,
+        descripcion,
+        archivoNormativa,
+        archivoActual,
+        nombreCenad,
+        idNormativa
+      )
       .pipe(
         tap((res) => {
           if (res) {
@@ -2411,7 +2439,12 @@ export class OrquestadorService {
       );
   }
 
-  borrarNormativa(nombreArchivo: string, idNormativa: string, idCenad: string, nombreCenad: string): Observable<any> {
+  borrarNormativa(
+    nombreArchivo: string,
+    idNormativa: string,
+    idCenad: string,
+    nombreCenad: string
+  ): Observable<any> {
     return this.normativaService.deleteNormativa(nombreArchivo, idNormativa, nombreCenad).pipe(
       tap((res) => {
         if (res) {
