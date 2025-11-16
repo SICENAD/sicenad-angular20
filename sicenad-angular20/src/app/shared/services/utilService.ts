@@ -1,10 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { ToastrService } from 'ngx-toastr';
+import { ModalSubidaService } from './modalSubidaArchivo.service';
 
 @Injectable({ providedIn: 'root' })
 export class UtilService {
   private toastr = inject(ToastrService);
+  // modal subida service (opcional)
+  private modalSubidaService = inject(ModalSubidaService, { optional: true }) as ModalSubidaService | undefined;
 
   // ----------------- TOAST -----------------
   toast(str: string, tipo: string) {
@@ -31,6 +34,13 @@ export class UtilService {
   blockingProgressStart(key: string, message: string) {
     try {
       if (typeof document === 'undefined') return;
+      // Prefer component modal if available: try to open it first and return if handled
+      if (this.modalSubidaService) {
+        try {
+          const handled = this.modalSubidaService.open(key, message);
+          if (handled) return;
+        } catch (e) {}
+      }
       const existing = document.getElementById(`sicenad-blocking-${key}`);
       if (existing) return; // ya existe
       const overlay = document.createElement('div');
@@ -89,6 +99,16 @@ export class UtilService {
 
   blockingProgressUpdate(key: string, messageOrPercent: string) {
     try {
+      // Prefer component modal if available
+      if (this.modalSubidaService) {
+        try {
+          const m = (messageOrPercent || '').toString().match(/(\d{1,3})%/);
+          const percent = m && m[1] ? Math.min(100, Math.max(0, parseInt(m[1], 10))) : 0;
+          const messageOnly = (messageOrPercent || '').toString().replace(/(\d{1,3}%)/, '').trim();
+          this.modalSubidaService.update(key, percent, messageOnly || undefined);
+          return;
+        } catch (e) {}
+      }
       if (typeof document === 'undefined') return;
       const overlay = document.getElementById(`sicenad-blocking-${key}`) as any;
       if (!overlay || !overlay.__sicenad) return;
@@ -112,6 +132,10 @@ export class UtilService {
 
   blockingProgressComplete(key: string, finalMessage?: string) {
     try {
+      // Prefer component modal if available
+      if (this.modalSubidaService) {
+        try { this.modalSubidaService.complete(key, finalMessage); return; } catch (e) {}
+      }
       if (typeof document === 'undefined') return;
       const overlay = document.getElementById(`sicenad-blocking-${key}`) as any;
       if (!overlay) return;
@@ -129,39 +153,95 @@ export class UtilService {
     }
   }
 
-  blockingProgressError(key: string, errorMessage: string) {
+  blockingProgressError(key: string, errorMessage: string, filename: string) {
     try {
-      if (typeof document === 'undefined') return;
-      const overlay = document.getElementById(`sicenad-blocking-${key}`) as any;
-      if (!overlay) return;
-      const { title, box } = overlay.__sicenad || {};
-      // Mostrar encabezado de error
-      if (title) title.innerText = errorMessage || 'Error al subir';
-      // Añadir botón Cerrar si no existe
-      const btnId = `sicenad-blocking-close-${key}`;
-      if (!document.getElementById(btnId) && box) {
-        const btn = document.createElement('button');
-        btn.id = btnId;
-        btn.innerText = 'Cerrar';
-        btn.style.display = 'inline-block';
-        btn.style.marginTop = '12px';
-        btn.style.padding = '8px 12px';
-        btn.style.border = 'none';
-        btn.style.background = '#1976d2';
-        btn.style.color = '#fff';
-        btn.style.borderRadius = '4px';
-        btn.style.cursor = 'pointer';
-        btn.setAttribute('aria-label', 'Cerrar diálogo de subida');
-        btn.onclick = () => {
-          try {
-            overlay.remove();
-            try { (document.body as HTMLElement).focus(); } catch (e) {}
-          } catch (e) {}
-        };
-        box.appendChild(btn);
-        // dar focus al botón para accesibilidad
-        setTimeout(() => { try { btn.focus(); } catch (e) {} }, 50);
+      if (this.modalSubidaService) {
+        try {
+          // cerrar modal de subida activo
+          try { this.modalSubidaService.close(key); } catch (e) {}
+          // abrir modal de error independiente con título "Error subiendo <nombre>"
+          const errKey = `error-${key}`;
+          const errTitle = filename ? `Error subiendo ${filename}` : 'Error al subir el archivo';
+          try { this.modalSubidaService.open(errKey, errTitle); } catch (e) {}
+          try { this.modalSubidaService.error(errKey, errorMessage); } catch (e) {}
+          return;
+        } catch (e) {}
       }
+
+      if (typeof document === 'undefined') return;
+      // eliminar overlay de subida si existiera (y extraer nombre archivo si es posible)
+      const uploadOverlay = document.getElementById(`sicenad-blocking-${key}`) as any;
+      let filenameFromOverlay = '';
+      try {
+        if (uploadOverlay) {
+          const info = uploadOverlay.__sicenad || {};
+          const prevTitle = info.title && info.title.innerText ? info.title.innerText.toString() : '';
+          if (prevTitle && prevTitle.startsWith('Subiendo ')) filenameFromOverlay = prevTitle.slice('Subiendo '.length).trim();
+          else filenameFromOverlay = prevTitle.trim();
+          uploadOverlay.remove();
+        }
+      } catch (e) {}
+
+      // crear overlay de error separado (id: sicenad-blocking-error-<key>)
+      const errorId = `sicenad-blocking-error-${key}`;
+      // si ya existe, actualizar texto
+      const existingError = document.getElementById(errorId) as any;
+      if (existingError) {
+        const info = existingError.__sicenad || {};
+        if (info.title) info.title.innerText = errorMessage || 'Error al subir';
+        return;
+      }
+
+      const overlay = document.createElement('div');
+      overlay.id = errorId;
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.zIndex = '20000';
+      overlay.style.background = 'rgba(0,0,0,0.45)';
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+
+      const box = document.createElement('div');
+      box.style.background = '#fff';
+      box.style.padding = '20px 24px';
+      box.style.borderRadius = '8px';
+      box.style.minWidth = '320px';
+      box.style.maxWidth = '90%';
+      box.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+      box.style.textAlign = 'center';
+
+      const title = document.createElement('div');
+      title.style.marginBottom = '12px';
+      title.style.fontSize = '16px';
+      title.style.fontWeight = '600';
+      // usar "Error subiendo <nombre>" si tenemos el nombre, o mostrar el mensaje de error
+      if (filenameFromOverlay) title.innerText = `Error subiendo ${filenameFromOverlay}`;
+      else title.innerText = errorMessage || 'Error al subir';
+
+      box.appendChild(title);
+
+      const btn = document.createElement('button');
+      btn.innerText = 'Cerrar';
+      btn.style.display = 'inline-block';
+      btn.style.marginTop = '12px';
+      btn.style.padding = '8px 12px';
+      btn.style.border = 'none';
+      btn.style.background = '#1976d2';
+      btn.style.color = '#fff';
+      btn.style.borderRadius = '4px';
+      btn.style.cursor = 'pointer';
+      btn.onclick = () => {
+        try { overlay.remove(); } catch (e) {}
+      };
+      box.appendChild(btn);
+
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+      (overlay as any).__sicenad = { title, box };
     } catch (e) {
       console.error('Error showing blocking overlay error', e);
     }

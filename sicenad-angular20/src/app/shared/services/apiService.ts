@@ -57,9 +57,6 @@ export class ApiService {
           const human = this.humanFileSize(bytes);
           const message = `SharePoint reporta un límite aproximado de archivo: ${bytes} bytes (${human}).`;
           console.warn(message);
-          try {
-            this.utilService.toast(message, 'warning');
-          } catch {}
           return;
         }
       }
@@ -751,7 +748,7 @@ export class ApiService {
                 : String(err || 'Error en la subida');
             if (uploadId) {
               try {
-                this.utilService.blockingProgressError(uploadId, errMsg);
+                this.utilService.blockingProgressError(uploadId, errMsg, archivo.name);
               } catch {}
             }
           } catch (e) {}

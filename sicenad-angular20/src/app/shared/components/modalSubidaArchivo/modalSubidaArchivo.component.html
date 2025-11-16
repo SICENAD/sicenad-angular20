@@ -1,0 +1,18 @@
+@if (state) {
+<div class="msa-overlay">
+  <div class="msa-box">
+    <div class="msa-title">{{ state.title }}</div>
+    @if (state.status !== 'error') {
+    <div class="msa-bar-outer">
+      <div class="msa-bar-inner" [style.width.%]="state.percent"></div>
+    </div>
+    <div class="msa-percent">{{ state.percent }}%</div>
+    }
+    @if (state.status === 'error') {
+    <div class="msa-actions">
+      <button class="msa-close" (click)="close()">Cerrar</button>
+    </div>
+    }
+  </div>
+</div>
+}
