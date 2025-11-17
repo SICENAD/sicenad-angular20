@@ -14,6 +14,8 @@ import { UtilsStore } from '@stores/utils.store';
 import { FicheroSolicitudComponent } from '../ficheroSolicitud/ficheroSolicitud.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { UpperCasePipe } from '@angular/common';
+import { IdiomaService } from '@services/idiomaService';
+import { UtilService } from '@services/utilService';
 
 @Component({
   selector: 'app-ficherosSolicitud',
@@ -29,6 +31,8 @@ export class FicherosSolicitudComponent {
   private utils = inject(UtilsStore);
   private iconoStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
   private fb = inject(FormBuilder);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -40,6 +44,17 @@ export class FicherosSolicitudComponent {
   // Estado base
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
   sizeMaxDocSolicitud = computed(() => this.utils.sizeMaxDocSolicitud());
+  sizeMaxDocSolicitudBytes = computed<number>(() => {
+    const raw = this.sizeMaxDocSolicitud();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   isGestorEsteCenad = computed(() => {
     return (this.usuarioLogueadoStore.cenadPropio()?.Id === this.cenadVisitado()?.Id) && (this.auth.rol() === RolUsuario.Gestor);
@@ -78,15 +93,28 @@ export class FicherosSolicitudComponent {
   get categoriaFichero() { return this.ficheroForm.get('categoriaFichero'); }
   get nombreArchivo() { return this.ficheroForm.get('nombreArchivo'); }
 
-  onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.ficheroForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+onFileChange(event: any) {
+    const input = event.target as HTMLInputElement;
+    const file: File | null = input?.files && input.files[0];
+    if (!file) {
       this.ficheroForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxDocSolicitudBytes();
+    if (typeof maxBytes === 'number' && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');
+      // limpiar selección
+      input.value = '';
+      this.ficheroForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.ficheroForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   descargar(fichero: FicheroSolicitud): void {

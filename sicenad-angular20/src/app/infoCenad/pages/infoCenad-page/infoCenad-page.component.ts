@@ -8,6 +8,7 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
+import { UtilService } from '@services/utilService';
 import { AuthStore } from '@stores/auth.store';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
@@ -27,6 +28,7 @@ export class InfoCenadPageComponent {
   private utils = inject(UtilsStore);
   private iconosStore = inject(IconosStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
   private fb = inject(FormBuilder);
   private idiomaService = inject(IdiomaService);
 
@@ -36,6 +38,17 @@ export class InfoCenadPageComponent {
   btnVista = signal('Administrador');
   etiquetaBoton = signal<string>(this.idiomaService.t('homeCenadVisitado.btnAdmin'));
   sizeMaxEscudo = computed(() => this.utils.sizeMaxEscudo());
+  sizeMaxEscudoBytes = computed<number>(() => {
+    const raw = this.sizeMaxEscudo();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   isAdminEsteCenad = signal(false);
 
@@ -124,16 +137,30 @@ export class InfoCenadPageComponent {
   }
 
   onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.cenadForm.patchValue({ infoCenad: file });
-      const reader = new FileReader();
-      reader.onload = (e) => this.previewInfoCenad.set(e.target?.result as string);
-      reader.readAsDataURL(file);
-      this.infoCenadFile.set(file);
-    } else {
+    const file: File | undefined = event?.target?.files?.[0];
+    if (!file) {
+      this.cenadForm.patchValue({ infoCenad: null });
       this.infoCenadFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxEscudoBytes();
+    if (typeof maxBytes === 'number' && maxBytes > 0 && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error'); // limpiar selección visual y formulario
+      try {
+        if (this.fileInput && this.fileInput.nativeElement) this.fileInput.nativeElement.value = '';
+      } catch {}
+      this.cenadForm.patchValue({ infoCenad: null });
+      this.infoCenadFile.set(null);
+      return;
+    }
+    // aceptado
+    this.cenadForm.patchValue({ infoCenad: file });
+    const reader = new FileReader();
+    reader.onload = (e) => this.previewInfoCenad.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+    this.infoCenadFile.set(file);
   }
 
   editarInfoCenad() {

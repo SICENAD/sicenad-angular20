@@ -13,6 +13,7 @@ import { forkJoin, map } from 'rxjs';
 import { UtilService } from '@services/utilService';
 import { TranslateModule } from '@ngx-translate/core';
 import { UpperCasePipe } from '@angular/common';
+import { IdiomaService } from '@services/idiomaService';
 
 @Component({
   selector: 'app-ficherosRecurso',
@@ -26,6 +27,7 @@ export class FicherosRecursoComponent {
   private utils = inject(UtilsStore);
   private iconoStore = inject(IconosStore);
   private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
   private orquestadorService = inject(OrquestadorService);
   private fb = inject(FormBuilder);
 
@@ -43,6 +45,17 @@ export class FicherosRecursoComponent {
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
   categorias = computed(() => this.cenadStore.categorias());
   sizeMaxDocRecurso = computed(() => this.utils.sizeMaxDocRecurso());
+  sizeMaxDocRecursoBytes = computed<number>(() => {
+    const raw = this.sizeMaxDocRecurso();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
   imagenModalNombre = computed(() => this.utilService.toTitleCase(this.imagenModal()?.nombre || ''));
 
@@ -63,15 +76,28 @@ export class FicherosRecursoComponent {
   get categoriaFichero() { return this.ficheroForm.get('categoriaFichero'); }
   get nombreArchivo() { return this.ficheroForm.get('nombreArchivo'); }
 
-  onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.ficheroForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+onFileChange(event: any) {
+    const input = event.target as HTMLInputElement;
+    const file: File | null = input?.files && input.files[0];
+    if (!file) {
       this.ficheroForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxDocRecursoBytes();
+    if (typeof maxBytes === 'number' && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');
+      // limpiar selección
+      input.value = '';
+      this.ficheroForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.ficheroForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   constructor() {

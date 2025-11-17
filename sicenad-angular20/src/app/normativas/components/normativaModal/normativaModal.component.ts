@@ -23,7 +23,7 @@ export class NormativaModalComponent {
   private cenadStore = inject(CenadStore);
   private orquestadorService = inject(OrquestadorService);
   private utilService = inject(UtilService);
-  private idiomaService = inject(IdiomaService);  
+  private idiomaService = inject(IdiomaService);
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
 

@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
+import { UtilService } from '@services/utilService';
 import { CenadStore } from '@stores/cenad.store';
 import { DatosPrincipalesStore } from '@stores/datosPrincipales.store';
 import { IconosStore } from '@stores/iconos.store';
@@ -21,6 +23,8 @@ export class FicheroSolicitudModalComponent {
   private datosPrincipalesStore = inject(DatosPrincipalesStore);
   private cenadStore = inject(CenadStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
 
@@ -33,6 +37,17 @@ export class FicheroSolicitudModalComponent {
 
   categoriasFichero = computed(() => this.datosPrincipalesStore.categoriasFichero());
   sizeMaxDocSolicitud = computed(() => this.utils.sizeMaxDocSolicitud());
+  sizeMaxDocSolicitudBytes = computed<number>(() => {
+    const raw = this.sizeMaxDocSolicitud();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   idFichero = computed(() => this.fichero()?.Id || '');
   _idModal = signal('modal-fichero-' + this.fichero()?.Id);
   _idModalEliminar = signal('modal-fichero-eliminar-' + this.fichero()?.Id);
@@ -58,13 +73,25 @@ export class FicheroSolicitudModalComponent {
   get nombreArchivo() { return this.ficheroForm.get('nombreArchivo'); }
 
   onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.ficheroForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+    const file: File | undefined = event?.target?.files?.[0];
+    if (!file) {
+      this.ficheroForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxDocSolicitudBytes();
+    if (typeof maxBytes === 'number' && maxBytes > 0 && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');      // limpiar selección visual y formulario
+      try { if (this.fileInput && this.fileInput.nativeElement) this.fileInput.nativeElement.value = ''; } catch {}
+      this.ficheroForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.ficheroForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   private esperarYCargarArchivo = void effect(() => {
