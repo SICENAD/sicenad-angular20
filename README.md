@@ -1,23 +1,26 @@
-# Aplicación `SICENAD`
+# **Aplicación `SICENAD`**
 
 ![MADOC](./sicenad-angular20/public//img/madoc.png)
 
-## DOCUMENTACIÓN
+## **DOCUMENTACIÓN**
 
 - Puede consultar la documentación accediendo a la [WIKI](https://git.institutomilitar.com/sicenad/sicenad/wikis/home).
 
-## DESARROLLO
+## **DESARROLLO**
 
 - Es una adaptación de la aplicación para Sharepoint:
 - Para ello se crea un subsitio para alojar integramente la aplicación.
 
-### BACKEND
+### **BACKEND**
 
 - Se simula la gestión de BBDD sobre **Listas de Sharepoint**, relacionadas entre sí.
 - El almacenamiento de archivos se hará en **Bibliotecas de documentos** creadas a tal efecto para cada _CENAD/CMT_.
 - Servicios, como la notificación sobre cambios de estado en las distintas solicitudes realizadas, se realizará mediante **Flujos de trabajo de Microsoft Sharepoint Designer**.
 
-### FRONTEND
+<!-- Salto de página para impresión -->
+<div style="page-break-before: always;"></div>
+
+### **FRONTEND**
 
 - Se ha realizado usando Angular 20, utilizando componentes Standalone y el paradigma de señales. Se han adaptado las distintas llamadas _http_ adaptándose a las particularidades de la _api_ que expone Sharepoint.
 - Además se han incorporado novedades adaptadas de `Vue`, como la gestión de estados globales.
@@ -28,7 +31,7 @@
   - El espacio total disponible viene limitado por la **Cuota de almacenamiento (Métrica)** de la Colección de Sitios.
   - Las restricciones de tamaño de archivo que regulan la subida de los mismos actualmente está en 150 MB,s.
 
-## FUNCIONALIDADES PRINCIPALES
+## **FUNCIONALIDADES PRINCIPALES**
 
 - Se necesita una aplicación para poder gestionar los recursos de los CENAD,s/CMT,s del Ejército de Tierra.
 - La aplicación `SICENAD` permitirá crear y mantener una BD de sus CENAD,s/CMT,s, con sus respectivos recursos, pudiendo administrarse cada CENAD/CMT por sí mismo, pero manteniéndose un control centralizado.
