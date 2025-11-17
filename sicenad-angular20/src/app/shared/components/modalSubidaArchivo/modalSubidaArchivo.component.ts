@@ -1,12 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ModalState, ModalSubidaService } from '@services/modalSubidaArchivo.service';
+import { ModalSubidaService } from '@services/modalSubidaArchivo.service';
+import { ModalState } from '@interfaces/others/modalState';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
-  selector: 'app-modalSubidaArchivo',
   imports: [TranslateModule],
+  selector: 'app-modalSubidaArchivo',
   templateUrl: './modalSubidaArchivo.component.html',
   styleUrls: ['./modalSubidaArchivo.component.css']
 })

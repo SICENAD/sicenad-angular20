@@ -69,6 +69,7 @@
     "archivos": {
         "descarga": "Herunterladen",
         "subirArchivo": "Datei hochladen",
+        "subiendo":"{{archivo}} hochladen",        
         "seleccionarArchivo": "Datei auswählen",
         "archivoSeleccionado": "Ausgewählte Datei:",
         "eliminarArchivo": "Datei löschen",
@@ -90,7 +91,8 @@
         "errorBorrarCarpeta": "Fehler beim Löschen des Ordners.",
         "ficheroEliminado": "Datei {{nombre}} wurde gelöscht",
         "archivo": "Datei",
-        "archivoActual": "Aktuelle Datei"
+        "archivoActual": "Aktuelle Datei",
+        "tooSize": "SharePoint hat mit FileTooLarge reagiert; die Datei überschreitet möglicherweise das auf dem Server konfigurierte Limit"
     },
     "administracion": {
         "rol": {

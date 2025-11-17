@@ -13,6 +13,8 @@ import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { NormativaComponent } from '@app/normativas/components/normativa/normativa.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { UpperCasePipe } from '@angular/common';
+import { IdiomaService } from '@services/idiomaService';
+import { UtilService } from '@services/utilService';
 
 @Component({
   selector: 'app-normativas',
@@ -24,6 +26,8 @@ export class NormativasPageComponent {
 
   private utils = inject(UtilsStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
   private iconoStore = inject(IconosStore);
   private fb = inject(FormBuilder);
   private auth = inject(AuthStore);
@@ -34,6 +38,17 @@ export class NormativasPageComponent {
   readonly routesPaths = RoutesPaths;
   normativas = computed(() => this.cenadStore.normativas());
   sizeMaxDocRecurso = computed(() => this.utils.sizeMaxDocRecurso());
+  sizeMaxDocRecursoBytes = computed<number>(() => {
+    const raw = this.sizeMaxDocRecurso();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
 
   isAdminEsteCenad = computed(() => {
@@ -54,15 +69,28 @@ export class NormativasPageComponent {
   get descripcion() { return this.normativaForm.get('descripcion'); }
   get nombreArchivo() { return this.normativaForm.get('nombreArchivo'); }
 
-  onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.normativaForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+onFileChange(event: any) {
+    const input = event.target as HTMLInputElement;
+    const file: File | null = input?.files && input.files[0];
+    if (!file) {
       this.normativaForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxDocRecursoBytes(); 
+    if (typeof maxBytes === 'number' && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');
+      // limpiar selección
+      input.value = '';
+      this.normativaForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.normativaForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   crearNormativa() {

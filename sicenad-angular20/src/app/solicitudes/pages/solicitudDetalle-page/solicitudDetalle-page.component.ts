@@ -259,8 +259,6 @@ export class SolicitudDetallePageComponent {
       .subscribe({
         next: (res) => {
           if (res) {
-            this.estadoInicial !== estado &&
-              this.orquestadorService.notificarCambioEstado(this.solicitud()!.Id).subscribe();
             this.router.navigate([
               this.routesPaths.cenadHome,
               this.cenadVisitado()?.Id,

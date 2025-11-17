@@ -69,6 +69,7 @@
     "archivos": {
         "descarga": "Download",
         "subirArchivo": "Enviar arquivo",
+        "subiendo": "A carregar {{archivo}}",
         "seleccionarArchivo": "Selecionar arquivo",
         "archivoSeleccionado": "Arquivo selecionado:",
         "eliminarArchivo": "Excluir arquivo",
@@ -90,7 +91,8 @@
         "errorBorrarCarpeta": "Erro ao excluir a pasta.",
         "ficheroEliminado": "O arquivo {{nombre}} foi excluído",
         "archivo": "Arquivo",
-        "archivoActual": "Arquivo atual"
+        "archivoActual": "Arquivo atual",
+        "tooSize": "O SharePoint respondeu com FileTooLarge; o ficheiro pode exceder o limite configurado no servidor."
     },
     "administracion": {
         "rol": {

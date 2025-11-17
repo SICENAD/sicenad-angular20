@@ -42,7 +42,7 @@ export class ApiService {
     });
   }
 
-  private logSharePointFileSizeLimitFromError(err: any) {
+  private async logSharePointFileSizeLimitFromError(err: any) {
     try {
       let msg = '';
       if (!err) return;
@@ -62,12 +62,11 @@ export class ApiService {
       }
 
       if (/FileTooLarge|FileTooBig|File is too large/i.test(msg)) {
-        const message =
-          'SharePoint ha respondido con FileTooLarge; puede que el archivo exceda el límite configurado en el servidor.';
-        console.warn(message, msg);
+        const mensaje = this.idiomaService.t('archivos.tooSize');
+        console.warn(mensaje, msg);
         try {
-          this.utilService.toast(message, 'warning');
-        } catch {}
+          this.utilService.toast(mensaje, 'warning');
+        } catch { }
       }
     } catch (e) {
       // ignore
@@ -282,9 +281,8 @@ export class ApiService {
     const filterParam = filtro ? `$filter=${filtro}` : '';
     // 🔗 Unir parámetros (con & solo si ambos existen)
     const query = [filterParam, selectParam].filter((p) => p).join('&');
-    const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items${
-      query ? '?' + query : ''
-    }`;
+    const url = `${this.utils.urlApi()}/getbytitle('${nombreLista}')/items${query ? '?' + query : ''
+      }`;
     const headers = new HttpHeaders({
       Accept: 'application/json;odata=verbose',
     });
@@ -429,9 +427,8 @@ export class ApiService {
                 const baseFolder = folderPath
                   ? `${libraryName}/${folderPath}`.replace(/\\/g, '/')
                   : libraryName;
-                const url = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${baseFolder}')/Files/add(url='${
-                  archivo.name
-                }',overwrite=${overwrite})`;
+                const url = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${baseFolder}')/Files/add(url='${archivo.name
+                  }',overwrite=${overwrite})`;
                 try {
                   const response = await fetch(url, {
                     method: 'POST',
@@ -515,9 +512,8 @@ export class ApiService {
             .replace(/\/\/+/g, '/');
           // Crear placeholder vacío
           try {
-            const addUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${baseFolder}')/Files/add(url='${
-              archivo.name
-            }',overwrite=${overwrite})`;
+            const addUrl = `${this.utils.urlSitio()}/_api/web/GetFolderByServerRelativeUrl('${baseFolder}')/Files/add(url='${archivo.name
+              }',overwrite=${overwrite})`;
             const zero = new Uint8Array(0);
             const resAdd = await fetch(addUrl, {
               method: 'POST',
@@ -540,12 +536,13 @@ export class ApiService {
           }
           uploadId = this.generateGuid();
           try {
-            this.utilService.blockingProgressStart(uploadId, `Subiendo ${archivo.name}`);
-          } catch {}
+            const mensaje = await this.idiomaService.tVars('archivos.subiendo', { archivo: `${archivo.name}` });
+            this.utilService.blockingProgressStart(uploadId, mensaje);
+          } catch { }
           const totalSize = archivo.size;
           try {
             this.localStorageService.resetExpiry();
-          } catch {}
+          } catch { }
           let offset = 0;
           let isFirst = true;
           let chunkIndex = 0;
@@ -580,7 +577,7 @@ export class ApiService {
                     totalSize,
                     opUrl,
                   });
-                } catch {}
+                } catch { }
                 const response = await fetch(opUrl, {
                   method: 'POST',
                   body: buffer,
@@ -602,7 +599,7 @@ export class ApiService {
                   });
                   try {
                     this.logSharePointFileSizeLimitFromError(text);
-                  } catch {}
+                  } catch { }
                   throw new Error(`Chunk upload error ${response.status}: ${text}`);
                 }
                 const respText = await response.text().catch(() => '');
@@ -648,7 +645,7 @@ export class ApiService {
                 }
                 try {
                   this.localStorageService.resetExpiry();
-                } catch {}
+                } catch { }
                 if (returnedOffset && returnedOffset > 0 && returnedOffset <= totalSize)
                   offset = returnedOffset;
                 else offset = end;
@@ -664,27 +661,28 @@ export class ApiService {
             try {
               const percent = Math.min(100, Math.round((offset / totalSize) * 100));
               try {
-                if (uploadId)
+                if (uploadId) {
+                  const mensaje = await this.idiomaService.tVars('archivos.subiendo', { archivo: `${archivo.name}` });
                   this.utilService.blockingProgressUpdate(
                     uploadId,
-                    `Subiendo ${archivo.name} ${percent}%`
+                    `${mensaje} ${percent}%`
                   );
-              } catch {}
+                }
+              } catch { }
               if (end >= totalSize) {
                 try {
-                  if (uploadId)
-                    this.utilService.blockingProgressComplete(
-                      uploadId,
-                      `Subida completada: ${archivo.name}`
-                    );
-                } catch {}
+                  if (uploadId) {
+                    const mensaje = this.idiomaService.t('archivos.exitoSubida');
+                    this.utilService.blockingProgressComplete(uploadId, mensaje);
+                  }
+                } catch { }
               }
-            } catch {}
+            } catch { }
           }
           try {
             const finalResult = json?.d ? json : { d: json };
             subscriber.next(finalResult);
-          } catch {}
+          } catch { }
           subscriber.complete();
         } catch (err) {
           // intentar eliminar placeholder por serverRelative
@@ -736,22 +734,23 @@ export class ApiService {
                 '[SP Upload] no se dispone de serverRelative ni libraryName para eliminar placeholder'
               );
             }
-          } catch (e) {}
+          } catch (e) { }
           try {
             this.logSharePointFileSizeLimitFromError(err);
-          } catch {}
+          } catch { }
           // Mostrar overlay de error y permitir cierre
           try {
+            const mensaje = this.idiomaService.t('archivos.errorSubida');
             const errMsg =
               err && (err as any).message
                 ? String((err as any).message)
-                : String(err || 'Error en la subida');
+                : String(err || mensaje);
             if (uploadId) {
               try {
                 this.utilService.blockingProgressError(uploadId, errMsg, archivo.name);
-              } catch {}
+              } catch { }
             }
-          } catch (e) {}
+          } catch (e) { }
           subscriber.error(err);
         }
       })();

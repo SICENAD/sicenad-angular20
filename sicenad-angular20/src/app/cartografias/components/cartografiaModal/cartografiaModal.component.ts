@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Cartografia } from '@interfaces/models/cartografia';
 import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
+import { UtilService } from '@services/utilService';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
@@ -20,6 +22,8 @@ export class CartografiaModalComponent {
   private utils = inject(UtilsStore);
   private cenadStore = inject(CenadStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);  
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
 
@@ -31,6 +35,17 @@ export class CartografiaModalComponent {
   // --- State ---
   escalas = computed(() => this.utils.escalasCartografia());
   sizeMaxCartografia = computed(() => this.utils.sizeMaxCartografia());
+  sizeMaxCartografiaBytes = computed<number>(() => {
+    const raw = this.sizeMaxCartografia();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   idCartografia = computed(() => this.cartografia()?.Id || '');
   _idModal = signal('modal-cartografia-' + this.cartografia()?.Id);
   _idModalEliminar = signal('modal-cartografia-eliminar-' + this.cartografia()?.Id);
@@ -57,13 +72,25 @@ export class CartografiaModalComponent {
   get nombreArchivo() { return this.cartografiaForm.get('nombreArchivo'); }
 
   onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.cartografiaForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+    const file: File | undefined = event?.target?.files?.[0];
+    if (!file) {
+      this.cartografiaForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxCartografiaBytes();
+    if (typeof maxBytes === 'number' && maxBytes > 0 && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');      // limpiar selección visual y formulario
+      try { if (this.fileInput && this.fileInput.nativeElement) this.fileInput.nativeElement.value = ''; } catch {}
+      this.cartografiaForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.cartografiaForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   private esperarYCargarArchivo = void effect(() => {

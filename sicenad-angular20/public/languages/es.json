@@ -69,6 +69,7 @@
   "archivos": {
     "descarga": "Descarga",
     "subirArchivo": "Subir archivo",
+    "subiendo": "Subiendo {{archivo}}",
     "seleccionarArchivo": "Seleccionar archivo",
     "archivoSeleccionado": "Archivo seleccionado:",
     "eliminarArchivo": "Eliminar archivo",
@@ -90,7 +91,9 @@
     "errorBorrarCarpeta": "Error al borrar la carpeta.",
     "ficheroEliminado": "Se ha eliminado el archivo {{nombre}}",
     "archivo": "Archivo",
-    "archivoActual": "Archivo actual"
+    "archivoActual": "Archivo actual",
+    "tooSize": "SharePoint ha respondido con FileTooLarge; puede que el archivo exceda el límite configurado en el servidor."
+
   },
   "administracion": {
     "rol": {

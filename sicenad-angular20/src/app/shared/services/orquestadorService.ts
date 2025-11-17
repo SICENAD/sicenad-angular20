@@ -36,8 +36,6 @@ import { RolUsuario } from '@interfaces/enums/rolUsuario.enum';
 import { FicheroService } from './ficheroService';
 import { FicheroRecurso } from '@interfaces/models/ficheroRecurso';
 import { FicheroSolicitud } from '@interfaces/models/ficheroSolicitud';
-import { NotificacionResponse } from '@interfaces/responses/notificacionResponse';
-import { NotificacionService } from './notificacionService';
 import { ChangePasswordResponse } from '@interfaces/responses/changePasswordResponse';
 import { UtilService } from './utilService';
 import { IdiomaService } from './idiomaService';
@@ -62,7 +60,6 @@ export class OrquestadorService {
   private normativaService = inject(NormativaService);
   private solicitudService = inject(SolicitudService);
   private ficheroService = inject(FicheroService);
-  private notificacionService = inject(NotificacionService);
   private idiomaService = inject(IdiomaService);
 
   /** Garantiza que el store tenga urlApi válida antes de usar servicios */
@@ -351,16 +348,6 @@ export class OrquestadorService {
       catchError((err) => {
         console.error(this.idiomaService.t('orquestador.errorCargaCenadVisitado'), err);
         this.cenadStore.clearCenadVisitado();
-        return of(null);
-      })
-    );
-  }
-
-  // --- NOTIFICACIONES ---
-  notificarCambioEstado(idSolicitud: string): Observable<NotificacionResponse | null> {
-    return this.notificacionService.notificarCambioEstado(idSolicitud).pipe(
-      catchError((err) => {
-        console.error(this.idiomaService.t('orquestador.errorNotificandoCambioEstado'), err);
         return of(null);
       })
     );

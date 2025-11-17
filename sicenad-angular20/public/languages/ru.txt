@@ -69,6 +69,7 @@
     "archivos": {
         "descarga": "Скачать",
         "subirArchivo": "Загрузить файл",
+        "subiendo": "Загрузка {{archivo}}",
         "seleccionarArchivo": "Выбрать файл",
         "archivoSeleccionado": "Выбранный файл:",
         "eliminarArchivo": "Удалить файл",
@@ -90,7 +91,8 @@
         "errorBorrarCarpeta": "Ошибка при удалении папки.",
         "ficheroEliminado": "Файл {{nombre}} был удалён",
         "archivo": "Файл",
-        "archivoActual": "Текущий файл"
+        "archivoActual": "Текущий файл",
+        "tooSize":"SharePoint ответил с ошибкой FileTooLarge; возможно, файл превышает установленный на сервере предел."
     },
     "administracion": {
         "rol": {

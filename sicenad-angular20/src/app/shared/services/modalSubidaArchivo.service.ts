@@ -1,14 +1,7 @@
 import { ApplicationRef, ComponentRef, createComponent, inject, Injectable, Injector, EnvironmentInjector } from '@angular/core';
+import { ModalState } from '@interfaces/others/modalState';
 import { ModalSubidaArchivoComponent } from '@shared/components/modalSubidaArchivo/modalSubidaArchivo.component';
 import { BehaviorSubject } from 'rxjs';
-
-export type ModalState = {
-  key: string;
-  title: string;
-  percent: number;
-  message?: string;
-  status: 'active' | 'error' | 'complete';
-};
 
 @Injectable({ providedIn: 'root' })
 export class ModalSubidaService {

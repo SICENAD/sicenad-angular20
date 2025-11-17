@@ -1,5 +1,4 @@
-Las variables `sizeMaxEscudo`, `sizeMaxDocRecurso` y `sizeMaxDocSolicitud` indican el número en "MB". Aquí se usa el nº de "MB", pero el código lo transformará a "bytes" y empleará "bytes".
-De manera análoga `sizeMaxCartografia` indica el número en "GB" máximo.
+Las variables `sizeMaxEscudo`, `sizeMaxDocRecurso`, `sizeMaxDocSolicitud` y `sizeMaxCartografia` indican el número en "MB". Aquí se usa el nº de "MB", pero el código lo transformará a "bytes" y empleará "bytes".
 La variable `minutosExpiracionLocalStorage` indica el número de **minutos** pasados los cuales, si no ha habido conexión, se borrará el Local Storage. 
 La variable `tiposTiro` representa los tipos de tiro de la entidad `SOLICITUDARMA`.
 La variable `categoriaFicheroCartografia` representa el id de la categoría de fichero que englobará la cartografía.

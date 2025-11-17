@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Normativa } from '@interfaces/models/normativa';
 import { TranslateModule } from '@ngx-translate/core';
+import { IdiomaService } from '@services/idiomaService';
 import { OrquestadorService } from '@services/orquestadorService';
+import { UtilService } from '@services/utilService';
 import { CenadStore } from '@stores/cenad.store';
 import { IconosStore } from '@stores/iconos.store';
 import { UtilsStore } from '@stores/utils.store';
@@ -20,6 +22,8 @@ export class NormativaModalComponent {
   private utils = inject(UtilsStore);
   private cenadStore = inject(CenadStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);  
   private iconos = inject(IconosStore);
   private fb = inject(FormBuilder);
 
@@ -30,6 +34,17 @@ export class NormativaModalComponent {
 
   // --- State ---
   sizeMaxDocRecurso = computed(() => this.utils.sizeMaxDocRecurso());
+  sizeMaxDocRecursoBytes = computed<number>(() => {
+    const raw = this.sizeMaxDocRecurso();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   idNormativa = computed(() => this.normativa()?.Id || '');
   _idModal = signal('modal-normativa-' + this.normativa()?.Id);
   _idModalEliminar = signal('modal-normativa-eliminar-' + this.normativa()?.Id);
@@ -54,13 +69,25 @@ export class NormativaModalComponent {
   get nombreArchivo() { return this.normativaForm.get('nombreArchivo'); }
 
   onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.normativaForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+    const file: File | undefined = event?.target?.files?.[0];
+    if (!file) {
+      this.normativaForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxDocRecursoBytes();
+    if (typeof maxBytes === 'number' && maxBytes > 0 && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');      // limpiar selección visual y formulario
+      try { if (this.fileInput && this.fileInput.nativeElement) this.fileInput.nativeElement.value = ''; } catch {}
+      this.normativaForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.normativaForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   private esperarYCargarArchivo = void effect(() => {

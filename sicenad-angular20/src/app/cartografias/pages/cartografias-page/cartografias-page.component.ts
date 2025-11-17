@@ -13,6 +13,8 @@ import { CenadStore } from '@stores/cenad.store';
 import { UsuarioLogueadoStore } from '@stores/usuarioLogueado.store';
 import { TranslateModule } from '@ngx-translate/core';
 import { UpperCasePipe } from '@angular/common';
+import { UtilService } from '@services/utilService';
+import { IdiomaService } from '@services/idiomaService';
 
 @Component({
   selector: 'app-cartografias',
@@ -24,6 +26,8 @@ export class CartografiasPageComponent {
 
   private utils = inject(UtilsStore);
   private orquestadorService = inject(OrquestadorService);
+  private utilService = inject(UtilService);
+  private idiomaService = inject(IdiomaService);
   private iconoStore = inject(IconosStore);
   private fb = inject(FormBuilder);
   private auth = inject(AuthStore);
@@ -35,6 +39,17 @@ export class CartografiasPageComponent {
   cartografias = computed(() => this.cenadStore.cartografias());
   escalas = signal<{ idEscala: number, nombre: string }[]>(this.utils.escalasCartografia());
   sizeMaxCartografia = computed(() => this.utils.sizeMaxCartografia());
+  sizeMaxCartografiaBytes = computed<number>(() => {
+    const raw = this.sizeMaxCartografia();
+    if (raw == null) return 0;
+    const val = Number(raw);
+    if (isNaN(val) || val <= 0) return 0;
+    // Si el valor parece ya estar en bytes (>= 1 MiB), devolver tal cual.
+    // Si es un número pequeño (p. ej. 1..1000) lo interpretamos como MB.
+    if (val >= 1024 * 1024) return Math.floor(val);
+    // Interpretar como MB por defecto
+    return Math.floor(val * 1024 * 1024);
+  });
   cenadVisitado = computed(() => this.cenadStore.cenadVisitado());
 
   isAdminEsteCenad = computed(() => {
@@ -57,15 +72,28 @@ export class CartografiasPageComponent {
   get escala() { return this.cartografiaForm.get('escala'); }
   get nombreArchivo() { return this.cartografiaForm.get('nombreArchivo'); }
 
-  onFileChange(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.cartografiaForm.patchValue({ nombreArchivo: file });
-      this.archivoFile.set(file);
-    } else {
+onFileChange(event: any) {
+    const input = event.target as HTMLInputElement;
+    const file: File | null = input?.files && input.files[0];
+    if (!file) {
       this.cartografiaForm.patchValue({ nombreArchivo: null });
       this.archivoFile.set(null);
+      return;
     }
+    const maxBytes = this.sizeMaxCartografiaBytes(); 
+    if (typeof maxBytes === 'number' && file.size > maxBytes) {
+      const maxMb = (maxBytes / (1024 * 1024)).toFixed(2);
+      const mensaje = this.idiomaService.t('archivos.errorTamanoArchivo');
+      this.utilService.toast(`${mensaje}: ${maxMb} MB.`, 'error');
+      // limpiar selección
+      input.value = '';
+      this.cartografiaForm.patchValue({ nombreArchivo: null });
+      this.archivoFile.set(null);
+      return;
+    }
+    // aceptado
+    this.cartografiaForm.patchValue({ nombreArchivo: file });
+    this.archivoFile.set(file);
   }
 
   crearCartografia() {

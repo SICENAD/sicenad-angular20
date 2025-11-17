@@ -69,6 +69,7 @@
     "archivos": {
         "descarga": "下载",
         "subirArchivo": "上传文件",
+        "subiendo": "上傳中 {{archivo}}",        
         "seleccionarArchivo": "选择文件",
         "archivoSeleccionado": "已选择文件:",
         "eliminarArchivo": "删除文件",
@@ -90,7 +91,8 @@
         "errorBorrarCarpeta": "删除文件夹时出错。",
         "ficheroEliminado": "已删除文件 {{nombre}}",
         "archivo": "文件",
-        "archivoActual": "当前文件"
+        "archivoActual": "当前文件",
+        "tooSize": "SharePoint 回應了 FileTooLarge；檔案可能超過了伺服器設定的限制."    
     },
     "administracion": {
         "rol": {

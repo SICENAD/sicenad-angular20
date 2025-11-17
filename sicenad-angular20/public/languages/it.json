@@ -69,6 +69,7 @@
     "archivos": {
         "descarga": "Download",
         "subirArchivo": "Carica file",
+        "subiendo": "Caricando {{archivo}}",
         "seleccionarArchivo": "Seleziona file",
         "archivoSeleccionado": "File selezionato:",
         "eliminarArchivo": "Elimina file",
@@ -90,7 +91,8 @@
         "errorBorrarCarpeta": "Errore nell'eliminazione della cartella.",
         "ficheroEliminado": "Il file {{nombre}} è stato eliminato",
         "archivo": "File",
-        "archivoActual": "File corrente"
+        "archivoActual": "File corrente",
+        "tooSize": "SharePoint ha risposto con FileTooLarge; il file potrebbe superare il limite configurato sul server."
     },
     "administracion": {
         "rol": {
