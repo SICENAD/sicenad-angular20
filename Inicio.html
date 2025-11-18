@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>SICENAD</title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+
+</head>
+
+<body>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <!-- Bootstrap local -->
+  <link rel="stylesheet"
+    href="https://colabora.mdef.es/et/aclog/ZONAPRIVADA/sicenad/SiteAssets/bootstrap/css/bootstrap.min.css">
+  <script src="https://colabora.mdef.es/et/aclog/ZONAPRIVADA/sicenad/SiteAssets/bootstrap/js/bootstrap.bundle.min.js"
+    type="application/javascript"></script>
+  <style>
+    /* Base styles (mantener anteriores reglas relevantes) */
+    body {
+      font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+      font-size: 14px;
+      padding: 20px;
+      line-height: 1.6;
+      background: #f5f7fa;
+      color: #222;
+    }
+
+    /* Center header for README */
+    .readme-header {
+      text-align: center;
+      margin: 18px 0 28px;
+      color: olive;
+    }
+
+    .readme-header img {
+      display: block;
+      margin: 8px auto 0;
+      max-width: 100px;
+      height: auto;
+    }
+
+    .readme-header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    /* Card layout */
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 900px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(18, 38, 63, 0.08);
+      border: 1px solid rgba(15, 23, 42, 0.04);
+    }
+
+    .card.fullwidth {
+      grid-column: 1 / -1;
+    }
+
+    /* Card headers */
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #A3B18A;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #588157;
+    }
+
+    .card p,
+    .card ul {
+      margin: 0 0 8px 0;
+    }
+
+    /* Small visual tweaks */
+    ul {
+      padding-left: 1.15rem;
+    }
+
+    a {
+      color: #0969da;
+    }
+
+    .btn {
+      background: #588157;
+      padding: 0.5;
+      font-size: 14px;
+      color: white;
+    }
+
+    .btn:hover {
+      background-color: #A3B18A;
+    }
+  </style>
+  <div class="readme-header">
+    <h1><strong>Aplicación <strong>SICENAD</strong></strong></h1>
+    <p><img src="../img/madoc.png" alt="MADOC"></p>
+    <a class="btn text-white ms-auto"
+      href="https://colabora.mdef.es/et/aclog/ZONAPRIVADA/sicenad/_layouts/15/viewlsts.aspx"
+      target="_blank"><strong>Contenidos del sitio</strong></a>
+    <a class="btn text-white ms-auto" href="https://colabora.mdef.es/et/aclog/ZONAPRIVADA/sicenad/index.html"
+      target="_blank"><strong></strong>Aplicación SICENAD</strong></a>
+  </div>
+  <div class="cards">
+    <section class="card fullwidth" id="desarrollo">
+      <h2><strong>DESARROLLO</strong></h2>
+      <ul>
+        <li>Es una adaptación de la aplicación para Sharepoint.</li>
+        <li>Para ello se crea un subsitio para alojar integramente la
+          aplicación.</li>
+      </ul>
+    </section>
+    <section class="card" id="backend">
+      <h3><strong>BACKEND</strong></h3>
+      <ul>
+        <li>Se simula la gestión de BBDD sobre <strong>Listas de Sharepoint</strong>, relacionadas entre sí.</li>
+        <li>El almacenamiento de archivos se hará en <strong>Bibliotecas de documentos</strong> creadas a tal efecto
+          para cada <em>CENAD/CMT</em>.</li>
+        <li>Servicios, como la notificación sobre cambios de estado, se realizarán mediante <strong>Flujos de trabajo de
+            Sharepoint Designer</strong>.</li>
+      </ul>
+    </section>
+    <section class="card" id="frontend">
+      <h3><strong>FRONTEND</strong></h3>
+      <ul>
+        <li>Se ha realizado usando Angular 20, componentes Standalone y señales, realizándose adaptaciones para la API
+          de Sharepoint.
+        </li>
+        <li>Además se han incorporado novedades adaptadas de <strong>Vue</strong>, como la gestión de estados globales.
+        </li>
+        <li>La aplicación se construye y aloja en el subsitio, accediendose a través del navegador siguiendo la ruta: <a
+            href="https://colabora.mdef.es/et/ACLOG/ZONAPRIVADA/sicenad/index.html"
+            target="_blank">https://colabora.mdef.es/et/ACLOG/ZONAPRIVADA/sicenad/index.html</a>.</li>
+        <li>Se ha desarrollado extrayendo a un archivo de propiedades <strong>properties.txt</strong> el mayor número de
+          parametros, para poder realizar modificaciones o ajustes sin necesidad de volver a construirla. Ejemplo de
+          ello es la definición de colores, tanto de la aplicación como del calendario, los idiomas, tamaños permitidos
+          para cada tipo de archivo, o la propia url de la <em>API</em> donde se alojan los datos.</li>
+        <li>Se han utilizado archivos de idiomas, por lo que la aplicación puede servirse en <strong>español</strong>,
+          <strong>inglés</strong>, <strong>francés</strong>, <strong>italiano</strong>, <strong>alemán</strong>,
+          <strong>portugués</strong>, <strong>ruso</strong> y <strong>chino</strong>, pudiendo modificarse en tiempo de
+          ejecución.
+        </li>
+      </ul>
+    </section>
+
+    <section class="card" id="limitaciones">
+      <h2><strong>LIMITACIONES</strong></h2>
+      <ul>
+        <li>El espacio total disponible está limitado por la <strong>Cuota de almacenamiento (Métrica)</strong> de la
+          Colección de
+          Sitios.</li>
+        <li>Las restricciones de tamaño de archivo que regulan la subida de los mismos actualmente están en 150 MB.</li>
+      </ul>
+    </section>
+    <section class="card" id="documentacion">
+      <h2><strong>DOCUMENTACIÓN</strong></h2>
+      <p>Puede consultar la documentación accediendo a la <a
+          href="https://git.institutomilitar.com/sicenad/sicenad/wikis/home" target="_blank">WIKI</a>.</p>
+    </section>
+    <section class="card fullwidth" id="funcionalidades">
+      <h2><strong>FUNCIONALIDADES PRINCIPALES</strong></h2>
+      <ul>
+        <li>Gestión de recursos de CENAD/CMT,s del Ejército de Tierra.</li>
+        <li>La aplicación <strong>SICENAD</strong> permitirá crear y mantener una BD de sus CENAD,s/CMT,s, con sus
+          respectivos recursos, pudiendo administrarse cada CENAD/CMT por sí mismo, pero manteniéndose un control
+          centralizado.</li>
+        <li>Cada CENAD/CMT podrá decidir su estructura de recursos y podrá personalizarlos, sin necesidad de ningún
+          conocimiento de programación.</li>
+        <li>Cada CENAD/CMT dispondrá además de un repositorio actualizado de cartografía.</li>
+        <li>Cada CENAD/CMT mostrará la ocupación de sus recursos en un calendario, que además permitirá, según el rol
+          del usuario, acceder a las solicitudes a las que referencian.</li>
+        <li>Cada cambio de estado de una solicitud de un recurso generará automáticamente una notificación (email
+          corporativo) a los usuarios afectados (si han manifestado querer recibir notificaciones).</li>
+        <li>Se adjunta un <a href="../manual.pdf" target="_blank">Manual de usuario</a>, que estará disponible desde la
+          aplicación, para facilitar el uso de la
+          misma.</li>
+      </ul>
+    </section>
+  </div>
+</body>
+
+</html>

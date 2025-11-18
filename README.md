@@ -24,7 +24,7 @@
 
 - Se ha realizado usando Angular 20, utilizando componentes Standalone y el paradigma de señales. Se han adaptado las distintas llamadas _http_ adaptándose a las particularidades de la _api_ que expone Sharepoint.
 - Además se han incorporado novedades adaptadas de `Vue`, como la gestión de estados globales.
-- La aplicación se construye y se aloja en el subsitio, accediendose a través del navegador siguiendo la ruta "http://colabora.mdef.es/et/COLECCIONSITIOS/SUBSITIO/index.html".
+- La aplicación se construye y se aloja en el subsitio, accediendose a través del navegador siguiendo la ruta "https://colabora.mdef.es/et/COLECCIONSITIOS/SUBSITIO/index.html".
 - Se ha desarrollado extrayendo a un archivo de propiedades `properties.txt` el mayor número de parametros, para poder realizar modificaciones o ajustes sin necesidad de volver a construirla. Ejemplo de ello es la definición de colores, tanto de la aplicación como del calendario, los idiomas, tamaños permitidos para cada tipo de archivo, o la propia url de la _API_ donde se alojan los datos.
 - Se han utilizado archivos de idiomas, por lo que la aplicación puede servirse en `español`, `inglés`, `francés`, `italiano`, `alemán`, `portugués`, `ruso` y `chino`, pudiendo modificarse en tiempo de ejecución.
 - Se ha observado una importante limitación de espacio, en los siguientes aspectos:
